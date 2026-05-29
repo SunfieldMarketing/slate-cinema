@@ -2,40 +2,58 @@
 
 export default function ScheduleCall() {
   return (
-    <section className="w-full py-32 bg-[#030305] relative overflow-hidden border-t border-white/5">
+    <section id="schedule" className="w-full py-32 bg-[#030305] relative overflow-hidden border-t border-white/5">
+      {/* Subtle top glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[2px] bg-gradient-to-r from-transparent via-[#00AEEF]/40 to-transparent" />
+      
       <div className="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
         
+        {/* Left side context */}
         <div className="flex-1 text-center lg:text-left">
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6">
+          <p className="text-xs font-mono tracking-[0.3em] text-[#00AEEF] uppercase mb-6">Book a Call</p>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6 leading-[1.1]">
             Schedule a Production Consult
           </h2>
-          <p className="text-[#8E96AA] text-lg lg:text-xl mb-12 max-w-xl mx-auto lg:mx-0">
+          <p className="text-[#8E96AA] text-lg lg:text-xl mb-12 max-w-xl mx-auto lg:mx-0 leading-relaxed">
             Book a time to talk through your campaign, content goals, timeline, and what Slate Cinema can create for you.
           </p>
 
           <div className="hidden lg:block space-y-6">
-            <h3 className="text-sm font-mono tracking-widest text-white/50 uppercase">What we'll cover</h3>
-            <ul className="space-y-4 text-[#8E96AA]">
-              <li className="flex items-center gap-4"><div className="w-1.5 h-1.5 rounded-full bg-[#00AEEF]" />Campaign goals</li>
-              <li className="flex items-center gap-4"><div className="w-1.5 h-1.5 rounded-full bg-[#00AEEF]" />Production needs</li>
-              <li className="flex items-center gap-4"><div className="w-1.5 h-1.5 rounded-full bg-[#00AEEF]" />Timeline & Budget</li>
-              <li className="flex items-center gap-4"><div className="w-1.5 h-1.5 rounded-full bg-[#00AEEF]" />Distribution plan</li>
+            <h3 className="text-[11px] font-mono tracking-[0.3em] text-white/40 uppercase">What we&apos;ll cover</h3>
+            <ul className="space-y-5 text-[#8E96AA]">
+              {['Campaign goals', 'Production needs', 'Timeline & Budget', 'Distribution plan'].map((item, i) => (
+                <li key={i} className="flex items-center gap-4 group">
+                  <div className="w-8 h-[1px] bg-[#00AEEF]/40 group-hover:w-12 group-hover:bg-[#00AEEF] transition-all duration-300" />
+                  <span className="group-hover:text-white transition-colors duration-300">{item}</span>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
 
+        {/* Right side calendar embed */}
         <div className="flex-1 w-full max-w-2xl">
-          <div className="relative perspective-[1000px] group">
-            <div className="absolute -inset-0.5 bg-gradient-to-b from-[#00AEEF]/20 to-transparent rounded-xl blur opacity-50"></div>
+          <div className="relative group">
+            {/* Glow effect */}
+            <div className="absolute -inset-1 bg-gradient-to-b from-[#00AEEF]/15 to-transparent rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             
-            {/* 3D Desk Surface Frame / Calendar Embed Container */}
-            <div className="relative bg-[#0A0B0E] p-2 sm:p-4 rounded-xl border border-white/10 shadow-2xl transform transition-transform duration-500 hover:scale-[1.02]">
-              <div className="bg-white rounded-lg w-full h-[600px] flex items-center justify-center relative overflow-hidden">
-                {/* Placeholder for Calendar embed */}
-                <div className="text-center text-gray-400">
-                  <svg className="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                  <p className="font-medium text-gray-500">Calendar Widget Target</p>
-                </div>
+            <div className="relative rounded-2xl overflow-hidden" style={{ background: 'rgba(10,11,14,0.9)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              {/* Top bar */}
+              <div className="flex items-center gap-2 px-6 py-3 border-b border-white/5">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
+                <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
+                <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+                <span className="text-[10px] font-mono text-white/20 ml-4 tracking-widest">SLATE CINEMA // SCHEDULE</span>
+              </div>
+              
+              {/* Calendar Embed Container */}
+              <div className="bg-white w-full" style={{ minHeight: '600px' }}>
+                <iframe
+                  src="https://calendly.com/slatecinema/consult"
+                  style={{ width: '100%', height: '600px', border: 'none' }}
+                  title="Schedule a call with Slate Cinema"
+                  loading="lazy"
+                />
               </div>
             </div>
           </div>
