@@ -1,140 +1,173 @@
 'use client'
 
-import { useRef, useState } from 'react'
-import gsap from 'gsap'
-import ScrollTrigger from 'gsap/ScrollTrigger'
+import { useState, useRef } from 'react'
 import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
 import clsx from 'clsx'
 
-gsap.registerPlugin(ScrollTrigger)
-
-const steps = [
+const pipelineData = [
   {
-    id: '01',
+    id: 'pre',
     title: 'Pre-Production',
-    desc: 'We map the idea before the camera turns on. Concept development, campaign planning, scripting, shot lists, storyboards, brand direction, production scheduling.'
+    subServices: [
+      { name: 'Concepts', details: 'Scripts + Storyboards | Call Sheet + Schedules | Outlines + Shot Lists' },
+      { name: 'Producing', details: 'Casting + Locations | Scouting + Hiring Crew | Logistics + Legal' }
+    ],
+    videoColor: 'from-[#0A0515] to-[#141235]'
   },
   {
-    id: '02',
+    id: 'prod',
     title: 'Production',
-    desc: 'We capture visuals that feel intentional, premium, and built for attention. On-location shooting, lighting, directing, interviews, product shots, social-first content capture.'
+    subServices: [
+      { name: 'Crew', details: 'Directors | Camera Crew | Sound Crew' },
+      { name: 'Talent', details: 'Actors/Child Actors | Musicians + Dancers | Animals' },
+      { name: 'Set Design', details: 'Set Designers + Props | Hair + Makeup | Wardrobe' }
+    ],
+    videoColor: 'from-[#051515] to-[#0D252F]'
   },
   {
-    id: '03',
+    id: 'post',
     title: 'Post-Production',
-    desc: 'We shape the story into content people actually finish watching. Editing, color grading, sound design, motion graphics, captions, VFX, platform-specific cuts.'
+    subServices: [
+      { name: 'Cut + Color', details: 'Obtain a clean edit at an affordable price' },
+      { name: 'Sound Design', details: 'Bring your dream to life with realistic sound effects and intricate sound design' },
+      { name: 'Motion Graphics', details: "When static images aren't enough, let motion tell your story through animated graphics" },
+      { name: 'VFX', details: 'Create custom visual effects that turn your dreams into a reality' },
+      { name: '2D + 3D', details: 'Create new worlds with our custom animation services' },
+      { name: 'AI Services', details: 'From upscaling to image generation, inquire about our AI assisted editing models' }
+    ],
+    videoColor: 'from-[#15050A] to-[#2F0D15]'
   },
   {
-    id: '04',
+    id: 'dist',
     title: 'Distribution',
-    desc: 'We prepare the content for the platforms where attention actually happens. Social media versions, ad-ready exports, campaign deliverables, posting strategy, analytics review.'
+    subServices: [
+      { name: 'Social Media Marketing', details: 'Strategically structure your online presence with scheduled posts and account management' },
+      { name: 'Ads Management', details: 'Run successful ad campaigns to drive sales and lead generation' },
+      { name: 'OOH Advertising', details: 'Target your specific clientele with local OOH ads' }
+    ],
+    videoColor: 'from-[#151005] to-[#352512]'
   }
 ]
 
 export default function Pipeline() {
-  const sectionRef = useRef<HTMLElement>(null)
-  const [activeStep, setActiveStep] = useState(0)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const containerRef = useRef<HTMLElement>(null)
+  const bgRef = useRef<HTMLDivElement>(null)
 
   useGSAP(() => {
-    gsap.timeline({
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: 'top top',
-        end: '+=400%',
-        pin: true,
-        scrub: 1,
-        onUpdate: (self) => {
-          const progress = self.progress
-          const stepIndex = Math.min(Math.floor(progress * 4), 3)
-          setActiveStep(stepIndex)
-        }
+    // Reveal animation
+    gsap.fromTo('.pipeline-header', 
+      { y: 50, opacity: 0 }, 
+      { y: 0, opacity: 1, duration: 1, scrollTrigger: { trigger: containerRef.current, start: 'top 70%' } }
+    )
+  }, { scope: containerRef })
+
+  const handleSelect = (index: number) => {
+    if (activeIndex === index) return
+    
+    // Animate background color transition
+    gsap.to(bgRef.current, {
+      opacity: 0.5,
+      duration: 0.3,
+      onComplete: () => {
+        setActiveIndex(index)
+        gsap.to(bgRef.current, { opacity: 1, duration: 0.5 })
       }
     })
-  }, { scope: sectionRef })
+  }
 
   return (
-    <section ref={sectionRef} className="relative w-full h-screen flex items-center bg-[#030305] overflow-hidden">
-      {/* Background rotating mark */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] opacity-[0.03] pointer-events-none">
-        <svg viewBox="0 0 100 100" className="w-full h-full text-[#00AEEF]" fill="none" stroke="currentColor" strokeWidth="0.5">
-          <circle cx="50" cy="50" r="40" strokeDasharray="6 4" />
-          <circle cx="50" cy="50" r="30" strokeDasharray="3 3" />
-          <polygon points="43,32 43,68 70,50" fill="currentColor" opacity="0.3" />
-        </svg>
+    <section 
+      id="how-it-works" 
+      ref={containerRef} 
+      className="w-full min-h-screen relative flex items-center py-32 overflow-hidden"
+    >
+      {/* Dynamic Background Simulation for Video */}
+      <div 
+        ref={bgRef}
+        className={clsx(
+          "absolute inset-0 z-0 bg-gradient-to-br transition-all duration-1000",
+          pipelineData[activeIndex].videoColor
+        )}
+      >
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
+        
+        {/* Fake video noise/texture */}
+        <div className="absolute inset-0 opacity-20 mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }} />
       </div>
 
-      <div className="max-w-7xl mx-auto w-full px-6 md:px-12 flex flex-col lg:flex-row items-start gap-12 lg:gap-20 relative z-10">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6">
         
-        {/* Left Side */}
-        <div className="flex-1 lg:sticky lg:top-1/3 space-y-6 pt-8">
-          <p className="text-xs font-mono tracking-[0.3em] text-[#00AEEF] uppercase">Our Process</p>
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.05]">
-            How It Works
-          </h2>
-          <p className="text-lg text-[#8E96AA] max-w-lg leading-relaxed">
+        <div className="pipeline-header max-w-3xl mb-24">
+          <h2 className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-8">How It Works</h2>
+          <p className="text-xl text-[#8E96AA] leading-relaxed">
             At Slate Cinema, our values shape our work. With integrity, creativity, and collaboration at our core, we deliver exceptional video production. Transparency, innovation, and teamwork drive us forward, ensuring every project exceeds expectations.
           </p>
-
-          {/* Step counter */}
-          <div className="flex items-center gap-4 pt-4">
-            <span className="text-5xl font-mono font-bold text-[#00AEEF]">{String(activeStep + 1).padStart(2, '0')}</span>
-            <div className="w-12 h-[1px] bg-white/20" />
-            <span className="text-sm font-mono text-white/30">04</span>
-          </div>
         </div>
 
-        {/* Right Side: Accordion */}
-        <div className="flex-1 w-full flex flex-col gap-3">
-          {steps.map((step, idx) => {
-            const isActive = activeStep === idx
-            return (
-              <div 
-                key={step.id} 
+        <div className="flex flex-col lg:flex-row gap-16">
+          
+          {/* Left Navigation */}
+          <div className="flex flex-col gap-4 lg:w-1/3">
+            {pipelineData.map((category, idx) => (
+              <button
+                key={category.id}
+                onClick={() => handleSelect(idx)}
                 className={clsx(
-                  'rounded-xl overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] cursor-pointer',
-                  isActive 
-                    ? 'bg-white/[0.04] border border-white/10' 
-                    : 'bg-white/[0.01] border border-white/[0.04] hover:bg-white/[0.03] hover:border-white/[0.08]'
+                  "text-left px-8 py-6 rounded-2xl border transition-all duration-500 group relative overflow-hidden",
+                  activeIndex === idx 
+                    ? "bg-white/10 border-[#00AEEF] shadow-[0_0_30px_rgba(0,174,239,0.15)]" 
+                    : "bg-white/5 border-white/10 hover:bg-white/10"
                 )}
-                style={isActive ? { boxShadow: '0 0 40px rgba(0,174,239,0.05)' } : undefined}
-                onClick={() => setActiveStep(idx)}
               >
-                {/* Active indicator line */}
-                <div className={clsx(
-                  'absolute left-0 top-0 bottom-0 w-[2px] rounded-full transition-all duration-500',
-                  isActive ? 'bg-[#00AEEF]' : 'bg-transparent'
-                )} />
-
-                <div className="flex items-center gap-5 p-5 md:p-6 relative">
-                  <span className={clsx(
-                    "font-mono text-xs tracking-[0.2em] transition-colors duration-500",
-                    isActive ? "text-[#00AEEF]" : "text-white/20"
-                  )}>{step.id}</span>
-                  <h3 className={clsx(
-                    "text-lg md:text-xl font-bold tracking-wide transition-colors duration-500",
-                    isActive ? "text-white" : "text-white/40"
-                  )}>{step.title}</h3>
-                  
-                  {/* Chevron */}
-                  <svg className={clsx("w-4 h-4 ml-auto transition-all duration-500", isActive ? "rotate-180 text-[#00AEEF]" : "text-white/20")} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-                
-                <div className={clsx(
-                  "overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
-                  isActive ? "max-h-[200px] opacity-100" : "max-h-0 opacity-0"
+                {activeIndex === idx && (
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#00AEEF] shadow-[0_0_10px_#00AEEF]" />
+                )}
+                <h3 className={clsx(
+                  "text-2xl font-bold tracking-wide transition-colors duration-300",
+                  activeIndex === idx ? "text-white" : "text-white/50 group-hover:text-white"
                 )}>
-                  <div className="px-5 md:px-6 pb-6 pt-0">
-                    <div className="w-8 h-[1px] bg-[#00AEEF]/30 mb-4" />
-                    <p className="text-[#8E96AA] leading-relaxed text-sm md:text-base">{step.desc}</p>
-                  </div>
+                  {category.title}
+                </h3>
+              </button>
+            ))}
+          </div>
+
+          {/* Right Content Area (Interactive Display) */}
+          <div className="lg:w-2/3 min-h-[500px]">
+            {pipelineData.map((category, idx) => (
+              <div 
+                key={category.id}
+                className={clsx(
+                  "transition-all duration-700 absolute lg:relative w-full",
+                  activeIndex === idx ? "opacity-100 translate-y-0 pointer-events-auto z-10" : "opacity-0 translate-y-12 pointer-events-none z-0"
+                )}
+              >
+                <div className="grid gap-6">
+                  {category.subServices.map((sub, i) => (
+                    <div 
+                      key={i} 
+                      className="glass-panel rounded-xl p-8 group hover:bg-white/10 transition-colors duration-300 border border-white/5 hover:border-white/20"
+                    >
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div>
+                          <h4 className="text-2xl font-bold text-white mb-2 group-hover:text-[#00AEEF] transition-colors">{sub.name}</h4>
+                          <p className="text-[#8E96AA] text-lg">{sub.details}</p>
+                        </div>
+                        <button className="flex items-center justify-center gap-2 px-6 py-3 rounded-full border border-white/20 text-white hover:bg-white hover:text-black transition-all duration-300 shrink-0 uppercase tracking-widest text-xs font-bold">
+                          <div className="w-2 h-2 rounded-full bg-[#00AEEF]" />
+                          Watch Now
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            )
-          })}
+            ))}
+          </div>
+
         </div>
-        
       </div>
     </section>
   )

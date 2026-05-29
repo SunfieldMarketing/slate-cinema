@@ -7,10 +7,11 @@ import Results from "@/components/Results";
 import LogoOrbit from "@/components/LogoOrbit";
 import IndustryStandards from "@/components/IndustryStandards";
 import Portfolio from "@/components/Portfolio";
-import QuoteCalculator from "@/components/QuoteCalculator";
-import ScheduleCall from "@/components/ScheduleCall";
+import LeadMagnet from "@/components/LeadMagnet";
+import CustomCalendar from "@/components/CustomCalendar";
 import Scene3DWrapper from "@/components/Scene3DWrapper";
 import Footer from "@/components/Footer";
+
 
 export default function Home() {
   return (
@@ -41,11 +42,11 @@ export default function Home() {
         </div>
         
         <div id="quote">
-          <QuoteCalculator />
+          <LeadMagnet />
         </div>
         
         <div id="contact">
-          <ScheduleCall />
+          <CustomCalendar />
         </div>
         
         <Footer />

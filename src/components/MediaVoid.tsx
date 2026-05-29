@@ -1,90 +1,125 @@
 'use client'
 
 import { useRef } from 'react'
-import gsap from 'gsap'
-import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-
-gsap.registerPlugin(ScrollTrigger)
-
-const cards = [
-  { type: 'Campaign Reel', format: 'vertical', src: '/images/portfolio-production.png' },
-  { type: 'Brand Film', format: 'horizontal', src: '/images/portfolio-brand.png' },
-  { type: 'Social Ad', format: 'vertical', src: '/images/portfolio-social.png' },
-  { type: 'Event Recap', format: 'horizontal', src: '/images/portfolio-event.png' },
-]
+import gsap from 'gsap'
+import Image from 'next/image'
 
 export default function MediaVoid() {
   const containerRef = useRef<HTMLElement>(null)
-
+  
   useGSAP(() => {
-    const tl = gsap.timeline({
+    // Text shatter and assemble effect
+    const chars = document.querySelectorAll('.shatter-char')
+    
+    gsap.fromTo(chars,
+      { 
+        opacity: 0,
+        z: () => gsap.utils.random(-1000, 1000),
+        x: () => gsap.utils.random(-500, 500),
+        y: () => gsap.utils.random(-500, 500),
+        rotationX: () => gsap.utils.random(-90, 90),
+        rotationY: () => gsap.utils.random(-90, 90),
+        rotationZ: () => gsap.utils.random(-90, 90)
+      },
+      {
+        opacity: 1,
+        z: 0,
+        x: 0,
+        y: 0,
+        rotationX: 0,
+        rotationY: 0,
+        rotationZ: 0,
+        stagger: 0.02,
+        duration: 2,
+        ease: "power4.out",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top 40%',
+          end: 'top -20%',
+          scrub: 1
+        }
+      }
+    )
+
+    // Parallax on cards
+    gsap.to('.void-card', {
+      y: (i) => -100 - (i * 50),
+      ease: "none",
       scrollTrigger: {
         trigger: containerRef.current,
-        start: 'top top',
-        end: '+=300%',
-        pin: true,
+        start: 'top bottom',
+        end: 'bottom top',
         scrub: 1
       }
     })
-
-    // Text sequence — fade each line in
-    tl.fromTo('.void-line-1', { opacity: 0.1, y: 20 }, { opacity: 1, y: 0, duration: 1 })
-      .fromTo('.void-line-2', { opacity: 0.1, y: 20 }, { opacity: 1, y: 0, duration: 1 })
-      .fromTo('.void-line-3', { opacity: 0.1, y: 20 }, { opacity: 1, y: 0, duration: 1 })
-      .fromTo('.void-line-4', { opacity: 0.1, y: 20 }, { opacity: 1, y: 0, duration: 1 })
-
-    // Media cards float in from depth
-    tl.fromTo('.void-card',
-      { scale: 0.6, opacity: 0, y: 40 },
-      { scale: 1, opacity: 1, y: 0, stagger: 0.3, duration: 2, ease: 'power2.out' },
-      0
-    )
   }, { scope: containerRef })
 
-  // Fixed positions for cards so they don't overlap randomly on each render
-  const cardPositions = [
-    { left: '5%', top: '15%', rotate: '-6deg' },
-    { right: '5%', top: '20%', rotate: '4deg' },
-    { left: '8%', bottom: '15%', rotate: '3deg' },
-    { right: '10%', bottom: '20%', rotate: '-5deg' },
-  ]
+  const text = "The content we create isn't just eye-catching, it's content people actually want to watch."
 
   return (
-    <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-hidden flex items-center justify-center">
+    <section ref={containerRef} className="w-full min-h-[150vh] relative flex flex-col items-center justify-center py-32 perspective-[2000px] bg-black overflow-hidden">
       
-      {/* Floating Media Cards */}
-      {cards.map((card, i) => (
-        <div 
-          key={i}
-          className={`void-card absolute ${card.format === 'vertical' ? 'w-36 md:w-48 h-56 md:h-72' : 'w-56 md:w-72 h-32 md:h-40'} rounded-xl overflow-hidden border border-white/[0.06] opacity-0 pointer-events-auto cursor-pointer group transition-transform duration-500 hover:scale-105 hover:z-20`}
-          style={{ ...cardPositions[i], transform: `rotate(${cardPositions[i].rotate})` }}
-        >
-          <img src={card.src} alt={card.type} className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-90 transition-opacity duration-500" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-          
-          {/* Play button on hover */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div className="w-10 h-10 rounded-full border border-white/40 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-              <div className="w-0 h-0 border-t-[5px] border-t-transparent border-l-[8px] border-l-white border-b-[5px] border-b-transparent ml-0.5" />
+      {/* Background Stats Layer (Scrolling up view count, likes, comments) */}
+      <div className="absolute inset-0 z-0 flex items-center justify-center opacity-20 pointer-events-none">
+        <div className="flex flex-col items-center gap-12 font-bold transform -rotate-12 scale-150 blur-sm">
+          <div className="text-[12rem] text-white leading-none flex items-center gap-8">
+            3,783,957 <span className="text-4xl text-white/50 tracking-[0.3em] uppercase">views</span>
+          </div>
+          <div className="flex gap-32 text-[6rem] text-white/80">
+            <div className="flex items-center gap-6">
+              <svg width="80" height="80" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+              12,227
+            </div>
+            <div className="flex items-center gap-6">
+              <svg width="80" height="80" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+              1,030
             </div>
           </div>
-          
-          <div className="absolute bottom-0 left-0 w-full p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-            <span className="text-[10px] font-mono tracking-[0.15em] text-white uppercase">{card.type}</span>
-          </div>
         </div>
-      ))}
+      </div>
 
-      {/* Center Text Sequence */}
-      <div className="relative z-10 flex flex-col items-center text-center gap-2 max-w-4xl px-6">
-        <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.1] flex flex-col gap-1">
-          <span className="void-line-1 text-white/10">The content we create</span>
-          <span className="void-line-2 text-white/10">isn&apos;t just eye-catching,</span>
-          <span className="void-line-3 text-white/10">it&apos;s content people</span>
-          <span className="void-line-4 text-[#00AEEF]/10">actually want to watch.</span>
+      {/* Floating Video/Image Cards Parallax layer */}
+      <div className="absolute inset-0 z-10 pointer-events-none">
+        {[...Array(6)].map((_, i) => (
+          <div 
+            key={i}
+            className="void-card absolute w-64 md:w-96 rounded-2xl overflow-hidden glass-panel"
+            style={{
+              left: `${Math.random() * 80}%`,
+              top: `${Math.random() * 100}%`,
+              transform: `translateZ(${Math.random() * 500}px) rotate(${Math.random() * 20 - 10}deg)`,
+              opacity: 0.6
+            }}
+          >
+            <div className="w-full aspect-video bg-gradient-to-br from-[#00AEEF]/20 to-purple-600/20 relative">
+              <div className="absolute inset-0 flex items-center justify-center text-white/50">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* 3D Shatter Text Content */}
+      <div className="relative z-20 max-w-6xl mx-auto px-6 text-center">
+        <h2 className="text-5xl md:text-8xl font-bold text-white leading-tight flex flex-wrap justify-center gap-x-4 gap-y-2">
+          {text.split(' ').map((word, wIdx) => (
+            <div key={wIdx} className="flex">
+              {word.split('').map((char, cIdx) => (
+                <span 
+                  key={cIdx} 
+                  className="shatter-char inline-block" 
+                  style={{ transformStyle: 'preserve-3d' }}
+                >
+                  {char}
+                </span>
+              ))}
+            </div>
+          ))}
         </h2>
       </div>
+
     </section>
   )
 }
