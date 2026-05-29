@@ -24,7 +24,8 @@ export default function SmoothScrolling({ children }: { children: React.ReactNod
 
   return (
     <ReactLenis root options={{ lerp: 0.05, smoothWheel: true }}>
-      {children}
+      {/* @ts-expect-error React 19 type mismatch with older Lenis types */}
+      {children as any}
     </ReactLenis>
   )
 }
