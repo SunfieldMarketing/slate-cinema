@@ -127,9 +127,44 @@ function FilmStrip() {
   )
 }
 
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
+import ScrollTrigger from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
+
 function SceneContent() {
+  const groupRef = useRef<THREE.Group>(null)
+
+  useGSAP(() => {
+    if (!groupRef.current) return
+    
+    // Global scroll-driven 3D animation
+    gsap.to(groupRef.current.rotation, {
+      y: Math.PI * 1.5,
+      x: 0.2,
+      scrollTrigger: {
+        trigger: document.documentElement,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: 1
+      }
+    })
+
+    gsap.to(groupRef.current.position, {
+      z: 3,
+      y: 2,
+      scrollTrigger: {
+        trigger: document.documentElement,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: 1
+      }
+    })
+  }, { scope: groupRef })
+
   return (
-    <>
+    <group ref={groupRef}>
       <ambientLight intensity={0.15} />
       <directionalLight position={[5, 5, 5]} intensity={0.3} color="#F7F8FF" />
       <pointLight position={[-3, 2, 2]} intensity={0.4} color="#00AEEF" distance={10} />
@@ -142,7 +177,7 @@ function SceneContent() {
 
       <Sparkles count={80} scale={15} size={1.5} speed={0.3} color="#00AEEF" opacity={0.3} />
       <Sparkles count={40} scale={12} size={1} speed={0.2} color="#F7F8FF" opacity={0.15} />
-    </>
+    </group>
   )
 }
 

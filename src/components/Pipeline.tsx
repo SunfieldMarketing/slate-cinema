@@ -56,25 +56,51 @@ export default function Pipeline() {
   const bgRef = useRef<HTMLDivElement>(null)
 
   useGSAP(() => {
-    // Reveal animation
+    // Pin section and scrub through categories
+    const totalCategories = pipelineData.length
+    
+    gsap.to({}, {
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: 'top top',
+        end: `+=${totalCategories * 100}%`, // scroll distance
+        pin: true,
+        scrub: 1,
+        onUpdate: (self) => {
+          // Calculate which category should be active based on scroll progress
+          const progress = self.progress
+          let newIndex = Math.floor(progress * totalCategories)
+          if (newIndex >= totalCategories) newIndex = totalCategories - 1
+          
+          if (newIndex !== activeIndex) {
+            handleSelect(newIndex)
+          }
+        }
+      }
+    })
+
     gsap.fromTo('.pipeline-header', 
       { y: 50, opacity: 0 }, 
       { y: 0, opacity: 1, duration: 1, scrollTrigger: { trigger: containerRef.current, start: 'top 70%' } }
     )
-  }, { scope: containerRef })
+  }, { scope: containerRef, dependencies: [activeIndex] })
 
   const handleSelect = (index: number) => {
     if (activeIndex === index) return
     
     // Animate background color transition
-    gsap.to(bgRef.current, {
-      opacity: 0.5,
-      duration: 0.3,
-      onComplete: () => {
-        setActiveIndex(index)
-        gsap.to(bgRef.current, { opacity: 1, duration: 0.5 })
-      }
-    })
+    if (bgRef.current) {
+      gsap.to(bgRef.current, {
+        opacity: 0.5,
+        duration: 0.3,
+        onComplete: () => {
+          setActiveIndex(index)
+          gsap.to(bgRef.current, { opacity: 1, duration: 0.5 })
+        }
+      })
+    } else {
+      setActiveIndex(index)
+    }
   }
 
   return (

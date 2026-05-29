@@ -12,7 +12,7 @@ export default function Hero() {
   const contentRef = useRef<HTMLDivElement>(null)
 
   useGSAP(() => {
-    // Only animate OUT on scroll, hero is fully visible on load
+    // 3D Explode / fly-through effect on scroll
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
@@ -23,12 +23,24 @@ export default function Hero() {
       }
     })
 
-    tl.to('.hero-bg-img', { scale: 1.15, opacity: 0.15 }, 0)
-    tl.to('.hero-title', { y: -80, opacity: 0 }, 0)
-    tl.to('.hero-subtitle', { y: -60, opacity: 0 }, 0.05)
-    tl.to('.hero-tagline', { y: -40, opacity: 0 }, 0.1)
-    tl.to('.hero-buttons', { y: -20, opacity: 0 }, 0.15)
-    tl.to('.hero-frames', { opacity: 0 }, 0.1)
+    // Background pulls away
+    tl.to('.hero-bg-img', { scale: 1.5, opacity: 0, filter: 'brightness(0) blur(20px)' }, 0)
+    
+    // Title shatters and flies AT the camera
+    tl.to('.hero-title-part', { 
+      z: 1000, 
+      scale: 3, 
+      opacity: 0, 
+      rotationX: () => gsap.utils.random(-45, 45),
+      rotationY: () => gsap.utils.random(-45, 45),
+      stagger: 0.1 
+    }, 0)
+    
+    // Rest fades and scales up
+    tl.to('.hero-subtitle', { z: 500, scale: 2, opacity: 0 }, 0)
+    tl.to('.hero-tagline', { z: 400, scale: 1.5, opacity: 0 }, 0)
+    tl.to('.hero-buttons', { y: 100, opacity: 0 }, 0)
+    tl.to('.hero-frames', { scale: 1.5, opacity: 0 }, 0)
   }, { scope: containerRef })
 
   return (
@@ -79,9 +91,9 @@ export default function Hero() {
       <div ref={contentRef} className="relative z-10 flex flex-col items-center text-center px-6 max-w-5xl mx-auto">
         
         {/* Main Title */}
-        <h1 className="hero-title text-7xl md:text-9xl lg:text-[11rem] font-bold tracking-tighter leading-none mb-6">
-          <span className="text-white drop-shadow-[0_0_60px_rgba(255,255,255,0.15)]">SLATE</span>{' '}
-          <span className="text-[#00AEEF] drop-shadow-[0_0_60px_rgba(0,174,239,0.3)]">CINEMA</span>
+        <h1 className="hero-title text-7xl md:text-9xl lg:text-[11rem] font-bold tracking-tighter leading-none mb-6" style={{ perspective: 1000 }}>
+          <span className="hero-title-part inline-block text-white drop-shadow-[0_0_60px_rgba(255,255,255,0.15)]">SLATE</span>{' '}
+          <span className="hero-title-part inline-block text-[#00AEEF] drop-shadow-[0_0_60px_rgba(0,174,239,0.3)]">CINEMA</span>
         </h1>
         
         {/* Subtitle */}

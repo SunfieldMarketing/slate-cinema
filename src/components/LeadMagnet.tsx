@@ -1,168 +1,172 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import gsap from 'gsap'
-import { useGSAP } from '@gsap/react'
 import clsx from 'clsx'
+import gsap from 'gsap'
+import ScrollTrigger from 'gsap/ScrollTrigger'
+import { useGSAP } from '@gsap/react'
 
-const steps = [
-  {
-    id: 'service',
-    title: 'What do you need?',
-    options: ['Pre-Production', 'Production', 'Post-Production', 'Distribution', 'Full Campaign']
-  },
-  {
-    id: 'scope',
-    title: 'Project Scope',
-    options: ['Single Video', 'Social Content Series', 'Brand Campaign', 'Event Coverage', 'Ongoing Retainer']
-  },
-  {
-    id: 'budget',
-    title: 'Budget Range',
-    options: ['$5k - $10k', '$10k - $25k', '$25k - $50k', '$50k+']
-  },
-  {
-    id: 'contact',
-    title: 'Your Details',
-    options: [] // Special case for inputs
-  }
-]
+gsap.registerPlugin(ScrollTrigger)
+
+type StepId = 'service' | 'scope' | 'budget' | 'contact'
 
 export default function LeadMagnet() {
   const containerRef = useRef<HTMLElement>(null)
-  const [currentStep, setCurrentStep] = useState(0)
-  const [selections, setSelections] = useState<Record<string, string>>({})
+  const formRef = useRef<HTMLDivElement>(null)
+  const [currentStep, setCurrentStep] = useState<StepId>('service')
+
+  const steps = [
+    { id: 'service', label: 'Service' },
+    { id: 'scope', label: 'Scope' },
+    { id: 'budget', label: 'Budget' },
+    { id: 'contact', label: 'Contact' },
+  ]
+
+  const options = {
+    service: ['Pre-Production', 'Production', 'Post-Production', 'Distribution', 'Full Campaign'],
+    scope: ['Single Video', 'Social Content Series', 'Brand Campaign', 'Event Coverage', 'Ongoing Retainer'],
+    budget: ['$5k-$10k', '$10k-$25k', '$25k-$50k', '$50k+']
+  }
 
   useGSAP(() => {
-    gsap.fromTo('.lead-magnet-card',
-      { y: 60, opacity: 0, rotateX: 10 },
-      {
-        y: 0,
-        opacity: 1,
-        rotateX: 0,
-        duration: 1.2,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top 60%',
-        }
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: 'top bottom',
+        end: 'top 20%',
+        scrub: 1,
       }
+    })
+
+    // Background gradient expands
+    tl.fromTo('.lm-bg', { scale: 0 }, { scale: 1, ease: 'none' }, 0)
+
+    // Lines rotate
+    tl.fromTo('.lm-lines', { rotation: 0 }, { rotation: 180, ease: 'none' }, 0)
+
+    // Form flies in 3D
+    tl.fromTo('.lm-form',
+      { y: 300, z: -500, rotateX: 45, opacity: 0 },
+      { y: 0, z: 0, rotateX: 0, opacity: 1, ease: 'power2.out' },
+      0.2
     )
+
+    // Submit button pulse
+    gsap.to('.lm-submit', {
+      boxShadow: '0 0 20px rgba(0,174,239,0.5)',
+      scale: 1.02,
+      repeat: -1,
+      yoyo: true,
+      duration: 1.5,
+      ease: 'power1.inOut'
+    })
   }, { scope: containerRef })
 
-  const handleSelect = (option: string) => {
-    setSelections(prev => ({ ...prev, [steps[currentStep].id]: option }))
-    
-    // Animate out current step
-    gsap.to('.step-content', {
+  const handleStepChange = (nextStep: StepId) => {
+    // 3D Exit current
+    gsap.to('.lm-step-content', {
+      rotateY: -90,
       opacity: 0,
-      x: -20,
       duration: 0.3,
       onComplete: () => {
-        if (currentStep < steps.length - 1) {
-          setCurrentStep(s => s + 1)
-          // Animate in next step
-          gsap.fromTo('.step-content', 
-            { opacity: 0, x: 20 },
-            { opacity: 1, x: 0, duration: 0.4, ease: 'power2.out' }
-          )
-        }
+        setCurrentStep(nextStep)
+        // 3D Enter next
+        gsap.fromTo('.lm-step-content',
+          { rotateY: 90, opacity: 0 },
+          { rotateY: 0, opacity: 1, duration: 0.4, ease: 'back.out(1.5)' }
+        )
       }
     })
   }
 
-  return (
-    <section id="quote" ref={containerRef} className="w-full py-32 relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #030305 0%, #0d0520 30%, #150a30 50%, #0d0520 70%, #030305 100%)' }}>
-      
-      {/* 3D Floating Particles / Ambience */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute bottom-[-10%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full blur-[140px] opacity-40" style={{ background: 'radial-gradient(circle, rgba(120,50,200,0.4) 0%, transparent 70%)' }} />
-        
-        {/* Abstract floating geo lines */}
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="absolute h-[1px] bg-gradient-to-r from-transparent via-[#00AEEF]/20 to-transparent w-full opacity-30" style={{ top: `${20 + i * 15}%`, transform: `rotate(${i % 2 === 0 ? 3 : -3}deg)` }} />
+  const handleOptionHover = (e: React.MouseEvent<HTMLButtonElement>) => {
+    gsap.to(e.currentTarget, { z: 10, scale: 1.02, duration: 0.2 })
+  }
+  const handleOptionLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
+    gsap.to(e.currentTarget, { z: 0, scale: 1, duration: 0.2 })
+  }
+
+  const renderStep = () => {
+    if (currentStep === 'contact') {
+      return (
+        <div className="lm-step-content flex flex-col gap-4" style={{ transformStyle: 'preserve-3d' }}>
+          <div className="grid grid-cols-2 gap-4">
+            <input type="text" placeholder="First Name" className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#00AEEF] transition-colors" />
+            <input type="text" placeholder="Last Name" className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#00AEEF] transition-colors" />
+          </div>
+          <input type="email" placeholder="Email" className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#00AEEF] transition-colors" />
+          <input type="text" placeholder="Company" className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#00AEEF] transition-colors" />
+          <button className="lm-submit mt-4 w-full bg-[#00AEEF] text-white font-bold py-4 rounded-lg hover:bg-[#00AEEF]/80 transition-colors">
+            Get Custom Proposal
+          </button>
+        </div>
+      )
+    }
+
+    const currentOptions = options[currentStep as keyof typeof options]
+    return (
+      <div className="lm-step-content flex flex-col gap-3" style={{ transformStyle: 'preserve-3d' }}>
+        {currentOptions.map((opt, i) => (
+          <button 
+            key={i} 
+            onMouseEnter={handleOptionHover}
+            onMouseLeave={handleOptionLeave}
+            onClick={() => {
+              if (currentStep === 'service') handleStepChange('scope')
+              else if (currentStep === 'scope') handleStepChange('budget')
+              else if (currentStep === 'budget') handleStepChange('contact')
+            }}
+            className="w-full text-left px-6 py-4 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/30 text-white transition-colors"
+            style={{ transformStyle: 'preserve-3d' }}
+          >
+            {opt}
+          </button>
         ))}
       </div>
+    )
+  }
 
-      <div className="relative z-10 max-w-4xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <p className="text-xs font-mono tracking-[0.3em] text-[#00AEEF] uppercase mb-4">Project Discovery</p>
-          <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-4">Build Your Scope</h2>
-          <p className="text-xl text-[#8E96AA] max-w-2xl mx-auto">
-            Answer a few quick questions to help us understand your vision. We&apos;ll prepare a custom execution plan.
-          </p>
-        </div>
+  const stepIndex = steps.findIndex(s => s.id === currentStep)
 
-        {/* Lead Magnet Interactive Form */}
-        <div className="lead-magnet-card relative w-full max-w-2xl mx-auto">
-          {/* Glowing border effect */}
-          <div className="absolute -inset-[1px] rounded-2xl opacity-50" style={{ background: 'linear-gradient(135deg, rgba(120,50,200,0.6), rgba(0,174,239,0.4), rgba(120,50,200,0.6))', filter: 'blur(8px)' }} />
+  return (
+    <section ref={containerRef} className="w-full py-32 bg-[#030305] relative overflow-hidden" style={{ perspective: '1200px' }}>
+      
+      {/* Background Entrance */}
+      <div className="lm-bg absolute inset-0 z-0 flex items-center justify-center opacity-30 pointer-events-none">
+        <div className="w-full max-w-4xl aspect-square rounded-full blur-[100px]" style={{ background: 'radial-gradient(circle, #00AEEF 0%, #6b21a8 50%, transparent 80%)' }} />
+      </div>
+      
+      <div className="lm-lines absolute inset-0 z-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, #fff 10px, #fff 11px)' }} />
+
+      <div className="relative z-10 max-w-3xl mx-auto px-6 text-center mb-12">
+        <p className="text-xs font-mono tracking-[0.3em] text-[#00AEEF] uppercase mb-6">Project Discovery</p>
+        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6">Build Your Scope</h2>
+        <p className="text-lg text-[#8E96AA]">Answer a few quick questions to help us understand your vision. We&apos;ll prepare a custom execution plan.</p>
+      </div>
+
+      <div className="relative z-10 max-w-2xl mx-auto px-6">
+        <div className="lm-form p-8 md:p-10 rounded-2xl glass-panel border border-white/10 shadow-2xl relative overflow-hidden" style={{ background: 'rgba(10,11,14,0.7)', transformStyle: 'preserve-3d' }}>
           
-          <div className="relative rounded-2xl overflow-hidden glass-panel p-8 md:p-12" style={{ background: 'rgba(11,20,40,0.7)' }}>
-            
-            {/* Progress Bar */}
-            <div className="w-full flex gap-2 mb-12">
-              {steps.map((_, i) => (
-                <div key={i} className="h-1 flex-1 rounded-full bg-white/10 overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-[#00AEEF] to-purple-500 transition-all duration-500"
-                    style={{ width: i <= currentStep ? '100%' : '0%' }}
-                  />
-                </div>
-              ))}
-            </div>
-
-            <div className="step-content">
-              <h3 className="text-3xl font-bold text-white mb-8">{steps[currentStep].title}</h3>
-              
-              {currentStep < 3 ? (
-                <div className="flex flex-col gap-4">
-                  {steps[currentStep].options.map((opt, i) => (
-                    <button
-                      key={i}
-                      onClick={() => handleSelect(opt)}
-                      className="w-full text-left px-6 py-4 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.08] hover:border-[#00AEEF]/50 transition-all duration-300 group flex items-center justify-between"
-                    >
-                      <span className="text-white/80 group-hover:text-white font-medium tracking-wide">{opt}</span>
-                      <div className="w-6 h-6 rounded-full border border-white/20 group-hover:border-[#00AEEF] flex items-center justify-center transition-colors">
-                        <div className="w-2 h-2 rounded-full bg-[#00AEEF] opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-col gap-6">
-                  <div className="flex gap-4">
-                    <input type="text" placeholder="First Name" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#00AEEF]/60 transition-colors" />
-                    <input type="text" placeholder="Last Name" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#00AEEF]/60 transition-colors" />
-                  </div>
-                  <input type="email" placeholder="Email Address" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#00AEEF]/60 transition-colors" />
-                  <input type="text" placeholder="Company" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#00AEEF]/60 transition-colors" />
-                  <button className="w-full mt-4 bg-gradient-to-r from-[#00AEEF] to-purple-600 text-white font-bold tracking-wider uppercase py-4 rounded-xl hover:shadow-[0_0_30px_rgba(0,174,239,0.4)] transition-all duration-300">
-                    Get Custom Proposal
-                  </button>
-                </div>
-              )}
-            </div>
-            
-            {/* Back button */}
-            {currentStep > 0 && (
-              <button 
-                onClick={() => {
-                  gsap.to('.step-content', {
-                    opacity: 0, x: 20, duration: 0.2, onComplete: () => {
-                      setCurrentStep(s => s - 1)
-                      gsap.fromTo('.step-content', { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.3 })
-                    }
-                  })
-                }}
-                className="mt-8 text-sm text-white/40 hover:text-white transition-colors flex items-center gap-2"
-              >
-                ← Back
-              </button>
-            )}
-            
+          {/* Progress bar glowing trail */}
+          <div className="w-full h-1 bg-white/10 rounded-full mb-8 relative overflow-hidden">
+            <div 
+              className="absolute top-0 left-0 h-full bg-[#00AEEF] transition-all duration-500 shadow-[0_0_10px_#00AEEF]"
+              style={{ width: `${((stepIndex + 1) / steps.length) * 100}%` }}
+            />
           </div>
+
+          <div className="flex justify-between mb-8 text-sm font-mono uppercase tracking-wider text-white/40">
+            {steps.map((step, i) => (
+              <span key={step.id} className={clsx("transition-colors duration-300", i <= stepIndex ? "text-[#00AEEF]" : "")}>
+                {step.label}
+              </span>
+            ))}
+          </div>
+
+          <div className="relative min-h-[300px]" style={{ perspective: '800px' }}>
+            {renderStep()}
+          </div>
+          
         </div>
       </div>
     </section>
