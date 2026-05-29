@@ -2,88 +2,154 @@
 
 import { useRef } from 'react'
 import gsap from 'gsap'
+import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 
+gsap.registerPlugin(ScrollTrigger)
+
 const projects = [
-  { title: "Summer Campaign", category: "Social Campaign", platform: "TikTok/IG", src: "/images/portfolio-production.png" },
-  { title: "Origin Story", category: "Brand Film", platform: "Website/YT", src: "/images/portfolio-brand.png" },
-  { title: "Tech Launch", category: "Product Video", platform: "Multi-channel", src: "/images/portfolio-social.png" },
-  { title: "Gala 2025", category: "Event Recap", platform: "LinkedIn/IG", src: "/images/portfolio-event.png" },
-  { title: "The Vision", category: "Founder Story", platform: "Website", src: "/images/portfolio-production.png" },
-  { title: "Ad Creative", category: "Paid Ad", platform: "Meta/TikTok", src: "/images/portfolio-brand.png" },
+  { title: 'Brand Campaign', category: 'Commercial', img: '/images/portfolio-brand.png', aspect: 'wide' },
+  { title: 'Social Series', category: 'Social Media', img: '/images/portfolio-social.png', aspect: 'tall' },
+  { title: 'Product Launch', category: 'Production', img: '/images/portfolio-production.png', aspect: 'wide' },
+  { title: 'Live Event', category: 'Event Coverage', img: '/images/portfolio-event.png', aspect: 'square' },
 ]
 
 export default function Portfolio() {
   const containerRef = useRef<HTMLElement>(null)
-  const trackRef = useRef<HTMLDivElement>(null)
 
   useGSAP(() => {
-    const track = trackRef.current
-    if (!track) return
+    const ctx = gsap.context(() => {
+      const items = gsap.utils.toArray<HTMLElement>('.port-item')
 
-    gsap.to(track, {
-      x: () => -(track.scrollWidth - window.innerWidth + 100),
-      ease: 'none',
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: 'top top',
-        end: () => `+=${track.scrollWidth - window.innerWidth + 100}`,
-        pin: true,
-        scrub: 1,
-        invalidateOnRefresh: true
-      }
-    })
+      // Each item flies in from a different 3D angle on scroll
+      items.forEach((item, i) => {
+        const directions = [
+          { x: -600, y: 200, z: -800, rotateY: 45, rotateX: -20 },
+          { x: 600, y: -150, z: -600, rotateY: -45, rotateX: 15 },
+          { x: -400, y: -300, z: -1000, rotateY: 30, rotateX: 25 },
+          { x: 500, y: 300, z: -700, rotateY: -30, rotateX: -15 },
+        ]
+        const dir = directions[i % directions.length]
+
+        gsap.fromTo(item,
+          { x: dir.x, y: dir.y, z: dir.z, rotateY: dir.rotateY, rotateX: dir.rotateX, opacity: 0 },
+          {
+            x: 0, y: 0, z: 0, rotateY: 0, rotateX: 0, opacity: 1,
+            duration: 1, ease: 'power3.out',
+            scrollTrigger: {
+              trigger: item,
+              start: 'top 90%',
+              end: 'top 30%',
+              scrub: 1,
+            }
+          }
+        )
+      })
+
+      // Title entrance
+      gsap.fromTo('.port-title',
+        { y: 100, rotateX: -45, opacity: 0 },
+        {
+          y: 0, rotateX: 0, opacity: 1,
+          scrollTrigger: { trigger: containerRef.current, start: 'top 70%', end: 'top 20%', scrub: 1 }
+        }
+      )
+
+    }, containerRef)
+    return () => ctx.revert()
   }, { scope: containerRef })
 
+  // 3D tilt on hover
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = (e.clientX - rect.left) / rect.width - 0.5
+    const y = (e.clientY - rect.top) / rect.height - 0.5
+    gsap.to(e.currentTarget, {
+      rotateY: x * 20,
+      rotateX: -y * 20,
+      duration: 0.3,
+      ease: 'power2.out'
+    })
+    // Parallax inner layers
+    const img = e.currentTarget.querySelector('.port-img') as HTMLElement
+    const overlay = e.currentTarget.querySelector('.port-overlay') as HTMLElement
+    if (img) gsap.to(img, { x: x * 20, y: y * 20, scale: 1.1, duration: 0.3 })
+    if (overlay) gsap.to(overlay, { x: x * -10, y: y * -10, duration: 0.3 })
+  }
+
+  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+    gsap.to(e.currentTarget, { rotateY: 0, rotateX: 0, duration: 0.5, ease: 'power3.out' })
+    const img = e.currentTarget.querySelector('.port-img') as HTMLElement
+    const overlay = e.currentTarget.querySelector('.port-overlay') as HTMLElement
+    if (img) gsap.to(img, { x: 0, y: 0, scale: 1, duration: 0.5 })
+    if (overlay) gsap.to(overlay, { x: 0, y: 0, duration: 0.5 })
+  }
+
   return (
-    <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-hidden flex flex-col justify-center">
-      
-      <div className="absolute top-20 left-6 md:left-12 z-20">
-        <p className="text-xs font-mono tracking-[0.3em] text-[#00AEEF] uppercase mb-4">Our Work</p>
-        <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-2">
-          Portfolio Built for <span className="text-[#00AEEF]">Attention</span>
-        </h2>
-        <p className="text-[#8E96AA] max-w-xl text-lg">
-          Campaigns, reels, brand films, and social-first edits that make audiences stop scrolling.
-        </p>
-      </div>
+    <section ref={containerRef} className="relative w-full py-32 bg-[#030305] overflow-hidden">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
+        {/* Header */}
+        <div className="port-title mb-20" style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}>
+          <span className="font-mono text-[10px] text-[#00AEEF] tracking-[0.4em] uppercase block mb-4">// Selected Work</span>
+          <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight">Portfolio</h2>
+        </div>
 
-      <div className="w-full mt-28 relative z-10 flex items-center overflow-visible pl-6 md:pl-12">
-        <div ref={trackRef} className="flex gap-8 w-max items-center">
-          
-          {projects.map((proj, i) => (
-            <div key={i} className="relative group shrink-0 w-[80vw] sm:w-[45vw] lg:w-[30vw] aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer border border-white/[0.06] transition-all duration-700 hover:-translate-y-4 hover:border-white/20 hover:shadow-[0_20px_60px_rgba(0,174,239,0.12)]">
-              {/* Image */}
-              <img 
-                src={proj.src} 
-                alt={proj.title}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-              />
-              
-              {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
-              
-              {/* Play button */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0">
-                <button className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-xl border border-white/30 flex items-center justify-center hover:bg-white hover:border-white transition-all duration-300 group/btn">
-                  <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[16px] border-l-white group-hover/btn:border-l-black border-b-[10px] border-b-transparent ml-1 transition-colors" />
-                </button>
-              </div>
-
-              {/* Meta */}
-              <div className="absolute bottom-0 left-0 w-full p-8">
-                <div className="flex gap-3 mb-4 translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">
-                  <span className="text-[10px] font-mono tracking-[0.15em] px-3 py-1.5 bg-white/10 rounded-full backdrop-blur-sm text-white uppercase">{proj.category}</span>
-                  <span className="text-[10px] font-mono tracking-[0.15em] px-3 py-1.5 bg-[#00AEEF]/20 text-[#00AEEF] rounded-full backdrop-blur-sm uppercase">{proj.platform}</span>
+        {/* Asymmetric masonry grid */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6" style={{ perspective: '1500px' }}>
+          {projects.map((project, i) => {
+            const spans = [
+              'md:col-span-7 h-[400px] md:h-[500px]',
+              'md:col-span-5 h-[400px] md:h-[500px]',
+              'md:col-span-5 h-[350px] md:h-[450px]',
+              'md:col-span-7 h-[350px] md:h-[450px]',
+            ]
+            return (
+              <div
+                key={i}
+                className={`port-item ${spans[i]} group cursor-pointer rounded-xl overflow-hidden relative`}
+                style={{ transformStyle: 'preserve-3d', border: '1px solid rgba(255,255,255,0.06)' }}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+              >
+                {/* Image layer */}
+                <div className="port-img absolute inset-0">
+                  <img src={project.img} alt={project.title} className="w-full h-full object-cover" />
                 </div>
-                <h3 className="text-2xl md:text-3xl font-bold text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-500">{proj.title}</h3>
-              </div>
-            </div>
-          ))}
 
+                {/* Dark overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#030305] via-[#030305]/40 to-transparent opacity-70 group-hover:opacity-90 transition-opacity duration-500" />
+
+                {/* Content overlay - parallax layer */}
+                <div className="port-overlay absolute inset-0 flex flex-col justify-end p-8" style={{ transformStyle: 'preserve-3d', transform: 'translateZ(30px)' }}>
+                  <span className="font-mono text-[10px] text-[#00AEEF] tracking-[0.3em] uppercase mb-2">{project.category}</span>
+                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">{project.title}</h3>
+                  
+                  {/* Play button */}
+                  <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:border-[#00AEEF]/50 group-hover:bg-[#00AEEF]/10 transition-all duration-500">
+                    <svg width="14" height="16" viewBox="0 0 14 16" fill="none">
+                      <path d="M14 8L0 16V0L14 8Z" fill="white" fillOpacity="0.8" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Top metadata bar */}
+                <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-6 py-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ transform: 'translateZ(20px)' }}>
+                  <span className="font-mono text-[9px] text-white/30 tracking-widest">{project.title.toUpperCase().replace(/ /g, '_')}.MP4</span>
+                  <span className="font-mono text-[9px] text-white/30">4K HDR</span>
+                </div>
+
+                {/* Aspect ratio frame corners on hover */}
+                <div className="absolute inset-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700" style={{ transform: 'translateZ(40px)' }}>
+                  <div className="absolute top-0 left-0 w-6 h-6 border-l border-t border-[#00AEEF]/30" />
+                  <div className="absolute top-0 right-0 w-6 h-6 border-r border-t border-[#00AEEF]/30" />
+                  <div className="absolute bottom-0 left-0 w-6 h-6 border-l border-b border-[#00AEEF]/30" />
+                  <div className="absolute bottom-0 right-0 w-6 h-6 border-r border-b border-[#00AEEF]/30" />
+                </div>
+              </div>
+            )
+          })}
         </div>
       </div>
-      
     </section>
   )
 }

@@ -1,199 +1,207 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import { useGSAP } from '@gsap/react'
+import { useRef } from 'react'
 import gsap from 'gsap'
-import clsx from 'clsx'
+import ScrollTrigger from 'gsap/ScrollTrigger'
+import { useGSAP } from '@gsap/react'
 
-const pipelineData = [
+gsap.registerPlugin(ScrollTrigger)
+
+const steps = [
   {
-    id: 'pre',
+    num: '01',
     title: 'Pre-Production',
-    subServices: [
-      { name: 'Concepts', details: 'Scripts + Storyboards | Call Sheet + Schedules | Outlines + Shot Lists' },
-      { name: 'Producing', details: 'Casting + Locations | Scouting + Hiring Crew | Logistics + Legal' }
-    ],
-    videoColor: 'from-[#0A0515] to-[#141235]'
+    desc: 'Concept development, campaign planning, scripting, shot lists, storyboards, brand direction, production scheduling.',
+    icon: '📋',
+    color: '#00AEEF',
   },
   {
-    id: 'prod',
+    num: '02',
     title: 'Production',
-    subServices: [
-      { name: 'Crew', details: 'Directors | Camera Crew | Sound Crew' },
-      { name: 'Talent', details: 'Actors/Child Actors | Musicians + Dancers | Animals' },
-      { name: 'Set Design', details: 'Set Designers + Props | Hair + Makeup | Wardrobe' }
-    ],
-    videoColor: 'from-[#051515] to-[#0D252F]'
+    desc: 'On-location shooting, lighting, directing, interviews, product shots, social-first content capture.',
+    icon: '🎬',
+    color: '#00AEEF',
   },
   {
-    id: 'post',
+    num: '03',
     title: 'Post-Production',
-    subServices: [
-      { name: 'Cut + Color', details: 'Obtain a clean edit at an affordable price' },
-      { name: 'Sound Design', details: 'Bring your dream to life with realistic sound effects and intricate sound design' },
-      { name: 'Motion Graphics', details: "When static images aren't enough, let motion tell your story through animated graphics" },
-      { name: 'VFX', details: 'Create custom visual effects that turn your dreams into a reality' },
-      { name: '2D + 3D', details: 'Create new worlds with our custom animation services' },
-      { name: 'AI Services', details: 'From upscaling to image generation, inquire about our AI assisted editing models' }
-    ],
-    videoColor: 'from-[#15050A] to-[#2F0D15]'
+    desc: 'Editing, color grading, sound design, motion graphics, captions, VFX, platform-specific cuts.',
+    icon: '🎞️',
+    color: '#00AEEF',
   },
   {
-    id: 'dist',
+    num: '04',
     title: 'Distribution',
-    subServices: [
-      { name: 'Social Media Marketing', details: 'Strategically structure your online presence with scheduled posts and account management' },
-      { name: 'Ads Management', details: 'Run successful ad campaigns to drive sales and lead generation' },
-      { name: 'OOH Advertising', details: 'Target your specific clientele with local OOH ads' }
-    ],
-    videoColor: 'from-[#151005] to-[#352512]'
-  }
+    desc: 'Social media versions, ad-ready exports, campaign deliverables, posting strategy, analytics review.',
+    icon: '📡',
+    color: '#00AEEF',
+  },
 ]
 
 export default function Pipeline() {
-  const [activeIndex, setActiveIndex] = useState(0)
   const containerRef = useRef<HTMLElement>(null)
-  const bgRef = useRef<HTMLDivElement>(null)
 
   useGSAP(() => {
-    // Pin section and scrub through categories
-    const totalCategories = pipelineData.length
-    
-    gsap.to({}, {
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: 'top top',
-        end: `+=${totalCategories * 100}%`, // scroll distance
-        pin: true,
-        scrub: 1,
-        onUpdate: (self) => {
-          // Calculate which category should be active based on scroll progress
-          const progress = self.progress
-          let newIndex = Math.floor(progress * totalCategories)
-          if (newIndex >= totalCategories) newIndex = totalCategories - 1
-          
-          if (newIndex !== activeIndex) {
-            handleSelect(newIndex)
-          }
-        }
-      }
-    })
+    const ctx = gsap.context(() => {
+      const cards = gsap.utils.toArray<HTMLElement>('.timeline-card')
+      const totalCards = cards.length
 
-    gsap.fromTo('.pipeline-header', 
-      { y: 50, opacity: 0 }, 
-      { y: 0, opacity: 1, duration: 1, scrollTrigger: { trigger: containerRef.current, start: 'top 70%' } }
-    )
-  }, { scope: containerRef, dependencies: [activeIndex] })
-
-  const handleSelect = (index: number) => {
-    if (activeIndex === index) return
-    
-    // Animate background color transition
-    if (bgRef.current) {
-      gsap.to(bgRef.current, {
-        opacity: 0.5,
-        duration: 0.3,
-        onComplete: () => {
-          setActiveIndex(index)
-          gsap.to(bgRef.current, { opacity: 1, duration: 0.5 })
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top top',
+          end: `+=${totalCards * 100}%`,
+          pin: true,
+          scrub: 1,
         }
       })
-    } else {
-      setActiveIndex(index)
-    }
-  }
+
+      // Horizontal scroll the timeline track
+      tl.to('.timeline-track', {
+        xPercent: -75,
+        ease: 'none',
+        duration: 1,
+      }, 0)
+
+      // Playhead moves across the timeline bar
+      tl.to('.playhead', {
+        left: '100%',
+        ease: 'none',
+        duration: 1,
+      }, 0)
+
+      // Progress fill
+      tl.to('.timeline-progress', {
+        scaleX: 1,
+        ease: 'none',
+        duration: 1,
+      }, 0)
+
+      // Each card rotates into view like a film reel
+      cards.forEach((card, i) => {
+        const start = i / totalCards
+        const end = (i + 0.5) / totalCards
+        
+        tl.fromTo(card,
+          { rotateY: 45, z: -300, opacity: 0.3, scale: 0.8 },
+          { rotateY: 0, z: 0, opacity: 1, scale: 1, ease: 'power2.out', duration: 0.2 },
+          start
+        )
+        
+        if (i < totalCards - 1) {
+          tl.to(card,
+            { rotateY: -45, z: -300, opacity: 0.3, scale: 0.8, ease: 'power2.in', duration: 0.2 },
+            end
+          )
+        }
+      })
+
+      // Section title entrance
+      gsap.fromTo('.pipeline-title',
+        { y: 80, opacity: 0 },
+        {
+          y: 0, opacity: 1, duration: 1, ease: 'power3.out',
+          scrollTrigger: { trigger: containerRef.current, start: 'top 80%', end: 'top 30%', scrub: 1 }
+        }
+      )
+
+    }, containerRef)
+    return () => ctx.revert()
+  }, { scope: containerRef })
 
   return (
-    <section 
-      id="how-it-works" 
-      ref={containerRef} 
-      className="w-full min-h-screen relative flex items-center py-32 overflow-hidden"
-    >
-      {/* Dynamic Background Simulation for Video */}
-      <div 
-        ref={bgRef}
-        className={clsx(
-          "absolute inset-0 z-0 bg-gradient-to-br transition-all duration-1000",
-          pipelineData[activeIndex].videoColor
-        )}
-      >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
-        
-        {/* Fake video noise/texture */}
-        <div className="absolute inset-0 opacity-20 mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }} />
-      </div>
+    <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-hidden" style={{ perspective: '1500px' }}>
+      
+      {/* Background: Editing timeline grid */}
+      <div className="absolute inset-0 z-0 opacity-[0.03]" style={{
+        backgroundImage: 'repeating-linear-gradient(90deg, #fff 0px, #fff 1px, transparent 1px, transparent 120px), repeating-linear-gradient(0deg, #fff 0px, #fff 1px, transparent 1px, transparent 60px)',
+      }} />
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6">
-        
-        <div className="pipeline-header max-w-3xl mb-24">
-          <h2 className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-8">How It Works</h2>
-          <p className="text-xl text-[#8E96AA] leading-relaxed">
-            At Slate Cinema, our values shape our work. With integrity, creativity, and collaboration at our core, we deliver exceptional video production. Transparency, innovation, and teamwork drive us forward, ensuring every project exceeds expectations.
+      {/* Top section label */}
+      <div className="absolute top-12 left-12 z-20">
+        <div className="pipeline-title">
+          <span className="font-mono text-[10px] text-[#00AEEF] tracking-[0.4em] uppercase block mb-3">// Production Pipeline</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight">How It Works</h2>
+          <p className="text-sm text-white/30 mt-3 max-w-md leading-relaxed">
+            At Slate Cinema, our values shape our work. With integrity, creativity, and collaboration at our core, we deliver exceptional video production.
           </p>
         </div>
+      </div>
 
-        <div className="flex flex-col lg:flex-row gap-16">
+      {/* Video Editing Timeline Bar */}
+      <div className="absolute bottom-32 left-0 right-0 z-20 px-12">
+        <div className="relative h-[2px] bg-white/10 rounded-full">
+          {/* Progress fill */}
+          <div className="timeline-progress absolute top-0 left-0 h-full bg-[#00AEEF] rounded-full origin-left" style={{ transform: 'scaleX(0)', width: '100%' }} />
           
-          {/* Left Navigation */}
-          <div className="flex flex-col gap-4 lg:w-1/3">
-            {pipelineData.map((category, idx) => (
-              <button
-                key={category.id}
-                onClick={() => handleSelect(idx)}
-                className={clsx(
-                  "text-left px-8 py-6 rounded-2xl border transition-all duration-500 group relative overflow-hidden",
-                  activeIndex === idx 
-                    ? "bg-white/10 border-[#00AEEF] shadow-[0_0_30px_rgba(0,174,239,0.15)]" 
-                    : "bg-white/5 border-white/10 hover:bg-white/10"
-                )}
-              >
-                {activeIndex === idx && (
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#00AEEF] shadow-[0_0_10px_#00AEEF]" />
-                )}
-                <h3 className={clsx(
-                  "text-2xl font-bold tracking-wide transition-colors duration-300",
-                  activeIndex === idx ? "text-white" : "text-white/50 group-hover:text-white"
-                )}>
-                  {category.title}
-                </h3>
-              </button>
-            ))}
-          </div>
-
-          {/* Right Content Area (Interactive Display) */}
-          <div className="lg:w-2/3 min-h-[500px]">
-            {pipelineData.map((category, idx) => (
-              <div 
-                key={category.id}
-                className={clsx(
-                  "transition-all duration-700 absolute lg:relative w-full",
-                  activeIndex === idx ? "opacity-100 translate-y-0 pointer-events-auto z-10" : "opacity-0 translate-y-12 pointer-events-none z-0"
-                )}
-              >
-                <div className="grid gap-6">
-                  {category.subServices.map((sub, i) => (
-                    <div 
-                      key={i} 
-                      className="glass-panel rounded-xl p-8 group hover:bg-white/10 transition-colors duration-300 border border-white/5 hover:border-white/20"
-                    >
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                        <div>
-                          <h4 className="text-2xl font-bold text-white mb-2 group-hover:text-[#00AEEF] transition-colors">{sub.name}</h4>
-                          <p className="text-[#8E96AA] text-lg">{sub.details}</p>
-                        </div>
-                        <button className="flex items-center justify-center gap-2 px-6 py-3 rounded-full border border-white/20 text-white hover:bg-white hover:text-black transition-all duration-300 shrink-0 uppercase tracking-widest text-xs font-bold">
-                          <div className="w-2 h-2 rounded-full bg-[#00AEEF]" />
-                          Watch Now
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
+          {/* Playhead */}
+          <div className="playhead absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-[#00AEEF] rounded-full shadow-[0_0_12px_rgba(0,174,239,0.6)] left-0 -ml-1.5 z-10" />
+          
+          {/* Timeline markers */}
+          {steps.map((step, i) => (
+            <div key={i} className="absolute top-1/2 -translate-y-1/2 flex flex-col items-center" style={{ left: `${(i / (steps.length - 1)) * 100}%` }}>
+              <div className="w-1 h-4 bg-white/20 -mt-6 rounded-full" />
+              <span className="font-mono text-[9px] text-white/25 mt-8 tracking-widest whitespace-nowrap">{step.num} {step.title}</span>
+            </div>
+          ))}
         </div>
+      </div>
+
+      {/* Card track - scrolls horizontally */}
+      <div className="timeline-track absolute top-1/2 -translate-y-1/2 left-[15%] flex gap-12 items-center z-10" style={{ transformStyle: 'preserve-3d' }}>
+        {steps.map((step, i) => (
+          <div
+            key={i}
+            className="timeline-card group w-[420px] h-[320px] shrink-0 rounded-2xl relative overflow-hidden cursor-pointer"
+            style={{
+              transformStyle: 'preserve-3d',
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
+              border: '1px solid rgba(255,255,255,0.06)',
+              backdropFilter: 'blur(20px)',
+            }}
+          >
+            {/* Top bar - looks like a video clip header */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.06]">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full" style={{ background: step.color }} />
+                <span className="font-mono text-[10px] text-white/40 tracking-widest">{step.title.toUpperCase()}.MOV</span>
+              </div>
+              <span className="font-mono text-[10px] text-white/20">00:{step.num}:00:00</span>
+            </div>
+
+            {/* Content */}
+            <div className="p-8 flex flex-col h-full justify-between">
+              <div>
+                <div className="flex items-center gap-4 mb-5">
+                  <div className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl" style={{ background: `${step.color}15`, border: `1px solid ${step.color}30` }}>
+                    {step.icon}
+                  </div>
+                  <div>
+                    <span className="font-mono text-[10px] text-[#00AEEF] tracking-[0.3em]">STEP {step.num}</span>
+                    <h3 className="text-2xl font-bold text-white">{step.title}</h3>
+                  </div>
+                </div>
+                <p className="text-white/40 text-sm leading-relaxed">{step.desc}</p>
+              </div>
+
+              {/* Fake waveform at bottom */}
+              <div className="flex items-end gap-[2px] h-8 mt-4 opacity-30 group-hover:opacity-60 transition-opacity">
+                {Array.from({ length: 60 }).map((_, j) => (
+                  <div key={j} className="w-[3px] bg-[#00AEEF] rounded-sm" style={{ height: `${Math.sin(j * 0.5) * 50 + Math.random() * 50}%` }} />
+                ))}
+              </div>
+            </div>
+
+            {/* Hover glow */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" style={{ background: 'radial-gradient(circle at 50% 0%, rgba(0,174,239,0.1) 0%, transparent 60%)' }} />
+          </div>
+        ))}
+      </div>
+
+      {/* Timecode overlay */}
+      <div className="absolute top-12 right-12 z-20 font-mono text-[10px] text-white/15 tracking-widest text-right">
+        <div>SEQUENCE: PIPELINE_V2</div>
+        <div>TIMELINE: 00:00 — 04:00</div>
       </div>
     </section>
   )

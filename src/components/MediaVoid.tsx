@@ -7,152 +7,174 @@ import { useGSAP } from '@gsap/react'
 
 gsap.registerPlugin(ScrollTrigger)
 
+const lines = [
+  { text: 'The content we create', color: '#ffffff' },
+  { text: "isn't just eye-catching,", color: '#ffffff' },
+  { text: "it's content people", color: '#ffffff' },
+  { text: 'actually want to watch.', color: '#00AEEF' },
+]
+
 export default function MediaVoid() {
   const containerRef = useRef<HTMLElement>(null)
 
   useGSAP(() => {
-    // Pin the section for a long immersive scroll
-    const masterTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: 'top top',
-        end: '+=250%',
-        pin: true,
-        scrub: 1,
-      }
-    })
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top top',
+          end: '+=400%',
+          pin: true,
+          scrub: 1,
+        }
+      })
 
-    // Phase 1: Stats background fades in and scales up (0-30%)
-    masterTl.fromTo('.void-stats',
-      { opacity: 0, scale: 0.6, rotateX: 20 },
-      { opacity: 0.2, scale: 1, rotateX: 0, duration: 0.3 },
-      0
-    )
+      // Color grading wheel rotates in background
+      tl.to('.color-wheel', { rotation: 360, ease: 'none', duration: 1 }, 0)
 
-    // Phase 2: Words assemble from 3D scatter (20-70%)
-    masterTl.fromTo('.void-word',
-      {
+      // Each line of text assembles from scattered 3D positions
+      lines.forEach((_, i) => {
+        const words = gsap.utils.toArray<HTMLElement>(`.mv-word-${i}`)
+        const start = i * 0.2
+
+        tl.fromTo(words,
+          {
+            opacity: 0,
+            y: () => gsap.utils.random(-200, 200),
+            x: () => gsap.utils.random(-400, 400),
+            z: () => gsap.utils.random(-800, -200),
+            rotateX: () => gsap.utils.random(-90, 90),
+            rotateY: () => gsap.utils.random(-90, 90),
+            scale: () => gsap.utils.random(0.3, 2),
+          },
+          {
+            opacity: 1,
+            y: 0,
+            x: 0,
+            z: 0,
+            rotateX: 0,
+            rotateY: 0,
+            scale: 1,
+            stagger: 0.02,
+            ease: 'power3.out',
+            duration: 0.2,
+          },
+          start
+        )
+      })
+
+      // After all text is assembled, everything flies past camera
+      tl.to('.mv-all-text', {
+        z: 2000,
         opacity: 0,
-        z: () => gsap.utils.random(-800, 800),
-        x: () => gsap.utils.random(-400, 400),
-        y: () => gsap.utils.random(-300, 300),
-        rotationX: () => gsap.utils.random(-90, 90),
-        rotationY: () => gsap.utils.random(-90, 90),
-        scale: () => gsap.utils.random(0.3, 2),
-      },
-      {
-        opacity: 1,
-        z: 0,
-        x: 0,
-        y: 0,
-        rotationX: 0,
-        rotationY: 0,
-        scale: 1,
-        stagger: 0.03,
-        duration: 0.5,
-      },
-      0.2
-    )
+        scale: 3,
+        duration: 0.15,
+        ease: 'power2.in'
+      }, 0.85)
 
-    // Phase 3: Floating cards parallax in from deep z-space (40-80%)
-    masterTl.fromTo('.void-card',
-      {
-        opacity: 0,
-        z: -1000,
-        rotateY: () => gsap.utils.random(-45, 45),
-        rotateX: () => gsap.utils.random(-30, 30),
-      },
-      {
-        opacity: 0.7,
-        z: 0,
-        rotateY: 0,
-        rotateX: 0,
-        stagger: 0.05,
-        duration: 0.4,
-      },
-      0.4
-    )
+      // Media thumbnails float in from deep Z at different parallax rates
+      const thumbs = gsap.utils.toArray<HTMLElement>('.media-thumb')
+      thumbs.forEach((thumb, i) => {
+        const startZ = -1500 - (i * 500)
+        const parallaxRate = 0.15 + (i * 0.05)
+        
+        tl.fromTo(thumb,
+          { z: startZ, opacity: 0, rotateY: (i % 2 === 0 ? 30 : -30), rotateX: gsap.utils.random(-15, 15) },
+          { z: 0, opacity: 0.7, rotateY: 0, rotateX: 0, ease: 'none', duration: parallaxRate },
+          0.1 + (i * 0.08)
+        )
 
-    // Phase 4: Everything pushes past camera (80-100%)
-    masterTl.to('.void-stats', { scale: 1.5, opacity: 0, z: 500, duration: 0.2 }, 0.8)
-    masterTl.to('.void-word', { z: 500, opacity: 0, stagger: 0.01, duration: 0.2 }, 0.8)
-    masterTl.to('.void-card', { z: 500, opacity: 0, stagger: 0.02, duration: 0.2 }, 0.85)
+        // Then they fly past camera
+        tl.to(thumb,
+          { z: 1000, opacity: 0, ease: 'none', duration: 0.15 },
+          0.7 + (i * 0.03)
+        )
+      })
 
+      // Audio waveform animates
+      gsap.to('.wave-bar', {
+        scaleY: () => gsap.utils.random(0.2, 1),
+        duration: 0.15,
+        repeat: -1,
+        yoyo: true,
+        stagger: { each: 0.02, repeat: -1, yoyo: true },
+        ease: 'none'
+      })
+
+    }, containerRef)
+    return () => ctx.revert()
   }, { scope: containerRef })
 
-  const text = "The content we create isn't just eye-catching, it's content people actually want to watch."
-  const words = text.split(' ')
-
-  const cardPositions = [
-    { left: '5%', top: '15%', rot: '-8deg' },
-    { left: '75%', top: '10%', rot: '12deg' },
-    { left: '10%', top: '70%', rot: '5deg' },
-    { left: '65%', top: '75%', rot: '-10deg' },
-    { left: '40%', top: '5%', rot: '3deg' },
-    { left: '85%', top: '50%', rot: '-6deg' },
-  ]
-
   return (
-    <section
-      ref={containerRef}
-      className="w-full h-screen relative flex items-center justify-center bg-black overflow-hidden"
-      style={{ perspective: '2000px' }}
-    >
-      {/* Background Stats Layer */}
-      <div className="void-stats absolute inset-0 z-0 flex items-center justify-center pointer-events-none" style={{ transformStyle: 'preserve-3d' }}>
-        <div className="flex flex-col items-center gap-8 font-bold transform -rotate-6 scale-125">
-          <div className="text-[8rem] md:text-[12rem] text-white leading-none flex items-center gap-6">
-            3,783,957
-            <span className="text-3xl md:text-4xl text-white/50 tracking-[0.3em] uppercase self-end mb-4">views</span>
-          </div>
-          <div className="flex gap-16 md:gap-32 text-[4rem] md:text-[6rem] text-white/80">
-            <div className="flex items-center gap-4">
-              <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" /></svg>
-              12,227
-            </div>
-            <div className="flex items-center gap-4">
-              <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg>
-              1,030
-            </div>
-          </div>
+    <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-hidden" style={{ perspective: '1200px', perspectiveOrigin: '50% 50%' }}>
+      
+      {/* Color Grading Wheel - background decoration */}
+      <div className="color-wheel absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] opacity-[0.03] pointer-events-none">
+        <svg viewBox="0 0 200 200" className="w-full h-full">
+          <defs>
+            <linearGradient id="cg1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#ff0000" />
+              <stop offset="33%" stopColor="#00ff00" />
+              <stop offset="66%" stopColor="#0000ff" />
+              <stop offset="100%" stopColor="#ff0000" />
+            </linearGradient>
+          </defs>
+          <circle cx="100" cy="100" r="90" fill="none" stroke="url(#cg1)" strokeWidth="2" />
+          <circle cx="100" cy="100" r="70" fill="none" stroke="url(#cg1)" strokeWidth="1" />
+          <circle cx="100" cy="100" r="50" fill="none" stroke="url(#cg1)" strokeWidth="0.5" />
+          {/* Crosshair */}
+          <line x1="100" y1="0" x2="100" y2="200" stroke="#fff" strokeWidth="0.3" />
+          <line x1="0" y1="100" x2="200" y2="100" stroke="#fff" strokeWidth="0.3" />
+        </svg>
+      </div>
+
+      {/* Floating media thumbnails at different depths */}
+      <div className="absolute inset-0 z-0" style={{ transformStyle: 'preserve-3d' }}>
+        <div className="media-thumb absolute top-[10%] left-[5%] w-48 h-28 rounded-lg overflow-hidden border border-white/10" style={{ transformStyle: 'preserve-3d' }}>
+          <img src="/images/portfolio-production.png" alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-[#030305]/60" />
+        </div>
+        <div className="media-thumb absolute top-[60%] right-[8%] w-64 h-36 rounded-lg overflow-hidden border border-white/10" style={{ transformStyle: 'preserve-3d' }}>
+          <img src="/images/portfolio-brand.png" alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-[#030305]/60" />
+        </div>
+        <div className="media-thumb absolute top-[20%] right-[20%] w-36 h-48 rounded-lg overflow-hidden border border-white/10" style={{ transformStyle: 'preserve-3d' }}>
+          <img src="/images/portfolio-social.png" alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-[#030305]/60" />
+        </div>
+        <div className="media-thumb absolute bottom-[15%] left-[20%] w-56 h-32 rounded-lg overflow-hidden border border-white/10" style={{ transformStyle: 'preserve-3d' }}>
+          <img src="/images/portfolio-event.png" alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-[#030305]/60" />
         </div>
       </div>
 
-      {/* Floating Video/Image Cards */}
-      <div className="absolute inset-0 z-10 pointer-events-none" style={{ transformStyle: 'preserve-3d' }}>
-        {cardPositions.map((pos, i) => (
-          <div
-            key={i}
-            className="void-card absolute w-48 md:w-72 rounded-2xl overflow-hidden glass-panel"
-            style={{
-              left: pos.left,
-              top: pos.top,
-              transform: `rotate(${pos.rot})`,
-              transformStyle: 'preserve-3d',
-            }}
-          >
-            <div className="w-full aspect-video bg-gradient-to-br from-[#00AEEF]/20 to-purple-600/20 relative">
-              <div className="absolute inset-0 flex items-center justify-center text-white/50">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
-              </div>
-            </div>
+      {/* Main text content */}
+      <div className="mv-all-text absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 md:gap-4" style={{ transformStyle: 'preserve-3d' }}>
+        {lines.map((line, i) => (
+          <div key={i} className="flex flex-wrap justify-center gap-x-4" style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}>
+            {line.text.split(' ').map((word, j) => (
+              <span 
+                key={j} 
+                className={`mv-word-${i} inline-block text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight`}
+                style={{ color: line.color, transformStyle: 'preserve-3d' }}
+              >
+                {word}
+              </span>
+            ))}
           </div>
         ))}
       </div>
 
-      {/* 3D Assembled Text */}
-      <div className="relative z-20 max-w-6xl mx-auto px-6 text-center" style={{ transformStyle: 'preserve-3d' }}>
-        <h2 className="text-4xl md:text-7xl lg:text-8xl font-bold text-white leading-tight flex flex-wrap justify-center gap-x-4 gap-y-2">
-          {words.map((word, wIdx) => (
-            <span
-              key={wIdx}
-              className="void-word inline-block"
-              style={{ transformStyle: 'preserve-3d' }}
-            >
-              {word}
-            </span>
-          ))}
-        </h2>
+      {/* Audio waveform at bottom */}
+      <div className="absolute bottom-8 left-12 right-12 z-20 flex items-end gap-[1px] h-6 opacity-20">
+        {Array.from({ length: 120 }).map((_, i) => (
+          <div key={i} className="wave-bar flex-1 bg-[#00AEEF] rounded-t-[1px] origin-bottom" style={{ height: `${Math.sin(i * 0.3) * 50 + 50}%` }} />
+        ))}
+      </div>
+
+      {/* Edit timeline markers */}
+      <div className="absolute bottom-20 left-12 z-20 font-mono text-[9px] text-white/15 tracking-widest">
+        SEQUENCE: CONTENT_REEL_V3 — DURATION: 02:47
       </div>
     </section>
   )

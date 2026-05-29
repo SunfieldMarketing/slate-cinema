@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -9,125 +9,226 @@ gsap.registerPlugin(ScrollTrigger)
 
 export default function Hero() {
   const containerRef = useRef<HTMLElement>(null)
-  const contentRef = useRef<HTMLDivElement>(null)
 
   useGSAP(() => {
-    // 3D Explode / fly-through effect on scroll
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: 'top top',
-        end: 'bottom top',
-        scrub: 1,
-        pin: true,
-      }
-    })
+    const ctx = gsap.context(() => {
+      // Initial entrance - everything flies in from 3D space
+      const enterTl = gsap.timeline({ delay: 0.3 })
+      
+      // Viewfinder brackets fly in from corners
+      enterTl.fromTo('.vf-corner', 
+        { scale: 3, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.8, stagger: 0.1, ease: 'power3.out' }, 0)
+      
+      // Title letters fly in from deep Z
+      enterTl.fromTo('.hero-letter',
+        { opacity: 0, y: 100, rotateX: -90, z: -500 },
+        { opacity: 1, y: 0, rotateX: 0, z: 0, duration: 1.2, stagger: 0.04, ease: 'power4.out' }, 0.2)
+      
+      // Subtitle slides up
+      enterTl.fromTo('.hero-subtitle',
+        { opacity: 0, y: 60 },
+        { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 0.8)
+      
+      // CTAs fly in from sides
+      enterTl.fromTo('.hero-cta',
+        { opacity: 0, x: -80, rotateY: 45 },
+        { opacity: 1, x: 0, rotateY: 0, duration: 0.6, stagger: 0.12, ease: 'back.out(1.5)' }, 1)
+      
+      // HUD elements fade in
+      enterTl.fromTo('.hud-element',
+        { opacity: 0 },
+        { opacity: 1, duration: 0.6, stagger: 0.1 }, 1.2)
 
-    // Background pulls away
-    tl.to('.hero-bg-img', { scale: 1.5, opacity: 0, filter: 'brightness(0) blur(20px)' }, 0)
-    
-    // Title shatters and flies AT the camera
-    tl.to('.hero-title-part', { 
-      z: 1000, 
-      scale: 3, 
-      opacity: 0, 
-      rotationX: () => gsap.utils.random(-45, 45),
-      rotationY: () => gsap.utils.random(-45, 45),
-      stagger: 0.1 
-    }, 0)
-    
-    // Rest fades and scales up
-    tl.to('.hero-subtitle', { z: 500, scale: 2, opacity: 0 }, 0)
-    tl.to('.hero-tagline', { z: 400, scale: 1.5, opacity: 0 }, 0)
-    tl.to('.hero-buttons', { y: 100, opacity: 0 }, 0)
-    tl.to('.hero-frames', { scale: 1.5, opacity: 0 }, 0)
+      // REC indicator blink
+      gsap.to('.rec-dot', {
+        opacity: 0,
+        duration: 0.5,
+        repeat: -1,
+        yoyo: true,
+        ease: 'power1.inOut'
+      })
+
+      // Exposure meter animation
+      gsap.to('.exposure-bar', {
+        scaleY: () => gsap.utils.random(0.3, 1),
+        duration: 0.3,
+        repeat: -1,
+        yoyo: true,
+        stagger: { each: 0.05, repeat: -1, yoyo: true },
+        ease: 'none'
+      })
+
+      // SCROLL-OUT: Dolly zoom effect - everything pulls back
+      const scrollTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top top',
+          end: '+=150%',
+          pin: true,
+          scrub: 1,
+        }
+      })
+
+      // Camera pulls back - everything shrinks into distance
+      scrollTl.to('.hero-content', {
+        z: -2000,
+        rotateX: 15,
+        opacity: 0,
+        scale: 0.3,
+        duration: 1,
+        ease: 'none'
+      }, 0)
+
+      // Viewfinder expands outward
+      scrollTl.to('.vf-frame', {
+        scale: 3,
+        opacity: 0,
+        duration: 1,
+        ease: 'none'
+      }, 0)
+
+      // Film grain intensifies
+      scrollTl.to('.grain-overlay', {
+        opacity: 0.15,
+        duration: 1,
+        ease: 'none'
+      }, 0)
+
+    }, containerRef)
+    return () => ctx.revert()
   }, { scope: containerRef })
 
-  return (
-    <section ref={containerRef} className="relative w-full h-screen overflow-hidden flex items-center justify-center">
-      {/* Background Image */}
-      <div className="hero-bg-img absolute inset-0 z-0">
-        <img
-          src="/images/hero-bg.png"
-          alt=""
-          className="w-full h-full object-cover"
-          style={{ filter: 'brightness(0.35) saturate(0.8)' }}
-        />
-      </div>
+  const slateLetters = 'SLATE'.split('')
+  const cinemaLetters = 'CINEMA'.split('')
 
-      {/* Gradient overlays for depth */}
-      <div className="absolute inset-0 z-[1] bg-gradient-to-b from-[#030305]/70 via-transparent to-[#030305]" />
-      <div className="absolute inset-0 z-[1] bg-gradient-to-r from-[#030305]/40 via-transparent to-[#030305]/40" />
+  return (
+    <section ref={containerRef} className="relative w-full h-screen overflow-hidden" style={{ perspective: '1200px', perspectiveOrigin: '50% 50%' }}>
       
       {/* Film grain overlay */}
-      <div className="absolute inset-0 z-[2] opacity-[0.04] pointer-events-none mix-blend-overlay"
-        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }}
-      />
+      <div className="grain-overlay absolute inset-0 z-50 pointer-events-none opacity-[0.04]"
+        style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\' opacity=\'0.5\'/%3E%3C/svg%3E")', backgroundSize: '128px 128px' }} />
 
-      {/* Radial spotlight behind title */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] z-[1] pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse, rgba(0,174,239,0.08) 0%, transparent 60%)' }} />
-
-      {/* Camera viewfinder corners */}
-      <div className="hero-frames absolute inset-0 z-[3] pointer-events-none hidden md:block">
-        {/* Top-left */}
-        <div className="absolute top-8 left-8 w-16 h-16 border-t border-l border-white/15" />
-        {/* Top-right */}
-        <div className="absolute top-8 right-8 w-16 h-16 border-t border-r border-white/15" />
-        {/* Bottom-left */}
-        <div className="absolute bottom-8 left-8 w-16 h-16 border-b border-l border-white/15" />
-        {/* Bottom-right */}
-        <div className="absolute bottom-8 right-8 w-16 h-16 border-b border-r border-white/15" />
+      {/* Camera Viewfinder Frame */}
+      <div className="vf-frame absolute inset-0 z-30 pointer-events-none">
+        {/* Corner brackets */}
+        <div className="vf-corner absolute top-8 left-8 w-16 h-16 border-l-2 border-t-2 border-white/40" />
+        <div className="vf-corner absolute top-8 right-8 w-16 h-16 border-r-2 border-t-2 border-white/40" />
+        <div className="vf-corner absolute bottom-8 left-8 w-16 h-16 border-l-2 border-b-2 border-white/40" />
+        <div className="vf-corner absolute bottom-8 right-8 w-16 h-16 border-r-2 border-b-2 border-white/40" />
+        
         {/* Center crosshair */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8">
-          <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white/10" />
-          <div className="absolute left-1/2 top-0 h-full w-[1px] bg-white/10" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <div className="w-8 h-[1px] bg-white/20 absolute -left-12 top-1/2" />
+          <div className="w-8 h-[1px] bg-white/20 absolute -right-12 top-1/2" />
+          <div className="w-[1px] h-8 bg-white/20 absolute left-1/2 -top-12" />
+          <div className="w-[1px] h-8 bg-white/20 absolute left-1/2 -bottom-12" />
+          <div className="w-3 h-3 border border-white/30 rounded-full" />
         </div>
-        {/* Frame border */}
-        <div className="absolute inset-12 border border-white/[0.04] rounded" />
+
+        {/* Focus bracket center */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-32">
+          <div className="absolute top-0 left-0 w-4 h-4 border-l border-t border-[#00AEEF]/50" />
+          <div className="absolute top-0 right-0 w-4 h-4 border-r border-t border-[#00AEEF]/50" />
+          <div className="absolute bottom-0 left-0 w-4 h-4 border-l border-b border-[#00AEEF]/50" />
+          <div className="absolute bottom-0 right-0 w-4 h-4 border-r border-b border-[#00AEEF]/50" />
+        </div>
       </div>
 
-      {/* Main Content — fully visible on load */}
-      <div ref={contentRef} className="relative z-10 flex flex-col items-center text-center px-6 max-w-5xl mx-auto">
-        
-        {/* Main Title */}
-        <h1 className="hero-title text-7xl md:text-9xl lg:text-[11rem] font-bold tracking-tighter leading-none mb-6" style={{ perspective: 1000 }}>
-          <span className="hero-title-part inline-block text-white drop-shadow-[0_0_60px_rgba(255,255,255,0.15)]">SLATE</span>{' '}
-          <span className="hero-title-part inline-block text-[#00AEEF] drop-shadow-[0_0_60px_rgba(0,174,239,0.3)]">CINEMA</span>
-        </h1>
-        
-        {/* Subtitle */}
-        <p className="hero-subtitle text-xs md:text-sm tracking-[0.35em] text-white/70 uppercase font-medium mb-8">
-          VIDEO MARKETING AT YOUR FINGERTIPS
-        </p>
+      {/* HUD Elements */}
+      <div className="absolute inset-0 z-20 pointer-events-none">
+        {/* REC indicator */}
+        <div className="hud-element absolute top-12 right-24 flex items-center gap-2">
+          <div className="rec-dot w-2 h-2 rounded-full bg-red-500" />
+          <span className="text-red-500 font-mono text-xs tracking-widest">REC</span>
+        </div>
 
-        {/* Supporting tagline */}
-        <p className="hero-tagline text-lg md:text-xl text-white/50 max-w-2xl font-light leading-relaxed mb-12">
-          From concept to campaign, we create cinematic content built to capture attention, tell stories, and drive engagement.
-        </p>
+        {/* Timecode */}
+        <div className="hud-element absolute top-12 left-24 font-mono text-xs text-white/40 tracking-widest">
+          01:00:24:07
+        </div>
 
-        {/* Quick Links */}
-        <div className="hero-buttons flex flex-col items-center gap-6">
-          <p className="text-[10px] font-mono tracking-[0.3em] text-white/30 uppercase">Quick Links</p>
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <a href="#portfolio" className="group relative px-8 py-4 rounded-full overflow-hidden border border-[#00AEEF]/40 hover:border-[#00AEEF] transition-all duration-500 hover:shadow-[0_0_30px_rgba(0,174,239,0.2)]">
-              <div className="absolute inset-0 bg-[#00AEEF]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <span className="relative text-sm font-medium tracking-wide text-white">Watch Our Reel</span>
-            </a>
-            <a href="#quote" className="group relative px-8 py-4 rounded-full overflow-hidden border border-white/15 hover:border-white/40 transition-all duration-500">
-              <span className="relative text-sm font-medium tracking-wide text-white/80 group-hover:text-white transition-colors">Get A Quote</span>
-            </a>
-            <a href="#how-it-works" className="group relative px-8 py-4 rounded-full overflow-hidden border border-white/15 hover:border-white/40 transition-all duration-500">
-              <span className="relative text-sm font-medium tracking-wide text-white/80 group-hover:text-white transition-colors">How It Works</span>
-            </a>
+        {/* Exposure meter - right side */}
+        <div className="hud-element absolute right-12 top-1/2 -translate-y-1/2 flex flex-col gap-[2px]">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div key={i} className="exposure-bar w-4 h-1 origin-right" style={{ background: i < 4 ? '#00AEEF' : i < 8 ? '#ffffff33' : '#ffffff15', transform: `scaleY(${Math.random()})` }} />
+          ))}
+        </div>
+
+        {/* Aspect ratio label */}
+        <div className="hud-element absolute bottom-12 left-24 font-mono text-[10px] text-white/25 tracking-widest">
+          2.39:1 ANAMORPHIC
+        </div>
+
+        {/* ISO / Shutter / FPS */}
+        <div className="hud-element absolute bottom-12 right-24 font-mono text-[10px] text-white/25 tracking-widest flex gap-6">
+          <span>ISO 800</span>
+          <span>1/48</span>
+          <span>24fps</span>
+        </div>
+
+        {/* Color temp indicator */}
+        <div className="hud-element absolute left-12 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1">
+          <div className="w-1 h-20 rounded-full overflow-hidden">
+            <div className="w-full h-full" style={{ background: 'linear-gradient(to bottom, #ff9500, #ffffff, #00AEEF)' }} />
+          </div>
+          <span className="font-mono text-[9px] text-white/25 mt-1">5600K</span>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="hero-content absolute inset-0 z-10 flex flex-col items-center justify-center" style={{ transformStyle: 'preserve-3d' }}>
+        
+        {/* Radial spotlight */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,174,239,0.08) 0%, transparent 70%)' }} />
+
+        {/* Title */}
+        <div className="flex items-baseline gap-4 md:gap-6 mb-6" style={{ perspective: '1000px' }}>
+          <div className="flex">
+            {slateLetters.map((letter, i) => (
+              <span key={`s-${i}`} className="hero-letter inline-block text-6xl md:text-8xl lg:text-[10rem] font-bold text-white tracking-tighter leading-none" style={{ transformStyle: 'preserve-3d' }}>
+                {letter}
+              </span>
+            ))}
+          </div>
+          <div className="flex">
+            {cinemaLetters.map((letter, i) => (
+              <span key={`c-${i}`} className="hero-letter inline-block text-6xl md:text-8xl lg:text-[10rem] font-bold text-[#00AEEF] tracking-tighter leading-none" style={{ transformStyle: 'preserve-3d' }}>
+                {letter}
+              </span>
+            ))}
           </div>
         </div>
-      </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 opacity-40">
-        <span className="text-[9px] font-mono tracking-[0.3em] text-white/50 uppercase">Scroll</span>
-        <div className="w-[1px] h-8 bg-gradient-to-b from-white/40 to-transparent animate-pulse" />
+        {/* Subtitle */}
+        <p className="hero-subtitle text-xs md:text-sm font-mono tracking-[0.4em] text-white/50 uppercase mb-12">
+          Video Marketing At Your Fingertips
+        </p>
+
+        {/* CTAs */}
+        <div className="flex flex-wrap items-center gap-4 justify-center" style={{ perspective: '800px' }}>
+          <span className="hero-subtitle font-mono text-[10px] text-white/30 tracking-widest uppercase mr-4">Quick Links:</span>
+          <a href="#reel" className="hero-cta group relative px-6 py-3 rounded-full overflow-hidden" style={{ transformStyle: 'preserve-3d', background: 'rgba(0,174,239,0.1)', border: '1px solid rgba(0,174,239,0.3)' }}>
+            <div className="absolute inset-0 bg-[#00AEEF] scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
+            <span className="relative text-sm font-medium text-white tracking-wide">Watch Our Reel</span>
+          </a>
+          <a href="#quote" className="hero-cta group relative px-6 py-3 rounded-full overflow-hidden" style={{ transformStyle: 'preserve-3d', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <div className="absolute inset-0 bg-white/10 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
+            <span className="relative text-sm font-medium text-white/70 group-hover:text-white tracking-wide transition-colors">Get A Quote</span>
+          </a>
+          <a href="#how" className="hero-cta group relative px-6 py-3 rounded-full overflow-hidden" style={{ transformStyle: 'preserve-3d', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <div className="absolute inset-0 bg-white/10 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
+            <span className="relative text-sm font-medium text-white/70 group-hover:text-white tracking-wide transition-colors">How It Works</span>
+          </a>
+        </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3">
+          <span className="font-mono text-[9px] text-white/20 tracking-[0.3em] uppercase">Scroll to explore</span>
+          <div className="w-[1px] h-12 overflow-hidden">
+            <div className="w-full h-full bg-gradient-to-b from-[#00AEEF] to-transparent animate-pulse" />
+          </div>
+        </div>
       </div>
     </section>
   )

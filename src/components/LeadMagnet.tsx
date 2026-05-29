@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import clsx from 'clsx'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -10,163 +9,189 @@ gsap.registerPlugin(ScrollTrigger)
 
 type StepId = 'service' | 'scope' | 'budget' | 'contact'
 
+const stepConfig = {
+  service: {
+    title: 'What do you need?',
+    options: ['Full Campaign', 'Brand Video', 'Social Content', 'Event Coverage', 'Post-Production Only'],
+  },
+  scope: {
+    title: 'Project scope?',
+    options: ['Single Video', 'Content Series (3-5)', 'Full Campaign (10+)', 'Ongoing Retainer'],
+  },
+  budget: {
+    title: 'Investment range?',
+    options: ['$5K — $10K', '$10K — $25K', '$25K — $50K', '$50K+'],
+  },
+  contact: {
+    title: 'Your details',
+    options: [],
+  },
+}
+
+const allSteps: StepId[] = ['service', 'scope', 'budget', 'contact']
+
 export default function LeadMagnet() {
   const containerRef = useRef<HTMLElement>(null)
-  const formRef = useRef<HTMLDivElement>(null)
   const [currentStep, setCurrentStep] = useState<StepId>('service')
+  const [selections, setSelections] = useState<Record<string, string>>({})
 
-  const steps = [
-    { id: 'service', label: 'Service' },
-    { id: 'scope', label: 'Scope' },
-    { id: 'budget', label: 'Budget' },
-    { id: 'contact', label: 'Contact' },
-  ]
-
-  const options = {
-    service: ['Pre-Production', 'Production', 'Post-Production', 'Distribution', 'Full Campaign'],
-    scope: ['Single Video', 'Social Content Series', 'Brand Campaign', 'Event Coverage', 'Ongoing Retainer'],
-    budget: ['$5k-$10k', '$10k-$25k', '$25k-$50k', '$50k+']
-  }
+  const stepIndex = allSteps.indexOf(currentStep)
 
   useGSAP(() => {
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: 'top bottom',
-        end: 'top 20%',
-        scrub: 1,
-      }
-    })
+    const ctx = gsap.context(() => {
+      // Form entrance from below
+      gsap.fromTo('.lm-form',
+        { y: 200, rotateX: 30, opacity: 0 },
+        {
+          y: 0, rotateX: 0, opacity: 1, duration: 1, ease: 'power3.out',
+          scrollTrigger: { trigger: containerRef.current, start: 'top 70%', end: 'top 30%', scrub: 1 }
+        }
+      )
 
-    // Background gradient expands
-    tl.fromTo('.lm-bg', { scale: 0 }, { scale: 1, ease: 'none' }, 0)
-
-    // Lines rotate
-    tl.fromTo('.lm-lines', { rotation: 0 }, { rotation: 180, ease: 'none' }, 0)
-
-    // Form flies in 3D
-    tl.fromTo('.lm-form',
-      { y: 300, z: -500, rotateX: 45, opacity: 0 },
-      { y: 0, z: 0, rotateX: 0, opacity: 1, ease: 'power2.out' },
-      0.2
-    )
-
-    // Submit button pulse
-    gsap.to('.lm-submit', {
-      boxShadow: '0 0 20px rgba(0,174,239,0.5)',
-      scale: 1.02,
-      repeat: -1,
-      yoyo: true,
-      duration: 1.5,
-      ease: 'power1.inOut'
-    })
+      // Background clapperboard pattern
+      gsap.to('.clap-pattern', {
+        rotation: 360,
+        ease: 'none',
+        duration: 120,
+        repeat: -1,
+      })
+    }, containerRef)
+    return () => ctx.revert()
   }, { scope: containerRef })
 
-  const handleStepChange = (nextStep: StepId) => {
-    // 3D Exit current
-    gsap.to('.lm-step-content', {
-      rotateY: -90,
-      opacity: 0,
-      duration: 0.3,
+  const selectOption = (option: string) => {
+    setSelections(prev => ({ ...prev, [currentStep]: option }))
+
+    // 3D flip transition
+    gsap.to('.step-content', {
+      rotateY: -90, opacity: 0, duration: 0.25, ease: 'power2.in',
       onComplete: () => {
-        setCurrentStep(nextStep)
-        // 3D Enter next
-        gsap.fromTo('.lm-step-content',
+        const next = allSteps[stepIndex + 1]
+        if (next) setCurrentStep(next)
+        gsap.fromTo('.step-content',
           { rotateY: 90, opacity: 0 },
-          { rotateY: 0, opacity: 1, duration: 0.4, ease: 'back.out(1.5)' }
+          { rotateY: 0, opacity: 1, duration: 0.35, ease: 'back.out(1.2)' }
         )
       }
     })
   }
 
-  const handleOptionHover = (e: React.MouseEvent<HTMLButtonElement>) => {
-    gsap.to(e.currentTarget, { z: 10, scale: 1.02, duration: 0.2 })
-  }
-  const handleOptionLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
-    gsap.to(e.currentTarget, { z: 0, scale: 1, duration: 0.2 })
-  }
-
-  const renderStep = () => {
-    if (currentStep === 'contact') {
-      return (
-        <div className="lm-step-content flex flex-col gap-4" style={{ transformStyle: 'preserve-3d' }}>
-          <div className="grid grid-cols-2 gap-4">
-            <input type="text" placeholder="First Name" className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#00AEEF] transition-colors" />
-            <input type="text" placeholder="Last Name" className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#00AEEF] transition-colors" />
-          </div>
-          <input type="email" placeholder="Email" className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#00AEEF] transition-colors" />
-          <input type="text" placeholder="Company" className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#00AEEF] transition-colors" />
-          <button className="lm-submit mt-4 w-full bg-[#00AEEF] text-white font-bold py-4 rounded-lg hover:bg-[#00AEEF]/80 transition-colors">
-            Get Custom Proposal
-          </button>
-        </div>
-      )
+  const goBack = () => {
+    if (stepIndex > 0) {
+      gsap.to('.step-content', {
+        rotateY: 90, opacity: 0, duration: 0.25, ease: 'power2.in',
+        onComplete: () => {
+          setCurrentStep(allSteps[stepIndex - 1])
+          gsap.fromTo('.step-content',
+            { rotateY: -90, opacity: 0 },
+            { rotateY: 0, opacity: 1, duration: 0.35, ease: 'back.out(1.2)' }
+          )
+        }
+      })
     }
-
-    const currentOptions = options[currentStep as keyof typeof options]
-    return (
-      <div className="lm-step-content flex flex-col gap-3" style={{ transformStyle: 'preserve-3d' }}>
-        {currentOptions.map((opt, i) => (
-          <button 
-            key={i} 
-            onMouseEnter={handleOptionHover}
-            onMouseLeave={handleOptionLeave}
-            onClick={() => {
-              if (currentStep === 'service') handleStepChange('scope')
-              else if (currentStep === 'scope') handleStepChange('budget')
-              else if (currentStep === 'budget') handleStepChange('contact')
-            }}
-            className="w-full text-left px-6 py-4 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/30 text-white transition-colors"
-            style={{ transformStyle: 'preserve-3d' }}
-          >
-            {opt}
-          </button>
-        ))}
-      </div>
-    )
   }
-
-  const stepIndex = steps.findIndex(s => s.id === currentStep)
 
   return (
-    <section ref={containerRef} className="w-full py-32 bg-[#030305] relative overflow-hidden" style={{ perspective: '1200px' }}>
+    <section ref={containerRef} className="relative w-full py-32 bg-[#030305] overflow-hidden" style={{ perspective: '1200px' }}>
       
-      {/* Background Entrance */}
-      <div className="lm-bg absolute inset-0 z-0 flex items-center justify-center opacity-30 pointer-events-none">
-        <div className="w-full max-w-4xl aspect-square rounded-full blur-[100px]" style={{ background: 'radial-gradient(circle, #00AEEF 0%, #6b21a8 50%, transparent 80%)' }} />
-      </div>
-      
-      <div className="lm-lines absolute inset-0 z-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, #fff 10px, #fff 11px)' }} />
-
-      <div className="relative z-10 max-w-3xl mx-auto px-6 text-center mb-12">
-        <p className="text-xs font-mono tracking-[0.3em] text-[#00AEEF] uppercase mb-6">Project Discovery</p>
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6">Build Your Scope</h2>
-        <p className="text-lg text-[#8E96AA]">Answer a few quick questions to help us understand your vision. We&apos;ll prepare a custom execution plan.</p>
+      {/* Background clapperboard stripe pattern */}
+      <div className="clap-pattern absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] opacity-[0.015] pointer-events-none">
+        <svg viewBox="0 0 100 100" className="w-full h-full">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <rect key={i} x={i * 12.5} y="0" width="6.25" height="100" fill={i % 2 === 0 ? '#fff' : '#000'} />
+          ))}
+        </svg>
       </div>
 
       <div className="relative z-10 max-w-2xl mx-auto px-6">
-        <div className="lm-form p-8 md:p-10 rounded-2xl glass-panel border border-white/10 shadow-2xl relative overflow-hidden" style={{ background: 'rgba(10,11,14,0.7)', transformStyle: 'preserve-3d' }}>
-          
-          {/* Progress bar glowing trail */}
-          <div className="w-full h-1 bg-white/10 rounded-full mb-8 relative overflow-hidden">
-            <div 
-              className="absolute top-0 left-0 h-full bg-[#00AEEF] transition-all duration-500 shadow-[0_0_10px_#00AEEF]"
-              style={{ width: `${((stepIndex + 1) / steps.length) * 100}%` }}
-            />
+        {/* Header */}
+        <div className="text-center mb-12">
+          <span className="font-mono text-[10px] text-[#00AEEF] tracking-[0.4em] uppercase block mb-4">// Project Discovery</span>
+          <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight mb-4">Build Your Scope</h2>
+          <p className="text-sm text-white/30">Answer a few quick questions. We&apos;ll prepare a custom execution plan.</p>
+        </div>
+
+        {/* The form card */}
+        <div className="lm-form rounded-2xl overflow-hidden relative" style={{
+          transformStyle: 'preserve-3d',
+          background: 'linear-gradient(160deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          backdropFilter: 'blur(20px)',
+        }}>
+          {/* Top bar - like an editing panel header */}
+          <div className="flex items-center justify-between px-6 py-3 border-b border-white/[0.06]">
+            <div className="flex items-center gap-3">
+              <div className="flex gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
+                <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
+                <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+              </div>
+              <span className="font-mono text-[10px] text-white/30 tracking-widest">PROJECT_SCOPE.FORM</span>
+            </div>
+            <span className="font-mono text-[10px] text-white/20">{stepIndex + 1} / {allSteps.length}</span>
           </div>
 
-          <div className="flex justify-between mb-8 text-sm font-mono uppercase tracking-wider text-white/40">
-            {steps.map((step, i) => (
-              <span key={step.id} className={clsx("transition-colors duration-300", i <= stepIndex ? "text-[#00AEEF]" : "")}>
-                {step.label}
-              </span>
-            ))}
+          {/* Progress bar */}
+          <div className="h-[2px] bg-white/[0.04] relative">
+            <div className="absolute top-0 left-0 h-full bg-[#00AEEF] transition-all duration-500 ease-out shadow-[0_0_10px_rgba(0,174,239,0.4)]" style={{ width: `${((stepIndex + 1) / allSteps.length) * 100}%` }} />
           </div>
 
-          <div className="relative min-h-[300px]" style={{ perspective: '800px' }}>
-            {renderStep()}
+          <div className="p-8 md:p-10">
+            {/* Step indicators */}
+            <div className="flex gap-4 mb-8">
+              {allSteps.map((step, i) => (
+                <div key={step} className="flex items-center gap-2">
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-mono font-bold transition-all duration-300 ${
+                    i <= stepIndex ? 'bg-[#00AEEF]/20 text-[#00AEEF] border border-[#00AEEF]/30' : 'bg-white/5 text-white/20 border border-white/10'
+                  }`}>
+                    {i < stepIndex ? '✓' : i + 1}
+                  </div>
+                  {i < allSteps.length - 1 && <div className={`w-8 h-[1px] transition-colors duration-300 ${i < stepIndex ? 'bg-[#00AEEF]/30' : 'bg-white/10'}`} />}
+                </div>
+              ))}
+            </div>
+
+            {/* Step content */}
+            <div className="step-content min-h-[280px]" style={{ transformStyle: 'preserve-3d' }}>
+              <h3 className="text-2xl font-bold text-white mb-6">{stepConfig[currentStep].title}</h3>
+
+              {currentStep === 'contact' ? (
+                <div className="flex flex-col gap-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <input type="text" placeholder="First Name" className="bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3.5 text-white text-sm font-mono placeholder:text-white/20 focus:outline-none focus:border-[#00AEEF]/50 transition-colors" />
+                    <input type="text" placeholder="Last Name" className="bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3.5 text-white text-sm font-mono placeholder:text-white/20 focus:outline-none focus:border-[#00AEEF]/50 transition-colors" />
+                  </div>
+                  <input type="email" placeholder="Email" className="bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3.5 text-white text-sm font-mono placeholder:text-white/20 focus:outline-none focus:border-[#00AEEF]/50 transition-colors" />
+                  <input type="text" placeholder="Company / Brand" className="bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3.5 text-white text-sm font-mono placeholder:text-white/20 focus:outline-none focus:border-[#00AEEF]/50 transition-colors" />
+                  <textarea placeholder="Tell us about your project..." rows={3} className="bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3.5 text-white text-sm font-mono placeholder:text-white/20 focus:outline-none focus:border-[#00AEEF]/50 transition-colors resize-none" />
+                  <button className="mt-2 w-full bg-[#00AEEF] text-white font-bold py-4 rounded-lg hover:bg-[#00AEEF]/80 transition-all duration-300 shadow-[0_0_30px_rgba(0,174,239,0.2)] hover:shadow-[0_0_40px_rgba(0,174,239,0.4)] text-sm tracking-wider uppercase">
+                    Get Custom Proposal →
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {stepConfig[currentStep].options.map((option, i) => (
+                    <button
+                      key={i}
+                      onClick={() => selectOption(option)}
+                      className="group w-full text-left px-5 py-4 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/[0.15] transition-all duration-300 flex items-center justify-between"
+                    >
+                      <span className="text-sm text-white/60 group-hover:text-white transition-colors font-medium">{option}</span>
+                      <svg className="w-4 h-4 text-white/10 group-hover:text-[#00AEEF] group-hover:translate-x-1 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Back button */}
+            {stepIndex > 0 && (
+              <button onClick={goBack} className="mt-6 text-xs font-mono text-white/20 hover:text-white/50 transition-colors tracking-widest uppercase flex items-center gap-2">
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                Back
+              </button>
+            )}
           </div>
-          
         </div>
       </div>
     </section>
