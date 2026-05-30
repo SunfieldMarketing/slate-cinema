@@ -15,28 +15,28 @@ const steps = [
     title: 'Pre-Production',
     desc: 'Concept development, campaign planning, scripting, shot lists, storyboards, brand direction, production scheduling.',
     icon: ClipboardList,
-    videoId: 'W0LHTWG-UmQ',
+    videoSrc: '/videos/pre-production.mp4',
   },
   {
     num: '02',
     title: 'Production',
     desc: 'On-location shooting, lighting, directing, interviews, product shots, social-first content capture.',
     icon: Clapperboard,
-    videoId: 'yAoLSRbwxL8',
+    videoSrc: '/videos/production.mp4',
   },
   {
     num: '03',
     title: 'Post-Production',
     desc: 'Editing, color grading, sound design, motion graphics, captions, VFX, platform-specific cuts.',
     icon: Film,
-    videoId: 'd1zJ_5z53c0',
+    videoSrc: '/videos/post-production.mp4',
   },
   {
     num: '04',
     title: 'Distribution',
     desc: 'Social media versions, ad-ready exports, campaign deliverables, posting strategy, analytics review.',
     icon: Radio,
-    videoId: 'a_426RiwEN8',
+    videoSrc: '/videos/distribution.mp4',
   },
 ]
 
@@ -96,12 +96,14 @@ export default function Pipeline() {
               i === 0 ? "opacity-100" : "opacity-0"
             )}
           >
-            <div className="absolute top-1/2 left-1/2 w-[300vw] h-[300vw] md:w-[150vw] md:h-[150vw] min-h-[150vh] min-w-[150vw] -translate-x-1/2 -translate-y-1/2">
-              <iframe
-                src={`https://www.youtube.com/embed/${step.videoId}?autoplay=1&mute=1&loop=1&playlist=${step.videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1`}
+            <div className="absolute top-1/2 left-1/2 w-full h-full min-h-[100vh] min-w-[100vw] -translate-x-1/2 -translate-y-1/2">
+              <video
+                src={step.videoSrc}
+                autoPlay
+                loop
+                muted
+                playsInline
                 className="absolute top-0 left-0 w-full h-full object-cover"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                style={{ border: 0 }}
               />
             </div>
           </div>

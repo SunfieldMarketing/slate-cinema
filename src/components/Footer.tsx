@@ -92,48 +92,93 @@ export default function Footer() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 flex flex-col items-center">
         
-        <div className="w-full flex flex-col md:flex-row justify-between items-center border-b border-white/10 pb-16 mb-16 gap-8">
-          <div className="text-center md:text-left">
-            <h3 className="text-2xl font-bold text-white mb-6">Ready to create?</h3>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button 
-                onMouseMove={handleMagneticMove}
-                onMouseLeave={handleMagneticLeave}
-                className="footer-btn px-8 py-4 bg-[#00AEEF] text-[#030305] font-bold rounded-full hover:bg-white transition-colors"
-                style={{ transformStyle: 'preserve-3d' }}
-              >
-                Start Your Campaign
-              </button>
-              <button 
-                onMouseMove={handleMagneticMove}
-                onMouseLeave={handleMagneticLeave}
-                className="footer-btn px-8 py-4 bg-transparent border border-white/20 text-white font-bold rounded-full hover:bg-white/10 transition-colors"
-                style={{ transformStyle: 'preserve-3d' }}
-              >
-                Book a Consultation
-              </button>
+        <div className="w-full flex flex-col lg:flex-row justify-between items-start border-b border-white/10 pb-16 mb-16 gap-12 lg:gap-8">
+          
+          {/* Left Side: Buttons and Newsletter */}
+          <div className="w-full lg:w-5/12 flex flex-col gap-12">
+            <div>
+              <h3 className="text-3xl font-bold text-white mb-6">Ready to create?</h3>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button 
+                  onMouseMove={handleMagneticMove}
+                  onMouseLeave={handleMagneticLeave}
+                  className="footer-btn px-8 py-4 bg-[#00AEEF] text-[#030305] font-bold rounded-full hover:bg-white transition-colors w-full sm:w-auto text-center"
+                  style={{ transformStyle: 'preserve-3d' }}
+                >
+                  Start Your Campaign
+                </button>
+                <button 
+                  onMouseMove={handleMagneticMove}
+                  onMouseLeave={handleMagneticLeave}
+                  className="footer-btn px-8 py-4 bg-transparent border border-white/20 text-white font-bold rounded-full hover:bg-white/10 transition-colors w-full sm:w-auto text-center"
+                  style={{ transformStyle: 'preserve-3d' }}
+                >
+                  Book a Consultation
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-lg font-semibold text-white mb-4">Subscribe to our Newsletter</h4>
+              <form className="flex w-full max-w-md" onSubmit={(e) => e.preventDefault()}>
+                <input 
+                  type="email" 
+                  placeholder="Your email address" 
+                  className="flex-1 bg-white/5 border border-white/10 border-r-0 rounded-l-full px-6 py-4 text-white placeholder:text-white/30 focus:outline-none focus:border-[#00AEEF] transition-colors"
+                />
+                <button 
+                  type="submit"
+                  className="bg-[#00AEEF] text-[#030305] font-bold px-8 py-4 rounded-r-full hover:bg-white transition-colors whitespace-nowrap"
+                >
+                  Sign Up
+                </button>
+              </form>
             </div>
           </div>
 
-          <div className="flex gap-8">
-            {['Instagram', 'LinkedIn', 'Vimeo', 'YouTube'].map((social) => (
-              <a
-                key={social}
-                href="#"
-                onMouseMove={handleMagneticMove}
-                onMouseLeave={handleMagneticLeave}
-                className="footer-link text-sm font-medium text-white/50 hover:text-[#00AEEF] transition-colors block"
-                style={{ transformStyle: 'preserve-3d' }}
-              >
-                {social}
-              </a>
-            ))}
+          {/* Right Side: Sitemap and Socials */}
+          <div className="w-full lg:w-7/12 flex flex-col sm:flex-row justify-between lg:justify-end gap-12 lg:gap-24 pt-4 lg:pt-0">
+            <div className="flex flex-col">
+              <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Studio</h4>
+              <div className="flex flex-col gap-4">
+                {['Work', 'Directors', 'About Us', 'Journal'].map((link) => (
+                  <a key={link} href="#" className="text-white/60 hover:text-[#00AEEF] transition-colors text-sm">{link}</a>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col">
+              <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Services</h4>
+              <div className="flex flex-col gap-4">
+                {['Commercials', 'Music Videos', 'Documentary', 'VFX & Color'].map((link) => (
+                  <a key={link} href="#" className="text-white/60 hover:text-[#00AEEF] transition-colors text-sm">{link}</a>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col">
+              <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Social</h4>
+              <div className="flex flex-col gap-4">
+                {['Instagram', 'LinkedIn', 'Vimeo', 'YouTube'].map((social) => (
+                  <a
+                    key={social}
+                    href="#"
+                    onMouseMove={handleMagneticMove}
+                    onMouseLeave={handleMagneticLeave}
+                    className="footer-link text-sm font-medium text-white/60 hover:text-[#00AEEF] transition-colors block w-max"
+                    style={{ transformStyle: 'preserve-3d' }}
+                  >
+                    {social}
+                  </a>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Giant 3D Wordmark */}
-        <div className="footer-wordmark w-full text-center overflow-hidden" style={{ transformStyle: 'preserve-3d' }}>
-          <span className="block text-[20vw] font-bold text-white leading-none tracking-tighter mix-blend-overlay opacity-80" style={{ textShadow: '0 20px 50px rgba(0,0,0,0.5)' }}>
+        <div className="footer-wordmark w-full flex justify-center items-center py-8 lg:py-16" style={{ transformStyle: 'preserve-3d' }}>
+          <span className="block text-[15vw] md:text-[18vw] font-bold text-white leading-tight tracking-tighter mix-blend-overlay opacity-80 pb-4 md:pb-8" style={{ textShadow: '0 20px 50px rgba(0,0,0,0.5)' }}>
             SLATE
           </span>
         </div>

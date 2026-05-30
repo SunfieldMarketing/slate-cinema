@@ -104,13 +104,18 @@ export default function Hero() {
   return (
     <section ref={containerRef} className="relative w-full h-screen overflow-hidden" style={{ perspective: '1200px', perspectiveOrigin: '50% 50%' }}>
       
-      {/* Background Video */}
-      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden bg-[#030305]">
-        <iframe
-          src="https://www.youtube.com/embed/QyhwSYhX09s?autoplay=1&mute=1&controls=0&loop=1&playlist=QyhwSYhX09s&playsinline=1&showinfo=0&rel=0"
-          className="absolute top-1/2 left-1/2 w-[150vw] h-[150vh] min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 opacity-40 mix-blend-screen"
-          allow="autoplay; encrypted-media"
+      {/* Background Video (Local for instant loading) */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none bg-[#030305]">
+        <video
+          src="/videos/hero.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute w-full h-full object-cover top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none mix-blend-screen opacity-40"
         />
+        {/* Cinematic dark overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/80 pointer-events-none" />
       </div>
 
       {/* Film grain overlay */}
