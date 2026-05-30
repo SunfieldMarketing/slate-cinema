@@ -13,28 +13,28 @@ const steps = [
   {
     num: '01',
     title: 'Pre-Production',
-    desc: 'Concept development, campaign planning, scripting, shot lists, storyboards, brand direction, production scheduling.',
+    desc: 'We map the idea before the camera turns on. Concept development, campaign planning, scripting, shot lists, storyboards, brand direction, production scheduling.',
     icon: ClipboardList,
-    videoSrc: '/videos/pre-production.mp4',
+    videoSrc: '/videos/pipeline-pre.mp4',
   },
   {
     num: '02',
     title: 'Production',
-    desc: 'On-location shooting, lighting, directing, interviews, product shots, social-first content capture.',
+    desc: 'We capture visuals that feel intentional, premium, and built for attention. On-location shooting, lighting, directing, interviews, product shots, social-first content capture.',
     icon: Clapperboard,
     videoSrc: '/videos/production.mp4',
   },
   {
     num: '03',
     title: 'Post-Production',
-    desc: 'Editing, color grading, sound design, motion graphics, captions, VFX, platform-specific cuts.',
+    desc: 'We shape the story into content people actually finish watching. Editing, color grading, sound design, motion graphics, captions, VFX, platform-specific cuts.',
     icon: Film,
     videoSrc: '/videos/post-production.mp4',
   },
   {
     num: '04',
     title: 'Distribution',
-    desc: 'Social media versions, ad-ready exports, campaign deliverables, posting strategy, analytics review.',
+    desc: 'We prepare the content for the platforms where attention actually happens. Social media versions, ad-ready exports, campaign deliverables, posting strategy, analytics review.',
     icon: Radio,
     videoSrc: '/videos/distribution.mp4',
   },
@@ -53,7 +53,7 @@ export default function Pipeline() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: `+=${totalSteps * 100}%`,
+          end: '+=150vh',
           pin: true,
           scrub: 1,
         }
@@ -85,7 +85,7 @@ export default function Pipeline() {
         <div className="absolute inset-0 z-10 hidden md:block bg-gradient-to-r from-[#030305] via-[#030305]/40 to-transparent w-full" />
         
         {/* Dark cinematic overlay for videos */}
-        <div className="absolute inset-0 z-10 bg-[#030305]/70 md:bg-[#030305]/40 mix-blend-multiply" />
+        <div className="absolute inset-0 z-10 bg-[#030305]/40 md:bg-[#030305]/40 mix-blend-multiply" />
         <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#030305] via-transparent to-[#030305] opacity-90" />
 
         {steps.map((step, i) => (

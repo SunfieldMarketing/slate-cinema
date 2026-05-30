@@ -131,10 +131,10 @@ export default function MediaVoid() {
       {/* Floating media thumbnails at different depths */}
       <div className="absolute inset-0 z-0" style={{ transformStyle: 'preserve-3d' }}>
         {[
-          { src: '/images/portfolio-production.png', cls: 'top-[10%] left-[5%] w-48 h-28', title: 'Production Reel' },
-          { src: '/images/portfolio-brand.png', cls: 'top-[60%] right-[8%] w-64 h-36', title: 'Brand Campaign' },
-          { src: '/images/portfolio-social.png', cls: 'top-[20%] right-[20%] w-36 h-48', title: 'Social Series' },
-          { src: '/images/portfolio-event.png', cls: 'bottom-[15%] left-[20%] w-56 h-32', title: 'Event Coverage' },
+          { src: '/images/portfolio-production.png', cls: 'top-[15%] left-[10%] w-44 h-28', title: 'Production Reel' },
+          { src: '/images/portfolio-brand.png', cls: 'top-[55%] right-[12%] w-52 h-32', title: 'Brand Campaign' },
+          { src: '/images/portfolio-social.png', cls: 'top-[18%] right-[15%] w-36 h-44', title: 'Social Series' },
+          { src: '/images/portfolio-event.png', cls: 'bottom-[20%] left-[15%] w-48 h-28', title: 'Event Coverage' },
         ].map((item, i) => (
           <div key={i} className={`media-thumb absolute ${item.cls}`} style={{ transformStyle: 'preserve-3d' }}>
             <div className="w-full h-full rounded-lg overflow-hidden border border-white/10 cursor-pointer group hover:shadow-[0_0_30px_rgba(0,174,239,0.3)] hover:border-white/30 transition-all duration-500 hover:scale-[1.05] relative bg-[#030305]">
