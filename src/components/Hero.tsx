@@ -12,13 +12,7 @@ export default function Hero() {
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
-      // Initial entrance - everything flies in from 3D space
       const enterTl = gsap.timeline({ delay: 0.3 })
-      
-      // Viewfinder brackets fly in from corners
-      enterTl.fromTo('.vf-corner', 
-        { scale: 3, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.8, stagger: 0.1, ease: 'power3.out' }, 0)
       
       // Title letters fly in from deep Z
       enterTl.fromTo('.hero-letter',
@@ -70,6 +64,11 @@ export default function Hero() {
         }
       })
 
+      // Viewfinder appears in the center ONLY when scrolling starts
+      scrollTl.fromTo('.vf-frame', 
+        { scale: 0.5, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.2, ease: 'power2.out' }, 0)
+
       // Camera pulls back - everything shrinks into distance
       scrollTl.to('.hero-content', {
         z: -2000,
@@ -78,15 +77,15 @@ export default function Hero() {
         scale: 0.3,
         duration: 1,
         ease: 'none'
-      }, 0)
+      }, 0.2)
 
-      // Viewfinder expands outward
+      // Viewfinder expands outward and fades out towards the end
       scrollTl.to('.vf-frame', {
         scale: 3,
         opacity: 0,
-        duration: 1,
-        ease: 'none'
-      }, 0)
+        duration: 0.8,
+        ease: 'power2.in'
+      }, 0.4)
 
       // Film grain intensifies
       scrollTl.to('.grain-overlay', {
@@ -105,8 +104,17 @@ export default function Hero() {
   return (
     <section ref={containerRef} className="relative w-full h-screen overflow-hidden" style={{ perspective: '1200px', perspectiveOrigin: '50% 50%' }}>
       
+      {/* Background Video */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden bg-[#030305]">
+        <iframe
+          src="https://www.youtube.com/embed/QyhwSYhX09s?autoplay=1&mute=1&controls=0&loop=1&playlist=QyhwSYhX09s&playsinline=1&showinfo=0&rel=0"
+          className="absolute top-1/2 left-1/2 w-[150vw] h-[150vh] min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 opacity-40 mix-blend-screen"
+          allow="autoplay; encrypted-media"
+        />
+      </div>
+
       {/* Film grain overlay */}
-      <div className="grain-overlay absolute inset-0 z-50 pointer-events-none opacity-[0.04]"
+      <div className="grain-overlay absolute inset-0 z-10 pointer-events-none opacity-[0.04]"
         style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\' opacity=\'0.5\'/%3E%3C/svg%3E")', backgroundSize: '128px 128px' }} />
 
       {/* Camera Viewfinder Frame */}

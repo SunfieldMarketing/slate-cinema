@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
+import { ThumbsUp, MessageSquare } from 'lucide-react'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -11,29 +12,13 @@ export default function Results() {
   const containerRef = useRef<HTMLElement>(null)
   const [views, setViews] = useState(0)
 
-  const stats = [
-    { label: 'Views Generated', value: '25M+', icon: '👁️' },
-    { label: 'Client Retention', value: '94%', icon: '🔄' },
-    { label: 'Projects Delivered', value: '350+', icon: '🎬' },
-    { label: 'Platforms Served', value: '12+', icon: '📱' },
-  ]
-
-  const benefits = [
-    'Campaign-ready edits',
-    'Social-first storytelling',
-    'Platform-specific deliverables',
-    'Retention-focused pacing',
-    'Hooks built for scroll behavior',
-    'Analytics-informed iteration'
-  ]
-
   useGSAP(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: '+=300%',
+          end: '+=200%',
           pin: true,
           scrub: 1,
         }
@@ -42,123 +27,86 @@ export default function Results() {
       // Timecode counter counts up
       const counter = { val: 0 }
       tl.to(counter, {
-        val: 25000000,
+        val: 120000000,
         ease: 'none',
-        duration: 0.4,
+        duration: 1,
         onUpdate: () => setViews(Math.floor(counter.val))
       }, 0)
 
-      // Stat cards unfold from the counter like origami
-      const statCards = gsap.utils.toArray<HTMLElement>('.stat-card')
-      statCards.forEach((card, i) => {
-        tl.fromTo(card,
-          { rotateX: -90, y: -50, opacity: 0, transformOrigin: 'top center' },
-          { rotateX: 0, y: 0, opacity: 1, duration: 0.15, ease: 'power3.out' },
-          0.3 + (i * 0.06)
-        )
-      })
-
-      // Benefits ticker tape scrolls in from right
-      tl.fromTo('.benefits-track',
-        { x: '100%' },
-        { x: '-100%', ease: 'none', duration: 0.5 },
-        0.5
-      )
-
-      // Data visualization bars grow
-      tl.fromTo('.data-bar',
-        { scaleY: 0 },
-        { scaleY: 1, stagger: 0.01, ease: 'none', duration: 0.4 },
-        0.1
-      )
-
-      // Glow pulse on the main counter
-      tl.fromTo('.counter-glow',
-        { scale: 0.5, opacity: 0 },
-        { scale: 1.5, opacity: 0.6, ease: 'none', duration: 0.5 },
+      // 3D rotation effect for the metrics block
+      tl.fromTo('.metrics-block',
+        { rotateX: 30, rotateY: -20, scale: 0.8, opacity: 0, z: -200 },
+        { rotateX: 0, rotateY: 0, scale: 1, opacity: 1, z: 0, duration: 0.4, ease: 'power2.out' },
         0
       )
+      
+      // Continue rotating slightly as it counts
+      tl.to('.metrics-block', {
+        rotateX: -15,
+        rotateY: 15,
+        scale: 1.05,
+        z: 100,
+        ease: 'none',
+        duration: 0.6
+      }, 0.4)
 
     }, containerRef)
     return () => ctx.revert()
   }, { scope: containerRef })
 
-  const formatTimecode = (num: number) => {
-    if (num >= 1000000) {
-      const m = (num / 1000000).toFixed(1)
-      return m + 'M+'
-    }
-    if (num >= 1000) return (num / 1000).toFixed(0) + 'K'
-    return num.toLocaleString()
-  }
-
   return (
     <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-hidden" style={{ perspective: '1200px' }}>
       
-      {/* Background data bars */}
-      <div className="absolute bottom-0 left-0 right-0 h-[60%] z-0 flex items-end gap-1 px-4 opacity-[0.04]">
-        {Array.from({ length: 80 }).map((_, i) => (
-          <div key={i} className="data-bar flex-1 bg-[#00AEEF] rounded-t origin-bottom" style={{ height: `${Math.random() * 80 + 20}%` }} />
-        ))}
+      {/* Background YouTube Video */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <iframe
+          className="absolute w-[150%] h-[150%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+          src="https://www.youtube.com/embed/QyhwSYhX09s?autoplay=1&mute=1&loop=1&playlist=QyhwSYhX09s&controls=0&showinfo=0&modestbranding=1&playsinline=1"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        />
+        {/* Cinematic dark overlay */}
+        <div className="absolute inset-0 bg-[#030305]/70 mix-blend-multiply" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#030305] via-transparent to-[#030305]" />
       </div>
 
-      {/* Counter glow */}
-      <div className="counter-glow absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(0,174,239,0.12) 0%, transparent 70%)' }} />
-
-      <div className="relative z-10 h-full flex flex-col items-center justify-center px-6">
-        {/* Section label */}
-        <span className="font-mono text-[10px] text-[#00AEEF] tracking-[0.4em] uppercase mb-8">// Performance Metrics</span>
-
-        {/* Giant timecode-style counter */}
-        <div className="mb-4">
-          <div className="text-7xl md:text-[9rem] lg:text-[12rem] font-bold text-white font-mono tracking-tighter leading-none" style={{ textShadow: '0 0 80px rgba(0,174,239,0.2)' }}>
-            {formatTimecode(views)}
-          </div>
-        </div>
-
-        <h3 className="text-xl md:text-3xl font-bold text-white/80 tracking-tight mb-16">
-          Generating millions of views consistently.
-        </h3>
-
-        {/* Stat cards - unfold from center */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 w-full max-w-4xl mb-16" style={{ perspective: '1000px' }}>
-          {stats.map((stat, i) => (
-            <div key={i} className="stat-card group px-5 py-6 rounded-xl relative overflow-hidden cursor-pointer" style={{
-              transformStyle: 'preserve-3d',
-              background: 'rgba(255,255,255,0.02)',
-              border: '1px solid rgba(255,255,255,0.06)',
-            }}>
-              {/* Top accent line */}
-              <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#00AEEF]/30 to-transparent" />
-              
-              <div className="text-2xl mb-3">{stat.icon}</div>
-              <div className="text-2xl md:text-3xl font-bold text-white mb-1 font-mono">{stat.value}</div>
-              <div className="text-[11px] text-white/30 font-mono tracking-wider uppercase">{stat.label}</div>
-              
-              {/* Hover glow */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: 'radial-gradient(circle at 50% 0%, rgba(0,174,239,0.08) 0%, transparent 70%)' }} />
+      <div className="relative z-10 h-full flex flex-col items-center justify-center px-6" style={{ transformStyle: 'preserve-3d' }}>
+        
+        {/* The 3D Metrics Block */}
+        <div className="metrics-block flex flex-col items-center" style={{ transformStyle: 'preserve-3d' }}>
+          
+          {/* Views Counter */}
+          <div className="flex items-baseline gap-4 md:gap-8 justify-center flex-wrap">
+            <div className="text-6xl md:text-[8rem] lg:text-[10rem] font-bold text-white tracking-tighter leading-none" style={{ textShadow: '0 10px 40px rgba(0,0,0,0.5)' }}>
+              {views.toLocaleString()}
             </div>
-          ))}
+            <div className="text-3xl md:text-5xl lg:text-7xl font-bold text-white/90">
+              views
+            </div>
+          </div>
+
+          {/* Separator Line */}
+          <div className="w-full max-w-3xl h-[2px] bg-white/20 my-8 shadow-[0_0_15px_rgba(255,255,255,0.3)]"></div>
+
+          {/* Engagement Metrics */}
+          <div className="flex gap-12 md:gap-24 items-center text-white/90 text-2xl md:text-4xl font-bold">
+            <div className="flex items-center gap-3 md:gap-4 drop-shadow-lg">
+              <ThumbsUp className="w-8 h-8 md:w-12 md:h-12" strokeWidth={2.5} />
+              <span>4,395</span>
+            </div>
+            <div className="flex items-center gap-3 md:gap-4 drop-shadow-lg">
+              <MessageSquare className="w-8 h-8 md:w-12 md:h-12" strokeWidth={2.5} />
+              <span>370</span>
+            </div>
+          </div>
+
         </div>
 
-        {/* Benefits ticker tape */}
-        <div className="w-full overflow-hidden relative">
-          <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#030305] to-transparent z-10" />
-          <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#030305] to-transparent z-10" />
-          <div className="benefits-track flex gap-8 whitespace-nowrap py-4">
-            {[...benefits, ...benefits].map((b, i) => (
-              <span key={i} className="flex items-center gap-3 text-sm text-white/30 font-mono tracking-wide">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00AEEF]/40" />
-                {b}
-              </span>
-            ))}
-          </div>
-        </div>
       </div>
 
       {/* Film frame overlay at edges */}
-      <div className="absolute top-0 left-0 right-0 h-8 z-20 pointer-events-none" style={{ background: 'linear-gradient(to bottom, #030305, transparent)' }} />
-      <div className="absolute bottom-0 left-0 right-0 h-8 z-20 pointer-events-none" style={{ background: 'linear-gradient(to top, #030305, transparent)' }} />
+      <div className="absolute top-0 left-0 right-0 h-16 z-20 pointer-events-none" style={{ background: 'linear-gradient(to bottom, #030305, transparent)' }} />
+      <div className="absolute bottom-0 left-0 right-0 h-16 z-20 pointer-events-none" style={{ background: 'linear-gradient(to top, #030305, transparent)' }} />
     </section>
   )
 }

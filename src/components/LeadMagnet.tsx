@@ -144,7 +144,7 @@ export default function LeadMagnet() {
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-mono font-bold transition-all duration-300 ${
                     i <= stepIndex ? 'bg-[#00AEEF]/20 text-[#00AEEF] border border-[#00AEEF]/30' : 'bg-white/5 text-white/20 border border-white/10'
                   }`}>
-                    {i < stepIndex ? '✓' : i + 1}
+                    {i < stepIndex ? <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg> : i + 1}
                   </div>
                   {i < allSteps.length - 1 && <div className={`w-8 h-[1px] transition-colors duration-300 ${i < stepIndex ? 'bg-[#00AEEF]/30' : 'bg-white/10'}`} />}
                 </div>

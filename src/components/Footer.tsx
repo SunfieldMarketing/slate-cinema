@@ -1,14 +1,16 @@
 'use client'
 
-import { useRef } from 'react'
+import React, { useRef } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
+import { Heart } from 'lucide-react'
 
 gsap.registerPlugin(ScrollTrigger)
 
 export default function Footer() {
   const footerRef = useRef<HTMLElement>(null)
+  const marqueeRef = useRef<HTMLDivElement>(null)
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -34,40 +36,56 @@ export default function Footer() {
         0.5
       )
 
-      // SMPTE color bars slide across
-      tl.fromTo('.smpte-bars',
-        { xPercent: -100 },
-        { xPercent: 0, ease: 'none', duration: 1 },
-        0
+      // Buttons stagger in
+      tl.fromTo('.footer-btn',
+        { scale: 0.8, opacity: 0 },
+        { scale: 1, opacity: 1, stagger: 0.2, duration: 0.5, ease: 'back.out(1.7)' },
+        0.4
       )
+
+      // Marquee animation
+      gsap.to('.marquee-content', {
+        xPercent: -50,
+        ease: 'none',
+        duration: 20,
+        repeat: -1
+      })
 
     }, footerRef)
     return () => ctx.revert()
   }, { scope: footerRef })
 
-  // 3D Magnetic hover for links
-  const handleLinkMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  // 3D Magnetic hover for elements
+  const handleMagneticMove = (e: React.MouseEvent<HTMLElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
     const x = e.clientX - rect.left - rect.width / 2
     const y = e.clientY - rect.top - rect.height / 2
     gsap.to(e.currentTarget, { x: x * 0.3, y: y * 0.3, rotateX: -y * 0.2, rotateY: x * 0.2, duration: 0.3 })
   }
-  const handleLinkLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleMagneticLeave = (e: React.MouseEvent<HTMLElement>) => {
     gsap.to(e.currentTarget, { x: 0, y: 0, rotateX: 0, rotateY: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' })
   }
+
+  const marqueeItems = [
+    "Cinematic Storytelling",
+    "High-End Production",
+    "Global Distribution",
+    "Cinematic Storytelling",
+    "High-End Production",
+    "Global Distribution"
+  ]
 
   return (
     <footer ref={footerRef} className="relative w-full bg-[#030305] pt-32 pb-12 overflow-hidden" style={{ perspective: '1000px' }}>
       
-      {/* SMPTE Color Bars Decoration (Cinematic callback) */}
-      <div className="absolute top-0 left-0 w-full h-1 overflow-hidden z-20">
-        <div className="smpte-bars w-[200%] h-full flex">
-          {['#C0C0C0', '#C0C000', '#00C0C0', '#00C000', '#C000C0', '#C00000', '#0000C0'].map((color, i) => (
-            <div key={i} className="flex-1 h-full" style={{ backgroundColor: color }} />
-          ))}
-          {/* Repeat for seamless slide */}
-          {['#C0C0C0', '#C0C000', '#00C0C0', '#00C000', '#C000C0', '#C00000', '#0000C0'].map((color, i) => (
-            <div key={`dup-${i}`} className="flex-1 h-full" style={{ backgroundColor: color }} />
+      {/* Marquee Section */}
+      <div className="w-full border-y border-white/10 py-6 mb-16 overflow-hidden flex whitespace-nowrap bg-[#00AEEF]/5" ref={marqueeRef}>
+        <div className="marquee-content flex gap-12 px-6 items-center w-max">
+          {marqueeItems.map((item, idx) => (
+            <div key={idx} className="flex items-center gap-12">
+              <span className="text-2xl md:text-4xl font-bold text-white tracking-wider">{item}</span>
+              <span className="text-[#00AEEF] text-2xl"><svg className="inline w-4 h-4" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0l2.5 5.5L16 8l-5.5 2.5L8 16l-2.5-5.5L0 8l5.5-2.5z"/></svg></span>
+            </div>
           ))}
         </div>
       </div>
@@ -76,8 +94,25 @@ export default function Footer() {
         
         <div className="w-full flex flex-col md:flex-row justify-between items-center border-b border-white/10 pb-16 mb-16 gap-8">
           <div className="text-center md:text-left">
-            <h3 className="text-2xl font-bold text-white mb-2">Ready to create?</h3>
-            <p className="text-white/40">info@slatecinema.com</p>
+            <h3 className="text-2xl font-bold text-white mb-6">Ready to create?</h3>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button 
+                onMouseMove={handleMagneticMove}
+                onMouseLeave={handleMagneticLeave}
+                className="footer-btn px-8 py-4 bg-[#00AEEF] text-[#030305] font-bold rounded-full hover:bg-white transition-colors"
+                style={{ transformStyle: 'preserve-3d' }}
+              >
+                Start Your Campaign
+              </button>
+              <button 
+                onMouseMove={handleMagneticMove}
+                onMouseLeave={handleMagneticLeave}
+                className="footer-btn px-8 py-4 bg-transparent border border-white/20 text-white font-bold rounded-full hover:bg-white/10 transition-colors"
+                style={{ transformStyle: 'preserve-3d' }}
+              >
+                Book a Consultation
+              </button>
+            </div>
           </div>
 
           <div className="flex gap-8">
@@ -85,8 +120,8 @@ export default function Footer() {
               <a
                 key={social}
                 href="#"
-                onMouseMove={handleLinkMove}
-                onMouseLeave={handleLinkLeave}
+                onMouseMove={handleMagneticMove}
+                onMouseLeave={handleMagneticLeave}
                 className="footer-link text-sm font-medium text-white/50 hover:text-[#00AEEF] transition-colors block"
                 style={{ transformStyle: 'preserve-3d' }}
               >
@@ -94,23 +129,24 @@ export default function Footer() {
               </a>
             ))}
           </div>
-
-          <div className="text-center md:text-right">
-            <p className="font-mono text-[10px] text-white/20 tracking-widest mb-2 uppercase">Headquarters</p>
-            <p className="text-white/40 text-sm">Los Angeles, CA<br/>Global Availability</p>
-          </div>
         </div>
 
         {/* Giant 3D Wordmark */}
         <div className="footer-wordmark w-full text-center overflow-hidden" style={{ transformStyle: 'preserve-3d' }}>
-          <span className="block text-[15vw] font-bold text-white leading-none tracking-tighter mix-blend-overlay opacity-80" style={{ textShadow: '0 20px 50px rgba(0,0,0,0.5)' }}>
-            SLATE CINEMA
+          <span className="block text-[20vw] font-bold text-white leading-none tracking-tighter mix-blend-overlay opacity-80" style={{ textShadow: '0 20px 50px rgba(0,0,0,0.5)' }}>
+            SLATE
           </span>
         </div>
 
-        <div className="w-full flex flex-col md:flex-row justify-between items-center mt-12 text-[10px] font-mono text-white/20 tracking-widest uppercase">
+        <div className="w-full flex flex-col md:flex-row justify-between items-center mt-12 text-[10px] font-mono text-white/20 tracking-widest uppercase gap-4">
           <p>© {new Date().getFullYear()} Slate Cinema</p>
-          <div className="flex gap-4 mt-4 md:mt-0">
+          
+          <div className="flex items-center gap-2">
+            Crafted with love by Slate Cinema 
+            <Heart size={12} className="text-[#00AEEF]" />
+          </div>
+
+          <div className="flex gap-4">
             <a href="#" className="hover:text-white transition-colors">Privacy</a>
             <a href="#" className="hover:text-white transition-colors">Terms</a>
             <a href="#" className="hover:text-[#00AEEF] transition-colors">Client Portal</a>

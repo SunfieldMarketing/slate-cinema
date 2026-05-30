@@ -79,14 +79,14 @@ export default function MediaVoid() {
         const parallaxRate = 0.15 + (i * 0.05)
         
         tl.fromTo(thumb,
-          { z: startZ, opacity: 0, rotateY: (i % 2 === 0 ? 30 : -30), rotateX: gsap.utils.random(-15, 15) },
-          { z: 0, opacity: 0.7, rotateY: 0, rotateX: 0, ease: 'none', duration: parallaxRate },
+          { z: startZ, opacity: 0, rotateY: (i % 2 === 0 ? 30 : -30), rotateX: gsap.utils.random(-15, 15), scale: 0.5 },
+          { z: 400, opacity: 1, rotateY: 0, rotateX: 0, scale: 1.5, ease: 'none', duration: parallaxRate },
           0.1 + (i * 0.08)
         )
 
         // Then they fly past camera
         tl.to(thumb,
-          { z: 1000, opacity: 0, ease: 'none', duration: 0.15 },
+          { z: 2500, opacity: 0, scale: 3, ease: 'none', duration: 0.15 },
           0.7 + (i * 0.03)
         )
       })
@@ -130,22 +130,27 @@ export default function MediaVoid() {
 
       {/* Floating media thumbnails at different depths */}
       <div className="absolute inset-0 z-0" style={{ transformStyle: 'preserve-3d' }}>
-        <div className="media-thumb absolute top-[10%] left-[5%] w-48 h-28 rounded-lg overflow-hidden border border-white/10" style={{ transformStyle: 'preserve-3d' }}>
-          <img src="/images/portfolio-production.png" alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-[#030305]/60" />
-        </div>
-        <div className="media-thumb absolute top-[60%] right-[8%] w-64 h-36 rounded-lg overflow-hidden border border-white/10" style={{ transformStyle: 'preserve-3d' }}>
-          <img src="/images/portfolio-brand.png" alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-[#030305]/60" />
-        </div>
-        <div className="media-thumb absolute top-[20%] right-[20%] w-36 h-48 rounded-lg overflow-hidden border border-white/10" style={{ transformStyle: 'preserve-3d' }}>
-          <img src="/images/portfolio-social.png" alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-[#030305]/60" />
-        </div>
-        <div className="media-thumb absolute bottom-[15%] left-[20%] w-56 h-32 rounded-lg overflow-hidden border border-white/10" style={{ transformStyle: 'preserve-3d' }}>
-          <img src="/images/portfolio-event.png" alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-[#030305]/60" />
-        </div>
+        {[
+          { src: '/images/portfolio-production.png', cls: 'top-[10%] left-[5%] w-48 h-28', title: 'Production Reel' },
+          { src: '/images/portfolio-brand.png', cls: 'top-[60%] right-[8%] w-64 h-36', title: 'Brand Campaign' },
+          { src: '/images/portfolio-social.png', cls: 'top-[20%] right-[20%] w-36 h-48', title: 'Social Series' },
+          { src: '/images/portfolio-event.png', cls: 'bottom-[15%] left-[20%] w-56 h-32', title: 'Event Coverage' },
+        ].map((item, i) => (
+          <div key={i} className={`media-thumb absolute ${item.cls} rounded-lg overflow-hidden border border-white/10 cursor-pointer group`} style={{ transformStyle: 'preserve-3d' }}>
+            <img src={item.src} alt={item.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+            <div className="absolute inset-0 bg-[#030305]/60 group-hover:bg-[#030305]/30 transition-colors duration-300" />
+            {/* Play button overlay */}
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center">
+                <svg className="w-5 h-5 text-white ml-0.5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+            </div>
+            {/* Title label */}
+            <div className="absolute bottom-2 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <span className="text-[10px] font-mono text-white/70 tracking-widest uppercase">{item.title}</span>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Main text content */}
