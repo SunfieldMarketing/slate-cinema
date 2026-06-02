@@ -118,22 +118,22 @@ export default function Hero() {
         },
       })
 
-      // A. Fade out HTML content slowly upon scroll to let the canvas pan underneath it
+      // A. Fade out HTML content quickly upon scroll so it doesn't linger
       scrollTl.to(
         '.hero-html-content',
-        { opacity: 0, ease: 'power2.inOut', duration: 0.4 },
+        { opacity: 0, ease: 'power2.inOut', duration: 0.1 },
         0
       )
       scrollTl.to(
         '.camera-ui',
-        { opacity: 0, ease: 'power2.inOut', duration: 0.4 },
+        { opacity: 0, ease: 'power2.inOut', duration: 0.1 },
         0
       )
 
       // B. Fade in the canvas container smoothly
       scrollTl.to(
         '.camera-canvas-container',
-        { opacity: 1, ease: 'power2.inOut', duration: 0.4 },
+        { opacity: 1, ease: 'power2.inOut', duration: 0.1 },
         0
       )
 

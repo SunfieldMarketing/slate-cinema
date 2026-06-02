@@ -8,6 +8,7 @@ import Pipeline from "@/components/Pipeline";
 import MediaVoid from "@/components/MediaVoid";
 import Results from "@/components/Results";
 import IndustryStandards from "@/components/IndustryStandards";
+import Reviews from "@/components/Reviews";
 import Portfolio from "@/components/Portfolio";
 import LogoOrbit from "@/components/LogoOrbit";
 import LeadMagnet from "@/components/LeadMagnet";
@@ -57,6 +58,7 @@ export default function Home() {
         <Results />
         <LogoOrbit />
         <IndustryStandards />
+        <Reviews />
         <Portfolio />
         <LeadMagnet />
         <CustomCalendar />

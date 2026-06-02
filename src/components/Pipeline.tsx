@@ -112,10 +112,14 @@ export default function Pipeline() {
             playsInline
             className="absolute top-1/2 left-1/2 min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 object-cover"
           />
-          {/* Deep cinematic gradient overlay to make text legible */}
-          <div className="absolute inset-0 bg-black/60 mix-blend-multiply" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/40" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)]" />
+          {/* Enhanced Cinematic Overlays */}
+          <div className="absolute inset-0 bg-[#030305]/60 mix-blend-multiply" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#030305] via-[#030305]/20 to-[#030305]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,rgba(3,3,5,0.9)_100%)]" />
+          
+          {/* Colored flares per step */}
+          <div className="absolute top-1/4 left-1/4 w-[40vw] h-[40vw] bg-[#00AEEF]/10 rounded-full blur-[100px] mix-blend-screen opacity-50 pointer-events-none animate-pulse duration-1000" />
+          <div className="absolute bottom-1/4 right-1/4 w-[50vw] h-[50vw] bg-blue-600/10 rounded-full blur-[120px] mix-blend-screen opacity-50 pointer-events-none" />
         </div>
       ))}
 

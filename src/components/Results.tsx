@@ -41,14 +41,14 @@ export default function Results() {
       }, 0)
 
       tl.to(likeCounter, {
-        val: 1435290,
+        val: 14352910,
         ease: 'none',
         duration: 0.6,
         onUpdate: () => setLikes(Math.floor(likeCounter.val))
       }, 0)
 
       tl.to(commentCounter, {
-        val: 85420,
+        val: 1670823,
         ease: 'none',
         duration: 0.6,
         onUpdate: () => setComments(Math.floor(commentCounter.val))
