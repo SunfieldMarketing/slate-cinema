@@ -414,32 +414,33 @@ export default function Pipeline() {
                 <div className="pipe-video-el flex-shrink-0 relative" style={{ order: isEven ? 2 : 1 }}>
 
                   {/* === Background decorative shape behind video === */}
-                  {/* Large rotated rectangle — glass shard / frame effect */}
+                  {/* Large background "shadow" frame — same angle, offset for depth */}
                   <div
                     className="pipe-bg-shape-1 absolute pointer-events-none"
                     style={{
-                      width: 'clamp(280px,34vw,440px)',
-                      height: 'clamp(340px,44vw,560px)',
+                      width: 'clamp(260px,30vw,400px)',
+                      height: 'clamp(320px,38vw,520px)',
                       top: '50%',
                       left: '50%',
-                      transform: `translate(-50%, -50%) rotate(${isEven ? '8deg' : '-8deg'})`,
-                      border: `1px solid ${step.color}30`,
-                      background: `linear-gradient(135deg, ${step.color}08 0%, transparent 60%)`,
-                      borderRadius: '2px',
+                      transform: `translate(calc(-50% + ${isEven ? '20px' : '-20px'}), calc(-50% + 30px)) rotate(${isEven ? '-2.5deg' : '2.5deg'}) skewX(-1.5deg)`,
+                      border: `1px solid ${step.color}40`,
+                      background: `linear-gradient(135deg, ${step.color}15 0%, transparent 80%)`,
+                      boxShadow: `0 30px 60px ${step.color}10`,
+                      borderRadius: '4px',
                       zIndex: 0,
                     }}
                   />
-                  {/* Second shape — smaller, tighter rotation, pure color outline */}
+                  {/* Second shape — tighter shadow, pure color outline */}
                   <div
                     className="pipe-bg-shape-2 absolute pointer-events-none"
                     style={{
-                      width: 'clamp(220px,26vw,340px)',
-                      height: 'clamp(260px,34vw,440px)',
+                      width: 'clamp(240px,28vw,380px)',
+                      height: 'clamp(300px,36vw,500px)',
                       top: '50%',
                       left: '50%',
-                      transform: `translate(-50%, -50%) rotate(${isEven ? '-4deg' : '4deg'})`,
-                      border: `1px solid ${step.color}18`,
-                      borderRadius: '2px',
+                      transform: `translate(calc(-50% + ${isEven ? '10px' : '-10px'}), calc(-50% + 15px)) rotate(${isEven ? '-2.5deg' : '2.5deg'}) skewX(-1.5deg)`,
+                      border: `1px solid ${step.color}25`,
+                      borderRadius: '4px',
                       zIndex: 0,
                     }}
                   />
