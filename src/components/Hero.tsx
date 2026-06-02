@@ -111,39 +111,39 @@ export default function Hero() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: '+=1500vh', // Increased distance for extremely smooth scrub
-          scrub: 1,     // Smoother scrub catching
+          end: '+=2000vh', // Increased distance for even slower, cinematic scrub
+          scrub: 1,
           pin: true,
           anticipatePin: 1,
         },
       })
 
-      // A. Fade out HTML content slowly upon scroll
+      // A. Fade out HTML content slowly upon scroll to let the canvas pan underneath it
       scrollTl.to(
         '.hero-html-content',
-        { opacity: 0, ease: 'power2.inOut', duration: 0.25 },
+        { opacity: 0, ease: 'power2.inOut', duration: 0.4 },
         0
       )
       scrollTl.to(
         '.camera-ui',
-        { opacity: 0, ease: 'power2.inOut', duration: 0.25 },
+        { opacity: 0, ease: 'power2.inOut', duration: 0.4 },
         0
       )
 
       // B. Fade in the canvas container smoothly
       scrollTl.to(
         '.camera-canvas-container',
-        { opacity: 1, ease: 'power2.inOut', duration: 0.25 },
+        { opacity: 1, ease: 'power2.inOut', duration: 0.4 },
         0
       )
 
-      // C. Frame sequence animation (spans the entire scroll distance)
+      // C. Frame sequence animation (spans the entire scroll distance, overlapping the fade)
       scrollTl.to(
         playhead,
         {
           frame: FRAME_COUNT - 1,
           snap: 'frame',
-          ease: 'power1.inOut', // adding ease instead of 'none' helps smooth start/end choppiness
+          ease: 'power1.inOut',
           duration: 1,
           onUpdate: () => renderFrame(playhead.frame),
         },

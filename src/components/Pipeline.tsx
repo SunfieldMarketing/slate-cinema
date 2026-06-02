@@ -4,7 +4,7 @@ import { useRef } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-import { ClipboardList, Clapperboard, Film, Radio } from 'lucide-react'
+import { PenTool, Video, Edit3, Send } from 'lucide-react'
 import clsx from 'clsx'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -14,138 +14,153 @@ const steps = [
     num: '01',
     title: 'Pre-Production',
     desc: 'We map the idea before the camera turns on. Concept development, campaign planning, scripting, shot lists, storyboards, brand direction, production scheduling.',
-    icon: ClipboardList,
+    icon: PenTool,
     videoSrc: '/videos/pre-production.mp4',
   },
   {
     num: '02',
     title: 'Production',
     desc: 'We capture visuals that feel intentional, premium, and built for attention. On-location shooting, lighting, directing, interviews, product shots, social-first content capture.',
-    icon: Clapperboard,
+    icon: Video,
     videoSrc: '/videos/production.mp4',
   },
   {
     num: '03',
     title: 'Post-Production',
     desc: 'We shape the story into content people actually finish watching. Editing, color grading, sound design, motion graphics, captions, VFX, platform-specific cuts.',
-    icon: Film,
+    icon: Edit3,
     videoSrc: '/videos/post-production.mp4',
   },
   {
     num: '04',
     title: 'Distribution',
     desc: 'We prepare the content for the platforms where attention actually happens. Social media versions, ad-ready exports, campaign deliverables, posting strategy, analytics review.',
-    icon: Radio,
+    icon: Send,
     videoSrc: '/videos/distribution.mp4',
-  },
+  }
 ]
 
 export default function Pipeline() {
   const containerRef = useRef<HTMLElement>(null)
 
   useGSAP(() => {
-    const ctx = gsap.context(() => {
-      const stepElements = gsap.utils.toArray<HTMLElement>('.step-item')
-      const videoElements = gsap.utils.toArray<HTMLElement>('.video-item')
-      const totalSteps = steps.length
+    if (!containerRef.current) return
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top top',
-          end: '+=1500vh',
-          pin: true,
-          scrub: 1,
-        }
-      })
+    const totalSteps = steps.length
+    
+    // Main scroll timeline
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: 'top top',
+        end: '+=4000vh', // Massive scroll distance for slow cinematic transitions
+        pin: true,
+        scrub: 1,
+        anticipatePin: 1,
+      }
+    })
 
-      const segSize = 1500 / totalSteps
+    // Text animations and video wipes
+    // Each step gets an equal fraction of the timeline
+    const stepDuration = 1 / totalSteps
 
-      stepElements.forEach((step, i) => {
-        if (i > 0) {
-          // Crossfade videos
-          tl.to(videoElements[i], { opacity: 1, duration: 1 }, i - 0.5)
-          tl.to(videoElements[i - 1], { opacity: 0, duration: 1 }, i - 0.5)
+    steps.forEach((step, i) => {
+      const startTime = i * stepDuration
+      
+      // The video wipe-in
+      if (i > 0) {
+        tl.fromTo(`.step-video-${i}`, 
+          { clipPath: 'circle(0% at 50% 50%)' },
+          { clipPath: 'circle(150% at 50% 50%)', ease: 'power2.inOut', duration: stepDuration * 0.4 },
+          startTime
+        )
+      }
 
-          // Dim previous step, highlight current step
-          tl.to(stepElements[i - 1], { opacity: 0.3, scale: 0.95, duration: 1 }, i - 0.5)
-          tl.to(stepElements[i], { opacity: 1, scale: 1, duration: 1 }, i - 0.5)
-        }
-      })
+      // The text fly-in and fade-out
+      tl.fromTo(`.step-text-${i}`,
+        { opacity: 0, scale: 0.8, y: 100, rotateX: 20 },
+        { opacity: 1, scale: 1, y: 0, rotateX: 0, ease: 'power3.out', duration: stepDuration * 0.3 },
+        startTime + (i > 0 ? stepDuration * 0.2 : 0) // Delay text until wipe is halfway
+      )
 
-    }, containerRef)
-    return () => ctx.revert()
+      // Fade out text if not the last step
+      if (i < totalSteps - 1) {
+        tl.to(`.step-text-${i}`,
+          { opacity: 0, scale: 1.1, y: -100, rotateX: -20, ease: 'power2.in', duration: stepDuration * 0.3 },
+          startTime + stepDuration * 0.7
+        )
+      }
+    })
+
   }, { scope: containerRef })
 
   return (
-    <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-hidden flex flex-col md:flex-row">
+    <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-hidden" style={{ perspective: '1200px' }}>
       
-      {/* Right Side - Videos (Background on mobile, right 50% on desktop) */}
-      <div className="absolute inset-0 md:left-[50%] w-full md:w-[50%] h-full z-0 overflow-hidden pointer-events-none">
-        
-        {/* Desktop Gradient overlay to blend left and right */}
-        <div className="absolute inset-0 z-10 hidden md:block bg-gradient-to-r from-[#030305] via-[#030305]/40 to-transparent w-full" />
-        
-        {/* Dark cinematic overlay for videos - opacity reduced to make videos more visible */}
-        <div className="absolute inset-0 z-10 bg-[#030305]/20 mix-blend-multiply" />
-        <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#030305] via-transparent to-[#030305] opacity-60" />
-
-        {steps.map((step, i) => (
-          <div 
-            key={i} 
-            className={clsx(
-              "video-item absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden",
-              i === 0 ? "opacity-100" : "opacity-0"
-            )}
-          >
-            <div className="absolute top-1/2 left-1/2 w-full h-full min-h-[100vh] min-w-[100vw] -translate-x-1/2 -translate-y-1/2">
-              <video
-                src={step.videoSrc}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="absolute top-0 left-0 w-full h-full object-cover"
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Left Side - Text Content (takes up 70% on desktop) */}
-      <div className="w-full md:w-[70%] h-full flex flex-col justify-center relative z-20 px-8 md:px-16 lg:px-24 pt-20 md:pt-0">
-        <div className="mb-10 md:mb-16">
-          <span className="font-mono text-sm md:text-base text-[#00AEEF] tracking-[0.4em] uppercase block mb-4">// Production Pipeline</span>
-          <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight">How It Works</h2>
+      {/* Background Videos Stacked */}
+      {steps.map((step, i) => (
+        <div 
+          key={`video-${i}`}
+          className={`step-video-${i} absolute inset-0 w-full h-full z-0 overflow-hidden`}
+          style={{ zIndex: i }}
+        >
+          <video
+            src={step.videoSrc}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute top-1/2 left-1/2 min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 object-cover"
+          />
+          {/* Deep cinematic gradient overlay to make text legible */}
+          <div className="absolute inset-0 bg-black/60 mix-blend-multiply" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/40" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)]" />
         </div>
+      ))}
+
+      {/* Floating Centered Text Content */}
+      <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none" style={{ transformStyle: 'preserve-3d' }}>
         
-        <div className="flex flex-col gap-8 md:gap-10">
-          {steps.map((step, i) => {
-            const Icon = step.icon
-            return (
-              <div 
-                key={i} 
-                className={clsx(
-                  "step-item flex items-start gap-4 md:gap-6 transform origin-left transition-all duration-300",
-                  i === 0 ? "opacity-100 scale-100" : "opacity-30 scale-95"
-                )}
-              >
-                <div className="flex-shrink-0 w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[#00AEEF]">
-                  <Icon strokeWidth={1.5} className="w-6 h-6 md:w-8 md:h-8" />
-                </div>
-                <div>
-                  <div className="font-mono text-xs text-[#00AEEF] tracking-[0.2em] mb-1 md:mb-2">STEP {step.num}</div>
-                  <h3 className="text-2xl md:text-4xl font-bold text-white mb-3 md:mb-4">{step.title}</h3>
-                  <p className="text-white/60 text-base md:text-xl leading-relaxed max-w-2xl">
-                    {step.desc}
-                  </p>
-                </div>
+        {/* Section Header (Fixed at top) */}
+        <div className="absolute top-12 md:top-24 left-0 right-0 text-center z-30 px-6">
+          <span className="font-mono text-sm md:text-base text-[#00AEEF] tracking-[0.4em] uppercase block mb-4 filter drop-shadow-[0_0_8px_rgba(0,174,239,0.8)]">
+            // Production Pipeline
+          </span>
+          <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tight drop-shadow-xl">
+            How It Works
+          </h2>
+        </div>
+
+        {/* Dynamic Step Text */}
+        {steps.map((step, i) => {
+          const Icon = step.icon
+          return (
+            <div 
+              key={`text-${i}`}
+              className={`step-text-${i} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl px-6 flex flex-col items-center text-center`}
+              style={{ opacity: 0 }} // Initial state for GSAP
+            >
+              <div className="w-20 h-20 md:w-28 md:h-28 rounded-full bg-black/30 backdrop-blur-md border border-white/20 flex items-center justify-center text-[#00AEEF] mb-8 shadow-[0_0_40px_rgba(0,174,239,0.3)]">
+                <Icon strokeWidth={1.5} className="w-10 h-10 md:w-14 md:h-14" />
               </div>
-            )
-          })}
-        </div>
+              
+              <div className="font-mono text-lg md:text-xl text-[#00AEEF] tracking-[0.3em] mb-4 drop-shadow-[0_0_8px_rgba(0,174,239,0.8)]">
+                STEP {step.num}
+              </div>
+              
+              <h3 className="text-5xl md:text-8xl font-bold text-white mb-6 md:mb-8 tracking-tighter drop-shadow-2xl">
+                {step.title}
+              </h3>
+              
+              <p className="text-white/80 text-xl md:text-3xl leading-relaxed max-w-3xl font-light drop-shadow-lg">
+                {step.desc}
+              </p>
+            </div>
+          )
+        })}
+
       </div>
-      
     </section>
   )
 }
