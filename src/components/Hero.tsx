@@ -130,9 +130,9 @@ export default function Hero() {
         0
       )
 
-      // B. Keep canvas opaque during the frame sequence
+      // B. Fade in the canvas container
       scrollTl.to(
-        canvasRef.current,
+        '.camera-canvas-container',
         { opacity: 1, ease: 'power2.inOut', duration: 0.1 },
         0
       )
@@ -151,9 +151,8 @@ export default function Hero() {
       )
 
       // D. Crossfade transition into the next section
-      // At the very end of the sequence, fade out the canvas so the next section flows in smoothly
       scrollTl.to(
-        canvasRef.current,
+        '.camera-canvas-container',
         { opacity: 0, ease: 'power2.inOut', duration: 0.1 },
         0.9 // Start fading out at 90% of the scroll timeline
       )
