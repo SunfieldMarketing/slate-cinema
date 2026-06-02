@@ -7,41 +7,16 @@ import { CircularGallery, GalleryItem } from '@/components/ui/circular-gallery'
 // Added realistic metrics for the external display
 const galleryData: GalleryItem[] = [
   {
-    title: 'High-End Production',
+    title: 'Neon Nights',
     category: 'Commercial',
+    company: 'HyperDrive Motors',
+    typeOfWork: 'Product Launch Campaign',
     photo: {
-      url: '/images/portfolio-production.png', // Or fallback to: 'https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?q=80&w=1000'
-      text: 'Professional camera setup on set',
+      url: '/images/portfolio-brand.png',
+      text: 'Brand shoot',
     },
     metrics: [
       { label: 'Views', value: '4.2M' },
-      { label: 'Conv. Rate', value: '+34%' }
-    ]
-  },
-  {
-    title: 'Social Storytelling',
-    category: 'Social Media',
-    photo: {
-      url: '/images/portfolio-social.png', // Or fallback to: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000'
-      text: 'Vertical social media content creation',
-    },
-    metrics: [
-      { label: 'Reach', value: '12.1M' },
-      { label: 'Engagement', value: '18.5%' }
-    ]
-  },
-  {
-    title: 'Brand Identity',
-    category: 'Branding',
-    photo: {
-      url: '/images/portfolio-brand.png', // Or fallback to: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=1000'
-      text: 'Cinematic brand lifestyle shot',
-    },
-    metrics: [
-      { label: 'Brand Lift', value: '+45%' },
-      { label: 'Watch Time', value: '1:45' }
-    ]
-  },
   {
     title: 'Live Events',
     category: 'Event Coverage',

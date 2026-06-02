@@ -59,19 +59,30 @@ const carouselTestimonials = [
 ]
 
 // Spread out to the edges (5-15% margins) AND add a few near the center text
+// Spread out to the edges (5-15% margins) AND add a few near the center text
 const imagePositions = [
-  { top: '15%', left: '5%', className: 'hidden lg:block w-28 h-28 z-20', delay: '0s', duration: '5s' },
-  { top: '25%', left: '15%', className: 'hidden md:block w-20 h-20 z-10', delay: '1s', duration: '6s' },
-  { top: '45%', left: '22%', className: 'hidden md:block w-16 h-16 z-30', delay: '2s', duration: '4.5s' }, // Near center left
-  { top: '12%', right: '8%', className: 'hidden lg:block w-24 h-24 z-20', delay: '0.5s', duration: '5.5s' },
-  { top: '35%', right: '15%', className: 'hidden md:block w-20 h-20 z-10', delay: '1.5s', duration: '6.5s' },
-  { top: '55%', right: '5%', className: 'hidden lg:block w-32 h-32 z-20', delay: '2.5s', duration: '7s' },
-  { top: '50%', right: '28%', className: 'hidden md:block w-16 h-16 z-30', delay: '0.8s', duration: '5s' }, // Near center right
+  { top: '5%', left: '5%', className: 'hidden lg:block w-24 h-24 z-20', delay: '0s', duration: '5s' },
+  { top: '15%', left: '20%', className: 'hidden md:block w-20 h-20 z-10', delay: '1s', duration: '6s' },
+  { top: '25%', left: '10%', className: 'hidden lg:block w-16 h-16 z-30', delay: '2s', duration: '4.5s' }, 
+  { top: '10%', right: '15%', className: 'hidden lg:block w-24 h-24 z-20', delay: '0.5s', duration: '5.5s' },
+  { top: '25%', right: '5%', className: 'hidden md:block w-20 h-20 z-10', delay: '1.5s', duration: '6.5s' },
+  { top: '45%', right: '10%', className: 'hidden lg:block w-28 h-28 z-20', delay: '2.5s', duration: '7s' },
+  { top: '50%', right: '28%', className: 'hidden md:block w-16 h-16 z-30', delay: '0.8s', duration: '5s' }, 
   { bottom: '15%', left: '20%', className: 'hidden lg:block w-20 h-20 z-10', delay: '1.2s', duration: '4.8s' },
   { bottom: '25%', left: '35%', className: 'hidden md:block w-16 h-16 z-20', delay: '2.2s', duration: '5.8s' },
   { bottom: '20%', right: '25%', className: 'hidden md:block w-24 h-24 z-20', delay: '0.8s', duration: '6.2s' },
   { bottom: '10%', right: '10%', className: 'hidden lg:block w-24 h-24 z-10', delay: '1.8s', duration: '5.3s' },
   
+  // Extra elements placed above and below the center text
+  { top: '12%', left: '40%', className: 'hidden lg:block w-16 h-16 z-20', delay: '0.3s', duration: '4.2s' },
+  { top: '18%', left: '60%', className: 'hidden md:block w-20 h-20 z-10', delay: '1.7s', duration: '5.1s' },
+  { bottom: '10%', left: '45%', className: 'hidden lg:block w-20 h-20 z-20', delay: '1.1s', duration: '6.1s' },
+  { bottom: '18%', left: '65%', className: 'hidden md:block w-16 h-16 z-10', delay: '2.1s', duration: '4.9s' },
+  { top: '40%', left: '15%', className: 'hidden lg:block w-20 h-20 z-20', delay: '0.7s', duration: '5.7s' },
+  { bottom: '40%', right: '15%', className: 'hidden md:block w-16 h-16 z-10', delay: '1.4s', duration: '6.3s' },
+  { top: '5%', right: '45%', className: 'hidden lg:block w-16 h-16 z-30', delay: '0.2s', duration: '5.4s' },
+  { bottom: '5%', right: '40%', className: 'hidden md:block w-24 h-24 z-20', delay: '1.9s', duration: '6.7s' },
+
   // Mobile fallback tighter positions
   { top: '10%', left: '5%', className: 'block md:hidden w-16 h-16 z-10', delay: '0s', duration: '5s' },
   { top: '12%', right: '5%', className: 'block md:hidden w-20 h-20 z-10', delay: '1s', duration: '6s' },
@@ -169,8 +180,8 @@ export default function Reviews() {
           
           {/* Floating Images Container */}
           <div className="review-grid-images absolute inset-0 pointer-events-none w-full h-full">
-            {gridTestimonials.slice(0, imagePositions.length).map((testimonial, index) => {
-              const pos = imagePositions[index]
+            {imagePositions.map((pos, index) => {
+              const testimonial = gridTestimonials[index % gridTestimonials.length]
               return (
                 <div
                   key={index}

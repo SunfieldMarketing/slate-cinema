@@ -8,6 +8,8 @@ const cn = (...classes: (string | undefined | null | false)[]) => {
 export interface GalleryItem {
   title: string;
   category: string;
+  company?: string;
+  typeOfWork?: string;
   photo: {
     url: string; 
     text: string;
@@ -90,17 +92,19 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
     // Drag handlers
     const handlePointerDown = (e: React.PointerEvent) => {
       if (activeIndex !== null) return;
-      setIsDragging(true);
       dragStartX.current = e.clientX;
       dragStartRotation.current = rotation;
       e.currentTarget.setPointerCapture(e.pointerId);
     };
 
     const handlePointerMove = (e: React.PointerEvent) => {
-      if (!isDragging) return;
+      if (activeIndex !== null) return;
       const deltaX = e.clientX - dragStartX.current;
-      // Convert pixel movement to rotation degrees
-      setRotation(dragStartRotation.current + deltaX * 0.2); 
+      if (Math.abs(deltaX) > 5) {
+        setIsDragging(true);
+        // Convert pixel movement to rotation degrees
+        setRotation(dragStartRotation.current + deltaX * 0.2); 
+      }
     };
 
     const handlePointerUp = (e: React.PointerEvent) => {
@@ -205,8 +209,14 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
                       <h2 className="text-xl font-bold tracking-tight mb-2 drop-shadow-md">{item.title}</h2>
                       
                       {/* Sub-description that only appears when active */}
-                      <div className={cn("overflow-hidden transition-all duration-500", isActive ? "max-h-40 opacity-100" : "max-h-0 opacity-0")}>
-                         <p className="text-[10px] text-white/90 leading-relaxed font-light mt-2 drop-shadow-sm">
+                      <div className={cn("overflow-hidden transition-all duration-500 flex flex-col gap-2", isActive ? "max-h-40 opacity-100" : "max-h-0 opacity-0")}>
+                         {item.company && (
+                           <p className="text-xs text-white/80"><strong className="text-white">Company:</strong> {item.company}</p>
+                         )}
+                         {item.typeOfWork && (
+                           <p className="text-xs text-white/80"><strong className="text-white">Type of Work:</strong> {item.typeOfWork}</p>
+                         )}
+                         <p className="text-[10px] text-white/90 leading-relaxed font-light mt-1 drop-shadow-sm">
                             A highly curated premium project demonstrating our unwavering standard in {item.category.toLowerCase()}. Execution is everything.
                          </p>
                       </div>

@@ -148,7 +148,7 @@ export default function IndustryStandards() {
             DOMINATE YOUR MARKET
           </h2>
           
-          <p className="text-white/80 max-w-full w-full text-base sm:text-lg md:text-[2vw] font-light leading-relaxed mb-12 px-4 shadow-black drop-shadow-md whitespace-nowrap overflow-hidden text-ellipsis text-center">
+          <p className="text-white/80 w-full max-w-4xl text-base sm:text-lg md:text-xl lg:text-2xl font-light leading-relaxed mb-12 px-4 shadow-black drop-shadow-md text-center">
             The result is scalable, predictable growth. We turn passive viewers into active communities, and organic reach into tangible ROI.
           </p>
           

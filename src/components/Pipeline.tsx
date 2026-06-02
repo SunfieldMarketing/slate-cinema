@@ -14,7 +14,7 @@ const steps = [
     title: 'Pre-Production',
     desc: 'Concept development, campaign planning, scripting, shot lists, storyboards.',
     icon: PenTool,
-    videoSrc: '/videos/pre-production.mp4',
+    videoSrc: 'https://videos.pexels.com/video-files/3660469/3660469-uhd_3840_2160_25fps.mp4',
     color: 'from-blue-500/10 to-cyan-400/5',
   },
   {
@@ -22,7 +22,7 @@ const steps = [
     title: 'Production',
     desc: 'On-location shooting, lighting, directing, interviews, social-first content capture.',
     icon: Video,
-    videoSrc: '/videos/production.mp4',
+    videoSrc: 'https://videos.pexels.com/video-files/8089117/8089117-uhd_3840_2160_25fps.mp4',
     color: 'from-purple-500/10 to-pink-500/5',
   },
   {
@@ -180,6 +180,9 @@ export default function Pipeline() {
                   
                   {/* Left Side: Number & Title */}
                   <div className="flex flex-col text-left drop-shadow-[0_20px_30px_rgba(0,0,0,1)]">
+                    <span className="font-mono text-xs tracking-[0.5em] text-[#00AEEF] uppercase mb-4 opacity-80">
+                      // How It Works
+                    </span>
                     <span className="font-mono text-6xl md:text-[10rem] font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white/90 to-transparent leading-none">
                       {step.num}
                     </span>

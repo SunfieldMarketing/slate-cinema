@@ -12,6 +12,7 @@ import Reviews from "@/components/Reviews";
 import Portfolio from "@/components/Portfolio";
 import LeadMagnet from "@/components/LeadMagnet";
 import CustomCalendar from "@/components/CustomCalendar";
+import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
 
 // We'll keep the Scene3DWrapper as a background element only
@@ -60,6 +61,7 @@ export default function Home() {
         <Portfolio />
         <LeadMagnet />
         <CustomCalendar />
+        <FinalCTA />
         <Footer />
       </div>
     </main>
