@@ -190,6 +190,83 @@ export default function Pipeline() {
       gsap.set(`.pipe-step-${i}`, { opacity: 0, x: 80 })
     })
   }, [])
+  // ── Mouse-tracked parallax + continuous ambient motion ────────────
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    // Smooth mouse position tracker
+    let mouseX = 0, mouseY = 0
+    let curX = 0, curY = 0
+    let rafId: number
+
+    const onMouseMove = (e: MouseEvent) => {
+      const rect = section.getBoundingClientRect()
+      if (rect.top > 2 || rect.bottom < window.innerHeight - 2) return
+      // Normalize -1..1 relative to section center
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2
+      mouseY = (e.clientY / window.innerHeight - 0.5) * 2
+    }
+
+    const tick = () => {
+      // Smooth lerp toward actual mouse position
+      curX += (mouseX - curX) * 0.055
+      curY += (mouseY - curY) * 0.055
+
+      // Parallax the video wrapper: moves opposite to mouse for depth
+      gsap.set('.pipe-video-el', {
+        x: curX * -18,
+        y: curY * -10,
+        rotateY: curX * 4,
+        rotateX: curY * -3,
+      })
+
+      // Parallax the text panel: moves slightly with mouse
+      gsap.set('.pipe-text-panel', {
+        x: curX * 8,
+        y: curY * 5,
+      })
+
+      // Move ambient orbs based on mouse
+      gsap.set('.pipe-orb-1', { x: curX * 40, y: curY * 30 })
+      gsap.set('.pipe-orb-2', { x: curX * -30, y: curY * -20 })
+      gsap.set('.pipe-orb-3', { x: curX * 60, y: curY * -40 })
+
+      rafId = requestAnimationFrame(tick)
+    }
+
+    rafId = requestAnimationFrame(tick)
+    window.addEventListener('mousemove', onMouseMove)
+
+    // Continuous floating animation on bg shapes
+    gsap.to('.pipe-bg-shape-1', {
+      y: '+=20', rotate: '+=3',
+      duration: 6, ease: 'sine.inOut', repeat: -1, yoyo: true,
+    })
+    gsap.to('.pipe-bg-shape-2', {
+      y: '-=25', x: '+=15', rotate: '-=4',
+      duration: 8, ease: 'sine.inOut', repeat: -1, yoyo: true,
+    })
+    gsap.to('.pipe-bg-shape-3', {
+      y: '+=30', x: '-=20', rotate: '+=6',
+      duration: 10, ease: 'sine.inOut', repeat: -1, yoyo: true,
+    })
+    gsap.to('.pipe-bg-shape-4', {
+      y: '-=18', rotate: '-=5',
+      duration: 7, ease: 'sine.inOut', repeat: -1, yoyo: true,
+    })
+
+    // Slow continuous pulse on corner dots
+    gsap.to('.pipe-corner-dot', {
+      scale: 1.5, opacity: 0.8,
+      duration: 2.5, ease: 'sine.inOut', repeat: -1, yoyo: true, stagger: 0.4,
+    })
+
+    return () => {
+      cancelAnimationFrame(rafId)
+      window.removeEventListener('mousemove', onMouseMove)
+    }
+  }, [])
 
   return (
     // Tall wrapper to provide scroll real-estate for the sticky section
@@ -221,6 +298,11 @@ export default function Pipeline() {
           style={{ background: 'linear-gradient(to bottom,transparent,rgba(255,255,255,0.9),transparent)', transform: 'rotate(-15deg)' }} />
         <div className="absolute -top-40 right-1/4 w-px h-[140vh] opacity-[0.05] pointer-events-none z-0"
           style={{ background: 'linear-gradient(to bottom,transparent,rgba(255,255,255,0.7),transparent)', transform: 'rotate(15deg)' }} />
+
+        {/* Floating Ambient Orbs (Mouse Parallax) */}
+        <div className="pipe-orb-1 absolute top-1/4 left-1/4 w-96 h-96 bg-[#00AEEF] rounded-full mix-blend-screen filter blur-[120px] opacity-10 pointer-events-none z-0" />
+        <div className="pipe-orb-2 absolute top-1/2 right-1/4 w-[28rem] h-[28rem] bg-[#a855f7] rounded-full mix-blend-screen filter blur-[140px] opacity-[0.08] pointer-events-none z-0" />
+        <div className="pipe-orb-3 absolute bottom-1/4 left-1/3 w-80 h-80 bg-[#10b981] rounded-full mix-blend-screen filter blur-[100px] opacity-[0.12] pointer-events-none z-0" />
 
         {/* Per-step ambient glows */}
         {steps.map((step, i) => (
@@ -262,7 +344,7 @@ export default function Pipeline() {
               <div className="w-full max-w-6xl flex flex-col md:flex-row items-center justify-between gap-12 md:gap-20">
 
                 {/* ── Text Side ───────────────────── */}
-                <div className="flex flex-col items-start flex-1 min-w-0"
+                <div className="pipe-text-panel flex flex-col items-start flex-1 min-w-0"
                   style={{ order: isEven ? 1 : 2, textAlign: 'left' }}>
 
                   {/* Number */}
@@ -334,7 +416,7 @@ export default function Pipeline() {
                   {/* === Background decorative shape behind video === */}
                   {/* Large rotated rectangle — glass shard / frame effect */}
                   <div
-                    className="absolute pointer-events-none"
+                    className="pipe-bg-shape-1 absolute pointer-events-none"
                     style={{
                       width: 'clamp(280px,34vw,440px)',
                       height: 'clamp(340px,44vw,560px)',
@@ -349,7 +431,7 @@ export default function Pipeline() {
                   />
                   {/* Second shape — smaller, tighter rotation, pure color outline */}
                   <div
-                    className="absolute pointer-events-none"
+                    className="pipe-bg-shape-2 absolute pointer-events-none"
                     style={{
                       width: 'clamp(220px,26vw,340px)',
                       height: 'clamp(260px,34vw,440px)',
@@ -363,7 +445,7 @@ export default function Pipeline() {
                   />
                   {/* Corner accent dots */}
                   {[[-1,-1],[1,-1],[1,1],[-1,1]].map(([dx,dy], ci) => (
-                    <div key={ci} className="absolute w-1.5 h-1.5 rounded-full pointer-events-none"
+                    <div key={ci} className="pipe-corner-dot absolute w-1.5 h-1.5 rounded-full pointer-events-none"
                       style={{
                         backgroundColor: step.color,
                         opacity: 0.5,
