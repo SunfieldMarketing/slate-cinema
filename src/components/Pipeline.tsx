@@ -15,8 +15,7 @@ const steps = [
     desc: 'We map the idea before the camera turns on. Concept development, campaign planning, scripting, shot lists, storyboards, brand direction, production scheduling.',
     icon: PenTool,
     videoSrc: '/videos/pre-production.mp4',
-    color: 'from-blue-500 to-cyan-400',
-    orbColor: 'rgba(6,182,212,0.8)',
+    color: 'from-blue-500/20 to-cyan-400/5',
   },
   {
     num: '02',
@@ -24,8 +23,7 @@ const steps = [
     desc: 'We capture visuals that feel intentional, premium, and built for attention. On-location shooting, lighting, directing, interviews, product shots, social-first content capture.',
     icon: Video,
     videoSrc: '/videos/production.mp4',
-    color: 'from-purple-500 to-pink-500',
-    orbColor: 'rgba(236,72,153,0.8)',
+    color: 'from-purple-500/20 to-pink-500/5',
   },
   {
     num: '03',
@@ -33,8 +31,7 @@ const steps = [
     desc: 'We shape the story into content people actually finish watching. Editing, color grading, sound design, motion graphics, captions, VFX, platform-specific cuts.',
     icon: Edit3,
     videoSrc: '/videos/post-production.mp4',
-    color: 'from-emerald-500 to-teal-400',
-    orbColor: 'rgba(16,185,129,0.8)',
+    color: 'from-emerald-500/20 to-teal-400/5',
   },
   {
     num: '04',
@@ -42,8 +39,7 @@ const steps = [
     desc: 'We prepare the content for the platforms where attention actually happens. Social media versions, ad-ready exports, campaign deliverables, posting strategy, analytics review.',
     icon: Send,
     videoSrc: '/videos/distribution.mp4',
-    color: 'from-orange-500 to-red-500',
-    orbColor: 'rgba(239,68,68,0.8)',
+    color: 'from-orange-500/20 to-red-500/5',
   }
 ]
 
@@ -57,77 +53,70 @@ export default function Pipeline() {
       scrollTrigger: {
         trigger: containerRef.current,
         start: 'top top',
-        end: '+=400%',
+        end: '+=400%', // 4 panels, so 400% scroll distance
         pin: true,
         scrub: 1,
         anticipatePin: 1,
       }
     })
 
-    // Initial state: Orb is small and floating. Text is hidden.
-    
+    // Setup initial positions deep in the Z-axis
+    gsap.set('.tunnel-panel', { z: -4000, opacity: 0, scale: 0.2 })
+
     steps.forEach((step, index) => {
-      // 1. Orb scales up violently to cover the container (Shatter/Expand)
-      tl.to(`.liquid-orb`, {
-        scale: 25, // Massive scale to cover the screen
-        backgroundColor: step.orbColor,
-        duration: 0.5,
-        ease: 'power3.in'
-      })
-      
-      // 2. Fade in the video and content for this step
-      tl.to(`.step-${index}-content`, {
+      // 1. Fly from deep space (-4000) to the center (0)
+      tl.to(`.panel-${index}`, {
+        z: 0,
         opacity: 1,
         scale: 1,
-        duration: 0.5,
-        ease: 'power2.out'
-      }, '<0.2') // Start fading in right before orb finishes expanding
+        ease: 'power2.inOut',
+        duration: 1
+      })
 
-      // 3. Hold the step on screen for a bit
-      tl.to({}, { duration: 1 })
+      // 2. Pause/hold perfectly in the center so the user can read it
+      tl.to(`.panel-${index}`, {
+        z: 100, // Move very slightly forward during the pause for parallax
+        ease: 'none',
+        duration: 0.5
+      })
 
-      // 4. Shrink back if not the last step
-      if (index !== steps.length - 1) {
-        tl.to(`.step-${index}-content`, {
-          opacity: 0,
-          scale: 0.8,
-          duration: 0.4,
-          ease: 'power2.in'
-        })
-        tl.to(`.liquid-orb`, {
-          scale: 1, // Shrink back to orb
-          duration: 0.6,
-          ease: 'power3.out'
-        }, '<')
-      }
+      // 3. Fly past the camera and disappear
+      tl.to(`.panel-${index}`, {
+        z: 1500, // Move past the screen
+        opacity: 0,
+        scale: 1.5,
+        ease: 'power2.in',
+        duration: 0.8
+      })
     })
+
+    // Background tunnel motion
+    tl.to('.tunnel-grid', {
+      backgroundPosition: '0px 1000px',
+      ease: 'none',
+      duration: tl.totalDuration()
+    }, 0)
 
   }, { scope: containerRef })
 
   return (
-    <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-hidden flex items-center justify-center">
+    <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-hidden flex items-center justify-center perspective-[1500px]">
       
-      {/* CSS Keyframes for the Liquid Morphing Orb Effect */}
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes liquid-morph {
-          0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-          50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
-          100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-        }
-      `}} />
+      {/* Infinite Space Background */}
+      <div className="absolute inset-0 bg-[#030305] z-0" />
+      
+      {/* Dynamic Tunnel Grid */}
+      <div className="tunnel-grid absolute inset-0 z-0 opacity-20 pointer-events-none" style={{
+        backgroundImage: `
+          linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px)
+        `,
+        backgroundSize: '100px 100px',
+        transform: 'rotateX(60deg) scale(3) translateY(-20%)',
+        transformOrigin: 'top center'
+      }} />
 
-      {/* SVG filter to give the DOM a "gooey" liquid look when expanding */}
-      <svg className="hidden">
-        <defs>
-          <filter id="gooey">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="gooey" />
-            <feBlend in="SourceGraphic" in2="gooey" />
-          </filter>
-        </defs>
-      </svg>
-
-      {/* Header outside */}
+      {/* Header outside of the 3D space */}
       <div className="absolute top-12 md:top-20 w-full text-center z-50 pointer-events-none">
         <span className="font-mono text-sm text-[#00AEEF] tracking-[0.4em] uppercase block mb-2 filter drop-shadow-[0_0_8px_rgba(0,174,239,0.8)]">
           // Production Pipeline
@@ -137,73 +126,58 @@ export default function Pipeline() {
         </h2>
       </div>
 
-      {/* Liquid Orb Container - uses the gooey filter */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10" style={{ filter: 'url(#gooey)' }}>
-        <div 
-          className="liquid-orb w-32 h-32 md:w-48 md:h-48 shadow-[0_0_60px_rgba(255,255,255,0.4)] mix-blend-screen"
-          style={{ 
-            backgroundColor: steps[0].orbColor,
-            animation: 'liquid-morph 8s ease-in-out infinite',
-            transformOrigin: 'center center'
-          }}
-        />
-      </div>
-
-      {/* Steps Content Overlay */}
-      <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+      {/* Z-Axis Container */}
+      <div className="relative w-full h-full flex items-center justify-center transform-style-3d pointer-events-none">
+        
         {steps.map((step, i) => {
           const Icon = step.icon
           return (
             <div 
               key={i} 
-              className={`step-${i}-content absolute inset-0 w-full h-full opacity-0 scale-110 flex flex-col md:flex-row`}
+              className={`tunnel-panel panel-${i} absolute w-[90%] md:w-[80vw] lg:w-[70vw] max-w-6xl aspect-[4/3] md:aspect-[16/9] flex flex-col md:flex-row rounded-3xl overflow-hidden border border-white/10 bg-black/40 backdrop-blur-2xl shadow-[0_0_100px_rgba(0,0,0,0.8)] will-change-transform`}
             >
               
+              {/* Colored Glow overlay inside the panel */}
+              <div className={`absolute inset-0 bg-gradient-to-br ${step.color} z-0`} />
+
               {/* Left Side: Video */}
-              <div className="relative w-full h-1/2 md:h-full md:w-1/2 overflow-hidden">
+              <div className="relative w-full h-1/2 md:h-full md:w-1/2 overflow-hidden z-10 border-b md:border-b-0 md:border-r border-white/10">
                 <video
                   src={step.videoSrc}
                   autoPlay
                   loop
                   muted
                   playsInline
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full object-cover opacity-80"
                 />
-                <div className={`absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#030305] to-transparent opacity-80`} />
+                <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/80 to-transparent" />
               </div>
 
-              {/* Right Side: Text & Typography */}
-              <div className="relative w-full h-1/2 md:h-full md:w-1/2 p-8 md:p-16 lg:p-24 flex flex-col justify-center bg-[#030305]">
+              {/* Right Side: Text */}
+              <div className="relative w-full h-1/2 md:h-full md:w-1/2 p-6 md:p-12 lg:p-16 flex flex-col justify-center z-10 text-white">
                 
-                {/* Background ambient color for this step */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${step.color} opacity-5 blur-[100px]`} />
-
-                <div className="relative z-10">
-                  <div className="flex items-center gap-6 mb-8">
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/5 border border-white/20 backdrop-blur-xl flex items-center justify-center text-white shadow-[0_0_30px_rgba(255,255,255,0.1)]">
-                      <Icon strokeWidth={1.5} className="w-8 h-8 md:w-10 md:h-10" />
-                    </div>
-                    <span className="font-mono text-5xl md:text-7xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white/80 to-transparent">
-                      {step.num}
-                    </span>
+                <div className="flex items-center gap-4 md:gap-6 mb-6">
+                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-xl flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.05)]">
+                    <Icon strokeWidth={1.5} className="w-6 h-6 md:w-8 md:h-8 text-white" />
                   </div>
-                  
-                  <h3 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 tracking-tighter leading-none">
-                    {step.title}
-                  </h3>
-                  
-                  <p className="text-white/60 text-lg md:text-xl lg:text-2xl leading-relaxed font-light max-w-xl">
-                    {step.desc}
-                  </p>
-
-                  {/* Aesthetic Line */}
-                  <div className="w-full h-px bg-gradient-to-r from-white/20 to-transparent mt-12" />
+                  <span className="font-mono text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/20">
+                    {step.num}
+                  </span>
                 </div>
-              </div>
+                
+                <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 tracking-tighter leading-none">
+                  {step.title}
+                </h3>
+                
+                <p className="text-white/60 text-base md:text-lg lg:text-xl leading-relaxed font-light">
+                  {step.desc}
+                </p>
 
+              </div>
             </div>
           )
         })}
+
       </div>
       
     </section>

@@ -15,8 +15,8 @@ export default function IndustryStandards() {
   useGSAP(() => {
     if (!containerRef.current) return
 
-    // Create the independent morphing timeline (paused initially)
-    morphTlRef.current = gsap.timeline({ repeat: -1, paused: true })
+    // Create the independent morphing timeline (running continuously)
+    morphTlRef.current = gsap.timeline({ repeat: -1 })
     const mTl = morphTlRef.current
 
     // Use '<' to make the fade-out and fade-in happen simultaneously so there's no empty pause
@@ -38,14 +38,7 @@ export default function IndustryStandards() {
         scrub: 1,
         anticipatePin: 1,
         onUpdate: (self) => {
-          // Play morphing timeline only when phase 2 is fully visible (between 25% and 50% scroll progress roughly)
-          if (self.progress > 0.3 && self.progress < 0.6) {
-            if (morphTlRef.current?.paused()) {
-              morphTlRef.current.play()
-            }
-          } else {
-            morphTlRef.current?.pause()
-          }
+          // Play morphing continuously without pausing
         }
       }
     })
@@ -68,9 +61,7 @@ export default function IndustryStandards() {
     // Massive light burst for phase 3
     tl.fromTo('.bg-visual-3', { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1.2, duration: 1.5 }, 2.2)
 
-    // Floating Metric Widget Animation (appears during Phase 3)
-    tl.fromTo('.metric-widget-1', { opacity: 0, x: -100 }, { opacity: 1, x: 0, duration: 1, ease: 'power3.out' }, 2.7)
-    tl.fromTo('.metric-widget-2', { opacity: 0, x: 100 }, { opacity: 1, x: 0, duration: 1, ease: 'power3.out' }, 2.9)
+
 
   }, { scope: containerRef })
 
@@ -153,7 +144,7 @@ export default function IndustryStandards() {
           </span>
           
           {/* MASSIVE SINGLE LINE TEXT */}
-          <h2 className="text-5xl sm:text-7xl md:text-8xl lg:text-[10vw] font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70 drop-shadow-[0_0_60px_rgba(16,185,129,0.5)] mb-8 whitespace-nowrap overflow-visible">
+          <h2 className="text-4xl sm:text-6xl md:text-7xl lg:text-[7vw] font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70 drop-shadow-[0_0_60px_rgba(16,185,129,0.5)] mb-8 whitespace-nowrap overflow-visible">
             DOMINATE YOUR MARKET
           </h2>
           
@@ -166,24 +157,7 @@ export default function IndustryStandards() {
             <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform" />
           </button>
 
-          {/* New Floating Sleek Metric Widgets (Positioned absolute relative to viewport during phase 3) */}
-          <div className="metric-widget-1 absolute -left-12 lg:left-12 top-1/2 -translate-y-1/2 bg-white/5 border border-white/10 backdrop-blur-xl p-6 rounded-2xl hidden md:flex flex-col gap-2 shadow-[0_0_30px_rgba(16,185,129,0.1)] pointer-events-auto hover:border-emerald-500/50 transition-colors">
-            <div className="flex items-center gap-3 text-emerald-400 mb-2">
-              <TrendingUp size={20} />
-              <span className="font-mono text-xs tracking-widest uppercase">Avg Growth</span>
-            </div>
-            <span className="text-4xl font-bold tracking-tighter text-white">314%</span>
-            <span className="text-sm text-white/50">Year over Year</span>
-          </div>
 
-          <div className="metric-widget-2 absolute -right-12 lg:right-12 top-1/2 -translate-y-1/2 bg-white/5 border border-white/10 backdrop-blur-xl p-6 rounded-2xl hidden md:flex flex-col gap-2 shadow-[0_0_30px_rgba(16,185,129,0.1)] pointer-events-auto hover:border-emerald-500/50 transition-colors">
-            <div className="flex items-center gap-3 text-emerald-400 mb-2">
-              <Users size={20} />
-              <span className="font-mono text-xs tracking-widest uppercase">Retention</span>
-            </div>
-            <span className="text-4xl font-bold tracking-tighter text-white">4.2x</span>
-            <span className="text-sm text-white/50">Viewer Watch Time</span>
-          </div>
 
         </div>
 

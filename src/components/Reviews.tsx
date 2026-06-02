@@ -195,7 +195,7 @@ export default function Reviews() {
           </div>
 
           {/* Central Content */}
-          <div className="review-grid-text relative z-20 flex flex-col items-center text-center px-4 bg-[#030305]/40 backdrop-blur-sm p-12 rounded-[3rem] border border-white/5 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+          <div className="review-grid-text relative z-20 flex flex-col items-center text-center px-4">
             <div className="mb-6 inline-block rounded-full bg-[#00AEEF]/10 border border-[#00AEEF]/20 px-4 py-2 text-xs font-mono tracking-widest text-[#00AEEF] uppercase backdrop-blur-md shadow-[0_0_20px_rgba(0,174,239,0.2)]">
               Client Feedback
             </div>

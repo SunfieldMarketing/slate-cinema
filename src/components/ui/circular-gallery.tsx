@@ -51,7 +51,7 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
 
         const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
         const scrollProgress = scrollableHeight > 0 ? window.scrollY / scrollableHeight : 0;
-        const scrollRotation = scrollProgress * 720; 
+        const scrollRotation = scrollProgress * 1080; 
         setRotation(scrollRotation);
 
         scrollTimeoutRef.current = setTimeout(() => {
@@ -131,14 +131,14 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
                       transform: `rotateY(${itemAngle}deg) translateZ(${radius}px)`,
                       left: '50%',
                       top: '50%',
-                      marginLeft: '-175px', // Base size (350px width)
-                      marginTop: '-275px', // Base size (550px height)
+                      marginLeft: '-140px', // Base size (280px width)
+                      marginTop: '-225px', // Base size (450px height)
                       opacity: opacity,
                     }
                 }
               >
-                {/* 16:9 vertical (approx 350x550) */}
-                <div className="relative w-[350px] h-[550px] rounded-3xl shadow-[0_0_50px_rgba(0,174,239,0.1)] overflow-visible group border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-500 hover:border-[#00AEEF]/50">
+                {/* 16:9 vertical (approx 280x450) */}
+                <div className="relative w-[280px] h-[450px] rounded-3xl shadow-[0_0_50px_rgba(0,174,239,0.1)] overflow-visible group border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-500 hover:border-[#00AEEF]/50">
                   
                   {/* Close button if active */}
                   {isActive && (
