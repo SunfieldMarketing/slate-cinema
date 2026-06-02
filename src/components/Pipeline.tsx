@@ -47,15 +47,15 @@ const TOTAL_STEPS = steps.length // 4
 export default function Pipeline() {
   const wrapperRef   = useRef<HTMLDivElement>(null)
   const sectionRef   = useRef<HTMLElement>(null)
-  const stepRef      = useRef(-1)            // -1 = intro
+  const stepRef      = useRef(0)            // 0 = step 1
   const animating    = useRef(false)
-  const [display, setDisplay] = useState(-1) // drives progress dots
+  const [display, setDisplay] = useState(0) // drives progress dots
 
   // ── core transition ──────────────────────────────────────────────────
   const goTo = useCallback((next: number) => {
     if (animating.current) return
     if (next === stepRef.current) return
-    if (next < -1 || next >= TOTAL_STEPS) return
+    if (next < 0 || next >= TOTAL_STEPS) return
 
     animating.current = true
     const prev = stepRef.current
@@ -69,53 +69,41 @@ export default function Pipeline() {
     })
 
     // ── animate OUT ──────────────────────────────────────────────────
-    if (prev === -1) {
-      tl.to('.pipe-intro', { opacity: 0, scale: 0.94, duration: 0.35, ease: 'power2.in' }, 0)
-    } else {
-      tl.to(`.pipe-step-${prev}`, {
-        opacity: 0,
-        x: forward ? -100 : 100,
-        filter: 'blur(8px)',
-        duration: 0.4,
-        ease: 'power2.in',
-      }, 0)
-    }
+    tl.to(`.pipe-step-${prev}`, {
+      opacity: 0,
+      x: forward ? -100 : 100,
+      filter: 'blur(8px)',
+      duration: 0.4,
+      ease: 'power2.in',
+    }, 0)
 
     // ── animate IN ──────────────────────────────────────────────────
-    if (next === -1) {
-      tl.fromTo('.pipe-intro',
-        { opacity: 0, scale: 1.04 },
-        { opacity: 1, scale: 1, duration: 0.5 },
-        0.3
-      )
-    } else {
-      // Make sure the incoming step is initially positioned correctly
-      gsap.set(`.pipe-step-${next}`, {
-        opacity: 0,
-        x: forward ? 100 : -100,
-        filter: 'blur(8px)',
-      })
-      tl.to(`.pipe-step-${next}`, {
-        opacity: 1,
-        x: 0,
-        filter: 'blur(0px)',
-        duration: 0.55,
-      }, 0.3)
+    // Make sure the incoming step is initially positioned correctly
+    gsap.set(`.pipe-step-${next}`, {
+      opacity: 0,
+      x: forward ? 100 : -100,
+      filter: 'blur(8px)',
+    })
+    tl.to(`.pipe-step-${next}`, {
+      opacity: 1,
+      x: 0,
+      filter: 'blur(0px)',
+      duration: 0.55,
+    }, 0.3)
 
-      // Stagger the internal elements
-      tl.fromTo(
-        `.pipe-step-${next} .pipe-text-el`,
-        { opacity: 0, y: 28 },
-        { opacity: 1, y: 0, stagger: 0.07, duration: 0.5, ease: 'power3.out' },
-        0.42
-      )
-      tl.fromTo(
-        `.pipe-step-${next} .pipe-video-el`,
-        { opacity: 0, scale: 0.9, rotate: forward ? 4 : -4 },
-        { opacity: 1, scale: 1, rotate: 0, duration: 0.65, ease: 'power3.out' },
-        0.35
-      )
-    }
+    // Stagger the internal elements
+    tl.fromTo(
+      `.pipe-step-${next} .pipe-text-el`,
+      { opacity: 0, y: 28 },
+      { opacity: 1, y: 0, stagger: 0.07, duration: 0.5, ease: 'power3.out' },
+      0.42
+    )
+    tl.fromTo(
+      `.pipe-step-${next} .pipe-video-el`,
+      { opacity: 0, scale: 0.9, rotate: forward ? 4 : -4 },
+      { opacity: 1, scale: 1, rotate: 0, duration: 0.65, ease: 'power3.out' },
+      0.35
+    )
 
     // Update ambient glow
     if (next >= 0) {
@@ -144,8 +132,8 @@ export default function Pipeline() {
 
       // If at last step and going down, let page scroll naturally past
       if (goingDown && current >= TOTAL_STEPS - 1) return
-      // If at intro and going up, let page scroll naturally back up
-      if (!goingDown && current <= -1) return
+      // If at step 0 and going up, let page scroll naturally back up
+      if (!goingDown && current <= 0) return
 
       e.preventDefault()
       if (animating.current) return
@@ -187,7 +175,12 @@ export default function Pipeline() {
   // ── initial set of hidden steps ────────────────────────────────────
   useEffect(() => {
     steps.forEach((_, i) => {
-      gsap.set(`.pipe-step-${i}`, { opacity: 0, x: 80 })
+      if (i === 0) {
+        gsap.set(`.pipe-step-0`, { opacity: 1, x: 0 })
+        gsap.set(`.pipe-glow-0`, { opacity: 1 })
+      } else {
+        gsap.set(`.pipe-step-${i}`, { opacity: 0, x: 80 })
+      }
     })
   }, [])
   // ── Mouse-tracked parallax + continuous ambient motion ────────────
@@ -318,18 +311,6 @@ export default function Pipeline() {
           <span className="block w-8 h-px bg-white/20" />
           <span className="font-mono text-[11px] tracking-[0.3em] text-white/30 uppercase">How It Works</span>
           <span className="block w-8 h-px bg-white/20" />
-        </div>
-
-        {/* ── Intro Glass Screen ─────────────────────────── */}
-        <div className="pipe-intro absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none">
-          <div className="absolute inset-8 border border-white/[0.07] bg-white/[0.02] backdrop-blur-2xl rounded-3xl" />
-          <h2 className="relative text-6xl md:text-9xl font-black text-white tracking-tighter"
-            style={{ textShadow: '0 0 80px rgba(255,255,255,0.07)' }}>
-            OUR PROCESS
-          </h2>
-          <p className="relative mt-4 text-white/25 tracking-[0.25em] text-xs font-mono uppercase">
-            Scroll to begin
-          </p>
         </div>
 
         {/* ── Steps ─────────────────────────────────────── */}
