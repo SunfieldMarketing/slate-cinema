@@ -23,7 +23,7 @@ export default function MediaVoid() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: '+=400%',
+          end: '+=150%',
           pin: true,
           scrub: 1,
         }

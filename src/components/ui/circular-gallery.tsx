@@ -28,11 +28,17 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
   ({ items, className, radius = 600, autoRotateSpeed = 0.05, ...props }, ref) => {
     const [rotation, setRotation] = useState(0);
     const [isScrolling, setIsScrolling] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
     
     const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const animationFrameRef = useRef<number | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+
+    // Drag state
+    const dragStartX = useRef(0);
+    const dragStartRotation = useRef(0);
+    const hasDragged = useRef(false);
 
     const handleRef = (el: HTMLDivElement) => {
       containerRef.current = el;
@@ -46,7 +52,7 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
     // Scroll rotation
     useEffect(() => {
       const handleScroll = () => {
-        if (activeIndex !== null) return;  
+        if (activeIndex !== null || isDragging) return;  
 
         setIsScrolling(true);
         if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
@@ -66,12 +72,12 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
         window.removeEventListener('scroll', handleScroll);
         if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
       };
-    }, [activeIndex]);
+    }, [activeIndex, isDragging]);
 
     // Auto-rotation
     useEffect(() => {
       const autoRotate = () => {
-        if (!isScrolling && activeIndex === null) {
+        if (!isScrolling && !isDragging && activeIndex === null) {
           setRotation(prev => prev + autoRotateSpeed);
         }
         animationFrameRef.current = requestAnimationFrame(autoRotate);
@@ -82,15 +88,43 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
       return () => {
         if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
       };
-    }, [isScrolling, autoRotateSpeed, activeIndex]);
+    }, [isScrolling, isDragging, autoRotateSpeed, activeIndex]);
+
+    // Drag handlers
+    const handlePointerDown = (e: React.PointerEvent) => {
+      if (activeIndex !== null) return;
+      dragStartX.current = e.clientX;
+      dragStartRotation.current = rotation;
+      hasDragged.current = false;
+      setIsDragging(true);
+      e.currentTarget.setPointerCapture(e.pointerId);
+    };
+
+    const handlePointerMove = (e: React.PointerEvent) => {
+      if (activeIndex !== null || !isDragging) return;
+      const deltaX = e.clientX - dragStartX.current;
+      if (Math.abs(deltaX) > 5) {
+        hasDragged.current = true;
+      }
+      setRotation(dragStartRotation.current + deltaX * 0.2); 
+    };
+
+    const handlePointerUp = (e: React.PointerEvent) => {
+      setIsDragging(false);
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    };
 
     const anglePerItem = 360 / items.length;
     
     return (
       <div
         ref={handleRef}
-        className={cn("relative w-full h-full flex items-center justify-center cursor-default", className)}
+        className={cn("relative w-full h-full flex items-center justify-center", className, isDragging ? "cursor-grabbing" : "cursor-grab")}
         style={{ perspective: '2500px', touchAction: 'none' }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
         {...props}
       >
         <div
@@ -98,7 +132,7 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
           style={{
             transform: `rotateY(${rotation}deg)`,
             transformStyle: 'preserve-3d',
-            transition: (isScrolling) ? 'none' : 'transform 0.1s linear',
+            transition: (isScrolling || isDragging) ? 'none' : 'transform 0.1s linear',
           }}
         >
           {items.map((item, i) => {
@@ -106,15 +140,17 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
             const totalRotation = rotation % 360;
             const relativeAngle = (itemAngle + totalRotation + 360) % 360;
             const normalizedAngle = Math.abs(relativeAngle > 180 ? 360 - relativeAngle : relativeAngle);
-            const opacity = Math.max(0.1, 1 - (normalizedAngle / 180));
-
             const isActive = activeIndex === i;
+            const opacity = isActive ? 1 : (activeIndex !== null ? 0.02 : Math.max(0.1, 1 - (normalizedAngle / 180)));
+            const filterBlur = isActive ? 'none' : (activeIndex !== null ? 'blur(10px)' : 'none');
 
             return (
               <div
                 key={i} 
                 onClick={() => {
-                  setActiveIndex(isActive ? null : i)
+                  if (!hasDragged.current) {
+                    setActiveIndex(isActive ? null : i);
+                  }
                 }}
                 className={cn(
                   "absolute transition-all duration-700 pointer-events-auto",
@@ -138,6 +174,7 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
                       marginLeft: '-110px', 
                       marginTop: '-175px', 
                       opacity: opacity,
+                      filter: filterBlur,
                     }
                 }
               >
@@ -210,13 +247,6 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
           })}
         </div>
 
-        {/* Global Dark Overlay when a card is active to focus attention */}
-        <div 
-          className={cn(
-            "fixed inset-0 bg-black/80 backdrop-blur-sm z-40 transition-opacity duration-700 pointer-events-none",
-            activeIndex !== null ? "opacity-100" : "opacity-0"
-          )}
-        />
       </div>
     );
   }

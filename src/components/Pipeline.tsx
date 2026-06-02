@@ -93,11 +93,11 @@ export default function Pipeline() {
       {/* SVG Turbulence Filter for Organic Ink Edge */}
       <svg className="absolute w-0 h-0">
         <filter id="ink-bleed" colorInterpolationFilters="sRGB">
-          <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" result="noise" />
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale="50" xChannelSelector="R" yChannelSelector="G" result="displaced" />
-          <feGaussianBlur in="displaced" stdDeviation="10" result="blurred" />
+          <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="80" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+          <feGaussianBlur in="displaced" stdDeviation="15" result="blurred" />
           <feComponentTransfer in="blurred">
-            <feFuncA type="linear" slope="3" intercept="-1" />
+            <feFuncA type="linear" slope="4" intercept="-1" />
           </feComponentTransfer>
         </filter>
       </svg>
@@ -153,6 +153,11 @@ export default function Pipeline() {
             <p className="mt-8 text-white/80 text-xl md:text-3xl font-light leading-relaxed max-w-3xl drop-shadow-[0_0_20px_rgba(0,0,0,1)]">
               {step.desc}
             </p>
+            <button 
+              className="mt-10 px-8 py-4 bg-white text-black font-semibold rounded-full hover:scale-105 transition-transform duration-300 pointer-events-auto shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+            >
+              Start Your Project
+            </button>
           </div>
           
         </div>
