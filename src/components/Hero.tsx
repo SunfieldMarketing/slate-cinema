@@ -12,32 +12,21 @@ const FRAME_COUNT = 291;
 export default function Hero() {
   const containerRef = useRef<HTMLElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [images, setImages] = useState<HTMLImageElement[]>([])
-  const [isLoaded, setIsLoaded] = useState(false)
+  
+  // Use a ref for images so we don't trigger React re-renders or recreate GSAP timelines as images load
+  const imagesRef = useRef<HTMLImageElement[]>([])
 
-  // Preload image sequence for Apple-style fluid scrubbing
+  // Preload image sequence seamlessly in the background
   useEffect(() => {
-    const loadedImages: HTMLImageElement[] = []
-    let loadedCount = 0
-
     for (let i = 1; i <= FRAME_COUNT; i++) {
       const img = new Image()
       img.src = `/videos/frames/frame_${i.toString().padStart(4, '0')}.jpg`
-      img.onload = () => {
-        loadedCount++
-        // We consider it loaded when at least the first few frames are ready, 
-        // but we'll wait for 50% to ensure smooth initial scrub
-        if (loadedCount === Math.floor(FRAME_COUNT / 2) || loadedCount === FRAME_COUNT) {
-          setIsLoaded(true)
-        }
-      }
-      loadedImages.push(img)
+      imagesRef.current.push(img)
     }
-    setImages(loadedImages)
   }, [])
 
   useGSAP(() => {
-    if (!containerRef.current || !canvasRef.current || !isLoaded || images.length === 0) return
+    if (!containerRef.current || !canvasRef.current) return
 
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
@@ -48,18 +37,18 @@ export default function Hero() {
     canvas.height = 588
 
     const renderFrame = (index: number) => {
-      // Clear and draw the image to the canvas
-      if (images[index] && images[index].complete) {
+      const img = imagesRef.current[index]
+      if (img && img.complete && img.naturalWidth !== 0) {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
-        ctx.drawImage(images[index], 0, 0, canvas.width, canvas.height)
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
       }
     }
 
-    // Draw first frame immediately
+    // Try to draw first frame immediately (it will retry onUpdate if not loaded yet)
     renderFrame(0)
 
     const gsapCtx = gsap.context(() => {
-      // --- 1. ENTRANCE ANIMATION (Plays on load for the HTML hero) ---
+      // --- 1. ENTRANCE ANIMATION ---
       const enterTl = gsap.timeline({ delay: 0.3 })
       
       enterTl.fromTo('.hero-letter',
@@ -91,17 +80,18 @@ export default function Hero() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: '+=800%', // Increased from 400% to 800% for much more fluid and controlled scrubbing distance
+          end: '+=800%', // Increased scroll distance to ensure long interaction
           pin: true,
           pinSpacing: true, // Forces the page to stay locked on this section
           scrub: true, // true gives instant 1:1 interactive mapping
           anticipatePin: 1,
+          fastScrollEnd: false, // Prevents glitching if user scrolls violently
         }
       })
 
       // A. Zoom out the HTML UI slightly and fade it out (0% -> 10% of scroll)
       scrollTl.to('.hero-html-content', {
-        scale: 0.85, // Zooms out a little bit
+        scale: 0.85,
         opacity: 0,
         ease: 'power2.inOut',
         duration: 0.1
@@ -125,11 +115,11 @@ export default function Hero() {
 
     }, containerRef)
     
-    // Force ScrollTrigger to recalculate bounds after everything is setup
+    // Refresh ScrollTrigger to lock in the layout
     ScrollTrigger.refresh()
 
     return () => gsapCtx.revert()
-  }, { scope: containerRef, dependencies: [isLoaded] })
+  }, { scope: containerRef })
 
   const slateLetters = 'SLATE'.split('')
   const cinemaLetters = 'CINEMA'.split('')
