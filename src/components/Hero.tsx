@@ -13,12 +13,16 @@ export default function Hero() {
   const containerRef = useRef<HTMLElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const scrollHintRef = useRef<HTMLDivElement>(null)
+
+  // Use a ref for images so we don't trigger React re-renders or recreate GSAP timelines as images load
   const imagesRef = useRef<HTMLImageElement[]>([])
 
+  // Auto-scroll to top on mount so the page always starts at the hero
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
 
+  // Preload image sequence seamlessly in the background
   useEffect(() => {
     for (let i = 1; i <= FRAME_COUNT; i++) {
       const img = new Image()
@@ -27,11 +31,12 @@ export default function Hero() {
     }
   }, [])
 
-  // Fade scroll hint as user scrolls
+  // Fade scroll hint arrow out as user scrolls
   useEffect(() => {
     const handleScroll = () => {
       if (!scrollHintRef.current) return
-      const opacity = Math.max(0, 1 - window.scrollY / 120)
+      const scrollY = window.scrollY
+      const opacity = Math.max(0, 1 - scrollY / 120)
       scrollHintRef.current.style.opacity = String(opacity)
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
@@ -45,6 +50,7 @@ export default function Hero() {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
+    // Set canvas internal resolution to match the video native resolution
     canvas.width = 1280
     canvas.height = 588
 
@@ -56,10 +62,11 @@ export default function Hero() {
       }
     }
 
+    // Try to draw first frame immediately (it will retry onUpdate if not loaded yet)
     renderFrame(0)
 
     const gsapCtx = gsap.context(() => {
-      // 1. Entrance
+      // --- 1. ENTRANCE ANIMATION ---
       const enterTl = gsap.timeline({ delay: 0.3 })
 
       enterTl.fromTo(
@@ -68,27 +75,22 @@ export default function Hero() {
         { opacity: 1, y: 0, rotateX: 0, z: 0, duration: 1.2, stagger: 0.04, ease: 'power4.out' },
         0.2
       )
+
       enterTl.fromTo(
         '.hero-subtitle',
         { opacity: 0, y: 60 },
         { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' },
         0.8
       )
+
       enterTl.fromTo(
         '.hero-cta',
         { opacity: 0, x: -80, rotateY: 45 },
         { opacity: 1, x: 0, rotateY: 0, duration: 0.6, stagger: 0.12, ease: 'back.out(1.5)' },
         1
       )
-      // HUD elements animate in after letters
-      enterTl.fromTo(
-        '.hud-element',
-        { opacity: 0 },
-        { opacity: 1, duration: 0.8, stagger: 0.06, ease: 'power2.out' },
-        1.2
-      )
 
-      // 2. Scroll animation
+      // --- 2. SCROLL ANIMATION ---
       const playhead = { frame: 0 }
 
       const scrollTl = gsap.timeline({
@@ -98,19 +100,46 @@ export default function Hero() {
           end: '+=800%',
           pin: true,
           pinSpacing: true,
-          scrub: true,
+          scrub: true,       // 1:1 interactive scrub mapping
           anticipatePin: 1,
           fastScrollEnd: false,
         },
       })
 
-      // A. Fade out hero HTML content (opacity only, no scale)
-      scrollTl.to('.hero-html-content', { opacity: 0, ease: 'power2.inOut', duration: 0.1 }, 0)
+      // A. Fade out HTML content — opacity only, no scale change
+      scrollTl.to(
+        '.hero-html-content',
+        {
+          opacity: 0,
+          ease: 'power2.inOut',
+          duration: 0.1,
+        },
+        0
+      )
+      
+      // A2. Make sure camera UI fades out even faster
+      scrollTl.to(
+        '.camera-ui',
+        {
+          opacity: 0,
+          ease: 'power4.out',
+          duration: 0.05,
+        },
+        0
+      )
 
-      // B. Fade in canvas
-      scrollTl.to('.camera-canvas-container', { opacity: 1, ease: 'power2.inOut', duration: 0.1 }, 0)
+      // B. Fade in the canvas simultaneously
+      scrollTl.to(
+        '.camera-canvas-container',
+        {
+          opacity: 1,
+          ease: 'power2.inOut',
+          duration: 0.1,
+        },
+        0
+      )
 
-      // C. Scrub image sequence
+      // C. Scrub through the image sequence (10% → 100% of scroll timeline)
       scrollTl.to(
         playhead,
         {
@@ -124,7 +153,9 @@ export default function Hero() {
       )
     }, containerRef)
 
+    // Refresh ScrollTrigger to lock in the layout
     ScrollTrigger.refresh()
+
     return () => gsapCtx.revert()
   }, { scope: containerRef })
 
@@ -133,111 +164,36 @@ export default function Hero() {
 
   return (
     <section ref={containerRef} className="relative w-full h-screen bg-[#030305]">
+      {/* Inner wrapper — overflow hidden so pinned canvas never bleeds out */}
       <div className="absolute inset-0 w-full h-full overflow-hidden" style={{ perspective: '2000px' }}>
 
-        {/* 1. Canvas image-sequence (fades in on scroll) */}
+        {/* 1. Canvas image-sequence layer (fades in on scroll) */}
         <div className="camera-canvas-container absolute inset-0 z-10 opacity-0 pointer-events-none flex items-center justify-center bg-[#030305]">
-          <canvas ref={canvasRef} className="w-full h-full object-contain scale-95" />
+          <canvas
+            ref={canvasRef}
+            className="w-full h-full object-contain scale-95"
+          />
         </div>
 
-        {/* 2. HTML UI layer — HUD + text (fades out on scroll) */}
+        {/* 2. HTML UI layer (fades out on scroll, no scale change) */}
         <div className="hero-html-content absolute inset-0 z-20">
 
-          {/* Background office video */}
+          {/* Background video at low opacity for visual depth */}
           <div className="absolute inset-0 z-0 pointer-events-none">
             <video
               src="/videos/hero.mp4"
-              autoPlay loop muted playsInline
-              className="absolute w-full h-full object-cover top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mix-blend-screen opacity-40"
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute w-full h-full object-cover top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none mix-blend-screen opacity-40"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/80" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/80 pointer-events-none" />
           </div>
 
-          {/* ── Camera Viewfinder HUD ─────────────────────────────────────── */}
-          <div className="absolute inset-0 z-10 pointer-events-none select-none">
-
-            {/* Corner brackets */}
-            {/* Top-left */}
-            <div className="hud-element absolute top-6 left-6 w-16 h-16 opacity-0">
-              <div className="absolute top-0 left-0 w-6 h-px bg-[#00AEEF]" />
-              <div className="absolute top-0 left-0 w-px h-6 bg-[#00AEEF]" />
-            </div>
-            {/* Top-right */}
-            <div className="hud-element absolute top-6 right-6 w-16 h-16 opacity-0">
-              <div className="absolute top-0 right-0 w-6 h-px bg-[#00AEEF]" />
-              <div className="absolute top-0 right-0 w-px h-6 bg-[#00AEEF]" />
-            </div>
-            {/* Bottom-left */}
-            <div className="hud-element absolute bottom-6 left-6 w-16 h-16 opacity-0">
-              <div className="absolute bottom-0 left-0 w-6 h-px bg-[#00AEEF]" />
-              <div className="absolute bottom-0 left-0 w-px h-6 bg-[#00AEEF]" />
-            </div>
-            {/* Bottom-right */}
-            <div className="hud-element absolute bottom-6 right-6 w-16 h-16 opacity-0">
-              <div className="absolute bottom-0 right-0 w-6 h-px bg-[#00AEEF]" />
-              <div className="absolute bottom-0 right-0 w-px h-6 bg-[#00AEEF]" />
-            </div>
-
-            {/* REC indicator — top left */}
-            <div className="hud-element absolute top-8 left-8 flex items-center gap-2 opacity-0">
-              <span
-                className="w-2 h-2 rounded-full bg-red-500"
-                style={{ animation: 'pulse 1s ease-in-out infinite alternate' }}
-              />
-              <span className="font-mono text-[10px] text-white/60 tracking-[0.3em] uppercase">REC</span>
-            </div>
-
-            {/* Timecode — top right */}
-            <div className="hud-element absolute top-8 right-8 font-mono text-[10px] text-white/45 tracking-widest opacity-0">
-              00:00:00:00
-            </div>
-
-            {/* Center crosshair */}
-            <div className="hud-element absolute inset-0 flex items-center justify-center opacity-0">
-              <div className="relative w-12 h-12">
-                {/* Horizontal line segments */}
-                <div className="absolute top-1/2 left-0 w-3 h-px bg-[#00AEEF]/50" style={{ transform: 'translateY(-50%)' }} />
-                <div className="absolute top-1/2 right-0 w-3 h-px bg-[#00AEEF]/50" style={{ transform: 'translateY(-50%)' }} />
-                {/* Vertical line segments */}
-                <div className="absolute left-1/2 top-0 h-3 w-px bg-[#00AEEF]/50" style={{ transform: 'translateX(-50%)' }} />
-                <div className="absolute left-1/2 bottom-0 h-3 w-px bg-[#00AEEF]/50" style={{ transform: 'translateX(-50%)' }} />
-                {/* Center dot */}
-                <div className="absolute top-1/2 left-1/2 w-1 h-1 rounded-full bg-[#00AEEF]/70" style={{ transform: 'translate(-50%,-50%)' }} />
-              </div>
-            </div>
-
-            {/* ISO / shutter info — bottom left */}
-            <div className="hud-element absolute bottom-8 left-8 flex flex-col gap-1 opacity-0">
-              <span className="font-mono text-[9px] text-white/35 tracking-widest">ISO 800</span>
-              <span className="font-mono text-[9px] text-white/35 tracking-widest">1/60s</span>
-              <span className="font-mono text-[9px] text-white/35 tracking-widest">f/2.8</span>
-            </div>
-
-            {/* Focus indicator — bottom right */}
-            <div className="hud-element absolute bottom-8 right-8 flex flex-col items-end gap-1 opacity-0">
-              <span className="font-mono text-[9px] text-[#00AEEF]/50 tracking-widest uppercase">AF · Auto</span>
-              <span className="font-mono text-[9px] text-white/35 tracking-widest">4K · 24fps</span>
-            </div>
-
-            {/* Exposure bar — left edge */}
-            <div className="hud-element absolute left-4 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 opacity-0">
-              <div className="w-px h-20 bg-white/10 relative overflow-hidden rounded-full">
-                <div className="absolute bottom-0 inset-x-0 h-[60%] bg-[#00AEEF]/50 rounded-full" />
-              </div>
-              <span className="font-mono text-[8px] text-white/25 tracking-widest -rotate-90 mt-2">EV</span>
-            </div>
-
-            {/* White balance bar — right edge */}
-            <div className="hud-element absolute right-4 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 opacity-0">
-              <div className="w-px h-20 bg-white/10 relative overflow-hidden rounded-full">
-                <div className="absolute bottom-0 inset-x-0 h-[45%] bg-orange-400/40 rounded-full" />
-              </div>
-              <span className="font-mono text-[8px] text-white/25 tracking-widest -rotate-90 mt-2">WB</span>
-            </div>
-          </div>
-
-          {/* ── Hero copy ────────────────────────────────────────────────── */}
+          {/* Main content — centered hero text and CTAs */}
           <div className="hero-content absolute inset-0 z-10 flex flex-col items-center justify-center">
+            {/* Subtle blue radial glow */}
             <div
               className="absolute inset-0 pointer-events-none"
               style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,174,239,0.08) 0%, transparent 70%)' }}
@@ -269,39 +225,98 @@ export default function Hero() {
               </div>
             </div>
 
+            {/* Subtitle */}
             <p className="hero-subtitle text-xs md:text-sm font-mono tracking-[0.4em] text-white/50 uppercase mb-12">
               Video Marketing At Your Fingertips
             </p>
 
-            <div className="flex flex-wrap items-center gap-4 justify-center pointer-events-auto">
+            {/* Cinematic top bar — REC indicator */}
+            <div className="camera-ui absolute top-6 left-8 z-30 flex items-center gap-3">
+              <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.8)]" />
+              <span className="font-mono text-[11px] md:text-sm text-red-500 tracking-[0.3em] font-bold">
+                REC
+              </span>
+            </div>
+            
+            {/* Battery / Time Indicator */}
+            <div className="camera-ui absolute top-6 right-8 z-30 flex items-center gap-4">
+              <span className="font-mono text-[11px] md:text-sm text-white/70 tracking-widest">
+                00:00:00:00
+              </span>
+              <div className="w-8 h-4 border border-white/40 rounded-sm p-[1px] flex justify-end">
+                <div className="w-3/4 h-full bg-white/70" />
+              </div>
+            </div>
+
+            {/* Viewfinder Corners */}
+            <div className="camera-ui absolute top-12 left-12 w-16 h-16 border-t-2 border-l-2 border-white/30 z-30 pointer-events-none" />
+            <div className="camera-ui absolute top-12 right-12 w-16 h-16 border-t-2 border-r-2 border-white/30 z-30 pointer-events-none" />
+            <div className="camera-ui absolute bottom-12 left-12 w-16 h-16 border-b-2 border-l-2 border-white/30 z-30 pointer-events-none" />
+            <div className="camera-ui absolute bottom-12 right-12 w-16 h-16 border-b-2 border-r-2 border-white/30 z-30 pointer-events-none" />
+
+            {/* Crosshair */}
+            <div className="camera-ui absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 z-30 pointer-events-none opacity-20">
+              <div className="absolute top-0 bottom-0 left-1/2 w-px bg-white -translate-x-1/2" />
+              <div className="absolute left-0 right-0 top-1/2 h-px bg-white -translate-y-1/2" />
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-wrap items-center gap-4 justify-center pointer-events-auto mt-12 z-40 relative">
               <span className="hero-subtitle font-mono text-[10px] text-white/30 tracking-widest uppercase mr-4">
                 Quick Links:
               </span>
-              <a href="#reel" className="hero-cta group relative px-6 py-3 rounded-full overflow-hidden border border-[#00AEEF]/30 bg-[#00AEEF]/10">
+              <a
+                href="#reel"
+                className="hero-cta group relative px-6 py-3 rounded-full overflow-hidden border border-[#00AEEF]/30 bg-[#00AEEF]/10"
+              >
                 <div className="absolute inset-0 bg-[#00AEEF] scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
                 <span className="relative text-sm font-medium text-white tracking-wide">Watch Our Reel</span>
               </a>
-              <a href="#quote" className="hero-cta group relative px-6 py-3 rounded-full overflow-hidden border border-white/10 bg-white/[0.03]">
+              <a
+                href="#quote"
+                className="hero-cta group relative px-6 py-3 rounded-full overflow-hidden border border-white/10 bg-white/[0.03]"
+              >
                 <div className="absolute inset-0 bg-white/10 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
-                <span className="relative text-sm font-medium text-white/70 group-hover:text-white tracking-wide transition-colors">Get A Quote</span>
+                <span className="relative text-sm font-medium text-white/70 group-hover:text-white tracking-wide transition-colors">
+                  Get A Quote
+                </span>
               </a>
-              <a href="#how" className="hero-cta group relative px-6 py-3 rounded-full overflow-hidden border border-white/10 bg-white/[0.03]">
+              <a
+                href="#how"
+                className="hero-cta group relative px-6 py-3 rounded-full overflow-hidden border border-white/10 bg-white/[0.03]"
+              >
                 <div className="absolute inset-0 bg-white/10 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
-                <span className="relative text-sm font-medium text-white/70 group-hover:text-white tracking-wide transition-colors">How It Works</span>
+                <span className="relative text-sm font-medium text-white/70 group-hover:text-white tracking-wide transition-colors">
+                  How It Works
+                </span>
               </a>
             </div>
           </div>
 
-          {/* Scroll hint */}
+          {/* Scroll hint arrow — fades out as user scrolls (controlled via JS) */}
           <div
             ref={scrollHintRef}
-            className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-30 pointer-events-none"
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-30 pointer-events-none transition-opacity duration-100"
           >
             <span className="font-mono text-[9px] text-white/40 tracking-[0.3em] uppercase">Scroll</span>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="animate-bounce text-[#00AEEF]/60">
-              <path d="M4 7l6 6 6-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            {/* Animated chevron arrow */}
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+              className="animate-bounce text-[#00AEEF]/60"
+            >
+              <path
+                d="M4 7l6 6 6-6"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </div>
+
         </div>
       </div>
     </section>

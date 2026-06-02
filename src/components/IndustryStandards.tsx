@@ -1,399 +1,116 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 
 gsap.registerPlugin(ScrollTrigger)
 
-// ─── Data ──────────────────────────────────────────────────────────────────────
-const standards = [
-  {
-    id: 'strategy',
-    label: '01',
-    title: 'Strategic Vision',
-    stat: '3×',
-    statLabel: 'ROI',
-    sub: 'Average return on video investment across our client campaigns',
-    detail: 'Every project begins with deep market research, competitor analysis, and audience mapping. We don\'t just make videos — we engineer campaigns that move numbers.',
-    tags: ['Brand Strategy', 'KPI Mapping', 'Audience Research'],
-  },
-  {
-    id: 'storytelling',
-    label: '02',
-    title: 'Cinematic Storytelling',
-    stat: '8.4%',
-    statLabel: 'Engagement',
-    sub: 'vs 2.1% industry average across all platforms',
-    detail: 'We craft narratives that stop the scroll and hold attention. From concept to final cut, every creative decision is made to serve the story and the metric.',
-    tags: ['Narrative Craft', 'Script Development', 'Visual Language'],
-  },
-  {
-    id: 'execution',
-    label: '03',
-    title: 'Flawless Execution',
-    stat: '100%',
-    statLabel: 'On-Time',
-    sub: 'Every project delivered on schedule, every time',
-    detail: 'Precision production with professional crews, state-of-the-art equipment, and workflows that scale from a single reel to a full campaign suite.',
-    tags: ['Multi-Camera Shoots', 'Post-Production', 'Campaign Delivery'],
-  },
-]
-
-// ─── Waveform visual for Storytelling ─────────────────────────────────────────
-function Waveform({ active }: { active: boolean }) {
-  return (
-    <div className="flex items-end gap-[3px] h-8" aria-hidden="true">
-      {Array.from({ length: 20 }).map((_, i) => (
-        <div
-          key={i}
-          className="flex-none rounded-full origin-bottom transition-all duration-300"
-          style={{
-            width: 3,
-            height: `${active ? (Math.sin(i * 0.6) * 0.4 + 0.6) * 100 : 20}%`,
-            background: active
-              ? `linear-gradient(to top, #00AEEF, rgba(0,174,239,0.3))`
-              : 'rgba(255,255,255,0.1)',
-            transitionDelay: `${i * 0.02}s`,
-          }}
-        />
-      ))}
-    </div>
-  )
-}
-
-// ─── Circular progress ring for Execution ─────────────────────────────────────
-function ProgressRing({ pct, active }: { pct: number; active: boolean }) {
-  const r = 30
-  const circ = 2 * Math.PI * r
-  const dash = active ? circ * (pct / 100) : 0
-  return (
-    <svg width="80" height="80" viewBox="0 0 80 80" aria-hidden="true">
-      <circle cx="40" cy="40" r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="4" />
-      <circle
-        cx="40" cy="40" r={r}
-        fill="none"
-        stroke="#00AEEF"
-        strokeWidth="4"
-        strokeLinecap="round"
-        strokeDasharray={`${dash} ${circ}`}
-        strokeDashoffset={circ / 4}
-        style={{
-          filter: active ? 'drop-shadow(0 0 6px rgba(0,174,239,0.7))' : 'none',
-          transition: 'stroke-dasharray 1.2s cubic-bezier(0.22,1,0.36,1)',
-        }}
-      />
-      <text x="40" y="45" textAnchor="middle" fontSize="12" fontWeight="700" fill="white" fontFamily="monospace">
-        {active ? `${pct}%` : '—'}
-      </text>
-    </svg>
-  )
-}
-
-// ─── Network dots for Strategy ─────────────────────────────────────────────────
-function NetworkDots({ active }: { active: boolean }) {
-  const nodes = [
-    { x: 40, y: 20 }, { x: 70, y: 35 }, { x: 60, y: 65 },
-    { x: 20, y: 65 }, { x: 10, y: 35 }, { x: 40, y: 50 },
-  ]
-  const edges = [[0,5],[1,5],[2,5],[3,5],[4,5],[0,1],[1,2],[2,3],[3,4],[4,0]]
-  return (
-    <svg width="80" height="80" viewBox="0 0 80 80" aria-hidden="true">
-      {edges.map(([a, b], i) => (
-        <line key={i} x1={nodes[a].x} y1={nodes[a].y} x2={nodes[b].x} y2={nodes[b].y}
-          stroke={active ? 'rgba(0,174,239,0.3)' : 'rgba(255,255,255,0.05)'}
-          strokeWidth="1"
-          style={{ transition: 'stroke 0.6s ease' }}
-        />
-      ))}
-      {nodes.map((n, i) => (
-        <circle key={i} cx={n.x} cy={n.y} r={i === 5 ? 5 : 3}
-          fill={active ? (i === 5 ? '#00AEEF' : 'rgba(0,174,239,0.5)') : 'rgba(255,255,255,0.15)'}
-          style={{
-            filter: active && i === 5 ? 'drop-shadow(0 0 4px #00AEEF)' : 'none',
-            transition: 'fill 0.6s ease, filter 0.6s ease',
-          }}
-        />
-      ))}
-    </svg>
-  )
-}
-
-// ─── Main component ────────────────────────────────────────────────────────────
 export default function IndustryStandards() {
-  const sectionRef = useRef<HTMLElement>(null)
-  const [activeTab, setActiveTab] = useState(0)
-
+  const containerRef = useRef<HTMLElement>(null)
+  
   useGSAP(() => {
-    const ctx = gsap.context(() => {
+    if (!containerRef.current) return
 
-      // Section header entrance
-      gsap.fromTo('.is-header',
-        { opacity: 0, y: 60 },
-        {
-          opacity: 1, y: 0, duration: 1, ease: 'power3.out',
-          scrollTrigger: { trigger: sectionRef.current, start: 'top 75%', end: 'top 45%', scrub: 1 },
-        }
-      )
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: 'top top',
+        end: '+=400%',
+        pin: true,
+        scrub: 1,
+        anticipatePin: 1,
+      }
+    })
 
-      // Tab buttons stagger in
-      gsap.fromTo('.is-tab',
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1, y: 0, stagger: 0.12, duration: 0.7, ease: 'power2.out',
-          scrollTrigger: { trigger: sectionRef.current, start: 'top 65%', end: 'top 35%', scrub: 1 },
-        }
-      )
+    // Text phases
+    tl.to('.phase-1', { opacity: 0, y: -100, duration: 1, ease: 'power2.inOut' }, 0)
+    tl.fromTo('.phase-2', { opacity: 0, y: 100, scale: 0.8 }, { opacity: 1, y: 0, scale: 1, duration: 1, ease: 'power2.inOut' }, 0.5)
+    
+    tl.to('.phase-2', { opacity: 0, y: -100, scale: 1.2, duration: 1, ease: 'power2.inOut' }, 2)
+    tl.fromTo('.phase-3', { opacity: 0, scale: 0.5, rotateX: 45 }, { opacity: 1, scale: 1, rotateX: 0, duration: 1, ease: 'power3.out' }, 2.5)
 
-      // Main panel
-      gsap.fromTo('.is-panel',
-        { opacity: 0, y: 50, rotateX: -8 },
-        {
-          opacity: 1, y: 0, rotateX: 0, duration: 1, ease: 'power3.out',
-          scrollTrigger: { trigger: sectionRef.current, start: 'top 60%', end: 'top 30%', scrub: 1 },
-        }
-      )
+    // Visual elements
+    tl.to('.bg-visual-1', { opacity: 0, scale: 1.5, duration: 1 }, 0)
+    tl.fromTo('.bg-visual-2', { opacity: 0, rotateZ: 45 }, { opacity: 1, rotateZ: 0, duration: 1.5 }, 0.2)
+    tl.to('.bg-visual-2', { opacity: 0, scale: 2, duration: 1 }, 1.8)
+    tl.fromTo('.bg-visual-3', { opacity: 0, filter: 'blur(20px)' }, { opacity: 1, filter: 'blur(0px)', duration: 1.5 }, 2.2)
 
-      // Achievement badges
-      gsap.fromTo('.is-badge',
-        { opacity: 0, scale: 0.7 },
-        {
-          opacity: 1, scale: 1, stagger: 0.08, duration: 0.5, ease: 'back.out(1.4)',
-          scrollTrigger: { trigger: '.is-badges', start: 'top 85%' },
-        }
-      )
-    }, sectionRef)
-    return () => ctx.revert()
-  }, { scope: sectionRef })
-
-  const active = standards[activeTab]
+  }, { scope: containerRef })
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative w-full py-32 lg:py-44 bg-[#030305] overflow-hidden"
-    >
-      {/* Watermark */}
-      <div
-        className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden"
-        aria-hidden="true"
-      >
-        <span
-          className="font-black text-white whitespace-nowrap"
-          style={{
-            fontSize: 'clamp(6rem, 18vw, 16rem)',
-            opacity: 0.018,
-            letterSpacing: '-0.04em',
-          }}
-        >
-          SLATE CINEMA
-        </span>
+    <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-hidden text-white flex items-center justify-center" style={{ perspective: '1000px' }}>
+      
+      {/* Background Visuals */}
+      <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+        <div className="bg-visual-1 absolute w-[80vw] h-[80vw] border-[1px] border-[#00AEEF]/10 rounded-full flex items-center justify-center">
+           <div className="w-[60vw] h-[60vw] border-[1px] border-[#00AEEF]/20 rounded-full flex items-center justify-center">
+             <div className="w-[40vw] h-[40vw] border-[1px] border-[#00AEEF]/30 rounded-full bg-[#00AEEF]/5 blur-3xl" />
+           </div>
+        </div>
+        
+        <div className="bg-visual-2 absolute w-[100vw] h-[100vh] opacity-0 flex items-center justify-center mix-blend-screen">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(168,85,247,0.15)_0%,transparent_70%)]" />
+          <div className="w-full h-[2px] bg-gradient-to-r from-transparent via-purple-500 to-transparent shadow-[0_0_30px_rgba(168,85,247,0.8)]" />
+          <div className="h-full w-[2px] bg-gradient-to-b from-transparent via-purple-500 to-transparent shadow-[0_0_30px_rgba(168,85,247,0.8)] absolute" />
+        </div>
+
+        <div className="bg-visual-3 absolute inset-0 opacity-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.1)_0%,transparent_100%)]">
+           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vh] border-y border-emerald-500/20" />
+           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[100vh] border-x border-emerald-500/20" />
+        </div>
       </div>
 
-      {/* Radial spotlight */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,174,239,0.05) 0%, transparent 65%)' }}
-      />
-
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-6">
-
-        {/* ── Header ──────────────────────────────────────────────────────── */}
-        <div className="is-header opacity-0 max-w-3xl mb-16">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="w-8 h-px bg-[#00AEEF]" />
-            <span className="font-mono text-xs text-[#00AEEF] tracking-[0.4em] uppercase">// Why Us</span>
-          </div>
-          <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-[1.0] mb-5">
-            Leading Industry<br />Standards.
+      {/* Content */}
+      <div className="relative z-10 w-full max-w-7xl px-8 flex flex-col items-center justify-center text-center">
+        
+        {/* Phase 1 */}
+        <div className="phase-1 absolute flex flex-col items-center">
+          <span className="font-mono text-[10px] md:text-xs text-[#00AEEF] tracking-[0.5em] uppercase mb-8">
+            // The Standard
+          </span>
+          <h2 className="text-6xl md:text-[8rem] font-black leading-none tracking-tighter">
+            WE REJECT
+            <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-b from-white/20 to-transparent">
+              AVERAGE
+            </span>
           </h2>
-          <p className="text-lg text-white/45 max-w-xl leading-relaxed">
-            At Slate Cinema, we set the benchmark for every frame, every cut, every campaign — backed by data and built for results.
+        </div>
+
+        {/* Phase 2 */}
+        <div className="phase-2 absolute flex flex-col items-center opacity-0 pointer-events-none">
+          <span className="font-mono text-[10px] md:text-xs text-purple-400 tracking-[0.5em] uppercase mb-8">
+            // The Execution
+          </span>
+          <h2 className="text-5xl md:text-[6rem] font-black leading-[0.9] tracking-tighter text-white">
+            EVERY FRAME
+            <br />
+            <span className="italic text-purple-400 font-serif font-light tracking-tight">Intentional.</span>
+          </h2>
+          <p className="mt-8 text-white/50 max-w-xl text-lg font-light">
+            We don't just shoot video. We engineer visual experiences designed to capture and hold attention in a world that never stops scrolling.
           </p>
         </div>
 
-        {/* ── Tab selector ─────────────────────────────────────────────────── */}
-        <div className="flex gap-2 mb-10">
-          {standards.map((s, i) => (
-            <button
-              key={s.id}
-              onClick={() => setActiveTab(i)}
-              className={`is-tab opacity-0 group relative flex items-center gap-3 px-5 py-3 rounded-xl border transition-all duration-300 text-left ${
-                activeTab === i
-                  ? 'border-[#00AEEF]/40 bg-[#00AEEF]/8 text-white'
-                  : 'border-white/8 bg-white/[0.02] text-white/40 hover:border-white/15 hover:text-white/70'
-              }`}
-            >
-              <span
-                className="font-mono text-xs tracking-widest shrink-0"
-                style={{ color: activeTab === i ? '#00AEEF' : 'inherit' }}
-              >
-                {s.label}
-              </span>
-              <span className="text-sm font-medium whitespace-nowrap hidden sm:block">{s.title}</span>
-              {activeTab === i && (
-                <span
-                  className="absolute bottom-0 left-0 right-0 h-px rounded-full"
-                  style={{ background: 'linear-gradient(to right, transparent, #00AEEF, transparent)' }}
-                />
-              )}
-            </button>
-          ))}
-        </div>
-
-        {/* ── Main panel ───────────────────────────────────────────────────── */}
-        <div
-          className="is-panel opacity-0 grid grid-cols-1 lg:grid-cols-2 gap-0 rounded-2xl overflow-hidden border border-white/[0.07]"
-          style={{ perspective: '800px' }}
-        >
-
-          {/* Left — stat + description */}
-          <div
-            className="relative p-10 lg:p-14 flex flex-col justify-between"
-            style={{ background: 'linear-gradient(135deg, rgba(11,20,40,0.9) 0%, rgba(3,3,5,0.95) 100%)' }}
-          >
-            {/* Step number bg watermark */}
-            <div
-              className="absolute right-6 top-6 font-black text-white/[0.04] select-none pointer-events-none leading-none"
-              style={{ fontSize: 'clamp(5rem, 10vw, 9rem)' }}
-            >
-              {active.label}
-            </div>
-
-            <div>
-              {/* Label */}
-              <span className="font-mono text-xs text-[#00AEEF]/70 tracking-[0.4em] uppercase mb-6 block">
-                {active.label} / 03 — {active.title}
-              </span>
-
-              {/* Giant stat */}
-              <div
-                className="font-black text-white leading-none mb-2 tracking-tighter"
-                style={{
-                  fontSize: 'clamp(4rem, 10vw, 8rem)',
-                  textShadow: '0 0 60px rgba(0,174,239,0.30), 0 0 120px rgba(0,174,239,0.12)',
-                  transition: 'text-shadow 0.5s ease',
-                }}
-              >
-                {active.stat}
-              </div>
-              <div className="text-[#00AEEF] font-mono text-sm tracking-[0.3em] uppercase mb-4">
-                {active.statLabel}
-              </div>
-              <p className="text-white/50 text-sm leading-relaxed mb-6 max-w-xs">
-                {active.sub}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-white/70 text-base leading-relaxed mb-8">
-                {active.detail}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {active.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-xs font-mono text-white/50 border border-white/10 rounded-full px-3 py-1 hover:border-[#00AEEF]/30 hover:text-[#00AEEF]/70 transition-colors duration-200"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Right — interactive visual */}
-          <div
-            className="relative flex flex-col items-center justify-center p-10 lg:p-14 gap-8"
-            style={{ background: 'linear-gradient(135deg, rgba(3,3,5,0.95) 0%, rgba(11,20,40,0.6) 100%)' }}
-          >
-            {/* Visual element per tab */}
-            <div className="flex flex-col items-center gap-6">
-
-              {activeTab === 0 && (
-                <>
-                  <NetworkDots active />
-                  <div className="text-center">
-                    <div className="font-mono text-xs text-white/30 uppercase tracking-widest mb-2">Strategic Network</div>
-                    <div className="text-white/60 text-sm max-w-[200px] text-center leading-relaxed">
-                      Every touchpoint mapped and optimized for maximum impact
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {activeTab === 1 && (
-                <>
-                  <Waveform active />
-                  <div className="text-center">
-                    <div className="font-mono text-xs text-white/30 uppercase tracking-widest mb-2">Audience Engagement</div>
-                    <div className="text-white/60 text-sm max-w-[200px] text-center leading-relaxed">
-                      Content engineered to hold attention and drive action
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {activeTab === 2 && (
-                <>
-                  <ProgressRing pct={100} active />
-                  <div className="text-center">
-                    <div className="font-mono text-xs text-white/30 uppercase tracking-widest mb-2">Delivery Rate</div>
-                    <div className="text-white/60 text-sm max-w-[200px] text-center leading-relaxed">
-                      Precision execution with zero compromises on quality
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* Divider */}
-            <div className="w-full h-px" style={{ background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.06), transparent)' }} />
-
-            {/* Other standards quick-links */}
-            <div className="w-full flex flex-col gap-3">
-              {standards.map((s, i) => i !== activeTab && (
-                <button
-                  key={s.id}
-                  onClick={() => setActiveTab(i)}
-                  className="flex items-center justify-between group px-4 py-3 rounded-xl border border-white/[0.05] bg-white/[0.02] hover:border-[#00AEEF]/25 hover:bg-[#00AEEF]/5 transition-all duration-200"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="font-mono text-xs text-white/25 group-hover:text-[#00AEEF]/60 transition-colors">{s.label}</span>
-                    <span className="text-sm text-white/40 group-hover:text-white/70 transition-colors">{s.title}</span>
-                  </div>
-                  <span
-                    className="font-bold text-white/20 group-hover:text-[#00AEEF]/60 text-base transition-colors"
-                    style={{ fontFeatureSettings: '"tnum"' }}
-                  >
-                    {s.stat}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* ── Achievement badges ───────────────────────────────────────────── */}
-        <div className="is-badges flex flex-wrap justify-center gap-3 mt-14">
-          {[
-            '2024 Top Agency',
-            '100M+ Views Delivered',
-            'Award-Winning Production',
-            'Multi-Platform Expertise',
-            '4.4M+ Engagements',
-            'Brooklyn, NY Based',
-          ].map((badge) => (
-            <span
-              key={badge}
-              className="is-badge opacity-0 font-mono text-xs text-white/40 border border-white/[0.08] rounded-full px-4 py-2 hover:border-[#00AEEF]/25 hover:text-[#00AEEF]/60 transition-colors duration-200 cursor-default"
-            >
-              {badge}
+        {/* Phase 3 */}
+        <div className="phase-3 absolute flex flex-col items-center opacity-0 pointer-events-none">
+          <span className="font-mono text-[10px] md:text-xs text-emerald-400 tracking-[0.5em] uppercase mb-8">
+            // The Result
+          </span>
+          <h2 className="text-6xl md:text-[9rem] font-black leading-none tracking-tighter text-white drop-shadow-[0_0_40px_rgba(16,185,129,0.3)]">
+            DOMINATE
+          </h2>
+          <div className="mt-8 px-8 py-4 border border-emerald-500/30 rounded-full bg-emerald-500/5 backdrop-blur-md">
+            <span className="font-mono text-sm tracking-widest text-emerald-300">
+              INDUSTRY-LEADING METRICS
             </span>
-          ))}
+          </div>
         </div>
+
       </div>
+
     </section>
   )
 }
