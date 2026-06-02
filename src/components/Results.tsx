@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Eye, ThumbsUp, MessageSquare } from 'lucide-react'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -13,6 +13,8 @@ export default function Results() {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const textRef = useRef<HTMLSpanElement>(null)
   const [views, setViews] = useState(0)
+  const [likes, setLikes] = useState(0)
+  const [comments, setComments] = useState(0)
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -28,6 +30,8 @@ export default function Results() {
 
       // Counter animation
       const viewCounter = { val: 0 }
+      const likeCounter = { val: 0 }
+      const commentCounter = { val: 0 }
 
       tl.to(viewCounter, {
         val: 120000000,
@@ -36,18 +40,25 @@ export default function Results() {
         onUpdate: () => setViews(Math.floor(viewCounter.val))
       }, 0)
 
+      tl.to(likeCounter, {
+        val: 4395,
+        ease: 'none',
+        duration: 0.6,
+        onUpdate: () => setLikes(Math.floor(likeCounter.val))
+      }, 0)
+
+      tl.to(commentCounter, {
+        val: 370,
+        ease: 'none',
+        duration: 0.6,
+        onUpdate: () => setComments(Math.floor(commentCounter.val))
+      }, 0)
+
       // Main block entrance
       tl.fromTo('.metrics-block',
         { rotateX: 30, rotateY: -20, scale: 0.7, opacity: 0, z: -300 },
         { rotateX: 0, rotateY: 0, scale: 1, opacity: 1, z: 0, duration: 0.3, ease: 'power2.out' },
         0
-      )
-
-      // Subtle abstract UI shapes fly in
-      tl.fromTo('.abstract-shape',
-        { scale: 0, opacity: 0, rotation: 45 },
-        { scale: 1, opacity: 1, rotation: 0, stagger: 0.1, duration: 0.4, ease: 'power3.out' },
-        0.1
       )
 
       // Bottom CTA fades in
@@ -66,16 +77,9 @@ export default function Results() {
         duration: 0.4
       }, 0.6)
 
-      // Parallax background & shapes
+      // Parallax background
       tl.to('.parallax-bg', {
         y: '-10%',
-        ease: 'none',
-        duration: 1
-      }, 0)
-      
-      tl.to('.abstract-shape', {
-        y: (i) => (i % 2 === 0 ? -100 : 100),
-        rotation: (i) => (i % 2 === 0 ? 15 : -15),
         ease: 'none',
         duration: 1
       }, 0)
@@ -132,32 +136,6 @@ export default function Results() {
 
       <div className="relative z-10 h-full flex items-center justify-center px-6" style={{ transformStyle: 'preserve-3d' }}>
         
-        {/* Subtle decorative overlays (no hard statistical data) */}
-        <div className="absolute inset-0 pointer-events-none flex items-center justify-between px-[10vw]" style={{ transformStyle: 'preserve-3d' }}>
-          {/* Left subtle overlay */}
-          <div className="abstract-shape hidden lg:flex flex-col gap-2 opacity-50" style={{ transform: 'translateZ(-100px)' }}>
-             <div className="w-16 h-[1px] bg-gradient-to-r from-[#00AEEF] to-transparent" />
-             <div className="font-mono text-[10px] text-[#00AEEF] tracking-[0.4em] uppercase">Scale / Volume</div>
-             <div className="w-32 h-[1px] bg-gradient-to-r from-white/20 to-transparent mt-8" />
-             <div className="w-24 h-[1px] bg-gradient-to-r from-white/10 to-transparent mt-2" />
-          </div>
-          
-          {/* Right subtle overlay */}
-          <div className="abstract-shape hidden lg:flex flex-col items-end gap-2 opacity-50 text-right" style={{ transform: 'translateZ(-50px)' }}>
-             <div className="w-16 h-[1px] bg-gradient-to-l from-[#00AEEF] to-transparent" />
-             <div className="font-mono text-[10px] text-[#00AEEF] tracking-[0.4em] uppercase">Engagement Matrix</div>
-             
-             {/* Decorative reticle */}
-             <div className="mt-8 relative w-12 h-12 border border-white/10 rounded-full flex items-center justify-center">
-                <div className="w-1 h-1 bg-[#00AEEF] rounded-full" />
-                <div className="absolute top-0 w-[1px] h-2 bg-white/20" />
-                <div className="absolute bottom-0 w-[1px] h-2 bg-white/20" />
-                <div className="absolute left-0 w-2 h-[1px] bg-white/20" />
-                <div className="absolute right-0 w-2 h-[1px] bg-white/20" />
-             </div>
-          </div>
-        </div>
-
         {/* Central Metrics Block */}
         <div className="metrics-block flex flex-col items-center max-w-4xl w-full" style={{ transformStyle: 'preserve-3d' }}>
 
@@ -179,6 +157,23 @@ export default function Results() {
           {/* Separator */}
           <div className="w-full max-w-2xl h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent my-10 shadow-[0_0_15px_rgba(255,255,255,0.1)] relative">
              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-[2px] bg-[#00AEEF] shadow-[0_0_10px_rgba(0,174,239,0.8)]" />
+          </div>
+
+          {/* Engagement Row (3D comments and likes elements brought back) */}
+          <div className="flex gap-12 md:gap-20 items-center text-white/90 text-xl md:text-3xl font-bold mb-10">
+            <div className="flex items-center gap-3">
+              <Eye className="w-6 h-6 md:w-10 md:h-10 text-[#00AEEF]" />
+              <span>{views > 0 ? '98.2%' : '0%'}</span>
+              <span className="text-xs text-white/40 font-normal ml-1">Reach</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <ThumbsUp className="w-6 h-6 md:w-10 md:h-10 text-[#00AEEF]" />
+              <span>{likes.toLocaleString()}</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <MessageSquare className="w-6 h-6 md:w-10 md:h-10 text-[#00AEEF]" />
+              <span>{comments.toLocaleString()}</span>
+            </div>
           </div>
 
           {/* Description */}

@@ -111,39 +111,39 @@ export default function Hero() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: '+=1000vh', // Increased distance for much slower, smoother scrub
-          scrub: 0.5,     // Faster scrub catch-up
+          end: '+=1500vh', // Increased distance for extremely smooth scrub
+          scrub: 1,     // Smoother scrub catching
           pin: true,
           anticipatePin: 1,
         },
       })
 
-      // A. Fade out HTML content immediately upon scroll
+      // A. Fade out HTML content slowly upon scroll
       scrollTl.to(
         '.hero-html-content',
-        { opacity: 0, ease: 'power4.out', duration: 0.05 },
+        { opacity: 0, ease: 'power2.inOut', duration: 0.25 },
         0
       )
       scrollTl.to(
         '.camera-ui',
-        { opacity: 0, ease: 'power4.out', duration: 0.05 },
+        { opacity: 0, ease: 'power2.inOut', duration: 0.25 },
         0
       )
 
-      // B. Fade in the canvas container
+      // B. Fade in the canvas container smoothly
       scrollTl.to(
         '.camera-canvas-container',
-        { opacity: 1, ease: 'power2.inOut', duration: 0.1 },
+        { opacity: 1, ease: 'power2.inOut', duration: 0.25 },
         0
       )
 
-      // C. Frame sequence animation
+      // C. Frame sequence animation (spans the entire scroll distance)
       scrollTl.to(
         playhead,
         {
           frame: FRAME_COUNT - 1,
           snap: 'frame',
-          ease: 'none',
+          ease: 'power1.inOut', // adding ease instead of 'none' helps smooth start/end choppiness
           duration: 1,
           onUpdate: () => renderFrame(playhead.frame),
         },
@@ -153,8 +153,8 @@ export default function Hero() {
       // D. Crossfade transition into the next section
       scrollTl.to(
         '.camera-canvas-container',
-        { opacity: 0, ease: 'power2.inOut', duration: 0.1 },
-        0.9 // Start fading out at 90% of the scroll timeline
+        { opacity: 0, ease: 'power2.inOut', duration: 0.15 },
+        0.85 // Start fading out at 85% of the scroll timeline
       )
     }, containerRef)
 

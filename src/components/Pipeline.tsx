@@ -53,13 +53,13 @@ export default function Pipeline() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: '+=900vh',
+          end: '+=1500vh',
           pin: true,
           scrub: 1,
         }
       })
 
-      const segSize = 900 / totalSteps
+      const segSize = 1500 / totalSteps
 
       stepElements.forEach((step, i) => {
         if (i > 0) {
@@ -80,8 +80,8 @@ export default function Pipeline() {
   return (
     <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-hidden flex flex-col md:flex-row">
       
-      {/* Right Side - Videos (Background on mobile, right 40% on desktop) */}
-      <div className="absolute inset-0 md:left-[60%] w-full md:w-[40%] h-full z-0 overflow-hidden pointer-events-none">
+      {/* Right Side - Videos (Background on mobile, right 50% on desktop) */}
+      <div className="absolute inset-0 md:left-[50%] w-full md:w-[50%] h-full z-0 overflow-hidden pointer-events-none">
         
         {/* Desktop Gradient overlay to blend left and right */}
         <div className="absolute inset-0 z-10 hidden md:block bg-gradient-to-r from-[#030305] via-[#030305]/40 to-transparent w-full" />
@@ -112,14 +112,14 @@ export default function Pipeline() {
         ))}
       </div>
 
-      {/* Left Side - Text Content (takes up 60% on desktop) */}
-      <div className="w-full md:w-[60%] h-full flex flex-col justify-center relative z-20 px-8 md:px-16 lg:px-24 pt-20 md:pt-0">
+      {/* Left Side - Text Content (takes up 70% on desktop) */}
+      <div className="w-full md:w-[70%] h-full flex flex-col justify-center relative z-20 px-8 md:px-16 lg:px-24 pt-20 md:pt-0">
         <div className="mb-10 md:mb-16">
-          <span className="font-mono text-xs text-[#00AEEF] tracking-[0.4em] uppercase block mb-4">// Production Pipeline</span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight">How It Works</h2>
+          <span className="font-mono text-sm md:text-base text-[#00AEEF] tracking-[0.4em] uppercase block mb-4">// Production Pipeline</span>
+          <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight">How It Works</h2>
         </div>
         
-        <div className="flex flex-col gap-6 md:gap-8">
+        <div className="flex flex-col gap-8 md:gap-10">
           {steps.map((step, i) => {
             const Icon = step.icon
             return (
@@ -130,13 +130,13 @@ export default function Pipeline() {
                   i === 0 ? "opacity-100 scale-100" : "opacity-30 scale-95"
                 )}
               >
-                <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#00AEEF]">
-                  <Icon size={20} strokeWidth={1.5} className="md:w-6 md:h-6" />
+                <div className="flex-shrink-0 w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[#00AEEF]">
+                  <Icon strokeWidth={1.5} className="w-6 h-6 md:w-8 md:h-8" />
                 </div>
                 <div>
-                  <div className="font-mono text-[10px] text-[#00AEEF] tracking-[0.2em] mb-1 md:mb-2">STEP {step.num}</div>
-                  <h3 className="text-xl md:text-2xl font-bold text-white mb-2">{step.title}</h3>
-                  <p className="text-white/60 text-sm md:text-base leading-relaxed max-w-sm">
+                  <div className="font-mono text-xs text-[#00AEEF] tracking-[0.2em] mb-1 md:mb-2">STEP {step.num}</div>
+                  <h3 className="text-2xl md:text-4xl font-bold text-white mb-3 md:mb-4">{step.title}</h3>
+                  <p className="text-white/60 text-base md:text-xl leading-relaxed max-w-2xl">
                     {step.desc}
                   </p>
                 </div>
