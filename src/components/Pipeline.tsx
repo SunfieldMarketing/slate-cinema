@@ -56,10 +56,15 @@ export default function Pipeline() {
     })
 
     steps.forEach((_, index) => {
-      // 1. Ink Drop Expands (animate the CSS variable --mask-size from 0% to 150%)
-      tl.fromTo(`.step-container-${index}`,
+      // 1. Fade in container (if not first) and Ink Drop Expands (animate mask on the video wrapper)
+      if (index !== 0) {
+        tl.to(`.step-container-${index}`, { opacity: 1, duration: 0.1 }, "-=0.5")
+      }
+      
+      tl.fromTo(`.video-mask-${index}`,
         { '--mask-size': '0%' },
-        { '--mask-size': '150%', duration: 2, ease: 'power2.inOut' }
+        { '--mask-size': '150%', duration: 2, ease: 'power2.inOut' },
+        "-=0.1"
       )
       
       // 2. Text "Bleeds" In (Blur + Opacity)
@@ -109,17 +114,19 @@ export default function Pipeline() {
           className={`step-container-${index} absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden`}
           style={{ 
             opacity: index === 0 ? 1 : 0, 
-            // We use a CSS variable animated by GSAP to control the radial gradient size
-            '--mask-size': index === 0 ? '0%' : '0%',
-            maskImage: 'radial-gradient(circle at center, black var(--mask-size), transparent calc(var(--mask-size) + 2%))',
-            WebkitMaskImage: 'radial-gradient(circle at center, black var(--mask-size), transparent calc(var(--mask-size) + 2%))',
-            // Apply the organic ink bleed SVG filter
-            filter: 'url(#ink-bleed)'
-          } as React.CSSProperties}
+          }}
         >
           
-          {/* Background Video */}
-          <div className="absolute inset-0 w-full h-full pointer-events-none -z-10">
+          {/* Background Video WITH Ink Bleed Filter */}
+          <div 
+            className={`video-mask-${index} absolute inset-0 w-full h-full pointer-events-none -z-10`}
+            style={{ 
+              '--mask-size': '0%',
+              maskImage: 'radial-gradient(circle at center, black var(--mask-size), transparent calc(var(--mask-size) + 2%))',
+              WebkitMaskImage: 'radial-gradient(circle at center, black var(--mask-size), transparent calc(var(--mask-size) + 2%))',
+              filter: 'url(#ink-bleed)'
+            } as React.CSSProperties}
+          >
             <video 
               src={step.videoSrc}
               autoPlay
