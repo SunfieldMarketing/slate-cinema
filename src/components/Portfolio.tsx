@@ -1,16 +1,15 @@
 'use client'
 
-import { useRef, useState, useEffect, useCallback } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Play, X, ArrowRight, Eye, TrendingUp, Share2, Clock } from 'lucide-react'
+import { X, Play, Eye, TrendingUp, Share2, Clock, type LucideIcon } from 'lucide-react'
 
 gsap.registerPlugin(ScrollTrigger)
 
-// ─── Data ────────────────────────────────────────────────────────────────────
-
+// ─── Data ─────────────────────────────────────────────────────────────────────
 interface Project {
   title: string
   category: string
@@ -18,14 +17,10 @@ interface Project {
   client: string
   year: string
   duration: string
-  metrics: {
-    views: string
-    engagement: string
-    shares: string
-    retention: string
-  }
+  metrics: { views: string; engagement: string; shares: string; retention: string }
   description: string
   tags: string[]
+  size: 'large' | 'medium' | 'small'
 }
 
 const projects: Project[] = [
@@ -37,9 +32,9 @@ const projects: Project[] = [
     year: '2024',
     duration: '2:34',
     metrics: { views: '12.4M', engagement: '9.2%', shares: '84K', retention: '78%' },
-    description:
-      'A cinematic brand film that redefined Apex Athletics\' digital presence. Shot across 4 locations with a crew of 18, this campaign drove a 340% increase in brand awareness.',
+    description: 'A cinematic brand film that redefined Apex Athletics\' digital presence. Shot across 4 locations with a crew of 18, this campaign drove a 340% increase in brand awareness.',
     tags: ['Brand Identity', 'Multi-Platform', 'Campaign'],
+    size: 'large',
   },
   {
     title: 'Social Series',
@@ -47,11 +42,11 @@ const projects: Project[] = [
     image: '/images/portfolio-social.png',
     client: 'Lifestyle Co',
     year: '2024',
-    duration: '0:30–0:60',
+    duration: '0:30–1:00',
     metrics: { views: '28.1M', engagement: '11.4%', shares: '210K', retention: '85%' },
-    description:
-      'A 12-part social-first content series engineered for scroll-stopping performance. Each piece tested and optimized in real-time.',
+    description: 'A 12-part social-first content series engineered for scroll-stopping performance. Each piece tested and optimized in real-time across TikTok and Instagram.',
     tags: ['Social-First', 'Series', 'Short-Form'],
+    size: 'medium',
   },
   {
     title: 'Brand Identity',
@@ -61,9 +56,9 @@ const projects: Project[] = [
     year: '2023',
     duration: '1:00',
     metrics: { views: '8.7M', engagement: '7.8%', shares: '45K', retention: '72%' },
-    description:
-      'High-end commercial production for a luxury brand launch. Directed with cinematic precision across 3 international locations.',
+    description: 'High-end commercial production for a luxury brand launch. Directed with cinematic precision across 3 international locations.',
     tags: ['Luxury', 'Commercial', 'International'],
+    size: 'medium',
   },
   {
     title: 'Live Event',
@@ -73,9 +68,9 @@ const projects: Project[] = [
     year: '2024',
     duration: '4:12',
     metrics: { views: '5.2M', engagement: '6.3%', shares: '32K', retention: '65%' },
-    description:
-      'Full-scale event coverage capturing the energy and atmosphere of a sold-out venue. Real-time editing delivered within 24 hours.',
+    description: 'Full-scale event coverage capturing the energy of a sold-out venue. Real-time editing and delivery within 24 hours of wrap.',
     tags: ['Live', 'Event', 'Real-Time'],
+    size: 'small',
   },
   {
     title: 'Product Launch',
@@ -85,9 +80,9 @@ const projects: Project[] = [
     year: '2024',
     duration: '1:30',
     metrics: { views: '19.6M', engagement: '13.1%', shares: '156K', retention: '89%' },
-    description:
-      'A product launch campaign that broke the internet. Combining 3D animation with live-action footage for a seamless premium feel.',
+    description: 'A viral product launch combining 3D animation with live-action for a seamless premium feel. Delivered across 6 platform formats.',
     tags: ['Product', 'Viral', '3D Integration'],
+    size: 'large',
   },
   {
     title: 'Culture Film',
@@ -97,501 +92,379 @@ const projects: Project[] = [
     year: '2023',
     duration: '8:45',
     metrics: { views: '3.1M', engagement: '14.2%', shares: '78K', retention: '91%' },
-    description:
-      'A deeply personal documentary piece exploring culture and community. Winner of 2 regional film festival awards.',
+    description: 'A deeply personal documentary exploring culture and community. Winner of 2 regional film festival awards.',
     tags: ['Documentary', 'Award-Winning', 'Cultural'],
+    size: 'small',
   },
 ]
 
-// ─── Animated Counter ─────────────────────────────────────────────────────────
-
-function AnimatedCounter({ value, isVisible }: { value: string; isVisible: boolean }) {
+// ─── Animated counter for expanded modal ───────────────────────────────────────
+function Counter({ target, suffix = '' }: { target: string; suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null)
-  const hasAnimated = useRef(false)
 
   useEffect(() => {
-    if (!isVisible || hasAnimated.current || !ref.current) return
-    hasAnimated.current = true
-
-    // Parse numeric portion
-    const raw = value.replace(/[^0-9.]/g, '')
-    const suffix = value.replace(/[0-9.]/g, '')
-    const target = parseFloat(raw)
-    const isDecimal = raw.includes('.')
-    const decimals = isDecimal ? (raw.split('.')[1]?.length ?? 1) : 0
-
+    const numericMatch = target.match(/[\d.]+/)
+    if (!numericMatch || !ref.current) return
+    const num = parseFloat(numericMatch[0])
+    const rest = target.replace(numericMatch[0], '')
     const obj = { val: 0 }
     gsap.to(obj, {
-      val: target,
-      duration: 2,
+      val: num,
+      duration: 1.4,
       ease: 'power2.out',
       delay: 0.3,
-      onUpdate() {
+      onUpdate: () => {
         if (ref.current) {
-          ref.current.textContent = obj.val.toFixed(decimals) + suffix
+          ref.current.textContent = `${obj.val < 10 ? obj.val.toFixed(1) : Math.floor(obj.val)}${rest}`
         }
       },
-      onComplete() {
-        if (ref.current) ref.current.textContent = value
-      },
     })
-  }, [isVisible, value])
+    return () => gsap.killTweensOf(obj)
+  }, [target])
 
-  return <span ref={ref}>0</span>
+  return <span ref={ref}>0{suffix}</span>
 }
 
-// ─── Metric Box ───────────────────────────────────────────────────────────────
-
-const metricIcons = {
-  Views: Eye,
-  Engagement: TrendingUp,
-  Shares: Share2,
-  Retention: Clock,
-}
-
-function MetricBox({
-  label,
-  value,
-  isVisible,
-  delay,
-}: {
-  label: keyof typeof metricIcons
-  value: string
-  isVisible: boolean
-  delay: number
-}) {
-  const Icon = metricIcons[label]
+// ─── Metric box ───────────────────────────────────────────────────────────────
+function MetricBox({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-      transition={{ duration: 0.5, delay }}
-      className="bg-white/[0.04] border border-white/[0.08] rounded-xl p-4 flex flex-col gap-2 backdrop-blur-sm"
-    >
-      <div className="flex items-center gap-2 text-[#00AEEF]/70">
-        <Icon size={13} strokeWidth={1.5} />
-        <span className="font-mono text-[9px] tracking-[0.25em] uppercase">{label}</span>
+    <div className="flex flex-col gap-1 p-4 rounded-xl bg-white/[0.04] border border-white/[0.07]">
+      <div className="flex items-center gap-2 mb-1">
+        <Icon size={13} className="text-[#00AEEF]" />
+        <span className="font-mono text-[9px] text-white/35 uppercase tracking-wider">{label}</span>
       </div>
-      <div className="text-2xl font-bold text-white tracking-tight">
-        <AnimatedCounter value={value} isVisible={isVisible} />
-      </div>
-    </motion.div>
+      <p className="text-xl font-bold text-white leading-none">
+        <Counter target={value} />
+      </p>
+    </div>
   )
 }
 
-// ─── Expanded Modal ───────────────────────────────────────────────────────────
-
-function ExpandedModal({
-  project,
-  onClose,
-}: {
-  project: Project
-  onClose: () => void
-}) {
-  const [metricsVisible, setMetricsVisible] = useState(false)
-
-  // Show metrics after modal is open
+// ─── Expanded modal ────────────────────────────────────────────────────────────
+function ExpandedModal({ project, onClose }: { project: Project; onClose: () => void }) {
+  // Close on Escape
   useEffect(() => {
-    const t = setTimeout(() => setMetricsVisible(true), 200)
-    return () => clearTimeout(t)
-  }, [])
-
-  // Escape key
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [onClose])
 
   return (
     <motion.div
-      className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-6"
+      className="fixed inset-0 z-[200] flex items-end md:items-center justify-center p-0 md:p-6"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
-      onClick={onClose}
+      transition={{ duration: 0.25 }}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/85 backdrop-blur-xl" />
-
-      {/* Panel */}
       <motion.div
-        className="relative w-full md:w-[92vw] max-w-6xl bg-[#0a0a0f] border border-white/10 rounded-t-3xl md:rounded-3xl overflow-hidden shadow-2xl"
-        style={{ maxHeight: '92vh' }}
+        className="absolute inset-0 bg-black/80 backdrop-blur-md"
+        onClick={onClose}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      />
+
+      {/* Modal card */}
+      <motion.div
+        className="relative z-10 w-full md:max-w-5xl bg-[#0a0f1e] rounded-t-3xl md:rounded-2xl overflow-hidden flex flex-col md:flex-row"
+        style={{ maxHeight: '92vh', border: '1px solid rgba(255,255,255,0.08)' }}
         initial={{ y: '100%', scale: 0.95 }}
         animate={{ y: 0, scale: 1 }}
         exit={{ y: '100%', scale: 0.95 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 32 }}
-        onClick={(e) => e.stopPropagation()}
+        transition={{ type: 'spring', damping: 30, stiffness: 260 }}
       >
-        {/* Drag handle (mobile) */}
-        <div className="md:hidden absolute top-3 left-1/2 -translate-x-1/2 w-12 h-1 rounded-full bg-white/20 z-10" />
-
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 z-20 w-10 h-10 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 transition-all duration-200"
+          className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/20 transition-all duration-200"
         >
-          <X size={18} />
+          <X size={16} />
         </button>
 
-        {/* Layout: image left (60%) + details right (40%) */}
-        <div className="flex flex-col md:flex-row h-full" style={{ minHeight: 0 }}>
+        {/* Left — image */}
+        <motion.div
+          className="relative w-full md:w-[55%] h-56 md:h-auto shrink-0 overflow-hidden"
+          initial={{ opacity: 0, scale: 1.05 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.7, delay: 0.1 }}
+        >
+          <img
+            src={project.image}
+            alt={project.title}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.src = `https://placehold.co/800x600/0B1428/00AEEF?text=${project.title}`
+              e.currentTarget.onerror = null
+            }}
+          />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, transparent 60%, rgba(10,15,30,0.8))' }} />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,15,30,0.7) 0%, transparent 40%)' }} />
 
-          {/* ── Left: Image ────────────────────────────────────────── */}
-          <div className="relative flex-shrink-0 w-full md:w-[60%] h-56 md:h-auto overflow-hidden">
-            <motion.img
-              src={project.image}
-              alt={project.title}
-              className="w-full h-full object-cover"
-              initial={{ scale: 1.08 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-            />
-            {/* Overlays */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-[#0a0a0f]/20 to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-[#0a0a0f]" />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#0a0a0f] hidden md:block" />
-
-            {/* Index label */}
-            <div className="absolute top-5 left-5 font-mono text-[10px] text-[#00AEEF]/60 tracking-[0.3em]">
-              {String(projects.indexOf(project) + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}
-            </div>
+          {/* Project index label */}
+          <div className="absolute top-4 left-4 font-mono text-xs text-white/40 bg-black/40 backdrop-blur-sm rounded-full px-3 py-1 border border-white/10">
+            {String(projects.indexOf(project) + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}
           </div>
+        </motion.div>
 
-          {/* ── Right: Details ─────────────────────────────────────── */}
-          <div className="flex-1 overflow-y-auto px-7 pt-8 pb-10 md:pl-0 md:pr-10 md:pt-12 flex flex-col gap-6">
+        {/* Right — details */}
+        <div className="flex-1 overflow-y-auto p-6 md:p-8 flex flex-col gap-5">
 
-            {/* Meta row */}
-            <motion.div
-              className="flex flex-wrap items-center gap-3"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.45, delay: 0.15 }}
-            >
-              <span className="font-mono text-[9px] text-[#00AEEF] tracking-[0.3em] uppercase px-3 py-1.5 border border-[#00AEEF]/30 rounded-full bg-[#00AEEF]/5">
-                {project.category}
+          {/* Meta row */}
+          <motion.div
+            className="flex flex-wrap items-center gap-2"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <span className="font-mono text-[10px] text-[#00AEEF] border border-[#00AEEF]/25 rounded-full px-2.5 py-0.5 bg-[#00AEEF]/5">
+              {project.category}
+            </span>
+            <span className="font-mono text-[10px] text-white/30">{project.year}</span>
+            <span className="font-mono text-[10px] text-white/30">·</span>
+            <span className="font-mono text-[10px] text-white/30">{project.duration}</span>
+          </motion.div>
+
+          {/* Title */}
+          <motion.h3
+            className="text-2xl md:text-3xl font-bold text-white tracking-tight leading-tight"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+          >
+            {project.title}
+          </motion.h3>
+
+          {/* Client */}
+          <motion.p
+            className="font-mono text-xs text-white/30 tracking-widest uppercase"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            Client: {project.client}
+          </motion.p>
+
+          {/* Description */}
+          <motion.p
+            className="text-white/65 text-sm leading-relaxed"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.32 }}
+          >
+            {project.description}
+          </motion.p>
+
+          {/* Tags */}
+          <motion.div
+            className="flex flex-wrap gap-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.35 }}
+          >
+            {project.tags.map((tag) => (
+              <span key={tag} className="text-[11px] font-mono text-white/45 border border-white/10 rounded-full px-3 py-1">
+                {tag}
               </span>
-              <span className="font-mono text-[9px] text-white/40 tracking-[0.2em] uppercase">
-                {project.year}
-              </span>
-              <span className="font-mono text-[9px] text-white/40 tracking-[0.2em] uppercase">
-                {project.duration}
-              </span>
-            </motion.div>
+            ))}
+          </motion.div>
 
-            {/* Title */}
-            <motion.h3
-              className="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-none"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: 0.2 }}
-            >
-              {project.title}
-            </motion.h3>
+          {/* Divider */}
+          <div className="h-px w-full" style={{ background: 'linear-gradient(to right, rgba(0,174,239,0.2), transparent)' }} />
 
-            {/* Client */}
-            <motion.div
-              className="flex items-center gap-2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4, delay: 0.25 }}
-            >
-              <span className="text-white/30 text-xs font-mono tracking-widest uppercase">Client</span>
-              <span className="w-px h-3 bg-white/20" />
-              <span className="text-white/60 text-sm">{project.client}</span>
-            </motion.div>
-
-            {/* Description */}
-            <motion.p
-              className="text-white/55 text-sm leading-relaxed"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: 0.3 }}
-            >
-              {project.description}
-            </motion.p>
-
-            {/* Tags */}
-            <motion.div
-              className="flex flex-wrap gap-2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4, delay: 0.35 }}
-            >
-              {project.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="text-[10px] font-mono tracking-widest uppercase text-white/40 border border-white/10 rounded-full px-3 py-1 bg-white/[0.03]"
-                >
-                  {tag}
-                </span>
-              ))}
-            </motion.div>
-
-            {/* Divider */}
-            <motion.div
-              className="h-px bg-gradient-to-r from-[#00AEEF]/20 via-white/10 to-transparent"
-              initial={{ scaleX: 0, originX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            />
-
-            {/* Metrics 2×2 grid */}
-            <div className="grid grid-cols-2 gap-3">
-              <MetricBox label="Views" value={project.metrics.views} isVisible={metricsVisible} delay={0} />
-              <MetricBox label="Engagement" value={project.metrics.engagement} isVisible={metricsVisible} delay={0.1} />
-              <MetricBox label="Shares" value={project.metrics.shares} isVisible={metricsVisible} delay={0.2} />
-              <MetricBox label="Retention" value={project.metrics.retention} isVisible={metricsVisible} delay={0.3} />
-            </div>
-
-          </div>
+          {/* Metrics 2×2 grid */}
+          <motion.div
+            className="grid grid-cols-2 gap-3"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <MetricBox icon={Eye}        label="Total Views"    value={project.metrics.views} />
+            <MetricBox icon={TrendingUp} label="Engagement"     value={project.metrics.engagement} />
+            <MetricBox icon={Share2}     label="Shares"         value={project.metrics.shares} />
+            <MetricBox icon={Clock}      label="Retention Rate" value={project.metrics.retention} />
+          </motion.div>
         </div>
       </motion.div>
     </motion.div>
   )
 }
 
-// ─── Portfolio Card ───────────────────────────────────────────────────────────
+// ─── Portfolio card ────────────────────────────────────────────────────────────
+function PortfolioCard({ project, index, onOpen }: { project: Project; index: number; onOpen: () => void }) {
+  const heightMap = { large: 'h-[480px]', medium: 'h-[380px]', small: 'h-[300px]' }
 
-function PortfolioCard({
-  project,
-  index,
-  onClick,
-}: {
-  project: Project
-  index: number
-  onClick: () => void
-}) {
   return (
-    <div
-      className="portfolio-card flex-shrink-0 relative group cursor-pointer"
-      style={{
-        width: 'clamp(320px, 35vw, 480px)',
-        height: '70vh',
-        transformStyle: 'preserve-3d',
-      }}
-      onClick={onClick}
-      onMouseMove={(e) => {
-        const rect = e.currentTarget.getBoundingClientRect()
-        const x = (e.clientX - rect.left) / rect.width - 0.5
-        const y = (e.clientY - rect.top) / rect.height - 0.5
-        gsap.to(e.currentTarget, {
-          rotateY: x * 10,
-          rotateX: -y * 6,
-          duration: 0.3,
-          ease: 'power2.out',
-        })
-      }}
-      onMouseLeave={(e) => {
-        gsap.to(e.currentTarget, {
-          rotateY: 0,
-          rotateX: 0,
-          duration: 0.55,
-          ease: 'power3.out',
-        })
-      }}
+    <motion.div
+      className={`portfolio-card relative rounded-2xl overflow-hidden cursor-pointer group ${heightMap[project.size]}`}
+      style={{ border: '1px solid rgba(255,255,255,0.06)' }}
+      whileHover={{ scale: 1.02 }}
+      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      onClick={onOpen}
     >
-      {/* Card inner */}
-      <div className="w-full h-full rounded-2xl overflow-hidden relative border border-white/[0.06] transition-all duration-500 group-hover:border-[#00AEEF]/25 group-hover:shadow-[0_0_50px_rgba(0,174,239,0.12)]">
+      {/* Image */}
+      <img
+        src={project.image}
+        alt={project.title}
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+        onError={(e) => {
+          e.currentTarget.src = `https://placehold.co/600x400/0B1428/00AEEF?text=${project.title}`
+          e.currentTarget.onerror = null
+        }}
+      />
 
-        {/* Image */}
-        <img
-          src={project.image}
-          alt={project.title}
-          className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-105"
-        />
+      {/* Dark overlay */}
+      <div
+        className="absolute inset-0 transition-opacity duration-300"
+        style={{ background: 'linear-gradient(to top, rgba(3,3,5,0.92) 0%, rgba(3,3,5,0.3) 50%, rgba(3,3,5,0.1) 100%)' }}
+      />
 
-        {/* Gradient overlay — always present */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#030305] via-[#030305]/40 to-transparent" />
+      {/* Hover glow border */}
+      <div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none rounded-2xl"
+        style={{ boxShadow: '0 0 0 1px rgba(0,174,239,0.35) inset, 0 0 40px rgba(0,174,239,0.08) inset' }}
+      />
 
-        {/* Noise texture overlay */}
-        <div className="absolute inset-0 opacity-20" style={{
-          backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\' opacity=\'1\'/%3E%3C/svg%3E")',
-          backgroundSize: '200px',
-        }} />
-
-        {/* Play button overlay */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-400">
-          <div className="relative">
-            {/* Pulsing ring */}
-            <div className="absolute inset-0 rounded-full bg-[#00AEEF]/10 animate-ping" />
-            <div className="relative w-16 h-16 rounded-full bg-black/40 backdrop-blur-md border border-[#00AEEF]/50 flex items-center justify-center">
-              <Play size={22} className="text-[#00AEEF] ml-1" fill="rgba(0,174,239,0.8)" />
-            </div>
-          </div>
-        </div>
-
-        {/* Glow border (inner) */}
-        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-          style={{ boxShadow: 'inset 0 0 60px rgba(0,174,239,0.06)' }}
-        />
-
-        {/* Index */}
-        <div className="absolute top-5 left-5 font-mono text-[9px] text-white/30 tracking-[0.3em]">
-          {String(index + 1).padStart(2, '0')}
-        </div>
-
-        {/* Bottom info */}
-        <div className="absolute bottom-0 left-0 right-0 p-7 flex flex-col gap-1">
-          <span className="font-mono text-[9px] text-[#00AEEF] tracking-[0.35em] uppercase mb-1 block">
-            {project.category}
-          </span>
-          <h3 className="text-2xl font-bold text-white tracking-tight leading-tight">
-            {project.title}
-          </h3>
-          <div className="flex items-center gap-2 mt-3 text-white/40 text-[11px] font-mono tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <span>Click to expand</span>
-            <ArrowRight size={10} />
-          </div>
+      {/* Play button — center on hover */}
+      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+        <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center">
+          <Play size={20} className="text-white ml-1" fill="white" />
         </div>
       </div>
-    </div>
+
+      {/* Index number — top left */}
+      <div className="absolute top-4 left-4 font-mono text-[10px] text-white/35 tracking-widest">
+        {String(index + 1).padStart(2, '0')}
+      </div>
+
+      {/* Category pill — top right */}
+      <div className="absolute top-4 right-4 font-mono text-[9px] text-[#00AEEF]/80 bg-[#00AEEF]/10 border border-[#00AEEF]/20 rounded-full px-2.5 py-0.5 backdrop-blur-sm">
+        {project.category}
+      </div>
+
+      {/* Bottom info */}
+      <div className="absolute bottom-0 left-0 right-0 p-5">
+        <p className="font-mono text-[10px] text-white/35 uppercase tracking-widest mb-1">{project.client} · {project.year}</p>
+        <h3 className="text-lg font-bold text-white tracking-tight mb-3">{project.title}</h3>
+
+        {/* Metrics preview row */}
+        <div className="flex items-center gap-4 text-xs text-white/40 mb-3">
+          <span className="flex items-center gap-1"><Eye size={10} className="text-[#00AEEF]" /> {project.metrics.views}</span>
+          <span className="flex items-center gap-1"><TrendingUp size={10} className="text-[#00AEEF]" /> {project.metrics.engagement}</span>
+        </div>
+
+        {/* Click to expand hint */}
+        <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="w-3 h-px bg-[#00AEEF]" />
+          <span className="font-mono text-[9px] text-[#00AEEF] tracking-[0.25em] uppercase">Tap to expand</span>
+        </div>
+      </div>
+    </motion.div>
   )
 }
 
-// ─── Portfolio Section ────────────────────────────────────────────────────────
-
+// ─── Main Portfolio section ────────────────────────────────────────────────────
 export default function Portfolio() {
   const sectionRef = useRef<HTMLElement>(null)
-  const trackRef = useRef<HTMLDivElement>(null)
-  const [expandedCard, setExpandedCard] = useState<number | null>(null)
+  const [expanded, setExpanded] = useState<Project | null>(null)
 
-  const handleClose = useCallback(() => setExpandedCard(null), [])
-
-  useGSAP(
-    () => {
-      if (!trackRef.current || !sectionRef.current) return
-
-      const track = trackRef.current
-      const section = sectionRef.current
-
-      // Calculate how far to scroll horizontally
-      const getScrollAmount = () => -(track.scrollWidth - window.innerWidth)
-
-      // Heading entrance
-      gsap.fromTo(
-        '.portfolio-heading',
-        { y: 60, opacity: 0 },
+  useGSAP(() => {
+    const ctx = gsap.context(() => {
+      // Header entrance
+      gsap.fromTo('.port-header',
+        { opacity: 0, y: 60 },
         {
-          y: 0,
-          opacity: 1,
-          duration: 0.9,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: section,
-            start: 'top 85%',
-            end: 'top 50%',
-            scrub: 1,
-          },
+          opacity: 1, y: 0, duration: 1, ease: 'power3.out',
+          scrollTrigger: { trigger: sectionRef.current, start: 'top 75%', end: 'top 45%', scrub: 1 },
         }
       )
 
-      // Cards stagger in from 3D rotation
-      gsap.fromTo(
-        '.portfolio-card',
-        { rotateY: 30, scale: 0.82, opacity: 0 },
+      // Cards stagger entrance
+      gsap.fromTo('.portfolio-card',
+        { opacity: 0, y: 80 },
         {
-          rotateY: 0,
-          scale: 1,
-          opacity: 1,
-          stagger: 0.08,
-          duration: 0.7,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: section,
-            start: 'top 70%',
-            end: 'top 15%',
-            scrub: 1,
-          },
+          opacity: 1, y: 0, stagger: 0.1, duration: 0.8, ease: 'power3.out',
+          scrollTrigger: { trigger: '.portfolio-grid', start: 'top 80%' },
         }
       )
-
-      // Pin + horizontal scroll
-      gsap.to(track, {
-        x: getScrollAmount,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: section,
-          start: 'top top',
-          end: () => `+=${track.scrollWidth - window.innerWidth + window.innerWidth * 0.4}`,
-          pin: true,
-          scrub: 1,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
-      })
-    },
-    { scope: sectionRef }
-  )
+    }, sectionRef)
+    return () => ctx.revert()
+  }, { scope: sectionRef })
 
   return (
     <>
-      {/* ── Section ──────────────────────────────────────────────── */}
-      <section
-        ref={sectionRef}
-        id="portfolio"
-        className="relative w-full h-screen bg-[#030305] overflow-hidden"
-        style={{ perspective: '1400px' }}
-      >
-        {/* Ambient glow */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#00AEEF] opacity-[0.025] rounded-full blur-[120px]" />
-        </div>
+      <section ref={sectionRef} className="relative w-full py-32 lg:py-44 bg-[#030305] overflow-hidden">
 
-        {/* Section header */}
-        <div className="portfolio-heading absolute top-14 left-8 md:left-16 z-20 pointer-events-none">
-          <span className="font-mono text-[10px] text-[#00AEEF] tracking-[0.45em] uppercase block mb-3">
-            // Featured Work
+        {/* Watermark */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden" aria-hidden="true">
+          <span className="font-black text-white whitespace-nowrap" style={{ fontSize: 'clamp(5rem, 16vw, 14rem)', opacity: 0.015, letterSpacing: '-0.04em' }}>
+            PORTFOLIO
           </span>
-          <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tight leading-none">
-            Our Portfolio
-          </h2>
         </div>
 
-        {/* Horizontal scroll track */}
-        <div
-          ref={trackRef}
-          className="absolute top-0 left-0 h-full flex items-center gap-6 md:gap-8 pl-8 md:pl-16 pr-[45vw]"
-          style={{
-            paddingTop: 'clamp(120px, 18vh, 180px)',
-            paddingBottom: '4vh',
-            transformStyle: 'preserve-3d',
-          }}
-        >
-          {projects.map((project, i) => (
-            <PortfolioCard
-              key={i}
-              project={project}
-              index={i}
-              onClick={() => setExpandedCard(i)}
-            />
-          ))}
+        {/* Ambient glow */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[80vw] h-[40vh] pointer-events-none" style={{ background: 'radial-gradient(ellipse, rgba(0,174,239,0.04) 0%, transparent 70%)' }} />
+
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6">
+
+          {/* ── Header ────────────────────────────────────────────────────── */}
+          <div className="port-header opacity-0 flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+            <div>
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-8 h-px bg-[#00AEEF]" />
+                <span className="font-mono text-xs text-[#00AEEF] tracking-[0.4em] uppercase">// Featured Work</span>
+              </div>
+              <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-[1.0]">
+                Our Portfolio.
+              </h2>
+            </div>
+            <p className="text-white/40 max-w-xs text-sm leading-relaxed md:text-right">
+              Click any project to see full details, metrics, and behind-the-scenes.
+            </p>
+          </div>
+
+          {/* ── Masonry-style grid ───────────────────────────────────────── */}
+          {/* Desktop: 3 columns. Mobile: 1 column */}
+          <div className="portfolio-grid grid grid-cols-1 md:grid-cols-3 gap-4">
+
+            {/* Column 1: large + small */}
+            <div className="flex flex-col gap-4">
+              <PortfolioCard project={projects[0]} index={0} onOpen={() => setExpanded(projects[0])} />
+              <PortfolioCard project={projects[3]} index={3} onOpen={() => setExpanded(projects[3])} />
+            </div>
+
+            {/* Column 2: medium + medium */}
+            <div className="flex flex-col gap-4">
+              <PortfolioCard project={projects[1]} index={1} onOpen={() => setExpanded(projects[1])} />
+              <PortfolioCard project={projects[2]} index={2} onOpen={() => setExpanded(projects[2])} />
+            </div>
+
+            {/* Column 3: large + small */}
+            <div className="flex flex-col gap-4">
+              <PortfolioCard project={projects[4]} index={4} onOpen={() => setExpanded(projects[4])} />
+              <PortfolioCard project={projects[5]} index={5} onOpen={() => setExpanded(projects[5])} />
+            </div>
+          </div>
+
+          {/* ── View all CTA ─────────────────────────────────────────────── */}
+          <div className="flex justify-center mt-14">
+            <a
+              href="#quote"
+              className="group inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.03] px-8 py-4 text-sm font-medium text-white/70 hover:text-white hover:border-[#00AEEF]/40 hover:bg-[#00AEEF]/5 transition-all duration-300"
+            >
+              <span>Start Your Project</span>
+              <div className="w-5 h-px bg-current transition-transform duration-300 group-hover:translate-x-1" />
+            </a>
+          </div>
+
         </div>
-
-        {/* Left edge fade */}
-        <div className="absolute top-0 bottom-0 left-0 w-20 z-10 pointer-events-none bg-gradient-to-r from-[#030305] to-transparent" />
-        {/* Right edge fade */}
-        <div className="absolute top-0 bottom-0 right-0 w-20 z-10 pointer-events-none bg-gradient-to-l from-[#030305] to-transparent" />
-
-        {/* Scroll hint */}
-        <div className="absolute bottom-8 right-8 md:right-16 z-20 flex items-center gap-3 text-white/25 select-none">
-          <span className="font-mono text-[9px] tracking-[0.3em] uppercase">Drag to explore</span>
-          <ArrowRight size={12} />
-        </div>
-
-        {/* Progress line */}
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-white/[0.06] z-20" />
       </section>
 
-      {/* ── Expanded Modal ───────────────────────────────────────── */}
-      <AnimatePresence mode="wait">
-        {expandedCard !== null && (
-          <ExpandedModal
-            key={expandedCard}
-            project={projects[expandedCard]}
-            onClose={handleClose}
-          />
+      {/* ── Expanded Modal ─────────────────────────────────────────────────── */}
+      <AnimatePresence>
+        {expanded && (
+          <ExpandedModal project={expanded} onClose={() => setExpanded(null)} />
         )}
       </AnimatePresence>
     </>
