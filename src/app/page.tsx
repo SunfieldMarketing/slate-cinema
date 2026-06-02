@@ -10,7 +10,6 @@ import Results from "@/components/Results";
 import IndustryStandards from "@/components/IndustryStandards";
 import Reviews from "@/components/Reviews";
 import Portfolio from "@/components/Portfolio";
-import LogoOrbit from "@/components/LogoOrbit";
 import LeadMagnet from "@/components/LeadMagnet";
 import CustomCalendar from "@/components/CustomCalendar";
 import Footer from "@/components/Footer";
@@ -56,7 +55,6 @@ export default function Home() {
         <Pipeline />
         <MediaVoid />
         <Results />
-        <LogoOrbit />
         <IndustryStandards />
         <Reviews />
         <Portfolio />

@@ -141,8 +141,10 @@ export default function IndustryStandards() {
           <span className="font-mono text-[10px] md:text-xs text-emerald-400 tracking-[0.5em] uppercase mb-8">
             // The Result
           </span>
-          <h2 className="text-6xl md:text-[8rem] font-black leading-none tracking-tighter text-white drop-shadow-[0_0_40px_rgba(16,185,129,0.3)] mb-8">
+          <h2 className="text-5xl md:text-[6rem] font-black leading-none tracking-tighter text-white drop-shadow-[0_0_40px_rgba(16,185,129,0.3)] mb-8">
             DOMINATE
+            <br />
+            YOUR MARKET
           </h2>
           <div className="px-8 py-4 border border-emerald-500/30 rounded-full bg-emerald-500/5 backdrop-blur-md mb-8">
             <span className="font-mono text-sm tracking-widest text-emerald-300">

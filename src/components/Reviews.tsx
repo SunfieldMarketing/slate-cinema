@@ -3,27 +3,26 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
-
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 
 gsap.registerPlugin(ScrollTrigger)
 
-// --- DATA: Premium Professional Headshots ---
+// --- DATA: Premium Professional Headshots (Curated reliable URLs) ---
 const gridTestimonials = [
-  { imgSrc: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=500&auto=format&fit=crop', alt: 'Professional Man' },
-  { imgSrc: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=500&auto=format&fit=crop', alt: 'Professional Woman' },
-  { imgSrc: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=500&auto=format&fit=crop', alt: 'Executive Man' },
-  { imgSrc: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=500&auto=format&fit=crop', alt: 'Smiling Executive' },
-  { imgSrc: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=500&auto=format&fit=crop', alt: 'Bearded Man' },
-  { imgSrc: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=500&auto=format&fit=crop', alt: 'Business Woman' },
-  { imgSrc: 'https://images.unsplash.com/photo-1557862921-37829c790f19?q=80&w=500&auto=format&fit=crop', alt: 'Man in blue shirt' },
-  { imgSrc: 'https://images.unsplash.com/photo-1598550874175-4d0ef43ee90d?q=80&w=500&auto=format&fit=crop', alt: 'Corporate Woman' },
-  { imgSrc: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=500&auto=format&fit=crop', alt: 'Older Man' },
-  { imgSrc: 'https://images.unsplash.com/photo-1531123897727-8f129e1bfa82?q=80&w=500&auto=format&fit=crop', alt: 'Young Executive' },
-  { imgSrc: 'https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?q=80&w=500&auto=format&fit=crop', alt: 'Man in suit' },
-  { imgSrc: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=500&auto=format&fit=crop', alt: 'Smiling Professional' },
+  { imgSrc: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&q=80', alt: 'Professional Man' },
+  { imgSrc: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&q=80', alt: 'Professional Woman' },
+  { imgSrc: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=500&q=80', alt: 'Executive Man' },
+  { imgSrc: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&q=80', alt: 'Smiling Executive' },
+  { imgSrc: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=80', alt: 'Bearded Man' },
+  { imgSrc: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=500&q=80', alt: 'Business Woman' },
+  { imgSrc: 'https://images.unsplash.com/photo-1557862921-37829c790f19?w=500&q=80', alt: 'Man in blue shirt' },
+  { imgSrc: 'https://images.unsplash.com/photo-1598550874175-4d0ef43ee90d?w=500&q=80', alt: 'Corporate Woman' },
+  { imgSrc: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500&q=80', alt: 'Older Man' },
+  { imgSrc: 'https://images.unsplash.com/photo-1531123897727-8f129e1bfa82?w=500&q=80', alt: 'Young Executive' },
+  { imgSrc: 'https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?w=500&q=80', alt: 'Man in suit' },
+  { imgSrc: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=500&q=80', alt: 'Smiling Professional' },
 ]
 
 const carouselTestimonials = [
@@ -31,53 +30,53 @@ const carouselTestimonials = [
     quote: "This platform revolutionized our data analysis process. The speed and accuracy are unparalleled. A must-have for any data-driven team.",
     name: "Priya Sharma",
     designation: "Data Scientist at QuantumLeap",
-    src: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1000&auto=format&fit=crop",
+    src: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1000&q=80",
   },
   {
     quote: "The user interface is incredibly intuitive, which made the onboarding process for my team a breeze. We were up and running in hours, not days.",
     name: "Marcus Johnson",
     designation: "Head of Operations at Synergy Corp",
-    src: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1000&auto=format&fit=crop",
+    src: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=1000&q=80",
   },
   {
     quote: "Customer support is top-notch. They are responsive, knowledgeable, and genuinely invested in our success. It feels like a true partnership.",
     name: "Isabella Rossi",
     designation: "Client Success Manager at Horizon",
-    src: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1000&auto=format&fit=crop",
+    src: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=1000&q=80",
   },
   {
     quote: "I'm impressed by the constant stream of updates and new features. The development team is clearly passionate and listens to user feedback.",
     name: "Kenji Tanaka",
     designation: "Software Engineer at CodeCrafters",
-    src: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=1000&auto=format&fit=crop",
+    src: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=1000&q=80",
   },
   {
     quote: "The ROI was almost immediate. It streamlined our workflows so effectively that we cut project delivery times by nearly 30%.",
     name: "Fatima Al-Jamil",
     designation: "CFO at Apex Financial",
-    src: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=1000&auto=format&fit=crop",
+    src: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=1000&q=80",
   },
 ]
 
-// --- PRE-DEFINED POSITIONS FOR THE IMAGES ---
-// Tightened margins to keep everything well within the screen (no margin/nav cutoffs)
+// Spread out to the edges (5-15% margins instead of 20-30%)
 const imagePositions = [
-  { top: '15%', left: '20%', className: 'hidden lg:block w-24 h-24' },
-  { top: '25%', left: '35%', className: 'hidden md:block w-20 h-20' },
-  { top: '15%', left: '55%', className: 'hidden md:block w-16 h-16' },
-  { top: '20%', right: '20%', className: 'hidden lg:block w-28 h-28' },
-  { top: '35%', right: '15%', className: 'hidden md:block w-20 h-20' },
-  { top: '55%', right: '18%', className: 'hidden lg:block w-24 h-24' },
-  { top: '60%', left: '15%', className: 'hidden md:block w-28 h-28' },
-  { bottom: '15%', left: '25%', className: 'hidden lg:block w-20 h-20' },
-  { bottom: '25%', left: '45%', className: 'hidden md:block w-16 h-16' },
-  { bottom: '20%', right: '35%', className: 'hidden md:block w-24 h-24' },
-  { bottom: '15%', right: '20%', className: 'hidden lg:block w-20 h-20' },
+  { top: '15%', left: '5%', className: 'hidden lg:block w-28 h-28', delay: '0s', duration: '5s' },
+  { top: '25%', left: '15%', className: 'hidden md:block w-20 h-20', delay: '1s', duration: '6s' },
+  { top: '15%', left: '35%', className: 'hidden md:block w-16 h-16', delay: '2s', duration: '4.5s' },
+  { top: '12%', right: '8%', className: 'hidden lg:block w-24 h-24', delay: '0.5s', duration: '5.5s' },
+  { top: '35%', right: '15%', className: 'hidden md:block w-20 h-20', delay: '1.5s', duration: '6.5s' },
+  { top: '55%', right: '5%', className: 'hidden lg:block w-32 h-32', delay: '2.5s', duration: '7s' },
+  { top: '60%', left: '8%', className: 'hidden md:block w-28 h-28', delay: '0.2s', duration: '5.2s' },
+  { bottom: '15%', left: '20%', className: 'hidden lg:block w-20 h-20', delay: '1.2s', duration: '4.8s' },
+  { bottom: '25%', left: '35%', className: 'hidden md:block w-16 h-16', delay: '2.2s', duration: '5.8s' },
+  { bottom: '20%', right: '25%', className: 'hidden md:block w-24 h-24', delay: '0.8s', duration: '6.2s' },
+  { bottom: '10%', right: '10%', className: 'hidden lg:block w-24 h-24', delay: '1.8s', duration: '5.3s' },
+  
   // Mobile fallback tighter positions
-  { top: '15%', left: '10%', className: 'block md:hidden w-16 h-16' },
-  { top: '12%', right: '15%', className: 'block md:hidden w-20 h-20' },
-  { bottom: '15%', left: '15%', className: 'block md:hidden w-20 h-20' },
-  { bottom: '20%', right: '10%', className: 'block md:hidden w-16 h-16' },
+  { top: '10%', left: '5%', className: 'block md:hidden w-16 h-16', delay: '0s', duration: '5s' },
+  { top: '12%', right: '5%', className: 'block md:hidden w-20 h-20', delay: '1s', duration: '6s' },
+  { bottom: '15%', left: '10%', className: 'block md:hidden w-20 h-20', delay: '2s', duration: '5.5s' },
+  { bottom: '20%', right: '5%', className: 'block md:hidden w-16 h-16', delay: '0.5s', duration: '4.5s' },
 ]
 
 export default function Reviews() {
@@ -130,8 +129,13 @@ export default function Reviews() {
   return (
     <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-hidden" style={{ perspective: '1000px' }}>
       
-      {/* Animated grid background */}
+      {/* CSS Keyframes for smooth infinite floating without React re-render jumps */}
       <style dangerouslySetInnerHTML={{__html: `
+        @keyframes float-img {
+          0% { transform: translateY(0px); }
+          50% { transform: translateY(-15px); }
+          100% { transform: translateY(0px); }
+        }
         @keyframes animate-grid {
           0% { background-position: 0% 50%; }
           100% { background-position: 100% 50%; }
@@ -146,49 +150,43 @@ export default function Reviews() {
           animation: animate-grid 40s linear infinite alternate;
         }
       `}} />
+
       <div className="animated-grid absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-30 z-0 pointer-events-none" />
       <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(3,3,5,1)_80%)] pointer-events-none" />
 
       {/* Part 1: Grid */}
       <div className="review-part-1 absolute inset-0 flex items-center justify-center z-10 w-full h-full">
-        <div className="relative w-full max-w-7xl mx-auto h-full flex flex-col items-center justify-center px-4">
+        <div className="relative w-full h-full flex flex-col items-center justify-center">
           
-          {/* Floating Images with separate container for parallax */}
-          <div className="review-grid-images absolute inset-0 pointer-events-none">
-            {gridTestimonials.slice(0, imagePositions.length).map((testimonial, index) => (
-              <motion.div
-                key={index}
-                className={`absolute rounded-2xl shadow-[0_0_30px_rgba(0,174,239,0.2)] border border-white/10 overflow-hidden ${imagePositions[index].className}`}
-                style={{ 
-                  top: imagePositions[index].top, 
-                  left: imagePositions[index].left,
-                  right: imagePositions[index].right,
-                  bottom: imagePositions[index].bottom,
-                }}
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ 
-                  opacity: 1, 
-                  scale: 1, 
-                  y: [0, Math.random() * -15 - 5, 0],
-                  transition: { 
-                    opacity: { duration: 1, delay: Math.random() * 0.5 },
-                    scale: { type: 'spring', stiffness: 260, damping: 20, delay: Math.random() * 0.5 },
-                    y: { duration: Math.random() * 4 + 5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }
-                  } 
-                }}
-                whileHover={{ scale: 1.1, zIndex: 20 }}
-              >
-                 <img
-                  src={testimonial.imgSrc}
-                  alt={testimonial.alt}
-                  className="w-full h-full object-cover"
-                />
-              </motion.div>
-            ))}
+          {/* Floating Images Container */}
+          <div className="review-grid-images absolute inset-0 pointer-events-none w-full h-full">
+            {gridTestimonials.slice(0, imagePositions.length).map((testimonial, index) => {
+              const pos = imagePositions[index]
+              return (
+                <div
+                  key={index}
+                  className={`absolute rounded-2xl shadow-[0_0_30px_rgba(0,174,239,0.2)] border border-white/10 overflow-hidden ${pos.className}`}
+                  style={{ 
+                    top: pos.top, 
+                    left: pos.left,
+                    right: pos.right,
+                    bottom: pos.bottom,
+                    animation: `float-img ${pos.duration} ease-in-out infinite`,
+                    animationDelay: pos.delay
+                  }}
+                >
+                   <img
+                    src={testimonial.imgSrc}
+                    alt={testimonial.alt}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )
+            })}
           </div>
 
           {/* Central Content */}
-          <div className="review-grid-text relative z-10 flex flex-col items-center text-center">
+          <div className="review-grid-text relative z-10 flex flex-col items-center text-center px-4">
             <div className="mb-6 inline-block rounded-full bg-[#00AEEF]/10 border border-[#00AEEF]/20 px-4 py-2 text-xs font-mono tracking-widest text-[#00AEEF] uppercase backdrop-blur-md shadow-[0_0_20px_rgba(0,174,239,0.2)]">
               Client Feedback
             </div>

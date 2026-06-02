@@ -150,12 +150,7 @@ export default function Hero() {
         0
       )
 
-      // D. Crossfade transition into the next section
-      scrollTl.to(
-        '.camera-canvas-container',
-        { opacity: 0, ease: 'power2.inOut', duration: 0.15 },
-        0.85 // Start fading out at 85% of the scroll timeline
-      )
+
     }, containerRef)
 
     // Refresh ScrollTrigger to lock in the layout
