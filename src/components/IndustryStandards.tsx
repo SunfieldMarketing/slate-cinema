@@ -20,13 +20,13 @@ export default function IndustryStandards() {
     const mTl = morphTlRef.current
 
     // Use '<' to make the fade-out and fade-in happen simultaneously so there's no empty pause
-    mTl.to('.morph-word-1', { opacity: 0, y: -20, duration: 0.4, delay: 2 })
+    mTl.to('.morph-word-1', { opacity: 0, y: -20, duration: 0.4 }, "+=2")
     mTl.fromTo('.morph-word-2', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4 }, '<')
     
-    mTl.to('.morph-word-2', { opacity: 0, y: -20, duration: 0.4, delay: 2 })
+    mTl.to('.morph-word-2', { opacity: 0, y: -20, duration: 0.4 }, "+=2")
     mTl.fromTo('.morph-word-3', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4 }, '<')
     
-    mTl.to('.morph-word-3', { opacity: 0, y: -20, duration: 0.4, delay: 2 })
+    mTl.to('.morph-word-3', { opacity: 0, y: -20, duration: 0.4 }, "+=2")
     mTl.fromTo('.morph-word-1', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4 }, '<')
 
     const tl = gsap.timeline({
@@ -144,11 +144,11 @@ export default function IndustryStandards() {
           </span>
           
           {/* MASSIVE SINGLE LINE TEXT */}
-          <h2 className="text-4xl sm:text-6xl md:text-7xl lg:text-[7vw] font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70 drop-shadow-[0_0_60px_rgba(16,185,129,0.5)] mb-8 whitespace-nowrap overflow-visible">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-[6vw] font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70 drop-shadow-[0_0_60px_rgba(16,185,129,0.5)] mb-8 whitespace-nowrap overflow-visible">
             DOMINATE YOUR MARKET
           </h2>
           
-          <p className="text-white/80 max-w-3xl text-lg md:text-2xl font-light leading-relaxed mb-12 px-4 shadow-black drop-shadow-md">
+          <p className="text-white/80 max-w-full w-full text-base sm:text-lg md:text-[2vw] font-light leading-relaxed mb-12 px-4 shadow-black drop-shadow-md whitespace-nowrap overflow-hidden text-ellipsis text-center">
             The result is scalable, predictable growth. We turn passive viewers into active communities, and organic reach into tangible ROI.
           </p>
           

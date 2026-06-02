@@ -12,34 +12,34 @@ const steps = [
   {
     num: '01',
     title: 'Pre-Production',
-    desc: 'We map the idea before the camera turns on. Concept development, campaign planning, scripting, shot lists, storyboards, brand direction, production scheduling.',
+    desc: 'Concept development, campaign planning, scripting, shot lists, storyboards.',
     icon: PenTool,
     videoSrc: '/videos/pre-production.mp4',
-    color: 'from-blue-500/20 to-cyan-400/5',
+    color: 'from-blue-500/10 to-cyan-400/5',
   },
   {
     num: '02',
     title: 'Production',
-    desc: 'We capture visuals that feel intentional, premium, and built for attention. On-location shooting, lighting, directing, interviews, product shots, social-first content capture.',
+    desc: 'On-location shooting, lighting, directing, interviews, social-first content capture.',
     icon: Video,
     videoSrc: '/videos/production.mp4',
-    color: 'from-purple-500/20 to-pink-500/5',
+    color: 'from-purple-500/10 to-pink-500/5',
   },
   {
     num: '03',
     title: 'Post-Production',
-    desc: 'We shape the story into content people actually finish watching. Editing, color grading, sound design, motion graphics, captions, VFX, platform-specific cuts.',
+    desc: 'Editing, color grading, sound design, motion graphics, captions, VFX.',
     icon: Edit3,
     videoSrc: '/videos/post-production.mp4',
-    color: 'from-emerald-500/20 to-teal-400/5',
+    color: 'from-emerald-500/10 to-teal-400/5',
   },
   {
     num: '04',
     title: 'Distribution',
-    desc: 'We prepare the content for the platforms where attention actually happens. Social media versions, ad-ready exports, campaign deliverables, posting strategy, analytics review.',
+    desc: 'Platform-specific cuts, ad-ready exports, campaign deliverables, analytics review.',
     icon: Send,
     videoSrc: '/videos/distribution.mp4',
-    color: 'from-orange-500/20 to-red-500/5',
+    color: 'from-orange-500/10 to-red-500/5',
   }
 ]
 
@@ -53,127 +53,151 @@ export default function Pipeline() {
       scrollTrigger: {
         trigger: containerRef.current,
         start: 'top top',
-        end: '+=400%', // 4 panels, so 400% scroll distance
+        end: '+=400%', 
         pin: true,
         scrub: 1,
         anticipatePin: 1,
       }
     })
 
-    // Setup initial positions deep in the Z-axis
-    gsap.set('.tunnel-panel', { z: -4000, opacity: 0, scale: 0.2 })
-
-    steps.forEach((step, index) => {
-      // 1. Fly from deep space (-4000) to the center (0)
-      tl.to(`.panel-${index}`, {
-        z: 0,
-        opacity: 1,
-        scale: 1,
-        ease: 'power2.inOut',
-        duration: 1
-      })
-
-      // 2. Pause/hold perfectly in the center so the user can read it
-      tl.to(`.panel-${index}`, {
-        z: 100, // Move very slightly forward during the pause for parallax
-        ease: 'none',
-        duration: 0.5
-      })
-
-      // 3. Fly past the camera and disappear
-      tl.to(`.panel-${index}`, {
-        z: 1500, // Move past the screen
-        opacity: 0,
-        scale: 1.5,
-        ease: 'power2.in',
-        duration: 0.8
-      })
+    // Setup initial twisted states for the "ribbon" segments
+    steps.forEach((step, i) => {
+      if (i !== 0) {
+        // Starts twisted deep in the background
+        gsap.set(`.ribbon-segment-${i}`, { 
+          rotationX: 60, 
+          rotationY: 45, 
+          rotationZ: -10,
+          z: -1500, 
+          opacity: 0 
+        })
+        gsap.set(`.text-layer-${i}`, { z: -2000, opacity: 0 })
+      } else {
+        // First segment starts flat and ready
+        gsap.set(`.ribbon-segment-0`, { rotationX: 0, rotationY: 0, rotationZ: 0, z: 0, opacity: 1 })
+        gsap.set(`.text-layer-0`, { z: 200, opacity: 1 }) // Floating text
+      }
     })
 
-    // Background tunnel motion
-    tl.to('.tunnel-grid', {
-      backgroundPosition: '0px 1000px',
-      ease: 'none',
-      duration: tl.totalDuration()
-    }, 0)
+    // Float animation for typography
+    gsap.to('.floating-text', {
+      y: -20,
+      rotationX: 5,
+      rotationY: 5,
+      duration: 4,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut'
+    })
+
+    steps.forEach((step, i) => {
+      // 1. Untwist and bring forward (if not the first one)
+      if (i !== 0) {
+        tl.to(`.ribbon-segment-${i}`, {
+          rotationX: 0,
+          rotationY: 0,
+          rotationZ: 0,
+          z: 0,
+          opacity: 1,
+          duration: 1,
+          ease: 'power2.out'
+        }, '>')
+        
+        tl.to(`.text-layer-${i}`, {
+          z: 200,
+          opacity: 1,
+          duration: 1,
+          ease: 'power2.out'
+        }, '<')
+      }
+
+      // 2. Pause so the user can watch the video and read the massive floating text
+      tl.to({}, { duration: 0.8 })
+
+      // 3. Twist away to the other side (if not the last one)
+      if (i !== steps.length - 1) {
+        tl.to(`.ribbon-segment-${i}`, {
+          rotationX: -60,
+          rotationY: -45,
+          rotationZ: 10,
+          z: -1500,
+          opacity: 0,
+          duration: 1,
+          ease: 'power2.in'
+        })
+        
+        tl.to(`.text-layer-${i}`, {
+          z: 500, // Flies forward past camera
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power2.in'
+        }, '<')
+      }
+    })
 
   }, { scope: containerRef })
 
   return (
-    <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-hidden flex items-center justify-center perspective-[1500px]">
+    <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-hidden flex items-center justify-center perspective-[2000px]">
       
-      {/* Infinite Space Background */}
+      {/* Abstract Ambient Void Background */}
       <div className="absolute inset-0 bg-[#030305] z-0" />
-      
-      {/* Dynamic Tunnel Grid */}
-      <div className="tunnel-grid absolute inset-0 z-0 opacity-20 pointer-events-none" style={{
-        backgroundImage: `
-          linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
-          linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px)
-        `,
-        backgroundSize: '100px 100px',
-        transform: 'rotateX(60deg) scale(3) translateY(-20%)',
-        transformOrigin: 'top center'
-      }} />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_0%,transparent_70%)] pointer-events-none" />
 
-      {/* Header outside of the 3D space */}
-      <div className="absolute top-12 md:top-20 w-full text-center z-50 pointer-events-none">
-        <span className="font-mono text-sm text-[#00AEEF] tracking-[0.4em] uppercase block mb-2 filter drop-shadow-[0_0_8px_rgba(0,174,239,0.8)]">
-          // Production Pipeline
-        </span>
-        <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight drop-shadow-xl">
-          How It Works
-        </h2>
-      </div>
-
-      {/* Z-Axis Container */}
+      {/* Ribbon Segments */}
       <div className="relative w-full h-full flex items-center justify-center transform-style-3d pointer-events-none">
         
         {steps.map((step, i) => {
-          const Icon = step.icon
           return (
-            <div 
-              key={i} 
-              className={`tunnel-panel panel-${i} absolute w-[90%] md:w-[80vw] lg:w-[70vw] max-w-6xl aspect-[4/3] md:aspect-[16/9] flex flex-col md:flex-row rounded-3xl overflow-hidden border border-white/10 bg-black/40 backdrop-blur-2xl shadow-[0_0_100px_rgba(0,0,0,0.8)] will-change-transform`}
-            >
+            <div key={i} className="absolute inset-0 w-full h-full flex items-center justify-center transform-style-3d">
               
-              {/* Colored Glow overlay inside the panel */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${step.color} z-0`} />
-
-              {/* Left Side: Video */}
-              <div className="relative w-full h-1/2 md:h-full md:w-1/2 overflow-hidden z-10 border-b md:border-b-0 md:border-r border-white/10">
+              {/* The Cinematic "Ribbon" Video Canvas */}
+              <div 
+                className={`ribbon-segment-${i} absolute w-[120vw] h-[60vh] md:w-[80vw] md:h-[70vh] flex items-center justify-center overflow-hidden transform-style-3d shadow-[0_0_150px_rgba(0,0,0,0.9)]`}
+                style={{ 
+                  // Borderless gradient edge for a seamless ribbon feel
+                  maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
+                  WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
+                  boxShadow: '0 30px 60px rgba(0,0,0,0.8)' 
+                }}
+              >
+                {/* Colored Ambient Tint */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${step.color} z-10 mix-blend-screen opacity-50`} />
+                
                 <video
                   src={step.videoSrc}
                   autoPlay
                   loop
                   muted
                   playsInline
-                  className="absolute inset-0 w-full h-full object-cover opacity-80"
+                  className="absolute inset-0 w-full h-full object-cover opacity-70 scale-110" // scale up slightly to hide edges when twisted
                 />
-                <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/80 to-transparent" />
               </div>
 
-              {/* Right Side: Text */}
-              <div className="relative w-full h-1/2 md:h-full md:w-1/2 p-6 md:p-12 lg:p-16 flex flex-col justify-center z-10 text-white">
-                
-                <div className="flex items-center gap-4 md:gap-6 mb-6">
-                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-xl flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.05)]">
-                    <Icon strokeWidth={1.5} className="w-6 h-6 md:w-8 md:h-8 text-white" />
+              {/* Massive Floating 3D Typography Layer */}
+              <div className={`text-layer-${i} floating-text absolute inset-0 flex items-center justify-center pointer-events-none z-50 transform-style-3d`}>
+                <div className="relative w-full max-w-7xl px-8 flex flex-col md:flex-row justify-between items-center md:items-end">
+                  
+                  {/* Left Side: Number & Title */}
+                  <div className="flex flex-col text-left drop-shadow-[0_20px_30px_rgba(0,0,0,1)]">
+                    <span className="font-mono text-6xl md:text-[10rem] font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white/90 to-transparent leading-none">
+                      {step.num}
+                    </span>
+                    <h3 className="text-5xl md:text-8xl font-black tracking-tighter text-white uppercase mt-[-20px] md:mt-[-40px]">
+                      {step.title}
+                    </h3>
                   </div>
-                  <span className="font-mono text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/20">
-                    {step.num}
-                  </span>
-                </div>
-                
-                <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 tracking-tighter leading-none">
-                  {step.title}
-                </h3>
-                
-                <p className="text-white/60 text-base md:text-lg lg:text-xl leading-relaxed font-light">
-                  {step.desc}
-                </p>
 
+                  {/* Right Side: Description */}
+                  <div className="mt-8 md:mt-0 md:max-w-md text-right md:text-left backdrop-blur-md bg-black/20 p-6 rounded-2xl border border-white/5 drop-shadow-2xl">
+                    <p className="text-white/80 text-lg md:text-2xl font-light leading-relaxed">
+                      {step.desc}
+                    </p>
+                  </div>
+
+                </div>
               </div>
+
             </div>
           )
         })}
