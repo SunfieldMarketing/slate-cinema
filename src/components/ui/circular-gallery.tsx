@@ -97,7 +97,7 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
       dragStartRotation.current = rotation;
       hasDragged.current = false;
       setIsDragging(true);
-      e.currentTarget.setPointerCapture(e.pointerId);
+      // Removed setPointerCapture to allow clicks to bubble
     };
 
     const handlePointerMove = (e: React.PointerEvent) => {
@@ -111,7 +111,7 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
 
     const handlePointerUp = (e: React.PointerEvent) => {
       setIsDragging(false);
-      e.currentTarget.releasePointerCapture(e.pointerId);
+      // Removed releasePointerCapture
     };
 
     const anglePerItem = 360 / items.length;
