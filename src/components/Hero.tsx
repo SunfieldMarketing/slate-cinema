@@ -77,7 +77,8 @@ export default function Hero() {
           end: '+=400%', // 400% creates a long, smooth scrub area
           pin: true,
           pinSpacing: true, // Forces the page to stay locked on this section
-          scrub: 0.5, // 0.5 gives a very slight, buttery smooth interpolation
+          scrub: true, // true gives instant 1:1 interactive mapping, removing the "getting stuck" delay feeling
+          anticipatePin: 1,
         }
       })
 
@@ -103,7 +104,7 @@ export default function Hero() {
         ease: 'none',
         duration: 0.9,
         onUpdate: function() {
-          if (videoRef.current) {
+          if (videoRef.current && videoRef.current.readyState >= 2) {
             videoRef.current.currentTime = this.targets()[0].t;
           }
         }
@@ -126,14 +127,14 @@ export default function Hero() {
       <div className="absolute inset-0 w-full h-full overflow-hidden" style={{ perspective: '2000px' }}>
         
         {/* 1. The 3D Camera Video */}
-        <div className="camera-video-container absolute inset-0 z-10 opacity-0 pointer-events-none flex items-center justify-center bg-black">
+        <div className="camera-video-container absolute inset-0 z-10 opacity-0 pointer-events-none flex items-center justify-center bg-[#030305]">
           <video
             ref={videoRef}
             muted
             playsInline
             preload="auto"
-            // object-contain ensures it never zooms in or gets cropped
-            className="w-full h-full object-contain"
+            // scale-95 physically zooms it out slightly to show more of the native 1080p frame
+            className="w-full h-full object-contain scale-95"
           />
         </div>
 
