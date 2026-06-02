@@ -11,28 +11,28 @@ const steps = [
   {
     num: '01',
     title: 'PRE-PRODUCTION',
-    desc: 'Concept development, campaign planning, scripting, shot lists.',
+    desc: 'The foundation of every masterpiece. We dive deep into concept development, architecting high-converting campaigns, meticulously scripting every scene, and drafting exhaustive shot lists to guarantee a flawless shoot day.',
     videoSrc: '/videos/pre-production.mp4',
     color: '#00AEEF',
   },
   {
     num: '02',
     title: 'PRODUCTION',
-    desc: 'On-location shooting, lighting, directing, social-first capture.',
-    videoSrc: '/videos/production.mp4#t=0,10',
+    desc: 'Where the magic happens. Utilizing cinema-grade cameras and mastery over lighting, our directors take charge on-location. We focus on dynamic, social-first capture that guarantees high retention and visual supremacy.',
+    videoSrc: '/videos/production.mp4',
     color: '#a855f7',
   },
   {
     num: '03',
     title: 'POST-PRODUCTION',
-    desc: 'Editing, color grading, sound design, motion graphics, VFX.',
+    desc: 'The polishing of the diamond. Our elite editors weave your footage together through aggressive color grading, immersive sound design, striking motion graphics, and VFX that command absolute attention.',
     videoSrc: '/videos/post-production.mp4',
     color: '#10b981',
   },
   {
     num: '04',
     title: 'DISTRIBUTION',
-    desc: 'Platform-specific cuts, ad-ready exports, analytics review.',
+    desc: 'Deploying the payload. We deliver platform-specific, ad-ready exports optimized for TikTok, Reels, and YouTube. Combined with data-driven analytics review, we ensure your content dominates the algorithm.',
     videoSrc: '/videos/distribution.mp4',
     color: '#f97316',
   }
@@ -59,6 +59,12 @@ export default function Pipeline() {
         end: '+=500%',
         pin: true,
         scrub: 1,
+        snap: {
+          snapTo: [3/17, 7/17, 11/17, 15/17],
+          duration: { min: 0.2, max: 0.8 },
+          delay: 0.1,
+          ease: "power2.inOut"
+        },
         anticipatePin: 1
       }
     })
@@ -124,7 +130,10 @@ export default function Pipeline() {
       tl.to(`.cta-${index}`, { 
         z: 300,
         x: index % 2 === 0 ? -300 : 300,
-        y: 50, 
+        y: 50,
+        rotateX: 0,
+        rotateY: 0,
+        rotateZ: 0,
         opacity: 1, 
         duration: 0.5 
       }, currentTime + 1)
@@ -258,7 +267,7 @@ export default function Pipeline() {
 
               {/* Desc Shard */}
               <div 
-                className={`text-shard-${index} mt-6 max-w-sm md:max-w-md text-white/80 text-lg md:text-xl font-light drop-shadow-md`}
+                className={`text-shard-${index} mt-6 max-w-sm md:max-w-lg text-white/80 text-lg md:text-xl font-light drop-shadow-md`}
                 style={{ 
                   transform: `translate3d(${gsap.utils.random(-500, 500)}px, ${gsap.utils.random(-500, 500)}px, ${gsap.utils.random(500, 1500)}px) rotateZ(${gsap.utils.random(-45, 45)}deg)`,
                   opacity: 0 
