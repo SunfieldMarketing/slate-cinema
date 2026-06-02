@@ -17,21 +17,56 @@ const galleryData: GalleryItem[] = [
     },
     metrics: [
       { label: 'Views', value: '4.2M' },
+      { label: 'Conv. Rate', value: '+34%' }
+    ]
+  },
   {
-    title: 'Live Events',
-    category: 'Event Coverage',
+    title: 'Velocity',
+    category: 'Social Media',
+    company: 'Apex Athletics',
+    typeOfWork: 'Social Campaign',
     photo: {
-      url: '/images/portfolio-event.png', // Or fallback to: 'https://images.unsplash.com/photo-1540039155732-6847350357a5?q=80&w=1000'
+      url: '/images/portfolio-social.png', 
+      text: 'Vertical social media content creation',
+    },
+    metrics: [
+      { label: 'Reach', value: '12.1M' },
+      { label: 'Engagement', value: '18.5%' }
+    ]
+  },
+  {
+    title: 'The Blueprint',
+    category: 'Documentary',
+    company: 'Nexus Architecture',
+    typeOfWork: 'Brand Mini-Doc',
+    photo: {
+      url: '/images/portfolio-production.png',
+      text: 'Cinematic brand lifestyle shot',
+    },
+    metrics: [
+      { label: 'Brand Lift', value: '+45%' },
+      { label: 'Watch Time', value: '1:45' }
+    ]
+  },
+  {
+    title: 'Ascension',
+    category: 'Event Coverage',
+    company: 'Summit Tech Conference',
+    typeOfWork: 'Event Recap & Hype Reel',
+    photo: {
+      url: '/images/portfolio-event.png',
       text: 'Dynamic event lighting and stage',
     },
     metrics: [
       { label: 'Attendees', value: '15k+' },
-      { label: 'Impressions', value: '2.8M' }
+      { label: 'Shares', value: '4.8k' }
     ]
   },
   {
     title: 'Automotive Cinema',
     category: 'Action',
+    company: 'Velocity Co',
+    typeOfWork: 'Action Ad',
     photo: {
       url: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=1000',
       text: 'Car racing cinematic shot',
@@ -44,6 +79,8 @@ const galleryData: GalleryItem[] = [
   {
     title: 'Product Focus',
     category: 'E-Commerce',
+    company: 'Lumiere Beauty',
+    typeOfWork: 'Product Spotlight',
     photo: {
       url: 'https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?q=80&w=1000',
       text: 'Premium product videography',
@@ -56,6 +93,8 @@ const galleryData: GalleryItem[] = [
   {
     title: 'Aerial Cinematography',
     category: 'Drone',
+    company: 'Vista Real Estate',
+    typeOfWork: 'Property Showcase',
     photo: {
       url: 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?q=80&w=1000',
       text: 'Drone hovering over landscape',
@@ -68,6 +107,8 @@ const galleryData: GalleryItem[] = [
   {
     title: 'Documentary',
     category: 'Narrative',
+    company: 'Global Health Org',
+    typeOfWork: 'Impact Film',
     photo: {
       url: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=1000',
       text: 'Close up interview lighting',
@@ -103,7 +144,7 @@ export default function Portfolio() {
             A Gallery of Impact
           </h2>
           <p className="mt-4 text-white/60 font-light text-lg">
-            Scroll to explore or <span className="text-white font-medium">click a card</span> to view campaign metrics.
+            Scroll to explore or <span className="text-white font-medium">drag & click a card</span> to view campaign metrics.
           </p>
         </div>
 
