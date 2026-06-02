@@ -130,24 +130,24 @@ export default function Hero() {
         0
       )
 
-      // B. Fade in the canvas container smoothly
+      // B. Fade in the canvas container smoothly after a gap (Stage 2: no video)
       scrollTl.to(
         '.camera-canvas-container',
         { opacity: 1, ease: 'power2.inOut', duration: 0.1 },
-        0
+        0.2
       )
 
-      // C. Frame sequence animation (spans the entire scroll distance, overlapping the fade)
+      // C. Frame sequence animation (starts after the gap)
       scrollTl.to(
         playhead,
         {
           frame: FRAME_COUNT - 1,
           snap: 'frame',
           ease: 'power1.inOut',
-          duration: 1,
+          duration: 0.8,
           onUpdate: () => renderFrame(playhead.frame),
         },
-        0
+        0.2
       )
 
 

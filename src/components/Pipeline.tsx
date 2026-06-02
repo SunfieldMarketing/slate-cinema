@@ -4,7 +4,6 @@ import { useRef } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-import { PenTool, Video, Edit3, Send } from 'lucide-react'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -13,39 +12,35 @@ const steps = [
     num: '01',
     title: 'Pre-Production',
     desc: 'Concept development, campaign planning, scripting, shot lists, storyboards.',
-    icon: PenTool,
-    videoSrc: 'https://videos.pexels.com/video-files/3660469/3660469-uhd_3840_2160_25fps.mp4',
-    color: 'from-blue-500/10 to-cyan-400/5',
+    videoSrc: '/videos/pre-production.mp4',
+    color: '#00AEEF',
   },
   {
     num: '02',
     title: 'Production',
     desc: 'On-location shooting, lighting, directing, interviews, social-first content capture.',
-    icon: Video,
-    videoSrc: 'https://videos.pexels.com/video-files/8089117/8089117-uhd_3840_2160_25fps.mp4',
-    color: 'from-purple-500/10 to-pink-500/5',
+    videoSrc: '/videos/production.mp4',
+    color: '#a855f7',
   },
   {
     num: '03',
     title: 'Post-Production',
     desc: 'Editing, color grading, sound design, motion graphics, captions, VFX.',
-    icon: Edit3,
     videoSrc: '/videos/post-production.mp4',
-    color: 'from-emerald-500/10 to-teal-400/5',
+    color: '#10b981',
   },
   {
     num: '04',
     title: 'Distribution',
     desc: 'Platform-specific cuts, ad-ready exports, campaign deliverables, analytics review.',
-    icon: Send,
     videoSrc: '/videos/distribution.mp4',
-    color: 'from-orange-500/10 to-red-500/5',
+    color: '#f97316',
   }
 ]
 
 export default function Pipeline() {
   const containerRef = useRef<HTMLElement>(null)
-
+  
   useGSAP(() => {
     if (!containerRef.current) return
 
@@ -53,159 +48,108 @@ export default function Pipeline() {
       scrollTrigger: {
         trigger: containerRef.current,
         start: 'top top',
-        end: '+=400%', 
+        end: '+=400%',
         pin: true,
         scrub: 1,
-        anticipatePin: 1,
+        anticipatePin: 1
       }
     })
 
-    // Setup initial twisted states for the "ribbon" segments
-    steps.forEach((step, i) => {
-      if (i !== 0) {
-        // Starts twisted deep in the background
-        gsap.set(`.ribbon-segment-${i}`, { 
-          rotationX: 60, 
-          rotationY: 45, 
-          rotationZ: -10,
-          z: -1500, 
-          opacity: 0 
-        })
-        gsap.set(`.text-layer-${i}`, { z: -2000, opacity: 0 })
-      } else {
-        // First segment starts flat and ready
-        gsap.set(`.ribbon-segment-0`, { rotationX: 0, rotationY: 0, rotationZ: 0, z: 0, opacity: 1 })
-        gsap.set(`.text-layer-0`, { z: 200, opacity: 1 }) // Floating text
-      }
-    })
+    steps.forEach((_, index) => {
+      // 1. Ink Drop Expands (animate the CSS variable --mask-size from 0% to 150%)
+      tl.fromTo(`.step-container-${index}`,
+        { '--mask-size': '0%' },
+        { '--mask-size': '150%', duration: 2, ease: 'power2.inOut' }
+      )
+      
+      // 2. Text "Bleeds" In (Blur + Opacity)
+      tl.fromTo(`.step-text-${index}`,
+        { opacity: 0, filter: 'blur(20px)', scale: 1.1 },
+        { opacity: 1, filter: 'blur(0px)', scale: 1, duration: 1.5, ease: 'power3.out' },
+        "-=1.5" // Overlap heavily with ink expansion
+      )
 
-    // Float animation for typography
-    gsap.to('.floating-text', {
-      y: -20,
-      rotationX: 5,
-      rotationY: 5,
-      duration: 4,
-      repeat: -1,
-      yoyo: true,
-      ease: 'sine.inOut'
-    })
+      // 3. Hold for reading
+      tl.to({}, { duration: 1 })
 
-    steps.forEach((step, i) => {
-      // 1. Untwist and bring forward (if not the first one)
-      if (i !== 0) {
-        tl.to(`.ribbon-segment-${i}`, {
-          rotationX: 0,
-          rotationY: 0,
-          rotationZ: 0,
-          z: 0,
-          opacity: 1,
-          duration: 1,
-          ease: 'power2.out'
-        }, '>')
-        
-        tl.to(`.text-layer-${i}`, {
-          z: 200,
-          opacity: 1,
-          duration: 1,
-          ease: 'power2.out'
-        }, '<')
-      }
-
-      // 2. Pause so the user can watch the video and read the massive floating text
-      tl.to({}, { duration: 0.8 })
-
-      // 3. Twist away to the other side (if not the last one)
-      if (i !== steps.length - 1) {
-        tl.to(`.ribbon-segment-${i}`, {
-          rotationX: -60,
-          rotationY: -45,
-          rotationZ: 10,
-          z: -1500,
-          opacity: 0,
-          duration: 1,
-          ease: 'power2.in'
-        })
-        
-        tl.to(`.text-layer-${i}`, {
-          z: 500, // Flies forward past camera
-          opacity: 0,
-          duration: 0.8,
-          ease: 'power2.in'
-        }, '<')
+      // 4. Fade out for the next wave, unless it's the last one
+      if (index !== steps.length - 1) {
+        tl.to(`.step-container-${index}`,
+          { opacity: 0, duration: 1, ease: 'power2.inOut' }
+        )
       }
     })
 
   }, { scope: containerRef })
 
   return (
-    <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-hidden flex items-center justify-center perspective-[2000px]">
+    <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-hidden">
       
-      {/* Abstract Ambient Void Background */}
-      <div className="absolute inset-0 bg-[#030305] z-0" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_0%,transparent_70%)] pointer-events-none" />
+      {/* SVG Turbulence Filter for Organic Ink Edge */}
+      <svg className="absolute w-0 h-0">
+        <filter id="ink-bleed" colorInterpolationFilters="sRGB">
+          <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="50" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+          <feGaussianBlur in="displaced" stdDeviation="10" result="blurred" />
+          <feComponentTransfer in="blurred">
+            <feFuncA type="linear" slope="3" intercept="-1" />
+          </feComponentTransfer>
+        </filter>
+      </svg>
 
-      {/* Ribbon Segments */}
-      <div className="relative w-full h-full flex items-center justify-center transform-style-3d pointer-events-none">
-        
-        {steps.map((step, i) => {
-          return (
-            <div key={i} className="absolute inset-0 w-full h-full flex items-center justify-center transform-style-3d">
-              
-              {/* The Cinematic "Ribbon" Video Canvas */}
-              <div 
-                className={`ribbon-segment-${i} absolute w-[120vw] h-[60vh] md:w-[80vw] md:h-[70vh] flex items-center justify-center overflow-hidden transform-style-3d shadow-[0_0_150px_rgba(0,0,0,0.9)]`}
-                style={{ 
-                  // Borderless gradient edge for a seamless ribbon feel
-                  maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
-                  WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
-                  boxShadow: '0 30px 60px rgba(0,0,0,0.8)' 
-                }}
-              >
-                {/* Colored Ambient Tint */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${step.color} z-10 mix-blend-screen opacity-50`} />
-                
-                <video
-                  src={step.videoSrc}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="absolute inset-0 w-full h-full object-cover opacity-70 scale-110" // scale up slightly to hide edges when twisted
-                />
-              </div>
-
-              {/* Massive Floating 3D Typography Layer */}
-              <div className={`text-layer-${i} floating-text absolute inset-0 flex items-center justify-center pointer-events-none z-50 transform-style-3d`}>
-                <div className="relative w-full max-w-7xl px-8 flex flex-col md:flex-row justify-between items-center md:items-end">
-                  
-                  {/* Left Side: Number & Title */}
-                  <div className="flex flex-col text-left drop-shadow-[0_20px_30px_rgba(0,0,0,1)]">
-                    <span className="font-mono text-xs tracking-[0.5em] text-[#00AEEF] uppercase mb-4 opacity-80">
-                      // How It Works
-                    </span>
-                    <span className="font-mono text-6xl md:text-[10rem] font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white/90 to-transparent leading-none">
-                      {step.num}
-                    </span>
-                    <h3 className="text-5xl md:text-8xl font-black tracking-tighter text-white uppercase mt-[-20px] md:mt-[-40px]">
-                      {step.title}
-                    </h3>
-                  </div>
-
-                  {/* Right Side: Description */}
-                  <div className="mt-8 md:mt-0 md:max-w-md text-right md:text-left backdrop-blur-md bg-black/20 p-6 rounded-2xl border border-white/5 drop-shadow-2xl">
-                    <p className="text-white/80 text-lg md:text-2xl font-light leading-relaxed">
-                      {step.desc}
-                    </p>
-                  </div>
-
-                </div>
-              </div>
-
-            </div>
-          )
-        })}
-
+      <div className="absolute inset-0 pointer-events-none z-50 flex items-center justify-center text-center">
+         <span className="font-mono text-sm text-white/30 tracking-[0.4em] uppercase absolute top-12 filter drop-shadow-[0_0_8px_rgba(0,174,239,0.5)]">
+            // How It Works
+         </span>
       </div>
+
+      {steps.map((step, index) => (
+        <div 
+          key={index} 
+          className={`step-container-${index} absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden`}
+          style={{ 
+            opacity: index === 0 ? 1 : 0, 
+            // We use a CSS variable animated by GSAP to control the radial gradient size
+            '--mask-size': index === 0 ? '0%' : '0%',
+            maskImage: 'radial-gradient(circle at center, black var(--mask-size), transparent calc(var(--mask-size) + 2%))',
+            WebkitMaskImage: 'radial-gradient(circle at center, black var(--mask-size), transparent calc(var(--mask-size) + 2%))',
+            // Apply the organic ink bleed SVG filter
+            filter: 'url(#ink-bleed)'
+          } as React.CSSProperties}
+        >
+          
+          {/* Background Video */}
+          <div className="absolute inset-0 w-full h-full pointer-events-none -z-10">
+            <video 
+              src={step.videoSrc}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover opacity-40 mix-blend-screen"
+            />
+            {/* Color overlay to give the "ink" a specific tint */}
+            <div className="absolute inset-0 opacity-30 mix-blend-overlay" style={{ backgroundColor: step.color }} />
+          </div>
+
+          {/* Text Content */}
+          <div className={`step-text-${index} relative z-10 flex flex-col items-center justify-center text-center px-4 max-w-5xl`}>
+            <span 
+              className="font-mono text-[15rem] md:text-[20rem] font-black tracking-tighter leading-none mb-[-80px] md:mb-[-120px] opacity-20 pointer-events-none"
+              style={{ color: step.color, filter: 'blur(8px)' }}
+            >
+              {step.num}
+            </span>
+            <h2 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter text-white uppercase drop-shadow-[0_0_30px_rgba(0,0,0,0.8)]">
+              {step.title}
+            </h2>
+            <p className="mt-8 text-white/80 text-xl md:text-3xl font-light leading-relaxed max-w-3xl drop-shadow-[0_0_20px_rgba(0,0,0,1)]">
+              {step.desc}
+            </p>
+          </div>
+          
+        </div>
+      ))}
       
     </section>
   )

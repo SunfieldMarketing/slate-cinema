@@ -19,15 +19,28 @@ export default function IndustryStandards() {
     morphTlRef.current = gsap.timeline({ repeat: -1 })
     const mTl = morphTlRef.current
 
-    // Use '<' to make the fade-out and fade-in happen simultaneously so there's no empty pause
-    mTl.to('.morph-word-1', { opacity: 0, y: -20, duration: 0.4 }, "+=2")
-    mTl.fromTo('.morph-word-2', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4 }, '<')
+    // Initial state
+    gsap.set('.morph-word-1', { opacity: 1, y: 0 })
+    gsap.set('.morph-word-2', { opacity: 0, y: 20 })
+    gsap.set('.morph-word-3', { opacity: 0, y: 20 })
+
+    // Use absolute positioning for the morphing sequence
+    mTl.to('.morph-word-1', { opacity: 0, y: -20, duration: 0.4 }, 2)
+    mTl.to('.morph-word-2', { opacity: 1, y: 0, duration: 0.4 }, 2)
     
-    mTl.to('.morph-word-2', { opacity: 0, y: -20, duration: 0.4 }, "+=2")
-    mTl.fromTo('.morph-word-3', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4 }, '<')
+    mTl.to('.morph-word-2', { opacity: 0, y: -20, duration: 0.4 }, 4)
+    mTl.to('.morph-word-3', { opacity: 1, y: 0, duration: 0.4 }, 4)
     
-    mTl.to('.morph-word-3', { opacity: 0, y: -20, duration: 0.4 }, "+=2")
-    mTl.fromTo('.morph-word-1', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4 }, '<')
+    mTl.to('.morph-word-3', { opacity: 0, y: -20, duration: 0.4 }, 6)
+    // To complete the cycle, morph-word-1 comes back in
+    // However, when the timeline repeats, it instantly jumps back to 0.
+    // At time 0, morph-word-1 is supposed to be at opacity 1. 
+    // We must put it back to initial y=20 so it can animate in:
+    mTl.set('.morph-word-1', { y: 20 }, 5.9)
+    mTl.to('.morph-word-1', { opacity: 1, y: 0, duration: 0.4 }, 6)
+    
+    // Add a 2s wait before it loops back so morph-word-1 is visible for the same duration
+    mTl.to({}, { duration: 2 })
 
     const tl = gsap.timeline({
       scrollTrigger: {
