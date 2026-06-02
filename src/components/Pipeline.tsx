@@ -444,6 +444,39 @@ export default function Pipeline() {
                       zIndex: 0,
                     }}
                   />
+                  {/* Third shape — deeper, softer ambient shadow outline */}
+                  <div
+                    className="pipe-bg-shape-3 absolute pointer-events-none"
+                    style={{
+                      width: 'clamp(280px,32vw,420px)',
+                      height: 'clamp(340px,40vw,540px)',
+                      top: '50%',
+                      left: '50%',
+                      transform: `translate(calc(-50% + ${isEven ? '35px' : '-35px'}), calc(-50% + 45px)) rotate(${isEven ? '-2.5deg' : '2.5deg'}) skewX(-1.5deg)`,
+                      border: `1px solid ${step.color}15`,
+                      background: `linear-gradient(to bottom right, ${step.color}05, transparent)`,
+                      boxShadow: `0 40px 80px ${step.color}05`,
+                      borderRadius: '4px',
+                      zIndex: 0,
+                    }}
+                  />
+                  {/* Fourth shape — tight highlight accent offset opposite to shadow */}
+                  <div
+                    className="pipe-bg-shape-4 absolute pointer-events-none"
+                    style={{
+                      width: 'clamp(240px,28vw,380px)',
+                      height: 'clamp(300px,36vw,500px)',
+                      top: '50%',
+                      left: '50%',
+                      transform: `translate(calc(-50% + ${isEven ? '-15px' : '15px'}), calc(-50% - 15px)) rotate(${isEven ? '-2.5deg' : '2.5deg'}) skewX(-1.5deg)`,
+                      borderTop: `1px solid ${step.color}40`,
+                      borderLeft: `1px solid ${step.color}20`,
+                      borderRight: 'transparent',
+                      borderBottom: 'transparent',
+                      borderRadius: '4px',
+                      zIndex: 0,
+                    }}
+                  />
                   {/* Corner accent dots */}
                   {[[-1,-1],[1,-1],[1,1],[-1,1]].map(([dx,dy], ci) => (
                     <div key={ci} className="pipe-corner-dot absolute w-1.5 h-1.5 rounded-full pointer-events-none"
