@@ -15,7 +15,7 @@ const steps = [
     title: 'Pre-Production',
     desc: 'We map the idea before the camera turns on. Concept development, campaign planning, scripting, shot lists, storyboards, brand direction, production scheduling.',
     icon: ClipboardList,
-    videoSrc: '/videos/pipeline-pre.mp4',
+    videoSrc: '/videos/pre-production.mp4',
   },
   {
     num: '02',
@@ -53,11 +53,13 @@ export default function Pipeline() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: '+=150vh',
+          end: '+=900vh',
           pin: true,
           scrub: 1,
         }
       })
+
+      const segSize = 900 / totalSteps
 
       stepElements.forEach((step, i) => {
         if (i > 0) {
@@ -78,15 +80,15 @@ export default function Pipeline() {
   return (
     <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-hidden flex flex-col md:flex-row">
       
-      {/* Right Side - Videos (Background on mobile, right half on desktop) */}
-      <div className="absolute inset-0 md:left-1/2 w-full md:w-1/2 h-full z-0 overflow-hidden pointer-events-none">
+      {/* Right Side - Videos (Background on mobile, right 40% on desktop) */}
+      <div className="absolute inset-0 md:left-[60%] w-full md:w-[40%] h-full z-0 overflow-hidden pointer-events-none">
         
         {/* Desktop Gradient overlay to blend left and right */}
         <div className="absolute inset-0 z-10 hidden md:block bg-gradient-to-r from-[#030305] via-[#030305]/40 to-transparent w-full" />
         
-        {/* Dark cinematic overlay for videos */}
-        <div className="absolute inset-0 z-10 bg-[#030305]/40 md:bg-[#030305]/40 mix-blend-multiply" />
-        <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#030305] via-transparent to-[#030305] opacity-90" />
+        {/* Dark cinematic overlay for videos - opacity reduced to make videos more visible */}
+        <div className="absolute inset-0 z-10 bg-[#030305]/20 mix-blend-multiply" />
+        <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#030305] via-transparent to-[#030305] opacity-60" />
 
         {steps.map((step, i) => (
           <div 
@@ -110,8 +112,8 @@ export default function Pipeline() {
         ))}
       </div>
 
-      {/* Left Side - Text Content */}
-      <div className="w-full md:w-1/2 h-full flex flex-col justify-center relative z-20 px-8 md:px-16 lg:px-24 pt-20 md:pt-0">
+      {/* Left Side - Text Content (takes up 60% on desktop) */}
+      <div className="w-full md:w-[60%] h-full flex flex-col justify-center relative z-20 px-8 md:px-16 lg:px-24 pt-20 md:pt-0">
         <div className="mb-10 md:mb-16">
           <span className="font-mono text-xs text-[#00AEEF] tracking-[0.4em] uppercase block mb-4">// Production Pipeline</span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight">How It Works</h2>

@@ -106,19 +106,39 @@ export default function Portfolio() {
           {projects.map((project, i) => (
             <div 
               key={i} 
-              className={`portfolio-item relative group cursor-pointer rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02] ${i === 0 || i === 3 ? 'md:aspect-square' : 'md:aspect-[4/3] aspect-square'}`}
+              className={`portfolio-item relative group cursor-pointer rounded-2xl overflow-hidden border border-white/20 hover:border-[#00AEEF]/50 transition-all duration-500 bg-white/[0.02] ${i === 0 || i === 3 ? 'md:aspect-square' : 'md:aspect-[4/3] aspect-square'}`}
               onClick={() => setActiveProject(i)}
             >
               <img src={project.image} alt={project.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#030305] via-[#030305]/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
               
-              <div className="absolute inset-0 p-8 flex flex-col justify-end">
-                <span className="font-mono text-[10px] text-[#00AEEF] tracking-[0.3em] uppercase mb-2 block translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                  {project.category}
-                </span>
-                <h3 className="text-3xl md:text-4xl font-bold text-white tracking-tight translate-y-2 group-hover:translate-y-0 transition-all duration-500">
-                  {project.title}
-                </h3>
+              <div className="absolute inset-0 p-6 md:p-8 flex flex-col justify-between">
+                {/* Top Section: Client / Stats */}
+                <div className="flex justify-between items-start">
+                  <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-full px-4 py-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <span className="font-mono text-[10px] text-white/80 uppercase tracking-widest">{project.client} • {project.year}</span>
+                  </div>
+                  <div className="flex flex-col items-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                    <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-full px-3 py-1 flex items-center gap-2">
+                      <Eye size={12} className="text-[#00AEEF]" />
+                      <span className="font-mono text-[10px] text-white font-bold">{project.metrics.views}</span>
+                    </div>
+                    <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-full px-3 py-1 flex items-center gap-2">
+                      <TrendingUp size={12} className="text-[#00AEEF]" />
+                      <span className="font-mono text-[10px] text-white font-bold">{project.metrics.engagement}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Section: Title */}
+                <div>
+                  <span className="font-mono text-[10px] text-[#00AEEF] tracking-[0.3em] uppercase mb-2 block translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                    {project.category}
+                  </span>
+                  <h3 className="text-3xl md:text-4xl font-bold text-white tracking-tight translate-y-2 group-hover:translate-y-0 transition-all duration-500">
+                    {project.title}
+                  </h3>
+                </div>
               </div>
 
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center border border-white/20 opacity-0 group-hover:opacity-100 scale-50 group-hover:scale-100 transition-all duration-500 delay-100">

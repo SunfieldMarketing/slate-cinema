@@ -111,7 +111,7 @@ export default function Hero() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: '+=600vh', // Shorter distance for faster, more fluid scroll
+          end: '+=1000vh', // Increased distance for much slower, smoother scrub
           scrub: 0.5,     // Faster scrub catch-up
           pin: true,
           anticipatePin: 1,
