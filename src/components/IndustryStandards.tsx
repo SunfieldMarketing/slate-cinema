@@ -1,17 +1,32 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
+import { ArrowRight } from 'lucide-react'
 
 gsap.registerPlugin(ScrollTrigger)
 
 export default function IndustryStandards() {
   const containerRef = useRef<HTMLElement>(null)
+  const morphTlRef = useRef<gsap.core.Timeline | null>(null)
   
   useGSAP(() => {
     if (!containerRef.current) return
+
+    // Create the independent morphing timeline (paused initially)
+    morphTlRef.current = gsap.timeline({ repeat: -1, paused: true })
+    const mTl = morphTlRef.current
+
+    mTl.to('.morph-word-1', { opacity: 0, y: -20, duration: 0.3, delay: 1.5 })
+    mTl.fromTo('.morph-word-2', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3 })
+    
+    mTl.to('.morph-word-2', { opacity: 0, y: -20, duration: 0.3, delay: 1.5 })
+    mTl.fromTo('.morph-word-3', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3 })
+    
+    mTl.to('.morph-word-3', { opacity: 0, y: -20, duration: 0.3, delay: 1.5 })
+    mTl.fromTo('.morph-word-1', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3 })
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -21,6 +36,17 @@ export default function IndustryStandards() {
         pin: true,
         scrub: 1,
         anticipatePin: 1,
+        onUpdate: (self) => {
+          // Play morphing timeline only when phase 2 is fully visible (between 25% and 50% scroll progress roughly)
+          if (self.progress > 0.3 && self.progress < 0.6) {
+            if (morphTlRef.current?.paused()) {
+              morphTlRef.current.play()
+            }
+          } else {
+            // Optional: reset or pause when out of view
+            morphTlRef.current?.pause()
+          }
+        }
       }
     })
 
@@ -29,13 +55,6 @@ export default function IndustryStandards() {
     
     tl.fromTo('.phase-2', { opacity: 0, y: 100, scale: 0.8 }, { opacity: 1, y: 0, scale: 1, duration: 1, ease: 'power2.inOut' }, 0.5)
     
-    // Morphing text sequence in Phase 2
-    tl.to('.morph-word-1', { opacity: 0, y: -20, duration: 0.2 }, 0.8)
-    tl.fromTo('.morph-word-2', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.2 }, 0.8)
-    
-    tl.to('.morph-word-2', { opacity: 0, y: -20, duration: 0.2 }, 1.3)
-    tl.fromTo('.morph-word-3', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.2 }, 1.3)
-
     tl.to('.phase-2', { opacity: 0, y: -100, scale: 1.2, duration: 1, ease: 'power2.inOut' }, 2)
     tl.fromTo('.phase-3', { opacity: 0, scale: 0.5, rotateX: 45 }, { opacity: 1, scale: 1, rotateX: 0, duration: 1, ease: 'power3.out' }, 2.5)
 
@@ -78,16 +97,20 @@ export default function IndustryStandards() {
           <span className="font-mono text-[10px] md:text-xs text-[#00AEEF] tracking-[0.5em] uppercase mb-8">
             // The Standard
           </span>
-          <h2 className="text-6xl md:text-[8rem] font-black leading-none tracking-tighter">
+          <h2 className="text-6xl md:text-[8rem] font-light leading-none tracking-tighter">
             WE ENGINEER
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-b from-white/20 to-transparent">
+            <span className="font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-white/50 drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]">
               ATTENTION
             </span>
           </h2>
-          <p className="mt-8 text-white/50 max-w-xl text-lg font-light">
-            Every detail is calculated.
+          <p className="mt-8 text-white/60 max-w-2xl text-lg md:text-xl font-light leading-relaxed">
+            In a crowded digital landscape, being 'good enough' means being invisible. We build content systems designed specifically to hijack feeds, halt thumbs, and demand viewer retention from the very first frame.
           </p>
+          <button className="mt-12 group inline-flex items-center justify-center px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-[#00AEEF] hover:text-white transition-all duration-300">
+            See Our Work
+            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </button>
         </div>
 
         {/* Phase 2 */}
@@ -104,24 +127,35 @@ export default function IndustryStandards() {
               <span className="morph-word-3 absolute left-1/2 -translate-x-1/2 w-full opacity-0">Done Right.</span>
             </span>
           </h2>
-          <p className="mt-8 text-white/50 max-w-xl text-lg font-light">
+          <p className="mt-8 text-white/60 max-w-xl text-lg font-light leading-relaxed">
             We don't just shoot video. We engineer visual experiences designed to capture and hold attention in a world that never stops scrolling.
           </p>
+          <button className="mt-12 group inline-flex items-center justify-center px-8 py-4 border border-purple-500/50 bg-purple-500/10 backdrop-blur-md text-white font-semibold rounded-full hover:bg-purple-500 hover:text-white transition-all duration-300 pointer-events-auto">
+            Discover Our Process
+            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </button>
         </div>
 
         {/* Phase 3 */}
-        <div className="phase-3 absolute flex flex-col items-center opacity-0 pointer-events-none">
+        <div className="phase-3 absolute flex flex-col items-center opacity-0 pointer-events-none w-full">
           <span className="font-mono text-[10px] md:text-xs text-emerald-400 tracking-[0.5em] uppercase mb-8">
             // The Result
           </span>
-          <h2 className="text-6xl md:text-[9rem] font-black leading-none tracking-tighter text-white drop-shadow-[0_0_40px_rgba(16,185,129,0.3)]">
+          <h2 className="text-6xl md:text-[8rem] font-black leading-none tracking-tighter text-white drop-shadow-[0_0_40px_rgba(16,185,129,0.3)] mb-8">
             DOMINATE
           </h2>
-          <div className="mt-8 px-8 py-4 border border-emerald-500/30 rounded-full bg-emerald-500/5 backdrop-blur-md">
+          <div className="px-8 py-4 border border-emerald-500/30 rounded-full bg-emerald-500/5 backdrop-blur-md mb-8">
             <span className="font-mono text-sm tracking-widest text-emerald-300">
               INDUSTRY-LEADING METRICS
             </span>
           </div>
+          <p className="text-white/60 max-w-2xl text-lg md:text-xl font-light leading-relaxed">
+            The result is scalable, predictable growth. We turn passive viewers into active communities, and organic reach into tangible ROI. You don't just get views; you get market dominance.
+          </p>
+          <button className="mt-12 group inline-flex items-center justify-center px-8 py-4 bg-emerald-500 text-black font-bold rounded-full hover:bg-emerald-400 transition-all duration-300 pointer-events-auto shadow-[0_0_30px_rgba(16,185,129,0.4)]">
+            Book a Strategy Call
+            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </button>
         </div>
 
       </div>

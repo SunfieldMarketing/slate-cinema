@@ -3,26 +3,27 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
+
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 
 gsap.registerPlugin(ScrollTrigger)
 
-// --- DATA ---
+// --- DATA: Premium Professional Headshots ---
 const gridTestimonials = [
-  { imgSrc: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=300', alt: 'Professional Man' },
-  { imgSrc: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?q=80&w=300', alt: 'Smiling Man' },
-  { imgSrc: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300', alt: 'Professional Woman' },
-  { imgSrc: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=300', alt: 'Smiling Woman' },
-  { imgSrc: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=300', alt: 'Man in a suit' },
-  { imgSrc: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=300', alt: 'Bearded Man' },
-  { imgSrc: 'https://images.unsplash.com/photo-1557862921-37829c790f19?q=80&w=300', alt: 'Man in a blue shirt' },
-  { imgSrc: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300', alt: 'Older Man' },
-  { imgSrc: 'https://images.unsplash.com/photo-1619895862022-09114b41f16f?q=80&w=300', alt: 'Woman with curly hair' },
-  { imgSrc: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=300', alt: 'Woman in an office' },
-  { imgSrc: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=300', alt: 'Woman with glasses' },
-  { imgSrc: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=300', alt: 'Woman with a dog' },
+  { imgSrc: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=500&auto=format&fit=crop', alt: 'Professional Man' },
+  { imgSrc: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=500&auto=format&fit=crop', alt: 'Professional Woman' },
+  { imgSrc: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=500&auto=format&fit=crop', alt: 'Executive Man' },
+  { imgSrc: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=500&auto=format&fit=crop', alt: 'Smiling Executive' },
+  { imgSrc: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=500&auto=format&fit=crop', alt: 'Bearded Man' },
+  { imgSrc: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=500&auto=format&fit=crop', alt: 'Business Woman' },
+  { imgSrc: 'https://images.unsplash.com/photo-1557862921-37829c790f19?q=80&w=500&auto=format&fit=crop', alt: 'Man in blue shirt' },
+  { imgSrc: 'https://images.unsplash.com/photo-1598550874175-4d0ef43ee90d?q=80&w=500&auto=format&fit=crop', alt: 'Corporate Woman' },
+  { imgSrc: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=500&auto=format&fit=crop', alt: 'Older Man' },
+  { imgSrc: 'https://images.unsplash.com/photo-1531123897727-8f129e1bfa82?q=80&w=500&auto=format&fit=crop', alt: 'Young Executive' },
+  { imgSrc: 'https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?q=80&w=500&auto=format&fit=crop', alt: 'Man in suit' },
+  { imgSrc: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=500&auto=format&fit=crop', alt: 'Smiling Professional' },
 ]
 
 const carouselTestimonials = [
@@ -30,57 +31,57 @@ const carouselTestimonials = [
     quote: "This platform revolutionized our data analysis process. The speed and accuracy are unparalleled. A must-have for any data-driven team.",
     name: "Priya Sharma",
     designation: "Data Scientist at QuantumLeap",
-    src: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1888&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    src: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1000&auto=format&fit=crop",
   },
   {
     quote: "The user interface is incredibly intuitive, which made the onboarding process for my team a breeze. We were up and running in hours, not days.",
     name: "Marcus Johnson",
     designation: "Head of Operations at Synergy Corp",
-    src: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    src: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1000&auto=format&fit=crop",
   },
   {
     quote: "Customer support is top-notch. They are responsive, knowledgeable, and genuinely invested in our success. It feels like a true partnership.",
     name: "Isabella Rossi",
     designation: "Client Success Manager at Horizon",
-    src: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1888&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    src: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1000&auto=format&fit=crop",
   },
   {
     quote: "I'm impressed by the constant stream of updates and new features. The development team is clearly passionate and listens to user feedback.",
     name: "Kenji Tanaka",
     designation: "Software Engineer at CodeCrafters",
-    src: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3",
+    src: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=1000&auto=format&fit=crop",
   },
   {
     quote: "The ROI was almost immediate. It streamlined our workflows so effectively that we cut project delivery times by nearly 30%.",
     name: "Fatima Al-Jamil",
     designation: "CFO at Apex Financial",
-    src: "https://images.unsplash.com/photo-1557053910-d9eadeed1c58?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3",
+    src: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=1000&auto=format&fit=crop",
   },
 ]
 
 // --- PRE-DEFINED POSITIONS FOR THE IMAGES ---
+// Tightened margins to keep everything well within the screen (no margin/nav cutoffs)
 const imagePositions = [
-  { top: '5%', left: '15%', className: 'hidden lg:block w-24 h-24' },
-  { top: '15%', left: '35%', className: 'hidden md:block w-20 h-20' },
-  { top: '5%', left: '55%', className: 'hidden md:block w-16 h-16' },
-  { top: '10%', right: '15%', className: 'hidden lg:block w-28 h-28' },
-  { top: '25%', right: '5%', className: 'hidden md:block w-20 h-20' },
-  { top: '45%', right: '10%', className: 'hidden lg:block w-24 h-24' },
-  { top: '50%', left: '5%', className: 'hidden md:block w-28 h-28' },
-  { bottom: '5%', left: '20%', className: 'hidden lg:block w-20 h-20' },
-  { bottom: '15%', left: '45%', className: 'hidden md:block w-16 h-16' },
-  { bottom: '10%', right: '30%', className: 'hidden md:block w-24 h-24' },
-  { bottom: '2%', right: '15%', className: 'hidden lg:block w-20 h-20' },
-  { top: '10%', left: '5%', className: 'block md:hidden w-16 h-16' },
-  { top: '5%', right: '10%', className: 'block md:hidden w-20 h-20' },
-  { bottom: '5%', left: '10%', className: 'block md:hidden w-20 h-20' },
-  { bottom: '10%', right: '5%', className: 'block md:hidden w-16 h-16' },
+  { top: '15%', left: '20%', className: 'hidden lg:block w-24 h-24' },
+  { top: '25%', left: '35%', className: 'hidden md:block w-20 h-20' },
+  { top: '15%', left: '55%', className: 'hidden md:block w-16 h-16' },
+  { top: '20%', right: '20%', className: 'hidden lg:block w-28 h-28' },
+  { top: '35%', right: '15%', className: 'hidden md:block w-20 h-20' },
+  { top: '55%', right: '18%', className: 'hidden lg:block w-24 h-24' },
+  { top: '60%', left: '15%', className: 'hidden md:block w-28 h-28' },
+  { bottom: '15%', left: '25%', className: 'hidden lg:block w-20 h-20' },
+  { bottom: '25%', left: '45%', className: 'hidden md:block w-16 h-16' },
+  { bottom: '20%', right: '35%', className: 'hidden md:block w-24 h-24' },
+  { bottom: '15%', right: '20%', className: 'hidden lg:block w-20 h-20' },
+  // Mobile fallback tighter positions
+  { top: '15%', left: '10%', className: 'block md:hidden w-16 h-16' },
+  { top: '12%', right: '15%', className: 'block md:hidden w-20 h-20' },
+  { bottom: '15%', left: '15%', className: 'block md:hidden w-20 h-20' },
+  { bottom: '20%', right: '10%', className: 'block md:hidden w-16 h-16' },
 ]
 
 export default function Reviews() {
   const containerRef = useRef<HTMLElement>(null)
-  
-  // Carousel State
   const [active, setActive] = useState(0)
 
   const handleNext = React.useCallback(() => {
@@ -113,16 +114,11 @@ export default function Reviews() {
       }
     })
 
-    // Phase 1 (Grid) fades out and moves up
-    tl.to('.review-part-1', {
-      opacity: 0,
-      y: -150,
-      scale: 0.9,
-      duration: 1,
-      ease: 'power2.inOut'
-    }, 0)
+    // Parallax out Part 1 (different speeds for text vs images)
+    tl.to('.review-grid-images', { y: -300, opacity: 0, duration: 1, ease: 'power2.inOut' }, 0)
+    tl.to('.review-grid-text', { y: -150, opacity: 0, duration: 1, ease: 'power2.inOut' }, 0)
 
-    // Phase 2 (Carousel) fades in and moves up
+    // Parallax in Part 2
     tl.fromTo('.review-part-2', 
       { opacity: 0, y: 150, scale: 0.9, rotateX: -20 },
       { opacity: 1, y: 0, scale: 1, rotateX: 0, duration: 1, ease: 'power2.out' },
@@ -157,41 +153,43 @@ export default function Reviews() {
       <div className="review-part-1 absolute inset-0 flex items-center justify-center z-10 w-full h-full">
         <div className="relative w-full max-w-7xl mx-auto h-full flex flex-col items-center justify-center px-4">
           
-          {/* Floating Images */}
-          {gridTestimonials.slice(0, imagePositions.length).map((testimonial, index) => (
-            <motion.div
-              key={index}
-              className={`absolute rounded-2xl shadow-[0_0_30px_rgba(0,174,239,0.2)] border border-white/10 overflow-hidden ${imagePositions[index].className}`}
-              style={{ 
-                top: imagePositions[index].top, 
-                left: imagePositions[index].left,
-                right: imagePositions[index].right,
-                bottom: imagePositions[index].bottom,
-              }}
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ 
-                opacity: 1, 
-                scale: 1, 
-                y: [0, Math.random() * -15 - 5, 0],
-                transition: { 
-                  opacity: { duration: 1, delay: Math.random() * 0.5 },
-                  scale: { type: 'spring', stiffness: 260, damping: 20, delay: Math.random() * 0.5 },
-                  y: { duration: Math.random() * 4 + 5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }
-                } 
-              }}
-              whileHover={{ scale: 1.1, zIndex: 20 }}
-            >
-               <img
-                src={testimonial.imgSrc}
-                alt={testimonial.alt}
-                className="w-full h-full object-cover"
-              />
-            </motion.div>
-          ))}
+          {/* Floating Images with separate container for parallax */}
+          <div className="review-grid-images absolute inset-0 pointer-events-none">
+            {gridTestimonials.slice(0, imagePositions.length).map((testimonial, index) => (
+              <motion.div
+                key={index}
+                className={`absolute rounded-2xl shadow-[0_0_30px_rgba(0,174,239,0.2)] border border-white/10 overflow-hidden ${imagePositions[index].className}`}
+                style={{ 
+                  top: imagePositions[index].top, 
+                  left: imagePositions[index].left,
+                  right: imagePositions[index].right,
+                  bottom: imagePositions[index].bottom,
+                }}
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ 
+                  opacity: 1, 
+                  scale: 1, 
+                  y: [0, Math.random() * -15 - 5, 0],
+                  transition: { 
+                    opacity: { duration: 1, delay: Math.random() * 0.5 },
+                    scale: { type: 'spring', stiffness: 260, damping: 20, delay: Math.random() * 0.5 },
+                    y: { duration: Math.random() * 4 + 5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }
+                  } 
+                }}
+                whileHover={{ scale: 1.1, zIndex: 20 }}
+              >
+                 <img
+                  src={testimonial.imgSrc}
+                  alt={testimonial.alt}
+                  className="w-full h-full object-cover"
+                />
+              </motion.div>
+            ))}
+          </div>
 
           {/* Central Content */}
-          <div className="relative z-10 flex flex-col items-center text-center">
-            <div className="mb-6 inline-block rounded-full bg-[#00AEEF]/10 border border-[#00AEEF]/20 px-4 py-2 text-xs font-mono tracking-widest text-[#00AEEF] uppercase backdrop-blur-md">
+          <div className="review-grid-text relative z-10 flex flex-col items-center text-center">
+            <div className="mb-6 inline-block rounded-full bg-[#00AEEF]/10 border border-[#00AEEF]/20 px-4 py-2 text-xs font-mono tracking-widest text-[#00AEEF] uppercase backdrop-blur-md shadow-[0_0_20px_rgba(0,174,239,0.2)]">
               Client Feedback
             </div>
             <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white mb-6 max-w-4xl drop-shadow-lg">
