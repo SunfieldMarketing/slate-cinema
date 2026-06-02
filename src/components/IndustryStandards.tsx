@@ -46,7 +46,7 @@ export default function IndustryStandards() {
       scrollTrigger: {
         trigger: containerRef.current,
         start: 'top top',
-        end: '+=400%',
+        end: '+=500%',
         pin: true,
         scrub: 1,
         anticipatePin: 1,
@@ -57,22 +57,23 @@ export default function IndustryStandards() {
     })
 
     // Text phases
-    tl.to('.phase-1', { opacity: 0, y: -100, duration: 1, ease: 'power2.inOut' }, 0)
+    // We add a delay (start at 1 instead of 0) so the first phase stays locked on screen longer
+    tl.to('.phase-1', { opacity: 0, y: -100, duration: 1, ease: 'power2.inOut' }, 1)
     
-    tl.fromTo('.phase-2', { opacity: 0, y: 100, scale: 0.8 }, { opacity: 1, y: 0, scale: 1, duration: 1, ease: 'power2.inOut' }, 0.5)
+    tl.fromTo('.phase-2', { opacity: 0, y: 100, scale: 0.8 }, { opacity: 1, y: 0, scale: 1, duration: 1, ease: 'power2.inOut' }, 1.5)
     
-    tl.to('.phase-2', { opacity: 0, y: -100, scale: 1.2, duration: 1, ease: 'power2.inOut' }, 2)
+    tl.to('.phase-2', { opacity: 0, y: -100, scale: 1.2, duration: 1, ease: 'power2.inOut' }, 3)
     
     // Scale phase 3 in to be massive and impactful
-    tl.fromTo('.phase-3', { opacity: 0, scale: 0.3, rotateX: 20 }, { opacity: 1, scale: 1, rotateX: 0, duration: 1, ease: 'back.out(1.2)' }, 2.5)
+    tl.fromTo('.phase-3', { opacity: 0, scale: 0.3, rotateX: 20 }, { opacity: 1, scale: 1, rotateX: 0, duration: 1, ease: 'back.out(1.2)' }, 3.5)
 
     // Visual elements - expanding boundaries well beyond 100vh/vw to prevent margin cutoff issues
-    tl.to('.bg-visual-1', { opacity: 0, scale: 1.5, duration: 1 }, 0)
-    tl.fromTo('.bg-visual-2', { opacity: 0, rotateZ: 45 }, { opacity: 1, rotateZ: 0, duration: 1.5 }, 0.2)
-    tl.to('.bg-visual-2', { opacity: 0, scale: 2, duration: 1 }, 1.8)
+    tl.to('.bg-visual-1', { opacity: 0, scale: 1.5, duration: 1 }, 1)
+    tl.fromTo('.bg-visual-2', { opacity: 0, rotateZ: 45 }, { opacity: 1, rotateZ: 0, duration: 1.5 }, 1.2)
+    tl.to('.bg-visual-2', { opacity: 0, scale: 2, duration: 1 }, 2.8)
     
     // Massive light burst for phase 3
-    tl.fromTo('.bg-visual-3', { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1.2, duration: 1.5 }, 2.2)
+    tl.fromTo('.bg-visual-3', { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1.2, duration: 1.5 }, 3.2)
 
 
 
