@@ -45,21 +45,20 @@ function formatViews(n: number): string {
 }
 
 function formatLikes(n: number): string {
-  if (n >= 14_500_000) return '14.5M+'
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
+  if (n >= 4_395_000) return '4.4M+'
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}M`
   if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K`
   return n.toLocaleString()
 }
 
 function formatComments(n: number): string {
-  if (n >= 2_100_000) return '2.1M+'
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
+  if (n >= 370_000) return '370K+'
   if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K`
   return n.toLocaleString()
 }
 
 function formatShares(n: number): string {
-  if (n >= 5_400_000) return '5.4M+'
+  if (n >= 1_200_000) return '1.2M+'
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
   if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K`
   return n.toLocaleString()
@@ -120,9 +119,9 @@ export default function Results() {
 
       tl.to(obj, {
         views:    100_000_000,
-        likes:    14_500_000,
-        comments:   2_100_000,
-        shares:     5_400_000,
+        likes:    4_395_000,
+        comments:   370_000,
+        shares:   1_200_000,
         ease: 'power1.inOut',
         duration: 0.55,
         onUpdate: () => {
@@ -410,7 +409,28 @@ export default function Results() {
           </div>
         </div>
 
-        {/* ── 4 Metric Cards Row removed as requested ── */}
+        {/* ── 4 Metric Cards Row ────────────────────────────────────────────── */}
+        <div className="w-full max-w-3xl grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+          {metricCards.map((m, i) => (
+            <div
+              key={i}
+              className="metric-card opacity-0 bg-white/[0.025] border border-white/[0.055] rounded-xl p-3 sm:p-4 flex flex-col gap-1 hover:border-[#00AEEF]/20 transition-colors duration-300"
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-6 h-6 rounded-lg bg-[#00AEEF]/10 border border-[#00AEEF]/20 flex items-center justify-center shrink-0">
+                  <m.icon size={12} className="text-[#00AEEF]" />
+                </div>
+                <span className="text-[9px] sm:text-[10px] font-mono text-white/35 uppercase tracking-wider leading-tight">
+                  {m.label}
+                </span>
+              </div>
+              <p className="text-lg sm:text-2xl font-bold text-white leading-none">
+                {m.value}
+                <span className="text-[#00AEEF] ml-0.5">{m.suffix}</span>
+              </p>
+            </div>
+          ))}
+        </div>
 
       </div>
     </section>

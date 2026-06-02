@@ -50,15 +50,29 @@ export default function Hero() {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    // Set canvas internal resolution to match the video native resolution
-    canvas.width = 1280
-    canvas.height = 588
-
+    // High-DPI Canvas Rendering Logic
     const renderFrame = (index: number) => {
       const img = imagesRef.current[index]
       if (img && img.complete && img.naturalWidth !== 0) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+        // Scale up for high-DPI displays to ensure 1080p looks crisp
+        const dpr = window.devicePixelRatio || 1
+        const targetWidth = 1920
+        const targetHeight = 1080
+
+        canvas.width = targetWidth * dpr
+        canvas.height = targetHeight * dpr
+        
+        ctx.save()
+        ctx.scale(dpr, dpr)
+
+        // Object-cover logic
+        const scale = Math.max(targetWidth / img.width, targetHeight / img.height)
+        const x = targetWidth / 2 - (img.width / 2) * scale
+        const y = targetHeight / 2 - (img.height / 2) * scale
+
+        ctx.clearRect(0, 0, targetWidth, targetHeight)
+        ctx.drawImage(img, x, y, img.width * scale, img.height * scale)
+        ctx.restore()
       }
     }
 
@@ -97,59 +111,51 @@ export default function Hero() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: '+=800%',
+          end: '+=600vh', // Shorter distance for faster, more fluid scroll
+          scrub: 0.5,     // Faster scrub catch-up
           pin: true,
-          pinSpacing: true,
-          scrub: true,       // 1:1 interactive scrub mapping
           anticipatePin: 1,
-          fastScrollEnd: false,
         },
       })
 
-      // A. Fade out HTML content — opacity only, no scale change
+      // A. Fade out HTML content immediately upon scroll
       scrollTl.to(
         '.hero-html-content',
-        {
-          opacity: 0,
-          ease: 'power2.inOut',
-          duration: 0.1,
-        },
+        { opacity: 0, ease: 'power4.out', duration: 0.05 },
         0
       )
-      
-      // A2. Make sure camera UI fades out even faster
       scrollTl.to(
         '.camera-ui',
-        {
-          opacity: 0,
-          ease: 'power4.out',
-          duration: 0.05,
-        },
+        { opacity: 0, ease: 'power4.out', duration: 0.05 },
         0
       )
 
-      // B. Fade in the canvas simultaneously
+      // B. Keep canvas opaque during the frame sequence
       scrollTl.to(
-        '.camera-canvas-container',
-        {
-          opacity: 1,
-          ease: 'power2.inOut',
-          duration: 0.1,
-        },
+        canvasRef.current,
+        { opacity: 1, ease: 'power2.inOut', duration: 0.1 },
         0
       )
 
-      // C. Scrub through the image sequence (10% → 100% of scroll timeline)
+      // C. Frame sequence animation
       scrollTl.to(
         playhead,
         {
           frame: FRAME_COUNT - 1,
           snap: 'frame',
           ease: 'none',
-          duration: 0.9,
+          duration: 1,
           onUpdate: () => renderFrame(playhead.frame),
         },
-        0.1
+        0
+      )
+
+      // D. Crossfade transition into the next section
+      // At the very end of the sequence, fade out the canvas so the next section flows in smoothly
+      scrollTl.to(
+        canvasRef.current,
+        { opacity: 0, ease: 'power2.inOut', duration: 0.1 },
+        0.9 // Start fading out at 90% of the scroll timeline
       )
     }, containerRef)
 

@@ -9,7 +9,6 @@ import MediaVoid from "@/components/MediaVoid";
 import Results from "@/components/Results";
 import IndustryStandards from "@/components/IndustryStandards";
 import Portfolio from "@/components/Portfolio";
-import Testimonials from "@/components/Testimonials";
 import LogoOrbit from "@/components/LogoOrbit";
 import LeadMagnet from "@/components/LeadMagnet";
 import CustomCalendar from "@/components/CustomCalendar";
@@ -59,7 +58,6 @@ export default function Home() {
         <LogoOrbit />
         <IndustryStandards />
         <Portfolio />
-        <Testimonials />
         <LeadMagnet />
         <CustomCalendar />
         <Footer />
