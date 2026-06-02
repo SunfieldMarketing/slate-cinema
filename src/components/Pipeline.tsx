@@ -262,8 +262,8 @@ export default function Pipeline() {
               <div className="w-full max-w-6xl flex flex-col md:flex-row items-center justify-between gap-12 md:gap-20">
 
                 {/* ── Text Side ───────────────────── */}
-                <div className={`flex flex-col ${isEven ? 'items-start' : 'items-end'} flex-1 min-w-0`}
-                  style={{ order: isEven ? 1 : 2, textAlign: isEven ? 'left' : 'right' }}>
+                <div className="flex flex-col items-start flex-1 min-w-0"
+                  style={{ order: isEven ? 1 : 2, textAlign: 'left' }}>
 
                   {/* Number */}
                   <div className="pipe-text-el font-mono font-black leading-none"
@@ -289,7 +289,7 @@ export default function Pipeline() {
 
                   {/* Divider */}
                   <div className="pipe-text-el mt-5 h-px w-20"
-                    style={{ background: `linear-gradient(to ${isEven ? 'right' : 'left'}, ${step.color}, transparent)` }} />
+                    style={{ background: `linear-gradient(to right, ${step.color}, transparent)` }} />
 
                   {/* Description */}
                   <p className="pipe-text-el mt-4 text-white/60 text-sm md:text-base font-light leading-relaxed max-w-md">
@@ -329,18 +329,65 @@ export default function Pipeline() {
                 </div>
 
                 {/* ── Video Side ──────────────────── */}
-                <div className="pipe-video-el flex-shrink-0" style={{ order: isEven ? 2 : 1 }}>
-                  {/* Outer wrapper: slight rotation gives the "shard" feel, inner clips video cleanly */}
+                <div className="pipe-video-el flex-shrink-0 relative" style={{ order: isEven ? 2 : 1 }}>
+
+                  {/* === Background decorative shape behind video === */}
+                  {/* Large rotated rectangle — glass shard / frame effect */}
+                  <div
+                    className="absolute pointer-events-none"
+                    style={{
+                      width: 'clamp(280px,34vw,440px)',
+                      height: 'clamp(340px,44vw,560px)',
+                      top: '50%',
+                      left: '50%',
+                      transform: `translate(-50%, -50%) rotate(${isEven ? '8deg' : '-8deg'})`,
+                      border: `1px solid ${step.color}30`,
+                      background: `linear-gradient(135deg, ${step.color}08 0%, transparent 60%)`,
+                      borderRadius: '2px',
+                      zIndex: 0,
+                    }}
+                  />
+                  {/* Second shape — smaller, tighter rotation, pure color outline */}
+                  <div
+                    className="absolute pointer-events-none"
+                    style={{
+                      width: 'clamp(220px,26vw,340px)',
+                      height: 'clamp(260px,34vw,440px)',
+                      top: '50%',
+                      left: '50%',
+                      transform: `translate(-50%, -50%) rotate(${isEven ? '-4deg' : '4deg'})`,
+                      border: `1px solid ${step.color}18`,
+                      borderRadius: '2px',
+                      zIndex: 0,
+                    }}
+                  />
+                  {/* Corner accent dots */}
+                  {[[-1,-1],[1,-1],[1,1],[-1,1]].map(([dx,dy], ci) => (
+                    <div key={ci} className="absolute w-1.5 h-1.5 rounded-full pointer-events-none"
+                      style={{
+                        backgroundColor: step.color,
+                        opacity: 0.5,
+                        top: `calc(50% + ${dy * (isEven ? 1 : -1)} * clamp(150px,18vw,250px))`,
+                        left: `calc(50% + ${dx} * clamp(120px,14vw,190px))`,
+                        transform: 'translate(-50%,-50%)',
+                        boxShadow: `0 0 8px ${step.color}`,
+                        zIndex: 0,
+                      }}
+                    />
+                  ))}
+
+                  {/* Outer wrapper: slight rotation gives the "shard" feel */}
                   <div
                     className="relative"
                     style={{
                       width: 'clamp(240px, 28vw, 380px)',
                       height: 'clamp(300px, 36vw, 500px)',
                       transform: `rotate(${isEven ? '-2.5deg' : '2.5deg'})`,
+                      zIndex: 1,
                     }}
                   >
                     {/* Glow behind shard */}
-                    <div className="absolute -inset-4 rounded-sm opacity-40 blur-2xl"
+                    <div className="absolute -inset-4 rounded-sm opacity-30 blur-2xl"
                       style={{ background: step.color, zIndex: 0 }} />
 
                     {/* Video container with overflow hidden */}
@@ -348,14 +395,13 @@ export default function Pipeline() {
                       style={{
                         boxShadow: `0 0 60px ${step.glow}, inset 0 1px 0 rgba(255,255,255,0.10)`,
                         zIndex: 1,
-                        // Subtle parallelogram via skew, not clip-path
                         transform: 'skewX(-1.5deg)',
                       }}>
                       <video
                         src={step.videoSrc}
                         autoPlay loop muted playsInline
                         className="w-full h-full object-cover"
-                        style={{ transform: 'skewX(1.5deg) scale(1.04)' }} // counter-skew so video isn't distorted
+                        style={{ transform: 'skewX(1.5deg) scale(1.04)' }}
                       />
                       {/* Gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
