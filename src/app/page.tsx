@@ -38,7 +38,7 @@ export default function Home() {
       </div>
       
       {/* Content layers above 3D */}
-      <div className="relative z-10 w-full overflow-hidden">
+      <div className="relative z-10 w-full">
         <Hero />
         <Pipeline />
         <MediaVoid />

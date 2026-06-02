@@ -51,9 +51,10 @@ export default function Hero() {
           scrollTrigger: {
             trigger: containerRef.current,
             start: 'top top',
-            end: '+=400%', // Massive scroll distance for smooth scrubbing
+            end: () => "+=" + window.innerHeight * 4, // 400vh explicit pixel height for perfect locking
             pin: true,
-            scrub: true, // Instant mapping
+            scrub: 1.5, // 1.5 second smoothing delay makes scrubbing feel buttery fluid instead of choppy frame-by-frame
+            anticipatePin: 1, // Helps prevent jumpiness when pin starts
           }
         })
 
