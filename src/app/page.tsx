@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import dynamic from 'next/dynamic'
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
@@ -17,6 +18,17 @@ import Footer from "@/components/Footer";
 const Scene3DWrapper = dynamic(() => import("@/components/Scene3DWrapper"), { ssr: false })
 
 export default function Home() {
+  // Suppress the THREE.Clock deprecation warning from @react-three/fiber internals
+  React.useEffect(() => {
+    const originalWarn = console.warn
+    console.warn = (...args) => {
+      if (typeof args[0] === 'string' && args[0].includes('THREE.Clock: This module has been deprecated')) return
+      originalWarn.apply(console, args)
+    }
+    return () => {
+      console.warn = originalWarn
+    }
+  }, [])
   return (
     <main className="relative min-h-screen bg-[#030305] text-white selection:bg-[#00AEEF] selection:text-white">
       {/* Global Cinematic Overlays */}

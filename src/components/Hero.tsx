@@ -7,43 +7,58 @@ import { useGSAP } from '@gsap/react'
 
 gsap.registerPlugin(ScrollTrigger)
 
+const FRAME_COUNT = 291;
+
 export default function Hero() {
   const containerRef = useRef<HTMLElement>(null)
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [isVideoLoaded, setIsVideoLoaded] = useState(false)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [images, setImages] = useState<HTMLImageElement[]>([])
+  const [isLoaded, setIsLoaded] = useState(false)
 
-  // Fetch video as Blob for perfectly smooth frame-by-frame scrubbing
+  // Preload image sequence for Apple-style fluid scrubbing
   useEffect(() => {
-    const loadVideo = async () => {
-      try {
-        const response = await fetch('/videos/hero-camera.mp4')
-        const blob = await response.blob()
-        if (videoRef.current) {
-          videoRef.current.src = URL.createObjectURL(blob)
-          videoRef.current.load()
-          
-          if (videoRef.current.readyState >= 1) {
-            setIsVideoLoaded(true)
-          } else {
-            videoRef.current.onloadedmetadata = () => {
-              setIsVideoLoaded(true)
-            }
-          }
+    const loadedImages: HTMLImageElement[] = []
+    let loadedCount = 0
+
+    for (let i = 1; i <= FRAME_COUNT; i++) {
+      const img = new Image()
+      img.src = `/videos/frames/frame_${i.toString().padStart(4, '0')}.jpg`
+      img.onload = () => {
+        loadedCount++
+        // We consider it loaded when at least the first few frames are ready, 
+        // but we'll wait for 50% to ensure smooth initial scrub
+        if (loadedCount === Math.floor(FRAME_COUNT / 2) || loadedCount === FRAME_COUNT) {
+          setIsLoaded(true)
         }
-      } catch (err) {
-        console.error("Failed to load video blob", err)
       }
+      loadedImages.push(img)
     }
-    loadVideo()
+    setImages(loadedImages)
   }, [])
 
   useGSAP(() => {
-    if (!containerRef.current || !videoRef.current || !isVideoLoaded) return
+    if (!containerRef.current || !canvasRef.current || !isLoaded || images.length === 0) return
 
-    const video = videoRef.current
-    const duration = video.duration || 5 
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
 
-    const ctx = gsap.context(() => {
+    // Set canvas internal resolution to match the video native resolution
+    canvas.width = 1280
+    canvas.height = 588
+
+    const renderFrame = (index: number) => {
+      // Clear and draw the image to the canvas
+      if (images[index] && images[index].complete) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        ctx.drawImage(images[index], 0, 0, canvas.width, canvas.height)
+      }
+    }
+
+    // Draw first frame immediately
+    renderFrame(0)
+
+    const gsapCtx = gsap.context(() => {
       // --- 1. ENTRANCE ANIMATION (Plays on load for the HTML hero) ---
       const enterTl = gsap.timeline({ delay: 0.3 })
       
@@ -70,14 +85,16 @@ export default function Hero() {
       })
 
       // --- 2. SCROLL ANIMATION ---
+      const playhead = { frame: 0 }
+
       const scrollTl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: '+=400%', // 400% creates a long, smooth scrub area
+          end: '+=800%', // Increased from 400% to 800% for much more fluid and controlled scrubbing distance
           pin: true,
           pinSpacing: true, // Forces the page to stay locked on this section
-          scrub: true, // true gives instant 1:1 interactive mapping, removing the "getting stuck" delay feeling
+          scrub: true, // true gives instant 1:1 interactive mapping
           anticipatePin: 1,
         }
       })
@@ -90,24 +107,20 @@ export default function Hero() {
         duration: 0.1
       }, 0)
 
-      // B. Fade in the video simultaneously
-      scrollTl.to('.camera-video-container', {
+      // B. Fade in the canvas simultaneously
+      scrollTl.to('.camera-canvas-container', {
         opacity: 1,
         ease: 'power2.inOut',
         duration: 0.1
       }, 0)
 
-      // C. Scrub the video from 10% -> 100% of the scroll timeline
-      // Using requestAnimationFrame inside GSAP onUpdate for maximum frame-by-frame performance
-      scrollTl.to({ t: 0 }, {
-        t: duration,
+      // C. Scrub through the image sequence array (10% -> 100% of the scroll timeline)
+      scrollTl.to(playhead, {
+        frame: FRAME_COUNT - 1,
+        snap: "frame",
         ease: 'none',
         duration: 0.9,
-        onUpdate: function() {
-          if (videoRef.current && videoRef.current.readyState >= 2) {
-            videoRef.current.currentTime = this.targets()[0].t;
-          }
-        }
+        onUpdate: () => renderFrame(playhead.frame)
       }, 0.1)
 
     }, containerRef)
@@ -115,8 +128,8 @@ export default function Hero() {
     // Force ScrollTrigger to recalculate bounds after everything is setup
     ScrollTrigger.refresh()
 
-    return () => ctx.revert()
-  }, { scope: containerRef, dependencies: [isVideoLoaded] })
+    return () => gsapCtx.revert()
+  }, { scope: containerRef, dependencies: [isLoaded] })
 
   const slateLetters = 'SLATE'.split('')
   const cinemaLetters = 'CINEMA'.split('')
@@ -126,14 +139,12 @@ export default function Hero() {
       {/* Inner wrapper handles the overflow so the outer section can pin safely */}
       <div className="absolute inset-0 w-full h-full overflow-hidden" style={{ perspective: '2000px' }}>
         
-        {/* 1. The 3D Camera Video */}
-        <div className="camera-video-container absolute inset-0 z-10 opacity-0 pointer-events-none flex items-center justify-center bg-[#030305]">
-          <video
-            ref={videoRef}
-            muted
-            playsInline
-            preload="auto"
-            // scale-95 physically zooms it out slightly to show more of the native 1080p frame
+        {/* 1. The 3D Camera Canvas Sequence */}
+        <div className="camera-canvas-container absolute inset-0 z-10 opacity-0 pointer-events-none flex items-center justify-center bg-[#030305]">
+          <canvas
+            ref={canvasRef}
+            // object-contain ensures it never zooms in or gets cropped
+            // scale-95 physically zooms it out slightly to show more of the frame
             className="w-full h-full object-contain scale-95"
           />
         </div>
