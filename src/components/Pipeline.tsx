@@ -108,8 +108,8 @@ export default function Pipeline() {
       // The text pieces fly in from scattered depths to perfectly align into a readable sentence
       const textPieces = gsap.utils.toArray(`.text-shard-${index}`)
       tl.to(textPieces, {
-        z: 0,
-        x: 0,
+        z: 300, // In front of video shard
+        x: index % 2 === 0 ? -300 : 300, // Opposite side of the video
         y: 0,
         rotateX: 0,
         rotateY: 0,
@@ -121,7 +121,13 @@ export default function Pipeline() {
       }, currentTime)
 
       // The CTA button fades in
-      tl.to(`.cta-${index}`, { opacity: 1, y: 0, duration: 0.5 }, currentTime + 1)
+      tl.to(`.cta-${index}`, { 
+        z: 300,
+        x: index % 2 === 0 ? -300 : 300,
+        y: 50, 
+        opacity: 1, 
+        duration: 0.5 
+      }, currentTime + 1)
 
       // HOLD phase (let user read)
       tl.to({}, { duration: 1 })
@@ -150,7 +156,7 @@ export default function Pipeline() {
           ease: 'power3.in'
         }, currentTime + 2.5)
 
-        tl.to(`.cta-${index}`, { opacity: 0, duration: 0.5 }, currentTime + 2.5)
+        tl.to(`.cta-${index}`, { opacity: 0, z: () => gsap.utils.random(500, 1500), duration: 0.5 }, currentTime + 2.5)
       }
 
       currentTime += 3; // Advance timeline for next step
@@ -176,9 +182,6 @@ export default function Pipeline() {
         <h2 className="section-title text-5xl md:text-8xl font-black text-white tracking-tighter mix-blend-overlay">
           HOW IT WORKS
         </h2>
-        <p className="section-title mt-6 text-white/50 tracking-widest text-sm md:text-base font-mono uppercase">
-          [ Scroll to Shatter ]
-        </p>
       </div>
 
       {/* Decorative Background Glass Shards */}
@@ -227,7 +230,7 @@ export default function Pipeline() {
             </div>
 
             {/* The Fractured Text that Aligns */}
-            <div className="absolute flex flex-col items-start justify-center ml-0 md:-ml-[400px] pointer-events-none" style={{ transformStyle: 'preserve-3d' }}>
+            <div className="absolute flex flex-col items-start justify-center ml-0 pointer-events-none" style={{ transformStyle: 'preserve-3d' }}>
               
               {/* Number Shard */}
               <div 
@@ -265,7 +268,13 @@ export default function Pipeline() {
               </div>
 
               {/* CTA Button Shard */}
-              <div className={`cta-${index} mt-8 pointer-events-auto`} style={{ opacity: 0, transform: 'translateY(30px)' }}>
+              <div 
+                className={`cta-${index} mt-8 pointer-events-auto`} 
+                style={{ 
+                  opacity: 0, 
+                  transform: `translate3d(${gsap.utils.random(-500, 500)}px, ${gsap.utils.random(-500, 500)}px, ${gsap.utils.random(500, 1500)}px) rotateY(${gsap.utils.random(-90, 90)}deg)` 
+                }}
+              >
                 <button className="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/30 text-white font-semibold rounded-full hover:bg-white hover:text-black transition-all duration-300">
                   Book A Strategy Call
                 </button>
