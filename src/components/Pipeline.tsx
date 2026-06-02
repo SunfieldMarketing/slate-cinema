@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -15,7 +15,8 @@ const steps = [
     desc: 'We map the idea before the camera turns on. Concept development, campaign planning, scripting, shot lists, storyboards, brand direction, production scheduling.',
     icon: PenTool,
     videoSrc: '/videos/pre-production.mp4',
-    rotation: 0,
+    color: 'from-blue-500 to-cyan-400',
+    orbColor: 'rgba(6,182,212,0.8)',
   },
   {
     num: '02',
@@ -23,7 +24,8 @@ const steps = [
     desc: 'We capture visuals that feel intentional, premium, and built for attention. On-location shooting, lighting, directing, interviews, product shots, social-first content capture.',
     icon: Video,
     videoSrc: '/videos/production.mp4',
-    rotation: 90,
+    color: 'from-purple-500 to-pink-500',
+    orbColor: 'rgba(236,72,153,0.8)',
   },
   {
     num: '03',
@@ -31,7 +33,8 @@ const steps = [
     desc: 'We shape the story into content people actually finish watching. Editing, color grading, sound design, motion graphics, captions, VFX, platform-specific cuts.',
     icon: Edit3,
     videoSrc: '/videos/post-production.mp4',
-    rotation: 180,
+    color: 'from-emerald-500 to-teal-400',
+    orbColor: 'rgba(16,185,129,0.8)',
   },
   {
     num: '04',
@@ -39,54 +42,93 @@ const steps = [
     desc: 'We prepare the content for the platforms where attention actually happens. Social media versions, ad-ready exports, campaign deliverables, posting strategy, analytics review.',
     icon: Send,
     videoSrc: '/videos/distribution.mp4',
-    rotation: -90,
+    color: 'from-orange-500 to-red-500',
+    orbColor: 'rgba(239,68,68,0.8)',
   }
 ]
 
 export default function Pipeline() {
   const containerRef = useRef<HTMLElement>(null)
-  const cubeRef = useRef<HTMLDivElement>(null)
 
   useGSAP(() => {
-    if (!containerRef.current || !cubeRef.current) return
+    if (!containerRef.current) return
 
-    // Calculate how much we want to scroll to complete the full rotation.
-    // 4 sides, we rotate 90 degrees 3 times (from 0 to -270)
-    // 300vh gives us plenty of scroll room for 3 transitions.
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
         start: 'top top',
-        end: '+=300%',
+        end: '+=400%',
         pin: true,
         scrub: 1,
         anticipatePin: 1,
       }
     })
 
-    // Rotate the entire monolith by -270 degrees over the scroll duration
-    // Adding slight scale changes to make it feel more dynamic when rotating
-    tl.to(cubeRef.current, {
-      rotateY: -270,
-      ease: 'none',
-      duration: 3, // abstract timeline duration
+    // Initial state: Orb is small and floating. Text is hidden.
+    
+    steps.forEach((step, index) => {
+      // 1. Orb scales up violently to cover the container (Shatter/Expand)
+      tl.to(`.liquid-orb`, {
+        scale: 25, // Massive scale to cover the screen
+        backgroundColor: step.orbColor,
+        duration: 0.5,
+        ease: 'power3.in'
+      })
+      
+      // 2. Fade in the video and content for this step
+      tl.to(`.step-${index}-content`, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.5,
+        ease: 'power2.out'
+      }, '<0.2') // Start fading in right before orb finishes expanding
+
+      // 3. Hold the step on screen for a bit
+      tl.to({}, { duration: 1 })
+
+      // 4. Shrink back if not the last step
+      if (index !== steps.length - 1) {
+        tl.to(`.step-${index}-content`, {
+          opacity: 0,
+          scale: 0.8,
+          duration: 0.4,
+          ease: 'power2.in'
+        })
+        tl.to(`.liquid-orb`, {
+          scale: 1, // Shrink back to orb
+          duration: 0.6,
+          ease: 'power3.out'
+        }, '<')
+      }
     })
 
   }, { scope: containerRef })
 
-  // We use responsive CSS for the cube size, but we need exact pixel values for translateZ to make a perfect cube
-  // A cube with width W needs translateZ of W/2. 
-  // Let's use max-w-[800px] which is 800px max. On mobile it will be smaller.
-  // We can use a CSS variable to handle the math perfectly.
-
   return (
     <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-hidden flex items-center justify-center">
       
-      {/* Ambient Lighting that reacts to the monolith */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,174,239,0.1)_0%,transparent_60%)] pointer-events-none" />
+      {/* CSS Keyframes for the Liquid Morphing Orb Effect */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes liquid-morph {
+          0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+          50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+          100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+        }
+      `}} />
 
-      {/* Header outside the cube */}
-      <div className="absolute top-12 md:top-20 w-full text-center z-20 pointer-events-none">
+      {/* SVG filter to give the DOM a "gooey" liquid look when expanding */}
+      <svg className="hidden">
+        <defs>
+          <filter id="gooey">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="gooey" />
+            <feBlend in="SourceGraphic" in2="gooey" />
+          </filter>
+        </defs>
+      </svg>
+
+      {/* Header outside */}
+      <div className="absolute top-12 md:top-20 w-full text-center z-50 pointer-events-none">
         <span className="font-mono text-sm text-[#00AEEF] tracking-[0.4em] uppercase block mb-2 filter drop-shadow-[0_0_8px_rgba(0,174,239,0.8)]">
           // Production Pipeline
         </span>
@@ -95,88 +137,73 @@ export default function Pipeline() {
         </h2>
       </div>
 
-      {/* The 3D Monolith Stage */}
-      <div className="relative w-full max-w-[340px] md:max-w-[700px] h-[500px] md:h-[600px] mt-12" style={{ perspective: '2000px' }}>
-        
-        {/* The Rotating Cube Container */}
+      {/* Liquid Orb Container - uses the gooey filter */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10" style={{ filter: 'url(#gooey)' }}>
         <div 
-          ref={cubeRef}
-          className="w-full h-full relative"
-          style={{ transformStyle: 'preserve-3d', transform: 'rotateY(0deg)' }}
-        >
-          
-          <style dangerouslySetInnerHTML={{__html: `
-            .monolith-face {
-              position: absolute;
-              width: 100%;
-              height: 100%;
-              border-radius: 2rem;
-              overflow: hidden;
-              border: 1px solid rgba(255,255,255,0.15);
-              background: rgba(255,255,255,0.03);
-              backdrop-filter: blur(20px);
-              box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 30px rgba(0,174,239,0.1);
-              backface-visibility: hidden;
-            }
-            .monolith-front { transform: rotateY(0deg) translateZ(170px); }
-            .monolith-right { transform: rotateY(90deg) translateZ(170px); }
-            .monolith-back { transform: rotateY(180deg) translateZ(170px); }
-            .monolith-left { transform: rotateY(-90deg) translateZ(170px); }
-            
-            @media (min-width: 768px) {
-              .monolith-front { transform: rotateY(0deg) translateZ(350px); }
-              .monolith-right { transform: rotateY(90deg) translateZ(350px); }
-              .monolith-back { transform: rotateY(180deg) translateZ(350px); }
-              .monolith-left { transform: rotateY(-90deg) translateZ(350px); }
-            }
-          `}} />
+          className="liquid-orb w-32 h-32 md:w-48 md:h-48 shadow-[0_0_60px_rgba(255,255,255,0.4)] mix-blend-screen"
+          style={{ 
+            backgroundColor: steps[0].orbColor,
+            animation: 'liquid-morph 8s ease-in-out infinite',
+            transformOrigin: 'center center'
+          }}
+        />
+      </div>
 
-          {steps.map((step, i) => {
-            const Icon = step.icon
-            const faceClass = i === 0 ? 'monolith-front' : i === 1 ? 'monolith-right' : i === 2 ? 'monolith-back' : 'monolith-left'
+      {/* Steps Content Overlay */}
+      <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+        {steps.map((step, i) => {
+          const Icon = step.icon
+          return (
+            <div 
+              key={i} 
+              className={`step-${i}-content absolute inset-0 w-full h-full opacity-0 scale-110 flex flex-col md:flex-row`}
+            >
+              
+              {/* Left Side: Video */}
+              <div className="relative w-full h-1/2 md:h-full md:w-1/2 overflow-hidden">
+                <video
+                  src={step.videoSrc}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className={`absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#030305] to-transparent opacity-80`} />
+              </div>
 
-            return (
-              <div key={i} className={`monolith-face ${faceClass} flex flex-col md:flex-row group`}>
+              {/* Right Side: Text & Typography */}
+              <div className="relative w-full h-1/2 md:h-full md:w-1/2 p-8 md:p-16 lg:p-24 flex flex-col justify-center bg-[#030305]">
                 
-                {/* Video Background / Top Half */}
-                <div className="relative w-full h-[40%] md:h-full md:w-[45%] overflow-hidden shrink-0">
-                  <video
-                    src={step.videoSrc}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#030305] via-[#030305]/40 to-transparent" />
-                </div>
+                {/* Background ambient color for this step */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${step.color} opacity-5 blur-[100px]`} />
 
-                {/* Content Side */}
-                <div className="relative w-full h-[60%] md:h-full md:w-[55%] p-6 md:p-12 flex flex-col justify-center bg-[#030305]/80">
-                  
-                  <div className="flex items-center justify-between mb-4 md:mb-8">
-                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-[#00AEEF]/10 border border-[#00AEEF]/30 flex items-center justify-center text-[#00AEEF] shadow-[0_0_20px_rgba(0,174,239,0.2)]">
-                      <Icon strokeWidth={1.5} className="w-6 h-6 md:w-8 md:h-8" />
+                <div className="relative z-10">
+                  <div className="flex items-center gap-6 mb-8">
+                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/5 border border-white/20 backdrop-blur-xl flex items-center justify-center text-white shadow-[0_0_30px_rgba(255,255,255,0.1)]">
+                      <Icon strokeWidth={1.5} className="w-8 h-8 md:w-10 md:h-10" />
                     </div>
-                    <span className="font-mono text-2xl md:text-4xl text-[#00AEEF]/30 font-bold tracking-tighter">
+                    <span className="font-mono text-5xl md:text-7xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white/80 to-transparent">
                       {step.num}
                     </span>
                   </div>
                   
-                  <h3 className="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tighter drop-shadow-md">
+                  <h3 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 tracking-tighter leading-none">
                     {step.title}
                   </h3>
                   
-                  <p className="text-white/60 text-sm md:text-lg leading-relaxed font-light">
+                  <p className="text-white/60 text-lg md:text-xl lg:text-2xl leading-relaxed font-light max-w-xl">
                     {step.desc}
                   </p>
-                  
-                </div>
 
+                  {/* Aesthetic Line */}
+                  <div className="w-full h-px bg-gradient-to-r from-white/20 to-transparent mt-12" />
+                </div>
               </div>
-            )
-          })}
-        </div>
+
+            </div>
+          )
+        })}
       </div>
       
     </section>

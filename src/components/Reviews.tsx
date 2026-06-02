@@ -9,7 +9,7 @@ import { useGSAP } from '@gsap/react'
 
 gsap.registerPlugin(ScrollTrigger)
 
-// --- DATA: Premium Professional Headshots (Curated reliable URLs) ---
+// --- DATA: Premium Professional Headshots (Verified Unsplash URLs) ---
 const gridTestimonials = [
   { imgSrc: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&q=80', alt: 'Professional Man' },
   { imgSrc: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&q=80', alt: 'Professional Woman' },
@@ -58,25 +58,25 @@ const carouselTestimonials = [
   },
 ]
 
-// Spread out to the edges (5-15% margins instead of 20-30%)
+// Spread out to the edges (5-15% margins) AND add a few near the center text
 const imagePositions = [
-  { top: '15%', left: '5%', className: 'hidden lg:block w-28 h-28', delay: '0s', duration: '5s' },
-  { top: '25%', left: '15%', className: 'hidden md:block w-20 h-20', delay: '1s', duration: '6s' },
-  { top: '15%', left: '35%', className: 'hidden md:block w-16 h-16', delay: '2s', duration: '4.5s' },
-  { top: '12%', right: '8%', className: 'hidden lg:block w-24 h-24', delay: '0.5s', duration: '5.5s' },
-  { top: '35%', right: '15%', className: 'hidden md:block w-20 h-20', delay: '1.5s', duration: '6.5s' },
-  { top: '55%', right: '5%', className: 'hidden lg:block w-32 h-32', delay: '2.5s', duration: '7s' },
-  { top: '60%', left: '8%', className: 'hidden md:block w-28 h-28', delay: '0.2s', duration: '5.2s' },
-  { bottom: '15%', left: '20%', className: 'hidden lg:block w-20 h-20', delay: '1.2s', duration: '4.8s' },
-  { bottom: '25%', left: '35%', className: 'hidden md:block w-16 h-16', delay: '2.2s', duration: '5.8s' },
-  { bottom: '20%', right: '25%', className: 'hidden md:block w-24 h-24', delay: '0.8s', duration: '6.2s' },
-  { bottom: '10%', right: '10%', className: 'hidden lg:block w-24 h-24', delay: '1.8s', duration: '5.3s' },
+  { top: '15%', left: '5%', className: 'hidden lg:block w-28 h-28 z-20', delay: '0s', duration: '5s' },
+  { top: '25%', left: '15%', className: 'hidden md:block w-20 h-20 z-10', delay: '1s', duration: '6s' },
+  { top: '45%', left: '22%', className: 'hidden md:block w-16 h-16 z-30', delay: '2s', duration: '4.5s' }, // Near center left
+  { top: '12%', right: '8%', className: 'hidden lg:block w-24 h-24 z-20', delay: '0.5s', duration: '5.5s' },
+  { top: '35%', right: '15%', className: 'hidden md:block w-20 h-20 z-10', delay: '1.5s', duration: '6.5s' },
+  { top: '55%', right: '5%', className: 'hidden lg:block w-32 h-32 z-20', delay: '2.5s', duration: '7s' },
+  { top: '50%', right: '28%', className: 'hidden md:block w-16 h-16 z-30', delay: '0.8s', duration: '5s' }, // Near center right
+  { bottom: '15%', left: '20%', className: 'hidden lg:block w-20 h-20 z-10', delay: '1.2s', duration: '4.8s' },
+  { bottom: '25%', left: '35%', className: 'hidden md:block w-16 h-16 z-20', delay: '2.2s', duration: '5.8s' },
+  { bottom: '20%', right: '25%', className: 'hidden md:block w-24 h-24 z-20', delay: '0.8s', duration: '6.2s' },
+  { bottom: '10%', right: '10%', className: 'hidden lg:block w-24 h-24 z-10', delay: '1.8s', duration: '5.3s' },
   
   // Mobile fallback tighter positions
-  { top: '10%', left: '5%', className: 'block md:hidden w-16 h-16', delay: '0s', duration: '5s' },
-  { top: '12%', right: '5%', className: 'block md:hidden w-20 h-20', delay: '1s', duration: '6s' },
-  { bottom: '15%', left: '10%', className: 'block md:hidden w-20 h-20', delay: '2s', duration: '5.5s' },
-  { bottom: '20%', right: '5%', className: 'block md:hidden w-16 h-16', delay: '0.5s', duration: '4.5s' },
+  { top: '10%', left: '5%', className: 'block md:hidden w-16 h-16 z-10', delay: '0s', duration: '5s' },
+  { top: '12%', right: '5%', className: 'block md:hidden w-20 h-20 z-10', delay: '1s', duration: '6s' },
+  { bottom: '15%', left: '10%', className: 'block md:hidden w-20 h-20 z-10', delay: '2s', duration: '5.5s' },
+  { bottom: '20%', right: '5%', className: 'block md:hidden w-16 h-16 z-10', delay: '0.5s', duration: '4.5s' },
 ]
 
 export default function Reviews() {
@@ -116,6 +116,7 @@ export default function Reviews() {
     // Parallax out Part 1 (different speeds for text vs images)
     tl.to('.review-grid-images', { y: -300, opacity: 0, duration: 1, ease: 'power2.inOut' }, 0)
     tl.to('.review-grid-text', { y: -150, opacity: 0, duration: 1, ease: 'power2.inOut' }, 0)
+    tl.to('.bento-background', { opacity: 0, duration: 1, ease: 'power2.inOut' }, 0)
 
     // Parallax in Part 2
     tl.fromTo('.review-part-2', 
@@ -136,23 +137,31 @@ export default function Reviews() {
           50% { transform: translateY(-15px); }
           100% { transform: translateY(0px); }
         }
-        @keyframes animate-grid {
-          0% { background-position: 0% 50%; }
-          100% { background-position: 100% 50%; }
-        }
-        .animated-grid {
-          width: 200%;
-          height: 200%;
-          background-image: 
-              linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), 
-              linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
-          background-size: 4rem 4rem;
-          animation: animate-grid 40s linear infinite alternate;
+        @keyframes float-aurora {
+          0% { transform: translate(0px, 0px) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+          100% { transform: translate(0px, 0px) scale(1); }
         }
       `}} />
 
-      <div className="animated-grid absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-30 z-0 pointer-events-none" />
-      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(3,3,5,1)_80%)] pointer-events-none" />
+      {/* Bento Grid Background + Aurora Lighting */}
+      <div className="bento-background absolute inset-0 z-0 pointer-events-none w-full h-full">
+        {/* Animated Aurora Orbs */}
+        <div className="absolute top-1/4 left-1/4 w-[40vw] h-[40vw] bg-emerald-500/10 rounded-full blur-[120px] mix-blend-screen" style={{ animation: 'float-aurora 20s ease-in-out infinite' }} />
+        <div className="absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] bg-[#00AEEF]/10 rounded-full blur-[120px] mix-blend-screen" style={{ animation: 'float-aurora 25s ease-in-out infinite reverse' }} />
+        
+        {/* Subtle Bento Grid Lines */}
+        <div className="absolute inset-0 opacity-[0.03]">
+          <div className="absolute top-1/3 left-0 w-full h-px bg-white" />
+          <div className="absolute top-2/3 left-0 w-full h-px bg-white" />
+          <div className="absolute top-0 left-1/3 w-px h-full bg-white" />
+          <div className="absolute top-0 left-2/3 w-px h-full bg-white" />
+        </div>
+        
+        {/* Center Vignette so text is readable */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(3,3,5,0.8)_80%)]" />
+      </div>
 
       {/* Part 1: Grid */}
       <div className="review-part-1 absolute inset-0 flex items-center justify-center z-10 w-full h-full">
@@ -186,7 +195,7 @@ export default function Reviews() {
           </div>
 
           {/* Central Content */}
-          <div className="review-grid-text relative z-10 flex flex-col items-center text-center px-4">
+          <div className="review-grid-text relative z-20 flex flex-col items-center text-center px-4 bg-[#030305]/40 backdrop-blur-sm p-12 rounded-[3rem] border border-white/5 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
             <div className="mb-6 inline-block rounded-full bg-[#00AEEF]/10 border border-[#00AEEF]/20 px-4 py-2 text-xs font-mono tracking-widest text-[#00AEEF] uppercase backdrop-blur-md shadow-[0_0_20px_rgba(0,174,239,0.2)]">
               Client Feedback
             </div>
@@ -203,7 +212,7 @@ export default function Reviews() {
       </div>
 
       {/* Part 2: Carousel */}
-      <div className="review-part-2 absolute inset-0 flex items-center justify-center z-20 w-full h-full opacity-0 pointer-events-none">
+      <div className="review-part-2 absolute inset-0 flex items-center justify-center z-30 w-full h-full opacity-0 pointer-events-none">
         <div className="mx-auto max-w-sm px-4 md:max-w-6xl md:px-8 lg:px-12 w-full">
           <div className="relative grid grid-cols-1 gap-y-12 md:grid-cols-2 md:gap-x-20 items-center pointer-events-auto">
             

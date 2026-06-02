@@ -4,7 +4,7 @@ import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, TrendingUp, Users, Activity } from 'lucide-react'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -19,14 +19,15 @@ export default function IndustryStandards() {
     morphTlRef.current = gsap.timeline({ repeat: -1, paused: true })
     const mTl = morphTlRef.current
 
-    mTl.to('.morph-word-1', { opacity: 0, y: -20, duration: 0.3, delay: 1.5 })
-    mTl.fromTo('.morph-word-2', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3 })
+    // Use '<' to make the fade-out and fade-in happen simultaneously so there's no empty pause
+    mTl.to('.morph-word-1', { opacity: 0, y: -20, duration: 0.4, delay: 2 })
+    mTl.fromTo('.morph-word-2', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4 }, '<')
     
-    mTl.to('.morph-word-2', { opacity: 0, y: -20, duration: 0.3, delay: 1.5 })
-    mTl.fromTo('.morph-word-3', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3 })
+    mTl.to('.morph-word-2', { opacity: 0, y: -20, duration: 0.4, delay: 2 })
+    mTl.fromTo('.morph-word-3', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4 }, '<')
     
-    mTl.to('.morph-word-3', { opacity: 0, y: -20, duration: 0.3, delay: 1.5 })
-    mTl.fromTo('.morph-word-1', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3 })
+    mTl.to('.morph-word-3', { opacity: 0, y: -20, duration: 0.4, delay: 2 })
+    mTl.fromTo('.morph-word-1', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4 }, '<')
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -43,7 +44,6 @@ export default function IndustryStandards() {
               morphTlRef.current.play()
             }
           } else {
-            // Optional: reset or pause when out of view
             morphTlRef.current?.pause()
           }
         }
@@ -56,21 +56,29 @@ export default function IndustryStandards() {
     tl.fromTo('.phase-2', { opacity: 0, y: 100, scale: 0.8 }, { opacity: 1, y: 0, scale: 1, duration: 1, ease: 'power2.inOut' }, 0.5)
     
     tl.to('.phase-2', { opacity: 0, y: -100, scale: 1.2, duration: 1, ease: 'power2.inOut' }, 2)
-    tl.fromTo('.phase-3', { opacity: 0, scale: 0.5, rotateX: 45 }, { opacity: 1, scale: 1, rotateX: 0, duration: 1, ease: 'power3.out' }, 2.5)
+    
+    // Scale phase 3 in to be massive and impactful
+    tl.fromTo('.phase-3', { opacity: 0, scale: 0.3, rotateX: 20 }, { opacity: 1, scale: 1, rotateX: 0, duration: 1, ease: 'back.out(1.2)' }, 2.5)
 
     // Visual elements - expanding boundaries well beyond 100vh/vw to prevent margin cutoff issues
     tl.to('.bg-visual-1', { opacity: 0, scale: 1.5, duration: 1 }, 0)
     tl.fromTo('.bg-visual-2', { opacity: 0, rotateZ: 45 }, { opacity: 1, rotateZ: 0, duration: 1.5 }, 0.2)
     tl.to('.bg-visual-2', { opacity: 0, scale: 2, duration: 1 }, 1.8)
-    tl.fromTo('.bg-visual-3', { opacity: 0, filter: 'blur(20px)' }, { opacity: 1, filter: 'blur(0px)', duration: 1.5 }, 2.2)
+    
+    // Massive light burst for phase 3
+    tl.fromTo('.bg-visual-3', { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1.2, duration: 1.5 }, 2.2)
+
+    // Floating Metric Widget Animation (appears during Phase 3)
+    tl.fromTo('.metric-widget-1', { opacity: 0, x: -100 }, { opacity: 1, x: 0, duration: 1, ease: 'power3.out' }, 2.7)
+    tl.fromTo('.metric-widget-2', { opacity: 0, x: 100 }, { opacity: 1, x: 0, duration: 1, ease: 'power3.out' }, 2.9)
 
   }, { scope: containerRef })
 
   return (
-    <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-hidden text-white flex items-center justify-center" style={{ perspective: '1000px' }}>
+    <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-visible text-white flex items-center justify-center" style={{ perspective: '1000px' }}>
       
       {/* Background Visuals */}
-      <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+      <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
         <div className="bg-visual-1 absolute min-w-[150vw] min-h-[150vh] border-[1px] border-[#00AEEF]/10 rounded-full flex items-center justify-center">
            <div className="w-[120vw] h-[120vh] border-[1px] border-[#00AEEF]/20 rounded-full flex items-center justify-center">
              <div className="w-[80vw] h-[80vh] border-[1px] border-[#00AEEF]/30 rounded-full bg-[#00AEEF]/5 blur-3xl" />
@@ -83,17 +91,19 @@ export default function IndustryStandards() {
           <div className="h-full w-[2px] bg-gradient-to-b from-transparent via-purple-500 to-transparent shadow-[0_0_30px_rgba(168,85,247,0.8)] absolute" />
         </div>
 
-        <div className="bg-visual-3 absolute inset-0 opacity-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.1)_0%,transparent_100%)]">
-           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-[150vw] h-[80vh] border-y border-emerald-500/20 opacity-30 mask-image:linear-gradient(to_right,transparent,black,transparent)" />
-           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] min-h-[150vh] border-x border-emerald-500/20 opacity-30 mask-image:linear-gradient(to_bottom,transparent,black,transparent)" />
+        {/* Huge Emerald Light Burst for Phase 3 */}
+        <div className="bg-visual-3 absolute inset-0 opacity-0 flex items-center justify-center pointer-events-none">
+           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] h-[120vh] bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.15)_0%,transparent_60%)] blur-[100px]" />
+           {/* Grid effect inside the burst */}
+           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_20%,transparent_100%)]" />
         </div>
       </div>
 
       {/* Content */}
-      <div className="relative z-10 w-full max-w-7xl px-8 flex flex-col items-center justify-center text-center">
+      <div className="relative z-10 w-full px-8 flex flex-col items-center justify-center text-center">
         
         {/* Phase 1 */}
-        <div className="phase-1 absolute flex flex-col items-center">
+        <div className="phase-1 absolute flex flex-col items-center max-w-7xl">
           <span className="font-mono text-[10px] md:text-xs text-[#00AEEF] tracking-[0.5em] uppercase mb-8">
             // The Standard
           </span>
@@ -114,7 +124,7 @@ export default function IndustryStandards() {
         </div>
 
         {/* Phase 2 */}
-        <div className="phase-2 absolute flex flex-col items-center opacity-0 pointer-events-none w-full">
+        <div className="phase-2 absolute flex flex-col items-center opacity-0 pointer-events-none w-full max-w-7xl">
           <span className="font-mono text-[10px] md:text-xs text-purple-400 tracking-[0.5em] uppercase mb-8">
             // The Execution
           </span>
@@ -136,32 +146,53 @@ export default function IndustryStandards() {
           </button>
         </div>
 
-        {/* Phase 3 */}
-        <div className="phase-3 absolute flex flex-col items-center opacity-0 pointer-events-none w-full">
-          <span className="font-mono text-[10px] md:text-xs text-emerald-400 tracking-[0.5em] uppercase mb-8">
+        {/* Phase 3 - DOMINATE YOUR MARKET */}
+        <div className="phase-3 absolute flex flex-col items-center opacity-0 pointer-events-none w-[100vw]">
+          <span className="font-mono text-[10px] md:text-xs text-emerald-400 tracking-[0.5em] uppercase mb-6 filter drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]">
             // The Result
           </span>
-          <h2 className="text-5xl md:text-[6rem] font-black leading-none tracking-tighter text-white drop-shadow-[0_0_40px_rgba(16,185,129,0.3)] mb-8">
-            DOMINATE
-            <br />
-            YOUR MARKET
+          
+          {/* MASSIVE SINGLE LINE TEXT */}
+          <h2 className="text-5xl sm:text-7xl md:text-8xl lg:text-[10vw] font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70 drop-shadow-[0_0_60px_rgba(16,185,129,0.5)] mb-8 whitespace-nowrap overflow-visible">
+            DOMINATE YOUR MARKET
           </h2>
-          <div className="px-8 py-4 border border-emerald-500/30 rounded-full bg-emerald-500/5 backdrop-blur-md mb-8">
-            <span className="font-mono text-sm tracking-widest text-emerald-300">
-              INDUSTRY-LEADING METRICS
-            </span>
-          </div>
-          <p className="text-white/60 max-w-2xl text-lg md:text-xl font-light leading-relaxed">
-            The result is scalable, predictable growth. We turn passive viewers into active communities, and organic reach into tangible ROI. You don't just get views; you get market dominance.
+          
+          <p className="text-white/80 max-w-3xl text-lg md:text-2xl font-light leading-relaxed mb-12 px-4 shadow-black drop-shadow-md">
+            The result is scalable, predictable growth. We turn passive viewers into active communities, and organic reach into tangible ROI.
           </p>
-          <button className="mt-12 group inline-flex items-center justify-center px-8 py-4 bg-emerald-500 text-black font-bold rounded-full hover:bg-emerald-400 transition-all duration-300 pointer-events-auto shadow-[0_0_30px_rgba(16,185,129,0.4)]">
+          
+          <button className="group inline-flex items-center justify-center px-10 py-5 bg-emerald-500 text-black font-bold text-lg rounded-full hover:bg-emerald-400 hover:scale-105 transition-all duration-300 pointer-events-auto shadow-[0_0_40px_rgba(16,185,129,0.5)]">
             Book a Strategy Call
-            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform" />
           </button>
+
+          {/* New Floating Sleek Metric Widgets (Positioned absolute relative to viewport during phase 3) */}
+          <div className="metric-widget-1 absolute -left-12 lg:left-12 top-1/2 -translate-y-1/2 bg-white/5 border border-white/10 backdrop-blur-xl p-6 rounded-2xl hidden md:flex flex-col gap-2 shadow-[0_0_30px_rgba(16,185,129,0.1)] pointer-events-auto hover:border-emerald-500/50 transition-colors">
+            <div className="flex items-center gap-3 text-emerald-400 mb-2">
+              <TrendingUp size={20} />
+              <span className="font-mono text-xs tracking-widest uppercase">Avg Growth</span>
+            </div>
+            <span className="text-4xl font-bold tracking-tighter text-white">314%</span>
+            <span className="text-sm text-white/50">Year over Year</span>
+          </div>
+
+          <div className="metric-widget-2 absolute -right-12 lg:right-12 top-1/2 -translate-y-1/2 bg-white/5 border border-white/10 backdrop-blur-xl p-6 rounded-2xl hidden md:flex flex-col gap-2 shadow-[0_0_30px_rgba(16,185,129,0.1)] pointer-events-auto hover:border-emerald-500/50 transition-colors">
+            <div className="flex items-center gap-3 text-emerald-400 mb-2">
+              <Users size={20} />
+              <span className="font-mono text-xs tracking-widest uppercase">Retention</span>
+            </div>
+            <span className="text-4xl font-bold tracking-tighter text-white">4.2x</span>
+            <span className="text-sm text-white/50">Viewer Watch Time</span>
+          </div>
+
         </div>
 
       </div>
 
+      {/* Smooth Transitionary Bleed into Reviews Section */}
+      {/* This creates a massive dark gradient at the very bottom of the pinned container that blends into the #030305 background of Reviews */}
+      <div className="absolute bottom-0 left-0 w-full h-[30vh] bg-gradient-to-b from-transparent to-[#030305] z-50 pointer-events-none translate-y-[100%]" />
+      
     </section>
   )
 }

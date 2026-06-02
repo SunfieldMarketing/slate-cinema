@@ -22,7 +22,7 @@ export default function Results() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: '+=250%',
+          end: '+=150%',
           pin: true,
           scrub: 1,
         }
