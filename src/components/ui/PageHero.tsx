@@ -34,7 +34,7 @@ export default function PageHero({ eyebrow, title, subtitle, videoSrc, accent = 
       {/* Video / imagery backdrop */}
       {videoSrc && (
         <div className="absolute inset-0 z-0">
-          <video src={videoSrc} autoPlay loop muted playsInline className="w-full h-full object-cover opacity-40" />
+          <video src={videoSrc} autoPlay loop muted playsInline preload="auto" className="w-full h-full object-cover opacity-40" />
           <div className="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/40 to-ink" />
         </div>
       )}

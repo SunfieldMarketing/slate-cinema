@@ -20,14 +20,7 @@ export default function Home() {
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-[#00AEEF] selection:text-white">
       {/* Global Cinematic Overlays */}
-      <div className="fixed inset-0 z-50 pointer-events-none mix-blend-overlay opacity-30">
-        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full opacity-50">
-          <filter id="noiseFilter">
-            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/>
-          </filter>
-          <rect width="100%" height="100%" filter="url(#noiseFilter)"/>
-        </svg>
-      </div>
+
       <div className="fixed inset-0 z-50 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(11,12,14,0.4)_100%)]" />
 
       <AmbientBackdrop accent="#00AEEF" />
@@ -37,14 +30,14 @@ export default function Home() {
       <div className="relative z-10 w-full">
         <div data-scroll-section="hero"><Hero /></div>
         <div data-scroll-section="trust"><TrustBanner /></div>
-        <div data-scroll-section="pipeline"><Pipeline /></div>
-        <div data-scroll-section="mediavoid"><MediaVoid /></div>
+        <div id="how" data-scroll-section="pipeline"><Pipeline /></div>
+        <div id="reel" data-scroll-section="mediavoid"><MediaVoid /></div>
         <div data-scroll-section="results"><Results /></div>
         <div data-scroll-section="standards"><IndustryStandards /></div>
         <div data-scroll-section="reviews"><Reviews /></div>
         <div data-scroll-section="portfolio"><Portfolio /></div>
         <div data-scroll-section="leadmagnet"><LeadMagnet /></div>
-        <div data-scroll-section="calendar"><CustomCalendar /></div>
+        <div id="quote" data-scroll-section="calendar"><CustomCalendar /></div>
         <div data-scroll-section="finalcta"><FinalCTA /></div>
         <div data-scroll-section="footer"><Footer /></div>
       </div>
