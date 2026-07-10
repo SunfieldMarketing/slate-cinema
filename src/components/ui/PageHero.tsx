@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useRef } from 'react'
+import React, { useRef, useEffect } from 'react'
+import { preload } from 'react-dom'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 
@@ -21,6 +22,11 @@ interface Props {
 export default function PageHero({ eyebrow, title, subtitle, videoSrc, accent = '#00AEEF', cta }: Props) {
   const ref = useRef<HTMLElement>(null)
 
+  // Preload the video immediately with high priority so it's ready instantly
+  if (videoSrc) {
+    preload(videoSrc, { as: 'video', fetchPriority: 'high' })
+  }
+
   useGSAP(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo('.ph-line', { yPercent: 120 }, { yPercent: 0, stagger: 0.1, duration: 0.9, ease: 'power4.out', delay: 0.1 })
@@ -34,7 +40,8 @@ export default function PageHero({ eyebrow, title, subtitle, videoSrc, accent = 
       {/* Video / imagery backdrop */}
       {videoSrc && (
         <div className="absolute inset-0 z-0">
-          <video src={videoSrc} autoPlay loop muted playsInline preload="auto" className="w-full h-full object-cover opacity-40" />
+          {/* @ts-expect-error fetchPriority not in React 18 types */}
+          <video src={videoSrc} autoPlay loop muted playsInline preload="auto" fetchPriority="high" className="w-full h-full object-cover opacity-40" />
           <div className="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/40 to-ink" />
         </div>
       )}

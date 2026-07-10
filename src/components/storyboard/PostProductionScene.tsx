@@ -46,7 +46,7 @@ export default function PostProductionScene() {
 
       {/* Smaller + lower on mobile so there's real clearance between the
           panel and the ring above it, not just a few px. */}
-      <div className="absolute bottom-[4%] md:bottom-[9%] left-1/2 -translate-x-1/2 w-[78vw] md:w-[88vw] max-w-3xl overflow-hidden pointer-events-auto">
+      <div className="absolute bottom-[2%] md:bottom-[9%] left-1/2 -translate-x-1/2 w-[65vw] md:w-[88vw] max-w-3xl overflow-hidden pointer-events-auto">
         <div className="sbs-item flex items-center justify-between px-1 mb-1 md:mb-2">
           <span className="font-mono text-[7px] md:text-[9px] tracking-widest text-white/55 truncate">PGM · SLATE_FINAL_v3.mov</span>
           <span className="font-mono text-[7px] md:text-[9px] tracking-widest flex items-baseline gap-1 shrink-0" style={{ color: post.color }}>

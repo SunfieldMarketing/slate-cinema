@@ -128,26 +128,17 @@ export default function IndustryWheel({ industries, accent = '#00AEEF' }: { indu
         <p className="text-white/70 text-lg sm:text-xl font-light leading-relaxed mb-6 text-center lg:text-left">
           {current.blurb}
         </p>
-        <div className="flex justify-center lg:justify-start mb-8">
-          <Link
-            href={`/portfolio/${current.slug}`}
-            className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full font-semibold text-sm text-black transition-transform duration-300 hover:scale-[1.03]"
-            style={{ background: `linear-gradient(135deg, #ffffff, ${accent})` }}
-          >
-            Explore {current.label} Work
-            <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-          </Link>
-        </div>
 
         <Link
           href={`/portfolio/${current.slug}`}
-          className="group relative block w-full h-56 sm:h-72 rounded-2xl overflow-hidden border"
+          className="group relative block w-full h-56 sm:h-72 rounded-2xl overflow-hidden border mb-8"
           style={{ borderColor: `${accent}30` }}
         >
           <img
             key={current.id}
             src={current.heroImage}
             alt={current.label}
+            loading="lazy"
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
@@ -158,6 +149,17 @@ export default function IndustryWheel({ industries, accent = '#00AEEF' }: { indu
             <ArrowUpRight className="w-5 h-5 text-white/70 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
           </div>
         </Link>
+
+        <div className="flex justify-center w-full">
+          <Link
+            href={`/portfolio/${current.slug}`}
+            className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full font-semibold text-sm text-black transition-transform duration-300 hover:scale-[1.03]"
+            style={{ background: `linear-gradient(135deg, #ffffff, ${accent})` }}
+          >
+            Explore {current.label} Work
+            <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+          </Link>
+        </div>
       </div>
     </div>
   )

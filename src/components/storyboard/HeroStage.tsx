@@ -88,7 +88,7 @@ const OBJECTS: {
   // rotate -90° on Y to bring that thin face-axis to point at the camera.
   { key: 'clapperboard', beat: 1, rotationOffset: [0, -Math.PI / 2, 0], turnInDeg: 50 },
   { key: 'studio', beat: 1, backdrop: true },
-  { key: 'workstation', beat: 2, screen: { targetName: 'MY SCREEN_MY SCREEN_0', videoSrc: '/videos/post-production.mp4' }, scaleBoost: 1.2, turnInDeg: 50 },
+  { key: 'workstation', beat: 2, rotationOffset: [0, -Math.PI / 2, 0], screen: { targetName: 'MY SCREEN_MY SCREEN_0', videoSrc: '/videos/post-production.mp4' }, scaleBoost: 1.2, turnInDeg: 50 },
   { key: 'phone', beat: 3, screen: { targetName: 'Lock_Screen', videoSrc: '/videos/dj-vinyl.mp4' }, turnInDeg: 50 },
 ]
 
@@ -124,6 +124,7 @@ interface PartInfo {
   scatterQuat: THREE.Quaternion
   homeScale: THREE.Vector3
   anchor: boolean
+  invScale: THREE.Vector3
 }
 
 function StageObject({
@@ -246,6 +247,11 @@ function StageObject({
       ).normalize()
       const angle = (0.6 + phase * 0.8) * Math.PI
       const scatterQuat = r.homeQuat.clone().multiply(new THREE.Quaternion().setFromAxisAngle(axis, angle))
+      
+      const worldScale = new THREE.Vector3()
+      if (r.obj.parent) r.obj.parent.getWorldScale(worldScale)
+      else worldScale.set(1, 1, 1)
+
       return {
         obj: r.obj,
         home: r.obj.position.clone(),
@@ -255,6 +261,7 @@ function StageObject({
         scatterQuat,
         homeScale: r.obj.scale.clone(),
         anchor,
+        invScale: new THREE.Vector3(1 / (worldScale.x || 1), 1 / (worldScale.y || 1), 1 / (worldScale.z || 1)),
       }
     })
 
@@ -329,7 +336,13 @@ function StageObject({
       }
       const partAssemble = THREE.MathUtils.clamp(assemble * 1.35 - p.phase * 0.35, 0, 1)
       const off = (1 - partAssemble) * EXPLODE_RADIUS * explodeScale
-      p.obj.position.set(p.home.x + p.dir.x * off, p.home.y + p.dir.y * off, p.home.z + p.dir.z * off)
+      
+      p.obj.position.set(
+        p.home.x + p.dir.x * off * p.invScale.x,
+        p.home.y + p.dir.y * off * p.invScale.y,
+        p.home.z + p.dir.z * off * p.invScale.z
+      )
+      
       p.obj.quaternion.slerpQuaternions(p.scatterQuat, p.homeQuat, partAssemble)
       // Small/thin pinned pieces (a photo, a sticky note) can be hard to
       // read while scattered — grow them slightly in flight, settling back
