@@ -23,7 +23,7 @@ export default function MediaVoid() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: '+=150%',
+          end: '+=90%',
           pin: true,
           scrub: 1,
         }
@@ -106,7 +106,7 @@ export default function MediaVoid() {
   }, { scope: containerRef })
 
   return (
-    <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-hidden" style={{ perspective: '1200px', perspectiveOrigin: '50% 50%' }}>
+    <section ref={containerRef} className="relative w-full h-screen overflow-hidden" style={{ perspective: '1200px', perspectiveOrigin: '50% 50%' }}>
       
       {/* Color Grading Wheel - background decoration */}
       <div className="color-wheel absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] opacity-[0.03] pointer-events-none">
@@ -137,9 +137,9 @@ export default function MediaVoid() {
           { src: '/images/portfolio-event.png', cls: 'bottom-[20%] left-[15%] w-48 h-28', title: 'Event Coverage' },
         ].map((item, i) => (
           <div key={i} className={`media-thumb absolute ${item.cls}`} style={{ transformStyle: 'preserve-3d' }}>
-            <div className="w-full h-full rounded-lg overflow-hidden border border-white/10 cursor-pointer group hover:shadow-[0_0_30px_rgba(0,174,239,0.3)] hover:border-white/30 transition-all duration-500 hover:scale-[1.05] relative bg-[#030305]">
+            <div className="w-full h-full rounded-lg overflow-hidden border border-white/10 cursor-pointer group hover:shadow-[0_0_30px_rgba(0,174,239,0.3)] hover:border-white/30 transition-all duration-500 hover:scale-[1.05] relative bg-ink">
               <img src={item.src} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#030305] via-transparent to-transparent opacity-80" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent opacity-80" />
               {/* Play button overlay */}
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110">
                 <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/30 flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.2)]">
@@ -175,7 +175,7 @@ export default function MediaVoid() {
       {/* Audio waveform at bottom */}
       <div className="absolute bottom-8 left-12 right-12 z-20 flex items-end gap-[1px] h-6 opacity-20">
         {Array.from({ length: 120 }).map((_, i) => (
-          <div key={i} className="wave-bar flex-1 bg-[#00AEEF] rounded-t-[1px] origin-bottom" style={{ height: `${Math.sin(i * 0.3) * 50 + 50}%` }} />
+          <div key={i} className="wave-bar flex-1 bg-[#00AEEF] rounded-t-[1px] origin-bottom" style={{ height: `${(Math.sin(i * 0.3) * 50 + 50).toFixed(2)}%` }} />
         ))}
       </div>
 

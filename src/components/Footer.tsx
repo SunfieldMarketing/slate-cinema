@@ -5,6 +5,7 @@ import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { Heart } from 'lucide-react'
+import { MODEL_CREDITS } from '@/components/storyboard/config'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -71,7 +72,7 @@ export default function Footer() {
   ]
 
   return (
-    <footer ref={footerRef} className="relative w-full bg-[#030305] pt-32 pb-12 overflow-hidden" style={{ perspective: '1000px' }}>
+    <footer ref={footerRef} className="relative w-full bg-ink pt-32 pb-12 overflow-hidden" style={{ perspective: '1000px' }}>
 
       {/* Marquee */}
       <div className="w-full border-y border-white/10 py-6 mb-16 overflow-hidden flex whitespace-nowrap bg-[#00AEEF]/5">
@@ -192,6 +193,11 @@ export default function Footer() {
             <a href="#" className="hover:text-[#00AEEF] transition-colors">Client Portal</a>
           </div>
         </div>
+
+        {/* CC-BY attribution for the hero's 3D assets — required by the license */}
+        <p className="w-full mt-6 text-center text-[9px] font-mono text-white/15 tracking-wide leading-relaxed normal-case">
+          {MODEL_CREDITS}
+        </p>
       </div>
 
       {/* Bottom glow */}

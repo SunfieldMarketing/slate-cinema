@@ -2,7 +2,7 @@
 
 export default function ScheduleCall() {
   return (
-    <section id="schedule" className="w-full py-32 bg-[#030305] relative overflow-hidden border-t border-white/5">
+    <section id="schedule" className="w-full py-32 bg-ink relative overflow-hidden">
       {/* Subtle top glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[2px] bg-gradient-to-r from-transparent via-[#00AEEF]/40 to-transparent" />
       

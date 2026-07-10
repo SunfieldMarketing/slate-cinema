@@ -46,7 +46,7 @@ export default function IndustryStandards() {
       scrollTrigger: {
         trigger: containerRef.current,
         start: 'top top',
-        end: '+=500%',
+        end: '+=260%',
         pin: true,
         scrub: 1,
         anticipatePin: 1,
@@ -80,7 +80,7 @@ export default function IndustryStandards() {
   }, { scope: containerRef })
 
   return (
-    <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-visible text-white flex items-center justify-center" style={{ perspective: '1000px' }}>
+    <section ref={containerRef} className="relative w-full h-screen overflow-visible text-white flex items-center justify-center" style={{ perspective: '1000px' }}>
       
       {/* Background Visuals */}
       <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
@@ -158,7 +158,7 @@ export default function IndustryStandards() {
           </span>
           
           {/* MASSIVE SINGLE LINE TEXT */}
-          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-[6vw] font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70 drop-shadow-[0_0_60px_rgba(16,185,129,0.5)] mb-8 whitespace-nowrap overflow-visible">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-[6vw] font-black leading-[1.05] md:leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70 drop-shadow-[0_0_60px_rgba(16,185,129,0.5)] mb-8 md:whitespace-nowrap overflow-visible px-4">
             DOMINATE YOUR MARKET
           </h2>
           
@@ -178,8 +178,8 @@ export default function IndustryStandards() {
       </div>
 
       {/* Smooth Transitionary Bleed into Reviews Section */}
-      {/* This creates a massive dark gradient at the very bottom of the pinned container that blends into the #030305 background of Reviews */}
-      <div className="absolute bottom-0 left-0 w-full h-[30vh] bg-gradient-to-b from-transparent to-[#030305] z-50 pointer-events-none translate-y-[100%]" />
+      {/* This creates a massive dark gradient at the very bottom of the pinned container that blends into the shared ink background of Reviews */}
+      <div className="absolute bottom-0 left-0 w-full h-[30vh] bg-gradient-to-b from-transparent to-ink z-50 pointer-events-none translate-y-[100%]" />
       
     </section>
   )

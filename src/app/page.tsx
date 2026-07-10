@@ -1,7 +1,6 @@
 'use client'
 
 import React from 'react'
-import dynamic from 'next/dynamic'
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import Pipeline from "@/components/Pipeline";
@@ -14,24 +13,12 @@ import LeadMagnet from "@/components/LeadMagnet";
 import CustomCalendar from "@/components/CustomCalendar";
 import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
-
-// We'll keep the Scene3DWrapper as a background element only
-const Scene3DWrapper = dynamic(() => import("@/components/Scene3DWrapper"), { ssr: false })
+import TrustBanner from "@/components/TrustBanner";
+import AmbientBackdrop from "@/components/ui/AmbientBackdrop";
 
 export default function Home() {
-  // Suppress the THREE.Clock deprecation warning from @react-three/fiber internals
-  React.useEffect(() => {
-    const originalWarn = console.warn
-    console.warn = (...args) => {
-      if (typeof args[0] === 'string' && args[0].includes('THREE.Clock: This module has been deprecated')) return
-      originalWarn.apply(console, args)
-    }
-    return () => {
-      console.warn = originalWarn
-    }
-  }, [])
   return (
-    <main className="relative min-h-screen bg-[#030305] text-white selection:bg-[#00AEEF] selection:text-white">
+    <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-[#00AEEF] selection:text-white">
       {/* Global Cinematic Overlays */}
       <div className="fixed inset-0 z-50 pointer-events-none mix-blend-overlay opacity-30">
         <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full opacity-50">
@@ -41,28 +28,25 @@ export default function Home() {
           <rect width="100%" height="100%" filter="url(#noiseFilter)"/>
         </svg>
       </div>
-      <div className="fixed inset-0 z-50 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(3,3,5,0.4)_100%)]" />
+      <div className="fixed inset-0 z-50 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(11,12,14,0.4)_100%)]" />
+
+      <AmbientBackdrop accent="#00AEEF" />
 
       <Nav />
-      
-      {/* Persistent 3D background scene - behind everything */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <Scene3DWrapper />
-      </div>
-      
-      {/* Content layers above 3D */}
+
       <div className="relative z-10 w-full">
-        <Hero />
-        <Pipeline />
-        <MediaVoid />
-        <Results />
-        <IndustryStandards />
-        <Reviews />
-        <Portfolio />
-        <LeadMagnet />
-        <CustomCalendar />
-        <FinalCTA />
-        <Footer />
+        <div data-scroll-section="hero"><Hero /></div>
+        <div data-scroll-section="trust"><TrustBanner /></div>
+        <div data-scroll-section="pipeline"><Pipeline /></div>
+        <div data-scroll-section="mediavoid"><MediaVoid /></div>
+        <div data-scroll-section="results"><Results /></div>
+        <div data-scroll-section="standards"><IndustryStandards /></div>
+        <div data-scroll-section="reviews"><Reviews /></div>
+        <div data-scroll-section="portfolio"><Portfolio /></div>
+        <div data-scroll-section="leadmagnet"><LeadMagnet /></div>
+        <div data-scroll-section="calendar"><CustomCalendar /></div>
+        <div data-scroll-section="finalcta"><FinalCTA /></div>
+        <div data-scroll-section="footer"><Footer /></div>
       </div>
     </main>
   );

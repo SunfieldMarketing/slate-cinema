@@ -4,6 +4,7 @@ import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
+import { scrollState, toTimecode, scrollToY } from '@/lib/scroll'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -13,6 +14,7 @@ export default function Hero() {
   const containerRef = useRef<HTMLElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const scrollHintRef = useRef<HTMLDivElement>(null)
+  const timecodeRef = useRef<HTMLSpanElement>(null)
 
   // Use a ref for images so we don't trigger React re-renders or recreate GSAP timelines as images load
   const imagesRef = useRef<HTMLImageElement[]>([])
@@ -41,6 +43,20 @@ export default function Hero() {
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Live camera timecode — runs off the master scroll store so the REC
+  // readout ticks in sync with the film-timecode HUD as you scroll
+  useEffect(() => {
+    let rafId: number
+    const tick = () => {
+      if (timecodeRef.current) {
+        timecodeRef.current.textContent = toTimecode(scrollState.progress)
+      }
+      rafId = requestAnimationFrame(tick)
+    }
+    rafId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(rafId)
   }, [])
 
   useGSAP(() => {
@@ -107,14 +123,47 @@ export default function Hero() {
       // --- 2. SCROLL ANIMATION ---
       const playhead = { frame: 0 }
 
+      // Once the user has scrolled roughly two-thirds of the way through the
+      // frame sequence, finish the ride for them — auto-advance the rest of
+      // the way so the last third flows straight into the next section
+      // instead of demanding more manual scrolling. Debounced: real wheel
+      // input fires onUpdate continuously while the user is actively
+      // scrolling, and each of those ticks would otherwise re-target Lenis'
+      // own wheel-driven scroll and cancel a scrollTo call made mid-gesture.
+      // Waiting for a short gap in updates means we only kick in once their
+      // scroll has actually settled, so we don't fight their input.
+      let autoAdvanced = false
+      let autoAdvanceTimer: ReturnType<typeof setTimeout> | null = null
+
       const scrollTl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: '+=1000vh', // Reduced distance for faster, buttery smooth scrub
+          // ScrollTrigger parses 'vh' strings as px — '+=1000vh' silently became
+          // 1000px. Compute real viewport multiples for a filmic 291-frame scrub.
+          // 1.15 viewports keeps the scrub smooth without a long dead runway
+          // before the next section arrives.
+          end: () => `+=${window.innerHeight * 1.15}`,
           scrub: 1,
           pin: true,
           anticipatePin: 1,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            if (self.progress < 0.65) {
+              autoAdvanced = false
+              if (autoAdvanceTimer) {
+                clearTimeout(autoAdvanceTimer)
+                autoAdvanceTimer = null
+              }
+              return
+            }
+            if (autoAdvanced || self.direction !== 1 || self.progress >= 0.99) return
+            if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer)
+            autoAdvanceTimer = setTimeout(() => {
+              autoAdvanced = true
+              scrollToY(self.end, 1.4)
+            }, 140)
+          },
         },
       })
 
@@ -163,15 +212,15 @@ export default function Hero() {
   const cinemaLetters = 'CINEMA'.split('')
 
   return (
-    <section ref={containerRef} className="relative w-full h-screen bg-[#030305]">
+    <section ref={containerRef} className="relative w-full h-screen bg-ink">
       {/* Inner wrapper — overflow hidden so pinned canvas never bleeds out */}
       <div className="absolute inset-0 w-full h-full overflow-hidden" style={{ perspective: '2000px' }}>
 
         {/* 1. Canvas image-sequence layer (fades in on scroll) */}
-        <div className="camera-canvas-container absolute inset-0 z-10 opacity-0 pointer-events-none flex items-center justify-center bg-[#030305]">
+        <div className="camera-canvas-container absolute inset-0 z-10 opacity-0 pointer-events-none flex items-center justify-center bg-ink">
           <canvas
             ref={canvasRef}
-            className="w-full h-full object-contain scale-95"
+            className="w-full h-full object-cover"
           />
         </div>
 
@@ -179,17 +228,20 @@ export default function Hero() {
         <div className="hero-html-content absolute inset-0 z-20">
 
           {/* Background video at low opacity for visual depth */}
-          <div className="absolute inset-0 z-0 pointer-events-none">
-            <video
-              src="/videos/hero.mp4"
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="absolute w-full h-full object-cover top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none mix-blend-screen opacity-40"
+          <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden mix-blend-screen opacity-40">
+            {/* Vimeo background embed, scaled via the standard 16:9 cover trick
+                (177.77vh = 16/9 * 100vh) so it always fills the frame like a
+                native <video object-cover> would. */}
+            <iframe
+              src="https://player.vimeo.com/video/937380835?background=1&autoplay=1&loop=1&muted=1&autopause=0&app_id=122963"
+              className="absolute top-1/2 left-1/2 w-[177.78vh] h-[56.25vw] min-w-full min-h-full -translate-x-1/2 -translate-y-1/2"
+              style={{ border: 0 }}
+              allow="autoplay; fullscreen; picture-in-picture"
+              title="Slate Cinema Reel"
+              tabIndex={-1}
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/80 pointer-events-none" />
           </div>
+          <div className="absolute inset-0 z-0 bg-gradient-to-b from-ink/80 via-transparent to-ink/80 pointer-events-none" />
 
           {/* Main content — centered hero text and CTAs */}
           <div className="hero-content absolute inset-0 z-10 flex flex-col items-center justify-center">
@@ -205,7 +257,7 @@ export default function Hero() {
                 {slateLetters.map((letter, i) => (
                   <span
                     key={`s-${i}`}
-                    className="hero-letter inline-block text-6xl md:text-8xl lg:text-[10rem] font-bold text-white tracking-tighter leading-none"
+                    className="hero-letter inline-block text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] font-bold text-white tracking-tighter leading-none"
                     style={{ transformStyle: 'preserve-3d' }}
                   >
                     {letter}
@@ -216,7 +268,7 @@ export default function Hero() {
                 {cinemaLetters.map((letter, i) => (
                   <span
                     key={`c-${i}`}
-                    className="hero-letter inline-block text-6xl md:text-8xl lg:text-[10rem] font-bold text-[#00AEEF] tracking-tighter leading-none"
+                    className="hero-letter inline-block text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] font-bold text-[#00AEEF] tracking-tighter leading-none"
                     style={{ transformStyle: 'preserve-3d' }}
                   >
                     {letter}
@@ -240,7 +292,7 @@ export default function Hero() {
             
             {/* Battery / Time Indicator */}
             <div className="camera-ui absolute top-6 right-8 z-30 flex items-center gap-4">
-              <span className="font-mono text-[11px] md:text-sm text-white/70 tracking-widest">
+              <span ref={timecodeRef} className="font-mono text-[11px] md:text-sm text-white/70 tracking-widest">
                 00:00:00:00
               </span>
               <div className="w-8 h-4 border border-white/40 rounded-sm p-[1px] flex justify-end">

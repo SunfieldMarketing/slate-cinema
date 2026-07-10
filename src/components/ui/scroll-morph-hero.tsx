@@ -54,7 +54,7 @@ function FlipCard({
             >
                 {/* Front Face */}
                 <div
-                    className="absolute inset-0 h-full w-full overflow-hidden rounded-xl shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-white/10 bg-[#030305]"
+                    className="absolute inset-0 h-full w-full overflow-hidden rounded-xl shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-white/10 bg-ink"
                     style={{ backfaceVisibility: "hidden" }}
                 >
                     <img
@@ -62,7 +62,7 @@ function FlipCard({
                         alt={`portfolio-${index}`}
                         className="h-full w-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                     />
-                    <div className="absolute inset-0 bg-[#030305]/40 transition-colors group-hover:bg-transparent" />
+                    <div className="absolute inset-0 bg-ink/40 transition-colors group-hover:bg-transparent" />
                 </div>
 
                 {/* Back Face */}
@@ -221,7 +221,7 @@ export default function IntroAnimation() {
     const contentY = useTransform(smoothMorph, [0.8, 1], [20, 0]);
 
     return (
-        <div ref={containerRef} className="relative w-full h-full bg-[#030305] overflow-hidden">
+        <div ref={containerRef} className="relative w-full h-full bg-ink overflow-hidden">
             <div className="flex h-full w-full flex-col items-center justify-center" style={{ perspective: '1000px' }}>
 
                 {/* Intro Text */}
@@ -331,7 +331,7 @@ export default function IntroAnimation() {
             </div>
             
             {/* Dark gradient fade at the bottom */}
-            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#030305] to-transparent z-30 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-ink to-transparent z-30 pointer-events-none" />
         </div>
     );
 }

@@ -92,7 +92,7 @@ export default function LeadMagnet() {
   }
 
   return (
-    <section ref={containerRef} className="relative w-full py-32 bg-[#030305] overflow-hidden" style={{ perspective: '1200px' }}>
+    <section ref={containerRef} className="relative w-full py-32 overflow-hidden" style={{ perspective: '1200px' }}>
       
       {/* Background clapperboard stripe pattern */}
       <div className="clap-pattern absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] opacity-[0.015] pointer-events-none">

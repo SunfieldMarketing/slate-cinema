@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Bebas_Neue, Fraunces, Courier_Prime, Caveat } from "next/font/google";
 import "./globals.css";
 import SmoothScrolling from "@/components/SmoothScrolling";
+import Preloader from "@/components/Preloader";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const bebas = Bebas_Neue({ subsets: ["latin"], weight: "400", variable: "--font-bebas" });
+const fraunces = Fraunces({ subsets: ["latin"], style: ["italic", "normal"], variable: "--font-fraunces" });
+const courier = Courier_Prime({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-courier" });
+const caveat = Caveat({ subsets: ["latin"], weight: ["400", "600"], variable: "--font-caveat" });
 
 export const metadata: Metadata = {
   title: "Slate Cinema | Video Marketing at Your Fingertips",
@@ -16,8 +21,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.variable} font-sans antialiased bg-[#030305] text-[#F7F8FF]`}>
+    <html lang="en" className={`dark ${inter.variable} ${bebas.variable} ${fraunces.variable} ${courier.variable} ${caveat.variable}`}>
+      <body className="font-sans antialiased bg-ink text-foreground overflow-x-hidden">
+        <Preloader />
         <SmoothScrolling>
           {children}
         </SmoothScrolling>

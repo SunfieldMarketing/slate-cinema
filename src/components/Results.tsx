@@ -22,7 +22,7 @@ export default function Results() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: '+=150%',
+          end: '+=80%',
           pin: true,
           scrub: 1,
         }
@@ -111,7 +111,7 @@ export default function Results() {
   }, [])
 
   return (
-    <section ref={containerRef} className="relative w-full h-screen bg-[#030305] overflow-hidden" style={{ perspective: '1200px' }}>
+    <section ref={containerRef} className="relative w-full h-screen overflow-hidden" style={{ perspective: '1200px' }}>
 
       {/* Background Local Video */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -123,8 +123,8 @@ export default function Results() {
           className="absolute w-full h-full object-cover top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-70"
           src="/videos/performance.mp4"
         />
-        <div className="absolute inset-0 bg-[#030305]/60 mix-blend-multiply" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#030305] via-transparent to-[#030305] opacity-80" />
+        <div className="absolute inset-0 bg-ink/60 mix-blend-multiply" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink opacity-80" />
       </div>
 
       {/* Parallax grid + orbs */}
@@ -197,8 +197,8 @@ export default function Results() {
       </div>
 
       {/* Edge fades */}
-      <div className="absolute top-0 left-0 right-0 h-24 z-20 pointer-events-none" style={{ background: 'linear-gradient(to bottom, #030305, transparent)' }} />
-      <div className="absolute bottom-0 left-0 right-0 h-24 z-20 pointer-events-none" style={{ background: 'linear-gradient(to top, #030305, transparent)' }} />
+      <div className="absolute top-0 left-0 right-0 h-24 z-20 pointer-events-none" style={{ background: 'linear-gradient(to bottom, #0B0C0E, transparent)' }} />
+      <div className="absolute bottom-0 left-0 right-0 h-24 z-20 pointer-events-none" style={{ background: 'linear-gradient(to top, #0B0C0E, transparent)' }} />
     </section>
   )
 }

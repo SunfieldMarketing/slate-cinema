@@ -63,7 +63,7 @@ export default function Testimonials() {
   }
 
   return (
-    <section ref={containerRef} className="relative w-full py-32 bg-[#030305] overflow-hidden">
+    <section ref={containerRef} className="relative w-full py-32 bg-ink overflow-hidden">
 
       {/* Massive background quote mark */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[#00AEEF]/5 pointer-events-none z-0">

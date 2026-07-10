@@ -43,7 +43,7 @@ export default function QuoteCalculator() {
   const labels = ['Concept', 'Shoot', 'Edit', 'VFX', 'Sound', 'Distribution']
 
   return (
-    <section ref={containerRef} className="w-full py-32 relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #030305 0%, #0d0520 30%, #150a30 50%, #0d0520 70%, #030305 100%)' }}>
+    <section ref={containerRef} className="w-full py-32 relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #0B0C0E 0%, #0d0520 30%, #150a30 50%, #0d0520 70%, #0B0C0E 100%)' }}>
       
       {/* Purple Podiums Background */}
       <div className="absolute inset-0 z-0 overflow-hidden">
