@@ -20,22 +20,24 @@ export default function Hero() {
   // Preload main hero video immediately with high priority
   preload('/videos/hero.mp4', { as: 'video', fetchPriority: 'high' })
 
-  // Use a ref for images so we don't trigger React re-renders or recreate GSAP timelines as images load
-  const imagesRef = useRef<HTMLImageElement[]>([])
+  // We store a sliding window of decoded images to prevent 1GB+ RAM usage
+  const imagesCacheRef = useRef<Map<number, HTMLImageElement>>(new Map())
+  // Keep track of the current frame so async onload callbacks know if they are still relevant
+  const currentFrameRef = useRef<number>(1)
 
   // Auto-scroll to top on mount so the page always starts at the hero
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
 
-  // Defer preloading the 291-frame image sequence until after initial paint
-  // This drastically reduces initial memory spikes and lets the background video load instantly
+  // Defer priming the network cache. We use `fetch` instead of `new Image()` 
+  // so the JPEGs are stored in the browser disk cache without decoding them to RAM.
   useEffect(() => {
     const timer = setTimeout(() => {
-      for (let i = 1; i <= FRAME_COUNT; i++) {
-        const img = new Image()
-        img.src = `/videos/frames/frame_${i.toString().padStart(4, '0')}.jpg`
-        imagesRef.current.push(img)
+      for (let i = 1; i <= FRAME_COUNT; i += 5) {
+        // We fetch every 5th frame to prime the cache quickly, 
+        // the sliding window handles the exact adjacent frames.
+        fetch(`/videos/frames/frame_${i.toString().padStart(4, '0')}.jpg`, { priority: 'low' }).catch(()=>{})
       }
     }, 500)
     return () => clearTimeout(timer)
@@ -67,6 +69,28 @@ export default function Hero() {
     return () => cancelAnimationFrame(rafId)
   }, [])
 
+  const loadNeighborhood = (centerIndex: number) => {
+    const radius = 15; // keep 30 frames in RAM (~250MB) instead of 291 (~2.4GB)
+    const start = Math.max(1, centerIndex - radius);
+    const end = Math.min(FRAME_COUNT, centerIndex + radius);
+    
+    // Decode incoming frames
+    for (let i = start; i <= end; i++) {
+      if (!imagesCacheRef.current.has(i)) {
+        const img = new Image()
+        img.src = `/videos/frames/frame_${i.toString().padStart(4, '0')}.jpg`
+        imagesCacheRef.current.set(i, img)
+      }
+    }
+    
+    // Purge outgoing frames to free RAM
+    for (const key of imagesCacheRef.current.keys()) {
+      if (key < start || key > end) {
+        imagesCacheRef.current.delete(key)
+      }
+    }
+  }
+
   useGSAP(() => {
     if (!containerRef.current || !canvasRef.current) return
 
@@ -76,7 +100,10 @@ export default function Hero() {
 
     // High-DPI Canvas Rendering Logic
     const renderFrame = (index: number) => {
-      const img = imagesRef.current[index]
+      currentFrameRef.current = index
+      loadNeighborhood(index)
+
+      const img = imagesCacheRef.current.get(index)
       if (img && img.complete && img.naturalWidth !== 0) {
         // Scale up for high-DPI displays to ensure 1080p looks crisp
         const dpr = window.devicePixelRatio || 1
@@ -97,6 +124,13 @@ export default function Hero() {
         ctx.clearRect(0, 0, targetWidth, targetHeight)
         ctx.drawImage(img, x, y, img.width * scale, img.height * scale)
         ctx.restore()
+      } else if (img) {
+        // Fallback: draw when loaded if the user hasn't scrolled past it
+        img.onload = () => {
+          if (currentFrameRef.current === index) {
+            renderFrame(index)
+          }
+        }
       }
     }
 

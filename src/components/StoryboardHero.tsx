@@ -165,8 +165,26 @@ export default function StoryboardHero({ eyebrow = 'The Process', title, subtitl
           onUpdate() {
             const p = this.progress()
             syncHud(p)
-            stageRef.current?.setProgress(p * TOTAL_UNITS)
-            ringRef.current?.setProgress(p)
+            const u = p * TOTAL_UNITS
+            stageRef.current?.setProgress(u)
+
+            // Map u to ring degrees 0..1 to perfectly sync the white dot with the quadrants
+            let ringP = 0
+            if (u < SCENE_ENTERS[0]) {
+              ringP = 0
+            } else if (u >= SCENE_ENTERS[0] && u < SCENE_ENTERS[1]) {
+              ringP = 0 + 0.25 * ((u - SCENE_ENTERS[0]) / (SCENE_ENTERS[1] - SCENE_ENTERS[0]))
+            } else if (u >= SCENE_ENTERS[1] && u < SCENE_ENTERS[2]) {
+              ringP = 0.25 + 0.25 * ((u - SCENE_ENTERS[1]) / (SCENE_ENTERS[2] - SCENE_ENTERS[1]))
+            } else if (u >= SCENE_ENTERS[2] && u < SCENE_ENTERS[3]) {
+              ringP = 0.50 + 0.25 * ((u - SCENE_ENTERS[2]) / (SCENE_ENTERS[3] - SCENE_ENTERS[2]))
+            } else if (u >= SCENE_ENTERS[3] && u < CTA_ENTER) {
+              ringP = 0.75 + 0.25 * ((u - SCENE_ENTERS[3]) / (CTA_ENTER - SCENE_ENTERS[3]))
+            } else {
+              ringP = 1
+            }
+
+            ringRef.current?.setProgress(ringP)
           },
         })
 

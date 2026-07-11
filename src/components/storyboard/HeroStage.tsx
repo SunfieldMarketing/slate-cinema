@@ -304,7 +304,7 @@ function StageObject({
     // the "finished" moment the visitor should mostly be looking at.
     let assemble: number
     if (t < 0.06) assemble = 0
-    else if (t < 0.18) assemble = THREE.MathUtils.smoothstep((t - 0.06) / 0.12, 0, 1)
+    else if (t < 0.28) assemble = THREE.MathUtils.smoothstep((t - 0.06) / 0.22, 0, 1)
     else if (t > 0.85) assemble = 1 - THREE.MathUtils.smoothstep((t - 0.85) / 0.15, 0, 1)
     else assemble = 1
 
