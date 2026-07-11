@@ -134,7 +134,7 @@ export default function PortfolioPage() {
 
         <ScrollExpandMedia
           mediaType="video"
-          mediaSrc="https://player.vimeo.com/video/937380835?background=1&autoplay=1&loop=1&muted=1&autopause=0&app_id=122963"
+          mediaSrc="/videos/hero.mp4"
           accent="#a855f7"
           title="Our Work"
           date="Selected Campaigns"
