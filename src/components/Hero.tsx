@@ -13,12 +13,33 @@ const FRAME_COUNT = 291
 
 export default function Hero() {
   const containerRef = useRef<HTMLElement>(null)
-  const videoRef = useRef<HTMLVideoElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
   const scrollHintRef = useRef<HTMLDivElement>(null)
   const timecodeRef = useRef<HTMLSpanElement>(null)
 
   // Preload main hero video immediately with high priority
   preload('/videos/hero.mp4', { as: 'video', fetchPriority: 'high' })
+
+  // Use a ref for images so we don't trigger React re-renders or recreate GSAP timelines as images load
+  const imagesRef = useRef<HTMLImageElement[]>([])
+
+  // Auto-scroll to top on mount so the page always starts at the hero
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
+  // Defer preloading the 291-frame image sequence until after initial paint
+  // This drastically reduces initial memory spikes and lets the background video load instantly
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      for (let i = 1; i <= FRAME_COUNT; i++) {
+        const img = new Image()
+        img.src = `/videos/frames/frame_${i.toString().padStart(4, '0')}.jpg`
+        imagesRef.current.push(img)
+      }
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [])
 
   // Fade scroll hint arrow out as user scrolls
   useEffect(() => {
@@ -47,15 +68,40 @@ export default function Hero() {
   }, [])
 
   useGSAP(() => {
-    if (!containerRef.current) return
+    if (!containerRef.current || !canvasRef.current) return
 
-    const renderFrame = (progress: number) => {
-      const vid = videoRef.current
-      // Only scrub if the video has loaded its metadata
-      if (vid && !isNaN(vid.duration) && vid.duration > 0) {
-        vid.currentTime = progress * vid.duration
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    // High-DPI Canvas Rendering Logic
+    const renderFrame = (index: number) => {
+      const img = imagesRef.current[index]
+      if (img && img.complete && img.naturalWidth !== 0) {
+        // Scale up for high-DPI displays to ensure 1080p looks crisp
+        const dpr = window.devicePixelRatio || 1
+        const targetWidth = 1920
+        const targetHeight = 1080
+
+        canvas.width = targetWidth * dpr
+        canvas.height = targetHeight * dpr
+        
+        ctx.save()
+        ctx.scale(dpr, dpr)
+
+        // Object-cover logic
+        const scale = Math.max(targetWidth / img.width, targetHeight / img.height)
+        const x = targetWidth / 2 - (img.width / 2) * scale
+        const y = targetHeight / 2 - (img.height / 2) * scale
+
+        ctx.clearRect(0, 0, targetWidth, targetHeight)
+        ctx.drawImage(img, x, y, img.width * scale, img.height * scale)
+        ctx.restore()
       }
     }
+
+    // Try to draw first frame immediately (it will retry onUpdate if not loaded yet)
+    renderFrame(0)
 
     const gsapCtx = gsap.context(() => {
       // --- 1. ENTRANCE ANIMATION ---
@@ -152,7 +198,8 @@ export default function Hero() {
       scrollTl.to(
         playhead,
         {
-          frame: 1,
+          frame: FRAME_COUNT - 1,
+          snap: 'frame',
           ease: 'power1.inOut',
           duration: 0.95,
           onUpdate: () => renderFrame(playhead.frame),
@@ -177,14 +224,10 @@ export default function Hero() {
       {/* Inner wrapper — overflow hidden so pinned canvas never bleeds out */}
       <div className="absolute inset-0 w-full h-full overflow-hidden" style={{ perspective: '2000px' }}>
 
-        {/* 1. Video scrub layer (fades in on scroll) replacing heavy canvas image sequence */}
+        {/* 1. Canvas image-sequence layer (fades in on scroll) */}
         <div className="camera-canvas-container absolute inset-0 z-10 opacity-0 pointer-events-none flex items-center justify-center bg-ink">
-          <video
-            ref={videoRef}
-            src="/videos/hero.mp4"
-            muted
-            playsInline
-            preload="auto"
+          <canvas
+            ref={canvasRef}
             className="w-full h-full object-cover"
           />
         </div>
