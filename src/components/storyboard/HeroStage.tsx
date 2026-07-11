@@ -152,6 +152,8 @@ function StageObject({
   const groupRef = useRef<THREE.Group>(null)
   const { actions } = useAnimations(animations, groupRef)
   const parts = useRef<PartInfo[]>([])
+  const allMats = useRef<THREE.Material[]>([])
+  const lastAssemble = useRef<number>(-1)
   const clapFired = useRef(false)
 
   // Video-screen state — created lazily the first time this object comes
@@ -189,6 +191,8 @@ function StageObject({
     let maxVol = -1
     let anchorIdx = -1
     let namedAnchorIdx = -1
+    const matsSet = new Set<THREE.Material>()
+    
     scene.traverse((o) => {
       if ((o as THREE.Mesh).isMesh) {
         const mesh = o as THREE.Mesh
@@ -199,24 +203,20 @@ function StageObject({
           maxVol = vol
           anchorIdx = raw.length - 1
         }
-        // Bounding-box volume alone can mislead: a cluster of small pinned
-        // items (many papers scattered across a board) can span nearly the
-        // whole object and out-measure the actual base panel. Prefer a
-        // part whose name says it's the structural base/body when one
-        // exists, falling back to the volume heuristic otherwise.
         if (namedAnchorIdx < 0 && /base|body|chassis|frame/i.test(o.name)) {
           namedAnchorIdx = raw.length - 1
         }
-        // Transparent up front so opacity can be animated for the
-        // hand-off dim in/out in useFrame below.
+        
         const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
         mats.forEach((m) => {
           m.transparent = true
+          matsSet.add(m)
         })
         mesh.frustumCulled = false
       }
     })
     if (namedAnchorIdx >= 0) anchorIdx = namedAnchorIdx
+    allMats.current = Array.from(matsSet)
 
     // Scatter direction is assigned by index on a Fibonacci sphere — NOT
     // derived from each part's actual mesh position. Small pinned items
@@ -278,7 +278,7 @@ function StageObject({
     video.muted = true
     video.playsInline = true
     video.loop = true
-    video.preload = 'metadata' // saves bandwidth until play
+    video.preload = 'auto' // Must be auto so it's fully ready before scrolling down
     video.src = screen.videoSrc
     video.style.position = 'fixed'
     video.style.width = '2px'
@@ -356,37 +356,41 @@ function StageObject({
     const fadeOut = 1 - THREE.MathUtils.smoothstep(THREE.MathUtils.clamp((t - 0.94) / 0.06, 0, 1), 0, 1)
     const fadeOpacity = Math.min(fadeIn, fadeOut)
 
-    const explodeScale = backdrop ? 0.15 : 1
-    for (const p of parts.current) {
-      const mesh = p.obj as THREE.Mesh
-      const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
-      mats.forEach((m) => {
-        ;(m as THREE.Material).opacity = fadeOpacity
-      })
+    // Vastly faster opacity update: iterate unique materials once, not per-mesh
+    for (let i = 0; i < allMats.current.length; i++) {
+      allMats.current[i].opacity = fadeOpacity
+    }
 
-      if (p.anchor) {
-        p.obj.position.copy(p.home)
-        p.obj.quaternion.copy(p.homeQuat)
-        continue
-      }
-      const partAssemble = THREE.MathUtils.clamp(assemble * 1.35 - p.phase * 0.35, 0, 1)
-      const off = (1 - partAssemble) * EXPLODE_RADIUS * explodeScale
-      
-      p.obj.position.set(
-        p.home.x + p.dir.x * off * p.invScale.x,
-        p.home.y + p.dir.y * off * p.invScale.y,
-        p.home.z + p.dir.z * off * p.invScale.z
-      )
-      
-      p.obj.quaternion.slerpQuaternions(p.scatterQuat, p.homeQuat, partAssemble)
-      // Small/thin pinned pieces (a photo, a sticky note) can be hard to
-      // read while scattered — grow them slightly in flight, settling back
-      // to true size as they land, so every piece stays legible mid-air.
-      if (!backdrop) {
-        const flightBoost = 1 + (1 - partAssemble) * 0.5
-        p.obj.scale.set(p.homeScale.x * flightBoost, p.homeScale.y * flightBoost, p.homeScale.z * flightBoost)
+    const explodeScale = backdrop ? 0.15 : 1
+    
+    // Performance optimization: if assemble is 1 and was 1 last frame, 
+    // the object is static on screen. Skip iterating 685 parts!
+    if (assemble !== 1 || lastAssemble.current !== 1) {
+      for (let i = 0; i < parts.current.length; i++) {
+        const p = parts.current[i]
+  
+        if (p.anchor) {
+          p.obj.position.copy(p.home)
+          p.obj.quaternion.copy(p.homeQuat)
+          continue
+        }
+        const partAssemble = THREE.MathUtils.clamp(assemble * 1.35 - p.phase * 0.35, 0, 1)
+        const off = (1 - partAssemble) * EXPLODE_RADIUS * explodeScale
+        
+        p.obj.position.set(
+          p.home.x + p.dir.x * off * p.invScale.x,
+          p.home.y + p.dir.y * off * p.invScale.y,
+          p.home.z + p.dir.z * off * p.invScale.z
+        )
+        
+        p.obj.quaternion.slerpQuaternions(p.scatterQuat, p.homeQuat, partAssemble)
+        if (!backdrop) {
+          const flightBoost = 1 + (1 - partAssemble) * 0.5
+          p.obj.scale.set(p.homeScale.x * flightBoost, p.homeScale.y * flightBoost, p.homeScale.z * flightBoost)
+        }
       }
     }
+    lastAssemble.current = assemble
 
     const s = prepared.scale * (0.65 + 0.35 * Math.min(inS, outS))
     group.scale.setScalar(s)

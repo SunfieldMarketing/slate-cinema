@@ -111,8 +111,13 @@ export default function Hero() {
         const targetWidth = 1920
         const targetHeight = 1080
 
-        canvas.width = targetWidth * dpr
-        canvas.height = targetHeight * dpr
+        const finalWidth = targetWidth * dpr
+        const finalHeight = targetHeight * dpr
+
+        if (canvas.width !== finalWidth || canvas.height !== finalHeight) {
+          canvas.width = finalWidth
+          canvas.height = finalHeight
+        }
         
         ctx.save()
         ctx.scale(dpr, dpr)
