@@ -159,7 +159,7 @@ export default function StoryboardHero({ eyebrow = 'The Process', title, subtitl
             trigger: containerRef.current,
             start: 'top top',
             end: () => `+=${window.innerHeight * RANGE_MULTIPLIER}`,
-            scrub: 1,
+            scrub: 1.5,
             invalidateOnRefresh: true,
           },
           onUpdate() {
