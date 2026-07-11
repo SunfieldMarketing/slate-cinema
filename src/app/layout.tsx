@@ -14,11 +14,15 @@ export const metadata: Metadata = {
   description: "From concept to campaign, we create cinematic content built to capture attention, tell stories, and drive engagement. Brooklyn, NY.",
 };
 
+import { preload } from 'react-dom';
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  preload('/videos/hero.mp4', { as: 'video', fetchPriority: 'high' });
+
   return (
     <html lang="en" className={`dark ${inter.variable} ${bebas.variable} ${fraunces.variable} ${courier.variable} ${caveat.variable}`}>
       <body className="font-sans antialiased bg-ink text-foreground overflow-x-hidden">

@@ -28,13 +28,17 @@ export default function Hero() {
     window.scrollTo(0, 0)
   }, [])
 
-  // Preload image sequence seamlessly in the background
+  // Defer preloading the 291-frame image sequence until after initial paint
+  // This drastically reduces initial memory spikes and lets the background video load instantly
   useEffect(() => {
-    for (let i = 1; i <= FRAME_COUNT; i++) {
-      const img = new Image()
-      img.src = `/videos/frames/frame_${i.toString().padStart(4, '0')}.jpg`
-      imagesRef.current.push(img)
-    }
+    const timer = setTimeout(() => {
+      for (let i = 1; i <= FRAME_COUNT; i++) {
+        const img = new Image()
+        img.src = `/videos/frames/frame_${i.toString().padStart(4, '0')}.jpg`
+        imagesRef.current.push(img)
+      }
+    }, 500)
+    return () => clearTimeout(timer)
   }, [])
 
   // Fade scroll hint arrow out as user scrolls
@@ -233,16 +237,13 @@ export default function Hero() {
 
           {/* Background video at low opacity for visual depth */}
           <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden mix-blend-screen opacity-40">
-            {/* Vimeo background embed, scaled via the standard 16:9 cover trick
-                (177.77vh = 16/9 * 100vh) so it always fills the frame like a
-                native <video object-cover> would. */}
-            <iframe
-              src="https://player.vimeo.com/video/937380835?background=1&autoplay=1&loop=1&muted=1&autopause=0&app_id=122963"
-              className="absolute top-1/2 left-1/2 w-[177.78vh] h-[56.25vw] min-w-full min-h-full -translate-x-1/2 -translate-y-1/2"
-              style={{ border: 0 }}
-              allow="autoplay; fullscreen; picture-in-picture"
-              title="Slate Cinema Reel"
-              tabIndex={-1}
+            <video
+              src="/videos/hero.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute top-1/2 left-1/2 w-full h-full object-cover min-w-full min-h-full -translate-x-1/2 -translate-y-1/2"
             />
           </div>
           <div className="absolute inset-0 z-0 bg-gradient-to-b from-ink/80 via-transparent to-ink/80 pointer-events-none" />

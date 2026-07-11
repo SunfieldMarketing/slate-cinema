@@ -15,10 +15,8 @@ export default function Pipeline() {
   const [open, setOpen] = useState(0)
   const [activeService, setActiveService] = useState(0)
 
-  // Preload all pipeline videos immediately
-  categories.forEach(cat => {
-    preload(cat.video, { as: 'video', fetchPriority: 'high' })
-  })
+  // Removed heavy aggressive preloading for pipeline videos to let the Hero video load instantly.
+  // The browser will fetch these when they enter the viewport naturally.
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
