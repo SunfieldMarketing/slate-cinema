@@ -75,7 +75,7 @@ function StudioLocation() {
         <div className="sl-inner grid lg:grid-cols-2 gap-6 items-stretch">
           {/* Stylized map / studio visual */}
           <div className="relative rounded-3xl overflow-hidden border border-white/10 min-h-[320px] group">
-            <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=1200" alt="Brooklyn, NY" className="absolute inset-0 w-full h-full object-cover opacity-45 transition-transform duration-[1400ms] group-hover:scale-105" />
+            <img src="/images/contact_bg_bright.png" alt="Brooklyn, NY" className="absolute inset-0 w-full h-full object-cover opacity-45 transition-transform duration-[1400ms] group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
             {/* map grid overlay */}
             <div className="absolute inset-0 opacity-[0.12] bg-[linear-gradient(rgba(0,174,239,0.6)_1px,transparent_1px),linear-gradient(90deg,rgba(0,174,239,0.6)_1px,transparent_1px)] bg-[size:40px_40px]" />

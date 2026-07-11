@@ -36,12 +36,12 @@ export const industries: IndustryData[] = [
     blurb: 'Motion-designed brand stories, explainers, and stylized 2D/3D pieces that make complex ideas feel effortless.',
     description: 'From explainer videos to fully stylized 2D/3D brand worlds, our animation work turns dense or abstract ideas into something an audience actually wants to watch. Every project starts as a storyboard, gets a bespoke motion language, and ships platform-native — because a great animated idea still needs to land in six seconds on a phone screen.',
     stat: '2D · 3D · Motion',
-    heroImage: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1400',
+    heroImage: '/images/ind_anim_hero.png',
     heroVideo: '/videos/post-production.mp4',
     gallery: [
-      'https://images.unsplash.com/photo-1501780392773-287d506245a5?q=80&w=1200',
-      'https://images.unsplash.com/photo-1618677425880-c2791c267401?q=80&w=1200',
-      '/images/portfolio-social.png',
+      '/images/ind_anim_gal1.png',
+      '/images/ind_anim_gal2.png',
+      '/images/ind_anim_gal3.png',
     ],
     stats: [
       { value: 40, suffix: '+', label: 'Animated Pieces' },
@@ -61,12 +61,12 @@ export const industries: IndustryData[] = [
     blurb: 'High-energy sports and fitness content built for retention — hype reels, launches, and athlete features.',
     description: "Sports content lives or dies in the first second. We build hype reels, athlete features, and launch films engineered around retention — fast cuts, real training footage, and a sound design that hits as hard as the content does. This is content built for people who scroll fast and stop for even faster.",
     stat: '12.1M reach',
-    heroImage: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=1400',
+    heroImage: '/images/ind_ath_hero.png',
     heroVideo: '/videos/production.mp4',
     gallery: [
-      'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=1200',
-      'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1200',
-      '/images/portfolio-event.png',
+      '/images/ind_ath_gal1.png',
+      '/images/ind_ath_gal2.png',
+      '/images/ind_ath_gal3.png',
     ],
     stats: [
       { value: 12, suffix: 'M+', label: 'Total Reach' },

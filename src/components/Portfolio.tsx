@@ -22,10 +22,10 @@ const projects: Project[] = [
   { title: 'Velocity', category: 'Social', company: 'Apex Athletics', url: '/images/portfolio-social.png', metrics: [{ label: 'Reach', value: '12.1M' }, { label: 'Engage', value: '18.5%' }], span: 'tall' },
   { title: 'The Blueprint', category: 'Documentary', company: 'Nexus Architecture', url: '/images/portfolio-production.png', metrics: [{ label: 'Brand Lift', value: '+45%' }, { label: 'Watch', value: '1:45' }] },
   { title: 'Ascension', category: 'Event', company: 'Summit Conf.', url: '/images/portfolio-event.png', metrics: [{ label: 'Attendees', value: '15k+' }, { label: 'Shares', value: '4.8k' }] },
-  { title: 'Automotive Cinema', category: 'Action', company: 'Velocity Co', url: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=1200', metrics: [{ label: 'Views', value: '8.4M' }, { label: 'Shares', value: '245k' }], span: 'tall' },
-  { title: 'Product Focus', category: 'E-Commerce', company: 'Lumiere Beauty', url: 'https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?q=80&w=1200', metrics: [{ label: 'ROAS', value: '4.2x' }, { label: 'Sales', value: '+$1.2M' }] },
-  { title: 'Aerial Cinematography', category: 'Drone', company: 'Vista Real Estate', url: 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?q=80&w=1200', metrics: [{ label: 'Watch', value: '98%' }, { label: 'Shares', value: '12k' }], span: 'wide' },
-  { title: 'Impact Film', category: 'Narrative', company: 'Global Health Org', url: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=1200', metrics: [{ label: 'Awards', value: '3' }, { label: 'Views', value: '1.1M' }] },
+  { title: 'Automotive Cinema', category: 'Action', company: 'Velocity Co', url: '/images/portfolio_auto_bright.png', metrics: [{ label: 'Views', value: '8.4M' }, { label: 'Shares', value: '245k' }], span: 'tall' },
+  { title: 'Product Focus', category: 'E-Commerce', company: 'Lumiere Beauty', url: '/images/portfolio_beauty_bright.png', metrics: [{ label: 'ROAS', value: '4.2x' }, { label: 'Sales', value: '+$1.2M' }] },
+  { title: 'Aerial Cinematography', category: 'Drone', company: 'Vista Real Estate', url: '/images/portfolio_realestate_bright.png', metrics: [{ label: 'Watch', value: '98%' }, { label: 'Shares', value: '12k' }], span: 'wide' },
+  { title: 'Impact Film', category: 'Narrative', company: 'Global Health Org', url: '/images/portfolio_impact_bright.png', metrics: [{ label: 'Awards', value: '3' }, { label: 'Views', value: '1.1M' }] },
 ]
 
 const filters = ['All', 'Commercial', 'Social', 'Documentary', 'Event', 'Action']

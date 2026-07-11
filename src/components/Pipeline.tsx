@@ -5,6 +5,7 @@ import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { ChevronDown, Play } from 'lucide-react'
+import { preload } from 'react-dom'
 import { categories } from '@/lib/pipeline-data'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -13,6 +14,11 @@ export default function Pipeline() {
   const sectionRef = useRef<HTMLElement>(null)
   const [open, setOpen] = useState(0)
   const [activeService, setActiveService] = useState(0)
+
+  // Preload all pipeline videos immediately
+  categories.forEach(cat => {
+    preload(cat.video, { as: 'video', fetchPriority: 'high' })
+  })
 
   useGSAP(() => {
     const ctx = gsap.context(() => {

@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useEffect } from 'react'
+import { preload } from 'react-dom'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -15,6 +16,9 @@ export default function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const scrollHintRef = useRef<HTMLDivElement>(null)
   const timecodeRef = useRef<HTMLSpanElement>(null)
+
+  // Preload main hero video immediately with high priority
+  preload('/videos/hero.mp4', { as: 'video', fetchPriority: 'high' })
 
   // Use a ref for images so we don't trigger React re-renders or recreate GSAP timelines as images load
   const imagesRef = useRef<HTMLImageElement[]>([])
