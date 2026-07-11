@@ -345,28 +345,20 @@ function StageObject({
     const span = exit - enter
     const t = THREE.MathUtils.clamp((u - enter) / span, 0, 1)
 
-    // Hold scattered, assemble, hold assembled, explode back out — a
-    // deliberate story arc instead of an instant snap. The scatter/assemble
-    // entrance and the explode exit are brief and punchy; the held, fully
-    // assembled, camera-facing pose is the majority of the beat — that's
-    // the "finished" moment the visitor should mostly be looking at.
+    // Deliberate story arc for the scattered pieces
     let assemble: number
-    if (t < 0.06) assemble = 0
-    else if (t < 0.28) assemble = THREE.MathUtils.smoothstep((t - 0.06) / 0.22, 0, 1)
-    else if (t > 0.85) assemble = 1 - THREE.MathUtils.smoothstep((t - 0.85) / 0.15, 0, 1)
+    if (t < 0.08) assemble = 0
+    else if (t < 0.35) assemble = THREE.MathUtils.smoothstep((t - 0.08) / 0.27, 0, 1)
+    else if (t > 0.75) assemble = 1 - THREE.MathUtils.smoothstep((t - 0.75) / 0.25, 0, 1)
     else assemble = 1
 
-    // Whole-object entrance/exit scale + drift (ring-as-stage swap with a
-    // directional nudge so consecutive objects feel handed to each other).
-    const inS = THREE.MathUtils.smoothstep(THREE.MathUtils.clamp(t / 0.2, 0, 1), 0, 1)
-    const outS = 1 - THREE.MathUtils.smoothstep(THREE.MathUtils.clamp((t - 0.85) / 0.15, 0, 1), 0, 1)
-    // A separate, much quicker fade just for opacity — the scale/drift
-    // envelope above ramps over 20% of the beat, which would otherwise
-    // starts. This only dims right at the hand-off edges (first/last 6%),
-    // staying fully visible through the scatter/assemble choreography.
-    // Delayed by 0.03 so the HTML text (which enters at t=0) appears first.
-    const fadeIn = THREE.MathUtils.smoothstep(THREE.MathUtils.clamp((t - 0.03) / 0.06, 0, 1), 0, 1)
-    const fadeOut = 1 - THREE.MathUtils.smoothstep(THREE.MathUtils.clamp((t - 0.94) / 0.06, 0, 1), 0, 1)
+    // Whole-object entrance/exit scale + drift
+    const inS = THREE.MathUtils.smoothstep(THREE.MathUtils.clamp(t / 0.25, 0, 1), 0, 1)
+    const outS = 1 - THREE.MathUtils.smoothstep(THREE.MathUtils.clamp((t - 0.75) / 0.25, 0, 1), 0, 1)
+    
+    // A separate, much quicker fade just for opacity 
+    const fadeIn = THREE.MathUtils.smoothstep(THREE.MathUtils.clamp((t - 0.02) / 0.13, 0, 1), 0, 1)
+    const fadeOut = 1 - THREE.MathUtils.smoothstep(THREE.MathUtils.clamp((t - 0.85) / 0.13, 0, 1), 0, 1)
     const fadeOpacity = Math.min(fadeIn, fadeOut)
 
     // Vastly faster opacity update: iterate unique materials once, not per-mesh
@@ -421,11 +413,11 @@ function StageObject({
     if (!backdrop && turnInDeg !== undefined) {
       const rad = THREE.MathUtils.degToRad(turnInDeg)
       let turn: number
-      if (t < 0.18) turn = 0
-      else if (t < 0.3) turn = THREE.MathUtils.smoothstep((t - 0.18) / 0.12, 0, 1)
-      else if (t < 0.42) turn = 1 - THREE.MathUtils.smoothstep((t - 0.3) / 0.12, 0, 1)
-      else if (t < 0.85) turn = 0
-      else turn = THREE.MathUtils.smoothstep((t - 0.85) / 0.15, 0, 1)
+      if (t < 0.22) turn = 0
+      else if (t < 0.35) turn = THREE.MathUtils.smoothstep((t - 0.22) / 0.13, 0, 1)
+      else if (t < 0.50) turn = 1 - THREE.MathUtils.smoothstep((t - 0.35) / 0.15, 0, 1)
+      else if (t < 0.75) turn = 0
+      else turn = THREE.MathUtils.smoothstep((t - 0.75) / 0.25, 0, 1)
       group.rotation.y = rad * turn
     }
 

@@ -8,12 +8,12 @@ import { categories } from '@/lib/pipeline-data'
   runway (RANGE_MULTIPLIER viewports of scroll).
 */
 
-export const RANGE_MULTIPLIER = 6
-export const TOTAL_UNITS = 12.5
+export const RANGE_MULTIPLIER = 7.5
+export const TOTAL_UNITS = 14.5
 export const INTRO_EXIT = 0.8
-export const SCENE_ENTERS = [0.8, 3.2, 5.8, 8.4]
-export const SCENE_EXITS = [3.4, 6.0, 8.6, 10.8]
-export const CTA_ENTER = 10.9
+export const SCENE_ENTERS = [0.8, 3.5, 6.7, 9.9]
+export const SCENE_EXITS = [4.1, 7.3, 10.5, 13.1]
+export const CTA_ENTER = 13.2
 
 export const SCENE_CLASSES = ['sb-scene-pre', 'sb-scene-prod', 'sb-scene-post', 'sb-scene-dist']
 
