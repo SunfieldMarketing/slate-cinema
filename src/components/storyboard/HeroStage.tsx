@@ -317,9 +317,22 @@ function StageObject({
     }
   }, [screen, scene])
 
+  const framesRef = useRef(0)
+
   useFrame(({ clock }, delta) => {
+    framesRef.current++
     const group = groupRef.current
     if (!group) return
+
+    // Force every object to render on the very first frame (tucked far behind the camera)
+    // to guarantee ThreeJS uploads all geometries to the GPU immediately on load,
+    // rather than blocking the main thread during the scroll transitions.
+    if (framesRef.current < 2) {
+      group.visible = true
+      group.position.z = -9999
+      return
+    }
+
     const u = stateRef.current.units
     const { enter, exit } = beatWindow(beat)
     const isClosing = u >= CTA_ENTER
