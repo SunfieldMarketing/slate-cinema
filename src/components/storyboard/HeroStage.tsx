@@ -269,19 +269,53 @@ function StageObject({
     parts.current = list
   }, [scene])
 
-  // Video element lives detached-but-in-DOM (hidden) so browsers keep
-  // decoding it on seek even though it's never appended visibly or played.
+  // Initialize video screen and material eagerly to prevent shader
+  // recompilation lag spikes mid-scroll. We create the video and material
+  // once on mount. It stays paused until the object becomes visible.
   useEffect(() => {
     if (!screen) return
+    const video = document.createElement('video')
+    video.muted = true
+    video.playsInline = true
+    video.loop = true
+    video.preload = 'metadata' // saves bandwidth until play
+    video.src = screen.videoSrc
+    video.style.position = 'fixed'
+    video.style.width = '2px'
+    video.style.height = '2px'
+    video.style.opacity = '0'
+    video.style.pointerEvents = 'none'
+    video.addEventListener('canplay', () => {
+      // Don't auto-play here; useFrame handles playing it when visible
+    })
+    document.body.appendChild(video)
+    videoRef.current = video
+
+    const target = findScreenMesh(scene, screen.targetName)
+    if (target) {
+      const texture = new THREE.VideoTexture(video)
+      texture.colorSpace = THREE.SRGBColorSpace
+      videoTextureRef.current = texture
+      const srcMat = (Array.isArray(target.material) ? target.material[0] : target.material) as THREE.MeshStandardMaterial
+      const mat = srcMat.clone() as THREE.MeshStandardMaterial
+      mat.map = texture
+      if (srcMat.emissiveMap) {
+        mat.emissive = new THREE.Color(0xffffff)
+        mat.emissiveMap = texture
+        mat.emissiveIntensity = Math.max(srcMat.emissiveIntensity, 1.2)
+      }
+      mat.needsUpdate = true
+      target.material = mat
+    }
+
     return () => {
-      const v = videoRef.current
-      if (v) {
-        v.pause()
-        v.remove()
+      if (video) {
+        video.pause()
+        video.remove()
       }
       videoTextureRef.current?.dispose()
     }
-  }, [screen])
+  }, [screen, scene])
 
   useFrame(({ clock }, delta) => {
     const group = groupRef.current
@@ -394,49 +428,19 @@ function StageObject({
       }
     }
 
-    // Screen video: plays and loops normally like any ambient texture,
-    // not tied to scroll position. Created + started lazily on first
-    // visibility, so nothing loads until the visitor actually reaches
-    // this beat.
-    if (screen && !videoRef.current) {
-      const video = document.createElement('video')
-      video.muted = true
-      video.playsInline = true
-      video.loop = true
-      video.preload = 'auto'
-      video.src = screen.videoSrc
-      video.style.position = 'fixed'
-      video.style.width = '2px'
-      video.style.height = '2px'
-      video.style.opacity = '0'
-      video.style.pointerEvents = 'none'
-      video.addEventListener('canplay', () => {
+    // Screen video: play when visible, pause when not.
+    if (screen && videoRef.current) {
+      const video = videoRef.current
+      if (visible && video.paused) {
         video.play().catch(() => {})
-      })
-      document.body.appendChild(video)
-      videoRef.current = video
-
-      const target = findScreenMesh(scene, screen.targetName)
-      if (target) {
-        const texture = new THREE.VideoTexture(video)
-        texture.colorSpace = THREE.SRGBColorSpace
-        videoTextureRef.current = texture
-        const srcMat = (Array.isArray(target.material) ? target.material[0] : target.material) as THREE.MeshStandardMaterial
-        const mat = srcMat.clone() as THREE.MeshStandardMaterial
-        mat.map = texture
-        if (srcMat.emissiveMap) {
-          mat.emissive = new THREE.Color(0xffffff)
-          mat.emissiveMap = texture
-          mat.emissiveIntensity = Math.max(srcMat.emissiveIntensity, 1.2)
-        }
-        mat.needsUpdate = true
-        target.material = mat
+      } else if (!visible && !video.paused) {
+        video.pause()
       }
     }
   })
 
   return (
-    <group ref={groupRef} visible={false}>
+    <group ref={groupRef} visible={true}>
       <primitive object={scene} />
     </group>
   )
