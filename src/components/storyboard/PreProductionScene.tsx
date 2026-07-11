@@ -52,7 +52,7 @@ export default function PreProductionScene() {
           so it never competes with the ring for space and always lands
           in the same spot as the visitor scrolls through. */}
       <p
-        className="sbs-item absolute top-[15%] left-1/2 -translate-x-1/2 w-[90vw] text-center text-white/90 text-xl md:text-3xl font-semibold tracking-tight"
+        className="sbs-item absolute top-[15%] left-6 right-6 md:max-w-[18rem] md:left-16 md:right-auto text-center md:text-left text-white/90 text-xl md:text-3xl font-semibold tracking-tight"
         style={{ textShadow: '0 2px 14px rgba(0,0,0,0.9)' }}
       >
         Every project starts on the board.

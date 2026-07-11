@@ -213,6 +213,7 @@ function StageObject({
         mats.forEach((m) => {
           m.transparent = true
         })
+        mesh.frustumCulled = false
       }
     })
     if (namedAnchorIdx >= 0) anchorIdx = namedAnchorIdx

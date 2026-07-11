@@ -38,7 +38,7 @@ export default function PostProductionScene() {
   return (
     <div className="sb-scene sb-scene-post absolute inset-0 pointer-events-none" style={{ opacity: 0, visibility: 'hidden' }}>
       <p
-        className="sbs-item absolute top-[15%] left-6 right-6 text-center text-white/90 text-xl md:text-3xl font-semibold tracking-tight"
+        className="sbs-item absolute top-[15%] left-6 right-6 md:max-w-[18rem] md:left-16 md:right-auto text-center md:text-left text-white/90 text-xl md:text-3xl font-semibold tracking-tight"
         style={{ textShadow: '0 2px 14px rgba(0,0,0,0.9)' }}
       >
         Then it all takes shape in the edit.

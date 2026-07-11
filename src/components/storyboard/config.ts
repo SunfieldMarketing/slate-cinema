@@ -9,11 +9,11 @@ import { categories } from '@/lib/pipeline-data'
 */
 
 export const RANGE_MULTIPLIER = 6
-export const TOTAL_UNITS = 13.5
+export const TOTAL_UNITS = 12.5
 export const INTRO_EXIT = 0.8
-export const SCENE_ENTERS = [1.8, 4.2, 6.8, 9.4]
-export const SCENE_EXITS = [4.4, 7.0, 9.6, 11.8]
-export const CTA_ENTER = 11.9
+export const SCENE_ENTERS = [0.8, 3.2, 5.8, 8.4]
+export const SCENE_EXITS = [3.4, 6.0, 8.6, 10.8]
+export const CTA_ENTER = 10.9
 
 export const SCENE_CLASSES = ['sb-scene-pre', 'sb-scene-prod', 'sb-scene-post', 'sb-scene-dist']
 

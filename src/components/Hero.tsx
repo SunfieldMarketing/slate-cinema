@@ -79,6 +79,7 @@ export default function Hero() {
       if (!imagesCacheRef.current.has(i)) {
         const img = new Image()
         img.src = `/videos/frames/frame_${i.toString().padStart(4, '0')}.jpg`
+        img.decode().catch(() => {}) // background decode to prevent scroll jitter
         imagesCacheRef.current.set(i, img)
       }
     }
