@@ -77,13 +77,13 @@ export default function LeadMagnet() {
 
         {/* The form card */}
         <div className="lm-form rounded-2xl overflow-hidden relative w-full h-[800px]" style={{
-          transformStyle: 'preserve-3d',
           background: 'linear-gradient(160deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
           border: '1px solid rgba(255,255,255,0.08)',
           backdropFilter: 'blur(20px)',
         }}>
           <iframe 
-            src="/Slate Cinema Intake.html" 
+            data-lenis-prevent="true"
+            src="/Slate Cinema Intake (standalone) UPDATED.html" 
             className="w-full h-full border-none outline-none"
             title="Slate Cinema Project Intake Form"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

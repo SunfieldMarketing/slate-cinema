@@ -314,10 +314,10 @@ function StageObject({
     const outS = 1 - THREE.MathUtils.smoothstep(THREE.MathUtils.clamp((t - 0.85) / 0.15, 0, 1), 0, 1)
     // A separate, much quicker fade just for opacity — the scale/drift
     // envelope above ramps over 20% of the beat, which would otherwise
-    // still be dimming the object right as the scattered-parts story
     // starts. This only dims right at the hand-off edges (first/last 6%),
     // staying fully visible through the scatter/assemble choreography.
-    const fadeIn = THREE.MathUtils.smoothstep(THREE.MathUtils.clamp(t / 0.06, 0, 1), 0, 1)
+    // Delayed by 0.03 so the HTML text (which enters at t=0) appears first.
+    const fadeIn = THREE.MathUtils.smoothstep(THREE.MathUtils.clamp((t - 0.03) / 0.06, 0, 1), 0, 1)
     const fadeOut = 1 - THREE.MathUtils.smoothstep(THREE.MathUtils.clamp((t - 0.94) / 0.06, 0, 1), 0, 1)
     const fadeOpacity = Math.min(fadeIn, fadeOut)
 
@@ -544,6 +544,11 @@ const HeroStage = forwardRef<HeroStageHandle, { className?: string }>(function H
       dpr={[1, 1.75]}
       camera={{ position: [0, 0.35, 5.6], fov: 40 }}
       gl={{ alpha: true, antialias: true }}
+      onCreated={({ gl, scene, camera }) => {
+        // Pre-compile all shaders immediately so the first time a beat's
+        // model becomes visible, it doesn't drop frames compiling materials.
+        gl.compile(scene, camera)
+      }}
     >
       <fog attach="fog" args={['#0B0C0E', 8, 16]} />
       <ambientLight intensity={0.85} />
