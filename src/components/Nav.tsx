@@ -72,8 +72,6 @@ export default function Nav() {
           <Link href="/" className="flex items-center gap-3 group" style={{ perspective: '500px' }}>
             <div className="relative w-8 h-8 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
               <img src="/images/logo.avif" alt="Slate Cinema" className="w-full h-full object-contain" />
-              {/* REC dot */}
-              <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-red-500 animate-pulse" />
             </div>
             <span className="font-bold tracking-[0.15em] text-sm text-white hidden sm:block">SLATE CINEMA</span>
           </Link>
