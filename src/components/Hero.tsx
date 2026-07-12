@@ -181,7 +181,7 @@ export default function Hero() {
           // 1000px. Compute real viewport multiples for a filmic 291-frame scrub.
           // 1.15 viewports keeps the scrub smooth without a long dead runway
           // before the next section arrives.
-          end: () => `+=${window.innerHeight * 1.15}`,
+          end: () => `+=${window.innerHeight * 1.6}`,
           scrub: 1,
           pin: true,
           anticipatePin: 1,
@@ -205,36 +205,38 @@ export default function Hero() {
         },
       })
 
-      // A. Fade out HTML content quickly upon scroll so it doesn't linger
+      // A. Slow cinematic dissolve — video fades out gently over a large scroll window
       scrollTl.to(
         '.hero-html-content',
-        { opacity: 0, ease: 'power2.inOut', duration: 0.1 },
+        { opacity: 0, ease: 'power2.in', duration: 0.3 },
         0
       )
       scrollTl.to(
         '.camera-ui',
-        { opacity: 0, ease: 'power2.inOut', duration: 0.1 },
+        { opacity: 0, ease: 'power2.in', duration: 0.3 },
         0
       )
 
-      // B. Fade in the canvas container smoothly after a short gap (Stage 2: no video)
+      // B. Canvas fades in simultaneously, overlapping the video dissolve
       scrollTl.to(
         '.camera-canvas-container',
-        { opacity: 1, ease: 'power2.inOut', duration: 0.1 },
-        0.05
+        { opacity: 1, ease: 'power2.out', duration: 0.35 },
+        0
       )
 
-      // C. Frame sequence — scrub:0 for instant zero-lag response like Apple
+      // C. Frame sequence — starts after crossfade is well underway.
+      // Uses power2.in so the very first frames advance slowly (cinematic hold)
+      // before picking up speed through the rest of the sequence.
       scrollTl.to(
         playhead,
         {
           frame: FRAME_COUNT - 1,
           snap: 'frame',
-          ease: 'none',
-          duration: 0.95,
+          ease: 'power2.in',
+          duration: 0.82,
           onUpdate: () => renderFrame(Math.round(playhead.frame)),
         },
-        0.05
+        0.18
       )
 
 
