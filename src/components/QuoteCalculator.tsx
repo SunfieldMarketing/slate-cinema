@@ -23,7 +23,6 @@ export default function QuoteCalculator() {
       }
     )
 
-    // Animate floating labels
     gsap.fromTo('.podium-label',
       { y: 30, opacity: 0 },
       {
@@ -47,7 +46,6 @@ export default function QuoteCalculator() {
       
       {/* Purple Podiums Background */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        {/* Large podium shapes */}
         <div className="absolute bottom-0 left-[10%] w-[200px] h-[300px] rounded-t-2xl opacity-30" style={{ background: 'linear-gradient(180deg, rgba(120,50,200,0.4) 0%, rgba(60,20,120,0.6) 100%)', boxShadow: '0 0 60px rgba(120,50,200,0.3)' }} />
         <div className="absolute bottom-0 left-[30%] w-[160px] h-[420px] rounded-t-2xl opacity-25" style={{ background: 'linear-gradient(180deg, rgba(100,40,180,0.4) 0%, rgba(50,15,100,0.6) 100%)', boxShadow: '0 0 80px rgba(100,40,180,0.3)' }} />
         <div className="absolute bottom-0 right-[25%] w-[180px] h-[350px] rounded-t-2xl opacity-30" style={{ background: 'linear-gradient(180deg, rgba(80,30,160,0.4) 0%, rgba(40,10,80,0.6) 100%)', boxShadow: '0 0 70px rgba(80,30,160,0.3)' }} />
@@ -68,13 +66,13 @@ export default function QuoteCalculator() {
           ))}
         </div>
 
-        <h2 className="text-4xl md:text-7xl font-bold tracking-tight text-white mb-4">Quote Calculator</h2>
+        <h2 className="text-4xl md:text-7xl font-bold tracking-tight text-white mb-4">Project Brief</h2>
         <p className="text-xl text-[#8E96AA] max-w-2xl mx-auto mb-16">
-          Tell us what you need and we&apos;ll help map the right production package for your goals.
+          Answer a few quick questions. We&apos;ll prepare a custom execution plan.
         </p>
 
-        {/* Cinematic Glass Console for Typeform */}
-        <div ref={formRef} className="relative max-w-3xl mx-auto group">
+        {/* Cinematic Glass Console wrapping the intake form */}
+        <div ref={formRef} className="relative max-w-4xl mx-auto group">
           {/* Glow border */}
           <div className="absolute -inset-[2px] rounded-2xl opacity-40 group-hover:opacity-70 transition-opacity duration-700" style={{ background: 'linear-gradient(135deg, rgba(120,50,200,0.5), rgba(0,174,239,0.3), rgba(120,50,200,0.5))' }} />
           
@@ -84,18 +82,16 @@ export default function QuoteCalculator() {
               <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
               <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
               <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
-              <span className="text-[10px] font-mono text-white/20 ml-4 tracking-widest">SLATE CINEMA // QUOTE BUILDER</span>
+              <span className="text-[10px] font-mono text-white/20 ml-4 tracking-widest">SLATE CINEMA // PROJECT DISCOVERY</span>
             </div>
             
-            {/* Typeform Embed Container */}
-            <div className="w-full" style={{ minHeight: '520px' }}>
-              <iframe
-                src="https://form.typeform.com/to/PLACEHOLDER"
-                style={{ width: '100%', height: '520px', border: 'none' }}
-                title="Slate Cinema Quote Calculator"
-                loading="lazy"
-              />
-            </div>
+            {/* Embedded intake form — self-contained HTML in /public */}
+            <iframe
+              src="/Slate Cinema Intake.html"
+              style={{ width: '100%', height: '700px', border: 'none', display: 'block' }}
+              title="Slate Cinema Project Brief"
+              loading="lazy"
+            />
           </div>
         </div>
 
