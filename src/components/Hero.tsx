@@ -20,9 +20,6 @@ export default function Hero() {
   // Preload main hero video immediately with high priority
   preload('/videos/hero.mp4', { as: 'video', fetchPriority: 'high' })
 
-  // We store a sliding window of decoded images to prevent 1GB+ RAM usage
-  const imagesCacheRef = useRef<Map<number, HTMLImageElement>>(new Map())
-  // Keep track of the current frame so async onload callbacks know if they are still relevant
   const currentFrameRef = useRef<number>(1)
 
   // Auto-scroll to top on mount so the page always starts at the hero
@@ -30,18 +27,6 @@ export default function Hero() {
     window.scrollTo(0, 0)
   }, [])
 
-  // Defer priming the network cache. We use `fetch` instead of `new Image()` 
-  // so the JPEGs are stored in the browser disk cache without decoding them to RAM.
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      for (let i = 1; i <= FRAME_COUNT; i += 5) {
-        // We fetch every 5th frame to prime the cache quickly, 
-        // the sliding window handles the exact adjacent frames.
-        fetch(`/videos/frames/frame_${i.toString().padStart(4, '0')}.jpg`, { priority: 'low' }).catch(()=>{})
-      }
-    }, 500)
-    return () => clearTimeout(timer)
-  }, [])
 
   // Fade scroll hint arrow out as user scrolls
   useEffect(() => {
@@ -69,28 +54,47 @@ export default function Hero() {
     return () => cancelAnimationFrame(rafId)
   }, [])
 
-  const loadNeighborhood = (centerIndex: number) => {
-    const radius = 15; // keep 30 frames in RAM (~250MB) instead of 291 (~2.4GB)
-    const start = Math.max(1, centerIndex - radius);
-    const end = Math.min(FRAME_COUNT, centerIndex + radius);
-    
-    // Decode incoming frames
-    for (let i = start; i <= end; i++) {
-      if (!imagesCacheRef.current.has(i)) {
-        const img = new Image()
-        img.src = `/videos/frames/frame_${i.toString().padStart(4, '0')}.jpg`
-        img.decode().catch(() => {}) // background decode to prevent scroll jitter
-        imagesCacheRef.current.set(i, img)
+  // ImageBitmap cache — GPU-ready decoded frames, no main-thread decode stall
+  // Apple-style: decode all 291 frames eagerly off-thread so every frame is
+  // available immediately when the scroll position hits it.
+  const bitmapsRef = useRef<(ImageBitmap | null)[]>(Array(FRAME_COUNT + 1).fill(null))
+  const loadedCountRef = useRef(0)
+
+  useEffect(() => {
+    let cancelled = false
+
+    const loadFrame = async (i: number) => {
+      if (cancelled || bitmapsRef.current[i]) return
+      try {
+        const resp = await fetch(`/videos/frames/frame_${i.toString().padStart(4, '0')}.jpg`)
+        if (cancelled) return
+        const blob = await resp.blob()
+        if (cancelled) return
+        const bmp = await createImageBitmap(blob)
+        if (!cancelled) {
+          bitmapsRef.current[i] = bmp
+          loadedCountRef.current++
+        }
+      } catch {}
+    }
+
+    // Load frames 1 → FRAME_COUNT in order (browser will pipeline them)
+    // First load frames 1-30 at high priority so the first scroll is instant,
+    // then load the rest sequentially.
+    const loadAll = async () => {
+      // Priority batch: first 30 frames
+      const priority = []
+      for (let i = 1; i <= Math.min(30, FRAME_COUNT); i++) priority.push(loadFrame(i))
+      await Promise.all(priority)
+      // Rest of the frames
+      for (let i = 31; i <= FRAME_COUNT; i++) {
+        if (cancelled) break
+        await loadFrame(i)
       }
     }
-    
-    // Purge outgoing frames to free RAM
-    for (const key of imagesCacheRef.current.keys()) {
-      if (key < start || key > end) {
-        imagesCacheRef.current.delete(key)
-      }
-    }
-  }
+    loadAll()
+    return () => { cancelled = true }
+  }, [])
 
   useGSAP(() => {
     if (!containerRef.current || !canvasRef.current) return
@@ -99,45 +103,31 @@ export default function Hero() {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    // High-DPI Canvas Rendering Logic
+    // Apple-style renderFrame: draw from pre-decoded ImageBitmap.
+    // ImageBitmaps live on the GPU side so drawImage() is near-zero cost.
+    // Canvas is sized to the actual viewport (not a fixed 1920x1080) so
+    // nothing is ever zoomed in.
     const renderFrame = (index: number) => {
       currentFrameRef.current = index
-      loadNeighborhood(index)
+      const bmp = bitmapsRef.current[index]
+      if (!bmp) return
 
-      const img = imagesCacheRef.current.get(index)
-      if (img && img.complete && img.naturalWidth !== 0) {
-        // Scale up for high-DPI displays to ensure 1080p looks crisp
-        const dpr = window.devicePixelRatio || 1
-        const targetWidth = 1920
-        const targetHeight = 1080
+      const dpr = window.devicePixelRatio || 1
+      const w = window.innerWidth
+      const h = window.innerHeight
+      const pw = Math.round(w * dpr)
+      const ph = Math.round(h * dpr)
 
-        const finalWidth = targetWidth * dpr
-        const finalHeight = targetHeight * dpr
-
-        if (canvas.width !== finalWidth || canvas.height !== finalHeight) {
-          canvas.width = finalWidth
-          canvas.height = finalHeight
-        }
-        
-        ctx.save()
-        ctx.scale(dpr, dpr)
-
-        // Object-cover logic
-        const scale = Math.max(targetWidth / img.width, targetHeight / img.height)
-        const x = targetWidth / 2 - (img.width / 2) * scale
-        const y = targetHeight / 2 - (img.height / 2) * scale
-
-        ctx.clearRect(0, 0, targetWidth, targetHeight)
-        ctx.drawImage(img, x, y, img.width * scale, img.height * scale)
-        ctx.restore()
-      } else if (img) {
-        // Fallback: draw when loaded if the user hasn't scrolled past it
-        img.onload = () => {
-          if (currentFrameRef.current === index) {
-            renderFrame(index)
-          }
-        }
+      if (canvas.width !== pw || canvas.height !== ph) {
+        canvas.width = pw
+        canvas.height = ph
       }
+
+      // Object-cover: scale the bitmap to fill the canvas while maintaining aspect ratio
+      const scale = Math.max(pw / bmp.width, ph / bmp.height)
+      const dx = (pw - bmp.width * scale) / 2
+      const dy = (ph - bmp.height * scale) / 2
+      ctx.drawImage(bmp, dx, dy, bmp.width * scale, bmp.height * scale)
     }
 
     // Try to draw first frame immediately (it will retry onUpdate if not loaded yet)
@@ -234,15 +224,15 @@ export default function Hero() {
         0.05
       )
 
-      // C. Frame sequence animation (starts after the gap)
+      // C. Frame sequence — scrub:0 for instant zero-lag response like Apple
       scrollTl.to(
         playhead,
         {
           frame: FRAME_COUNT - 1,
           snap: 'frame',
-          ease: 'power1.inOut',
+          ease: 'none',
           duration: 0.95,
-          onUpdate: () => renderFrame(playhead.frame),
+          onUpdate: () => renderFrame(Math.round(playhead.frame)),
         },
         0.05
       )
