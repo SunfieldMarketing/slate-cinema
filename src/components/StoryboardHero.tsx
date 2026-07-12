@@ -88,6 +88,11 @@ export default function StoryboardHero({ eyebrow = 'The Process', title, subtitl
 
   const [pinState, setPinState] = useState<'before' | 'pinned' | 'after'>('before')
 
+  // Always start at the very top of the page so we see the intro text
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
   // Hand-rolled pin — proven fix, reused as-is.
   useEffect(() => {
     const updatePin = () => {
@@ -159,7 +164,7 @@ export default function StoryboardHero({ eyebrow = 'The Process', title, subtitl
             trigger: containerRef.current,
             start: 'top top',
             end: () => `+=${window.innerHeight * RANGE_MULTIPLIER}`,
-            scrub: 1.5,
+            scrub: 0.8,
             invalidateOnRefresh: true,
           },
           onUpdate() {

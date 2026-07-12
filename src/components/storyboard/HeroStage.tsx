@@ -555,9 +555,9 @@ const HeroStage = forwardRef<HeroStageHandle, { className?: string }>(function H
   return (
     <Canvas
       className={className}
-      dpr={[1, 1.75]}
+      dpr={[1, 1.5]}
       camera={{ position: [0, 0.35, 5.6], fov: 40 }}
-      gl={{ alpha: true, antialias: true }}
+      gl={{ alpha: true, antialias: false, powerPreference: 'high-performance' }}
       onCreated={({ gl, scene, camera }) => {
         // Pre-compile all shaders immediately so the first time a beat's
         // model becomes visible, it doesn't drop frames compiling materials.

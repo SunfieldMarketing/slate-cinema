@@ -50,7 +50,7 @@ export default function SmoothScrolling({ children }: { children: React.ReactNod
   }, [])
 
   return (
-    <ReactLenis ref={lenisRef} autoRaf={false} root options={{ lerp: 0.05, smoothWheel: true }}>
+    <ReactLenis ref={lenisRef} autoRaf={false} root options={{ lerp: 0.1, smoothWheel: true, syncTouch: true }}>
       {children as any}
     </ReactLenis>
   )
