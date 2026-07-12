@@ -13,6 +13,10 @@ const caveat = Caveat({ subsets: ["latin"], weight: ["400", "600"], variable: "-
 export const metadata: Metadata = {
   title: "Slate Cinema | Video Marketing at Your Fingertips",
   description: "From concept to campaign, we create cinematic content built to capture attention, tell stories, and drive engagement. Brooklyn, NY.",
+  icons: {
+    icon: '/images/logo.avif',
+    apple: '/images/logo.avif',
+  },
 };
 
 import { preload } from 'react-dom';

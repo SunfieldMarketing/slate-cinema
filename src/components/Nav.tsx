@@ -70,8 +70,8 @@ export default function Nav() {
         <div className="nav-inner relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-6 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group" style={{ perspective: '500px' }}>
-            <div className="relative w-8 h-8 rounded bg-[#00AEEF] flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
-              <span className="text-[#030305] font-bold text-xs">SC</span>
+            <div className="relative w-8 h-8 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <img src="/images/logo.avif" alt="Slate Cinema" className="w-full h-full object-contain" />
               {/* REC dot */}
               <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-red-500 animate-pulse" />
             </div>
