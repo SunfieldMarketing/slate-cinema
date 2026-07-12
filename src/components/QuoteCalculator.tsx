@@ -87,7 +87,7 @@ export default function QuoteCalculator() {
             
             {/* Embedded intake form — self-contained HTML in /public */}
             <iframe
-              src="/Slate Cinema Intake.html"
+              src="/intake.html"
               style={{ width: '100%', height: '700px', border: 'none', display: 'block' }}
               title="Slate Cinema Project Brief"
               loading="lazy"
