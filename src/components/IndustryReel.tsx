@@ -13,56 +13,35 @@ import { portfolioProjects } from '@/lib/portfolio-projects'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const FRAME_W = 2.6
-const FRAME_H = 1.7
-const RAIL_GAP = 0.15
-const RAIL_H = 0.22
-const COUNT = portfolioProjects.length
-
 /*
-  The ribbon's shape never changes — a single S-curve that dips and rises
-  in real depth (Z), not just a flat bow. That depth variation is what
-  gives each frame a different perspective skew along the strip (some
-  face-on, some sharply keystoned), matching a physical filmstrip caught
-  mid-wave instead of a flat curved plane. What animates is the whole
-  ribbon's rigid transform: it starts small, distant and rotated ~80°
-  off-axis (reading as a thin diagonal sliver, exactly like a wide strip
-  seen almost edge-on) and flies to identity as the section scrolls in —
-  a real cinematic fly-in rather than a geometry deformation.
+  The reel is a closed cylindrical band of film — all 8 frames wrapped
+  around a ring, like a strip of film joined end to end. The camera sits
+  just outside the ring so the active frame fills the center while its
+  neighbours curve away, and the far side of the loop shows faintly
+  (mirrored, fogged) behind — the classic 3D film-carousel look.
+  Navigation rotates the band about its axis; the fly-in animates the
+  whole band's rigid transform from a small, distant, steeply tilted
+  pose (reading as a loose reel tumbling in) down to its resting tilt.
 */
-const CURVE_POINTS = [
-  new THREE.Vector3(-9.2, 1.85, 1.3),
-  new THREE.Vector3(-4.6, 0.85, -1.3),
-  new THREE.Vector3(0, 0.3, 0.9),
-  new THREE.Vector3(4.6, 0.95, -1.3),
-  new THREE.Vector3(9.2, 1.9, 1.1),
-]
+const FRAME_W = 6.4
+const FRAME_H = 4.0
+const GAP = 1.15
+const SPACING = FRAME_W + GAP
+const RAIL_GAP = 0.22
+const RAIL_H = 0.3
+const COUNT = portfolioProjects.length
+const RADIUS = (COUNT * SPACING) / (2 * Math.PI)
+const STEP = (2 * Math.PI) / COUNT
+const FRAME_ARC = FRAME_W / RADIUS
 
-const START_POS = new THREE.Vector3(5.7, 4.6, -8.2)
-const START_QUAT = new THREE.Quaternion().setFromEuler(new THREE.Euler(0.16, 1.32, -0.4, 'XYZ'))
-const START_SCALE = 0.48
-const END_POS = new THREE.Vector3(0, 0, 0)
-const END_QUAT = new THREE.Quaternion()
+const START_POS = new THREE.Vector3(7.5, 6.0, -16)
+const START_QUAT = new THREE.Quaternion().setFromEuler(new THREE.Euler(0.85, 0.7, -0.45, 'XYZ'))
+const START_SCALE = 0.4
+const END_POS = new THREE.Vector3(0, -0.2, -2.2)
+const END_QUAT = new THREE.Quaternion().setFromEuler(new THREE.Euler(0.12, 0, 0.03, 'XYZ'))
 const END_SCALE = 1
 
-const worldUp = new THREE.Vector3(0, 1, 0)
-const worldFallback = new THREE.Vector3(0, 0, 1)
-
-function basisAt(curve: THREE.CatmullRomCurve3, u: number) {
-  const point = curve.getPointAt(u)
-  const tangent = curve.getTangentAt(u).normalize()
-  let up = worldUp.clone().sub(tangent.clone().multiplyScalar(tangent.dot(worldUp)))
-  if (up.lengthSq() < 1e-6) up = worldFallback.clone().sub(tangent.clone().multiplyScalar(tangent.dot(worldFallback)))
-  up.normalize()
-  const normal = new THREE.Vector3().crossVectors(tangent, up).normalize()
-  return { point, tangent, up, normal }
-}
-
-function quaternionFromBasis(x: THREE.Vector3, y: THREE.Vector3, z: THREE.Vector3) {
-  return new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(x, y, z))
-}
-
-/* Perforated sprocket-hole strip texture, tiled along each rail. */
+/* Perforated sprocket-hole strip texture, tiled around each rail ring. */
 function useSprocketTexture() {
   return useMemo(() => {
     const canvas = document.createElement('canvas')
@@ -89,58 +68,30 @@ function useSprocketTexture() {
     tex.wrapS = THREE.RepeatWrapping
     tex.wrapT = THREE.ClampToEdgeWrapping
     tex.colorSpace = THREE.SRGBColorSpace
+    tex.repeat.set(84, 1)
     return tex
   }, [])
 }
 
-function buildRailGeometry(curve: THREE.CatmullRomCurve3, side: 1 | -1, samples: number) {
-  const positions: number[] = []
-  const uvs: number[] = []
-  const indices: number[] = []
-  const offset = side * (FRAME_H / 2 + RAIL_GAP)
-  const uRepeat = 16
-
-  for (let i = 0; i <= samples; i++) {
-    const u = i / samples
-    const { point, up } = basisAt(curve, u)
-    const center = point.clone().addScaledVector(up, offset)
-    const top = center.clone().addScaledVector(up, RAIL_H / 2)
-    const bottom = center.clone().addScaledVector(up, -RAIL_H / 2)
-    positions.push(top.x, top.y, top.z, bottom.x, bottom.y, bottom.z)
-    uvs.push(u * uRepeat, 1, u * uRepeat, 0)
-    if (i < samples) {
-      const a = i * 2
-      const b = a + 1
-      const c = a + 2
-      const d = a + 3
-      indices.push(a, b, c, b, d, c)
-    }
-  }
-
-  const geo = new THREE.BufferGeometry()
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
-  geo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2))
-  geo.setIndex(indices)
-  geo.computeVertexNormals()
-  return geo
-}
-
-interface RibbonInputRefs {
+interface ReelRefs {
   progressRef: MutableRefObject<number>
   activeRef: MutableRefObject<number>
+  spinRef: MutableRefObject<number>
   dragExtraRef: MutableRefObject<number>
   pointerRef: MutableRefObject<{ x: number; y: number }>
 }
 
-function FilmRibbon({
+function FilmBand({
   progressRef,
   activeRef,
+  spinRef,
   dragExtraRef,
   pointerRef,
   accent,
   onSelect,
-}: RibbonInputRefs & { accent: string; onSelect: (i: number) => void }) {
-  const groupRef = useRef<THREE.Group>(null)
+}: ReelRefs & { accent: string; onSelect: (i: number) => void }) {
+  const flyRef = useRef<THREE.Group>(null)
+  const spinGroupRef = useRef<THREE.Group>(null)
   const frameRefs = useRef<(THREE.Mesh | null)[]>([])
 
   const textures = useTexture(portfolioProjects.map((p) => p.url))
@@ -155,69 +106,97 @@ function FilmRibbon({
 
   const accentColor = useMemo(() => new THREE.Color(accent), [accent])
 
-  const curve = useMemo(() => new THREE.CatmullRomCurve3(CURVE_POINTS, false, 'catmullrom', 0.6), [])
-
-  const frameTransforms = useMemo(
+  // Curved cylinder segment per frame, already placed at its angle around
+  // the ring, so the mesh transform stays identity and highlight-scaling
+  // pops the frame radially outward.
+  const frameGeos = useMemo(
     () =>
-      portfolioProjects.map((_, i) => {
-        const u = (i + 0.5) / COUNT
-        const { point, tangent, up, normal } = basisAt(curve, u)
-        return { point, quat: quaternionFromBasis(tangent, up, normal), bezelPoint: point.clone().addScaledVector(normal, -0.02) }
-      }),
-    [curve]
+      portfolioProjects.map((_, i) => new THREE.CylinderGeometry(RADIUS, RADIUS, FRAME_H, 32, 1, true, i * STEP - FRAME_ARC / 2, FRAME_ARC)),
+    []
   )
 
-  const topGeo = useMemo(() => buildRailGeometry(curve, 1, 140), [curve])
-  const bottomGeo = useMemo(() => buildRailGeometry(curve, -1, 140), [curve])
+  // Dark film base between frames, slightly recessed so it never z-fights.
+  const fillerGeos = useMemo(
+    () =>
+      portfolioProjects.map((_, i) => {
+        const ovl = 0.12 / RADIUS
+        return new THREE.CylinderGeometry(RADIUS - 0.02, RADIUS - 0.02, FRAME_H + 0.12, 12, 1, true, i * STEP + FRAME_ARC / 2 - ovl, STEP - FRAME_ARC + ovl * 2)
+      }),
+    []
+  )
+
+  // Dark margins between the image edge and each sprocket rail.
+  const marginGeos = useMemo(
+    () =>
+      [1, -1].map((s) => {
+        const yInner = s * (FRAME_H / 2 - 0.04)
+        const yOuter = s * (FRAME_H / 2 + RAIL_GAP + 0.02)
+        const g = new THREE.CylinderGeometry(RADIUS - 0.015, RADIUS - 0.015, Math.abs(yOuter - yInner), 128, 1, true)
+        g.translate(0, (yInner + yOuter) / 2, 0)
+        return g
+      }),
+    []
+  )
+
+  // Full sprocket-hole rings above and below the frames.
+  const railGeos = useMemo(
+    () =>
+      [1, -1].map((s) => {
+        const g = new THREE.CylinderGeometry(RADIUS, RADIUS, RAIL_H, 160, 1, true)
+        g.translate(0, s * (FRAME_H / 2 + RAIL_GAP + RAIL_H / 2), 0)
+        return g
+      }),
+    []
+  )
 
   useFrame((state) => {
     const eased = progressRef.current
-    if (groupRef.current) {
-      // Idle bob + mouse parallax + drag spin only fade in once the reel
-      // has (mostly) arrived, so they never fight the fly-in itself.
-      const t = state.clock.elapsedTime
-      const bobY = Math.sin(t * 0.6) * 0.06 * eased
-      const bobRotZ = Math.sin(t * 0.5 + 1.3) * 0.015 * eased
-      const parallaxRotY = pointerRef.current.x * 0.12 * eased
-      const parallaxRotX = -pointerRef.current.y * 0.06 * eased
+    const t = state.clock.elapsedTime
 
-      groupRef.current.position.lerpVectors(START_POS, END_POS, eased)
-      groupRef.current.position.y += bobY
-      groupRef.current.quaternion.copy(START_QUAT).slerp(END_QUAT, eased)
-      const extra = new THREE.Euler(parallaxRotX, parallaxRotY + dragExtraRef.current * eased, bobRotZ, 'XYZ')
-      groupRef.current.quaternion.multiply(new THREE.Quaternion().setFromEuler(extra))
-      groupRef.current.scale.setScalar(THREE.MathUtils.lerp(START_SCALE, END_SCALE, eased))
+    if (flyRef.current) {
+      const bobY = Math.sin(t * 0.55) * 0.07 * eased
+      const bobRotZ = Math.sin(t * 0.45 + 1.3) * 0.012 * eased
+      const parallaxRotY = pointerRef.current.x * 0.09 * eased
+      const parallaxRotX = -pointerRef.current.y * 0.05 * eased
+
+      flyRef.current.position.lerpVectors(START_POS, END_POS, eased)
+      flyRef.current.position.y += bobY
+      flyRef.current.quaternion.copy(START_QUAT).slerp(END_QUAT, eased)
+      const extra = new THREE.Euler(parallaxRotX, parallaxRotY, bobRotZ, 'XYZ')
+      flyRef.current.quaternion.multiply(new THREE.Quaternion().setFromEuler(extra))
+      flyRef.current.scale.setScalar(THREE.MathUtils.lerp(START_SCALE, END_SCALE, eased))
     }
 
-    // Highlight whichever frame is active.
+    if (spinGroupRef.current) {
+      spinGroupRef.current.rotation.y = spinRef.current + dragExtraRef.current
+    }
+
+    // Brighten whichever frame is active; pop it slightly outward.
     for (let i = 0; i < COUNT; i++) {
       const frame = frameRefs.current[i]
       if (!frame) continue
       const isActive = i === activeRef.current
-      const targetScale = isActive ? 1.14 : 1
-      frame.scale.x = THREE.MathUtils.lerp(frame.scale.x, targetScale, 0.12)
-      frame.scale.y = THREE.MathUtils.lerp(frame.scale.y, targetScale, 0.12)
+      const targetScale = isActive ? 1.03 : 1
+      const s = THREE.MathUtils.lerp(frame.scale.x, targetScale, 0.1)
+      frame.scale.setScalar(s)
       const mat = frame.material as THREE.MeshStandardMaterial
-      mat.emissiveIntensity = THREE.MathUtils.lerp(mat.emissiveIntensity, isActive ? 0.1 : 0, 0.12)
-      mat.color.setScalar(THREE.MathUtils.lerp(mat.color.r, isActive ? 1 : 0.5, 0.12))
+      mat.emissiveIntensity = THREE.MathUtils.lerp(mat.emissiveIntensity, isActive ? 0.08 : 0, 0.1)
+      mat.color.setScalar(THREE.MathUtils.lerp(mat.color.r, isActive ? 1 : 0.55, 0.1))
     }
   })
 
   return (
-    <group ref={groupRef}>
-      {portfolioProjects.map((p, i) => (
-        <group key={p.title}>
-          <mesh position={frameTransforms[i].bezelPoint} quaternion={frameTransforms[i].quat}>
-            <planeGeometry args={[FRAME_W + 0.14, FRAME_H + 0.14]} />
-            <meshBasicMaterial color="#05070c" side={THREE.DoubleSide} />
-          </mesh>
+    <group ref={flyRef}>
+      <group ref={spinGroupRef}>
+        {portfolioProjects.map((p, i) => (
           <mesh
-            position={frameTransforms[i].point}
-            quaternion={frameTransforms[i].quat}
+            key={p.title}
+            geometry={frameGeos[i]}
             ref={(el) => {
               frameRefs.current[i] = el
             }}
             onClick={(e) => {
+              if (e.delta > 8) return
               e.stopPropagation()
               onSelect(i)
             }}
@@ -229,7 +208,6 @@ function FilmRibbon({
               document.body.style.cursor = 'auto'
             }}
           >
-            <planeGeometry args={[FRAME_W, FRAME_H]} />
             <meshStandardMaterial
               map={textures[i]}
               emissive={accentColor}
@@ -240,41 +218,57 @@ function FilmRibbon({
               toneMapped={false}
             />
           </mesh>
-        </group>
-      ))}
+        ))}
 
-      <mesh geometry={topGeo}>
-        <meshBasicMaterial map={sprocketTex} side={THREE.DoubleSide} transparent />
-      </mesh>
-      <mesh geometry={bottomGeo}>
-        <meshBasicMaterial map={sprocketTex} side={THREE.DoubleSide} transparent />
-      </mesh>
+        {fillerGeos.map((g, i) => (
+          <mesh key={`filler-${i}`} geometry={g}>
+            <meshBasicMaterial color="#05070c" side={THREE.DoubleSide} />
+          </mesh>
+        ))}
+        {marginGeos.map((g, i) => (
+          <mesh key={`margin-${i}`} geometry={g}>
+            <meshBasicMaterial color="#05070c" side={THREE.DoubleSide} />
+          </mesh>
+        ))}
+        {railGeos.map((g, i) => (
+          <mesh key={`rail-${i}`} geometry={g}>
+            <meshBasicMaterial map={sprocketTex} side={THREE.DoubleSide} />
+          </mesh>
+        ))}
+      </group>
     </group>
   )
 }
 
-function FilmReelScene({
-  progressRef,
-  activeRef,
-  dragExtraRef,
-  pointerRef,
-  accent,
-  onSelect,
-}: RibbonInputRefs & { accent: string; onSelect: (i: number) => void }) {
+/* Pull the camera back on narrow viewports so the front frame still fits. */
+function ResponsiveCamera() {
+  useFrame((state) => {
+    const aspect = state.size.width / state.size.height
+    const targetZ = aspect < 1.1 ? 25 : aspect < 1.8 ? 20 : 17.5
+    if (Math.abs(state.camera.position.z - targetZ) > 0.001) {
+      state.camera.position.z = THREE.MathUtils.lerp(state.camera.position.z, targetZ, 0.15)
+    }
+  })
+  return null
+}
+
+function FilmReelScene(props: ReelRefs & { accent: string; onSelect: (i: number) => void }) {
   return (
     <Canvas
-      camera={{ position: [0, 0.5, 10.5], fov: 44 }}
+      camera={{ position: [0, 0.5, 17.5], fov: 42 }}
       dpr={[1, 2]}
       gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
     >
+      <ResponsiveCamera />
+      <fog attach="fog" args={['#101c38', 16, 42]} />
       <ambientLight intensity={0.55} />
-      <directionalLight position={[4, 6, 6]} intensity={1.1} />
-      <pointLight position={[-6, -1, 5]} intensity={0.5} color={accent} />
+      <directionalLight position={[4, 6, 8]} intensity={1.1} />
+      <pointLight position={[-6, -1, 8]} intensity={0.5} color={props.accent} />
       <Suspense fallback={null}>
-        <FilmRibbon progressRef={progressRef} activeRef={activeRef} dragExtraRef={dragExtraRef} pointerRef={pointerRef} accent={accent} onSelect={onSelect} />
+        <FilmBand {...props} />
       </Suspense>
       <EffectComposer enableNormalPass={false}>
-        <Bloom luminanceThreshold={0.35} luminanceSmoothing={0.9} intensity={0.65} mipmapBlur />
+        <Bloom luminanceThreshold={0.35} luminanceSmoothing={0.9} intensity={0.6} mipmapBlur />
       </EffectComposer>
     </Canvas>
   )
@@ -286,8 +280,11 @@ export default function IndustryReel({ accent }: { accent: string }) {
   const indexRef = useRef(0)
   const [index, setIndex] = useState(0)
 
-  // Drag-to-spin + mouse parallax state, read every frame inside the
-  // canvas without triggering React re-renders.
+  // The band's rotation target lives in refs so the canvas reads it every
+  // frame without React re-renders. `virtual` counts continuously (no
+  // modulo) so next/prev always take the short way around the ring.
+  const virtualRef = useRef(0)
+  const spinRef = useRef(0)
   const dragExtraRef = useRef(0)
   const pointerRef = useRef({ x: 0, y: 0 })
   const dragStateRef = useRef({ active: false, startX: 0, lastX: 0 })
@@ -323,8 +320,22 @@ export default function IndustryReel({ accent }: { accent: string }) {
     { scope: sectionRef }
   )
 
-  const go = (delta: number) => setIndex((i) => (i + delta + COUNT) % COUNT)
-  const active = portfolioProjects[index]
+  const goTo = (virtual: number) => {
+    virtualRef.current = virtual
+    setIndex(((virtual % COUNT) + COUNT) % COUNT)
+    gsap.killTweensOf(spinRef)
+    gsap.to(spinRef, { current: -virtual * STEP, duration: 1.15, ease: 'power3.out' })
+  }
+
+  const go = (delta: number) => goTo(virtualRef.current + delta)
+
+  const selectIndex = (i: number) => {
+    const curMod = ((virtualRef.current % COUNT) + COUNT) % COUNT
+    let diff = i - curMod
+    if (diff > COUNT / 2) diff -= COUNT
+    if (diff < -COUNT / 2) diff += COUNT
+    goTo(virtualRef.current + diff)
+  }
 
   const handlePointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
@@ -333,28 +344,35 @@ export default function IndustryReel({ accent }: { accent: string }) {
     if (dragStateRef.current.active) {
       const dx = e.clientX - dragStateRef.current.lastX
       dragStateRef.current.lastX = e.clientX
-      dragExtraRef.current += dx * 0.006
+      dragExtraRef.current += dx * 0.004
     }
   }
 
   const handlePointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
-    if ((e.target as HTMLElement).closest('button')) return
-    gsap.killTweensOf(dragExtraRef)
+    if ((e.target as HTMLElement).closest('button, a')) return
+    gsap.killTweensOf(spinRef)
     dragStateRef.current = { active: true, startX: e.clientX, lastX: e.clientX }
     setIsDragging(true)
   }
 
   const endDrag = () => {
     if (!dragStateRef.current.active) return
-    const totalDx = dragStateRef.current.lastX - dragStateRef.current.startX
     dragStateRef.current.active = false
     setIsDragging(false)
-    if (Math.abs(totalDx) > 50) go(totalDx > 0 ? -1 : 1)
-    gsap.to(dragExtraRef, { current: 0, duration: 0.8, ease: 'elastic.out(1, 0.6)' })
+    // Fold the live drag rotation into the base spin, then let one tween
+    // glide the band to the nearest (or flicked-to) frame.
+    const extra = dragExtraRef.current
+    spinRef.current += extra
+    dragExtraRef.current = 0
+    let delta = Math.round(-extra / STEP)
+    if (delta === 0 && Math.abs(extra) > 0.14) delta = extra < 0 ? 1 : -1
+    goTo(virtualRef.current + delta)
   }
 
+  const active = portfolioProjects[index]
+
   return (
-    <section ref={sectionRef} className="relative w-full overflow-hidden py-20 md:py-24">
+    <section ref={sectionRef} className="relative w-full overflow-hidden py-14 md:py-16">
       <div
         className="absolute inset-0 pointer-events-none"
         style={{ background: 'linear-gradient(180deg, #050810 0%, #0a1226 32%, #142748 55%, #0a1226 78%, #050810 100%)' }}
@@ -364,59 +382,47 @@ export default function IndustryReel({ accent }: { accent: string }) {
         style={{ background: `radial-gradient(ellipse 55% 45% at 50% 45%, ${accent}22, transparent 70%)` }}
       />
 
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
-        <div className="reel-fade text-center mb-4">
-          <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-5" style={{ color: accent }}>
-            <span className="w-8 h-px" style={{ background: `${accent}66` }} /> The Reel
-            <span className="w-8 h-px" style={{ background: `${accent}66` }} />
-          </span>
-          <h3 className="font-serif-accent italic text-4xl sm:text-5xl md:text-6xl text-white" style={{ textShadow: '0 4px 40px rgba(0,0,0,.85)' }}>
-            {active.title}
-          </h3>
-          <div className="mt-3 font-mono text-[11px] tracking-[0.22em] text-white/60 uppercase" style={{ textShadow: '0 2px 14px rgba(0,0,0,.9)' }}>
-            {active.category} · {active.company} ·{' '}
-            <a href="#gallery" className="inline-flex items-center gap-1.5 hover:text-white transition-colors" style={{ color: accent }}>
-              View project <ArrowRight className="w-3 h-3" />
-            </a>
-          </div>
-        </div>
-
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
         <div
-          className="relative h-[46vh] min-h-[340px] max-h-[520px] w-full touch-none"
+          className="relative h-[62vh] min-h-[460px] max-h-[700px] w-full touch-none"
           style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={endDrag}
           onPointerLeave={endDrag}
         >
-          <FilmReelScene progressRef={progressRef} activeRef={indexRef} dragExtraRef={dragExtraRef} pointerRef={pointerRef} accent={accent} onSelect={setIndex} />
-
-          <div className="reel-fade absolute left-1 bottom-1 sm:left-3 sm:bottom-3 flex items-center gap-3 pointer-events-none">
-            <span
-              className="w-7 h-7 rounded-full border flex items-center justify-center font-mono text-[9px]"
-              style={{ borderColor: `${accent}55`, color: accent, backgroundColor: 'rgba(5,7,12,0.6)' }}
-            >
-              {String(index + 1).padStart(2, '0')}
+          {/* Title overlays the top of the band, like the reference. */}
+          <div className="reel-fade pointer-events-none absolute inset-x-0 top-2 z-10 text-center">
+            <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-3" style={{ color: accent }}>
+              <span className="w-8 h-px" style={{ background: `${accent}66` }} /> The Reel
+              <span className="w-8 h-px" style={{ background: `${accent}66` }} />
             </span>
-            <div className="flex items-center gap-2 pointer-events-auto">
-              {portfolioProjects.map((p, i) => (
-                <button
-                  key={p.title}
-                  type="button"
-                  aria-label={`Show ${p.title}`}
-                  onClick={() => setIndex(i)}
-                  className="h-1 rounded-full transition-all"
-                  style={{ width: i === index ? 20 : 7, background: i === index ? accent : 'rgba(255,255,255,0.25)' }}
-                />
-              ))}
+            <h3 className="font-serif-accent italic text-4xl sm:text-5xl md:text-6xl text-white" style={{ textShadow: '0 4px 40px rgba(0,0,0,.9)' }}>
+              {active.title}
+            </h3>
+            <div className="mt-2.5 font-mono text-[11px] tracking-[0.22em] text-white/60 uppercase" style={{ textShadow: '0 2px 14px rgba(0,0,0,.9)' }}>
+              {active.category} · {active.company} ·{' '}
+              <a href="#gallery" className="pointer-events-auto inline-flex items-center gap-1.5 hover:text-white transition-colors" style={{ color: accent }}>
+                View project <ArrowRight className="w-3 h-3" />
+              </a>
             </div>
           </div>
+
+          <FilmReelScene
+            progressRef={progressRef}
+            activeRef={indexRef}
+            spinRef={spinRef}
+            dragExtraRef={dragExtraRef}
+            pointerRef={pointerRef}
+            accent={accent}
+            onSelect={selectIndex}
+          />
 
           <button
             type="button"
             onClick={() => go(-1)}
             aria-label="Previous project"
-            className="reel-fade absolute left-0 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full border border-white/15 bg-black/30 backdrop-blur-md text-white flex items-center justify-center transition-colors hover:border-white/40"
+            className="reel-fade absolute left-1 bottom-1 sm:left-2 sm:bottom-2 w-10 h-10 rounded-lg border border-white/10 bg-black/60 backdrop-blur-md text-white flex items-center justify-center transition-colors hover:border-white/40"
           >
             ←
           </button>
@@ -424,10 +430,23 @@ export default function IndustryReel({ accent }: { accent: string }) {
             type="button"
             onClick={() => go(1)}
             aria-label="Next project"
-            className="reel-fade absolute right-0 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full border border-white/15 bg-black/30 backdrop-blur-md text-white flex items-center justify-center transition-colors hover:border-white/40"
+            className="reel-fade absolute right-1 bottom-1 sm:right-2 sm:bottom-2 w-10 h-10 rounded-lg border border-white/10 bg-black/60 backdrop-blur-md text-white flex items-center justify-center transition-colors hover:border-white/40"
           >
             →
           </button>
+
+          <div className="reel-fade absolute inset-x-0 bottom-4 z-10 flex items-center justify-center gap-2 pointer-events-none">
+            {portfolioProjects.map((p, i) => (
+              <button
+                key={p.title}
+                type="button"
+                aria-label={`Show ${p.title}`}
+                onClick={() => selectIndex(i)}
+                className="pointer-events-auto h-1.5 rounded-full transition-all"
+                style={{ width: i === index ? 20 : 6, background: i === index ? accent : 'rgba(255,255,255,0.3)' }}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
