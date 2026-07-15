@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState, type MutableRefObject, type PointerEvent as ReactPointerEvent } from 'react'
 import * as THREE from 'three'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useTexture } from '@react-three/drei'
@@ -125,15 +125,21 @@ function buildRailGeometry(curve: THREE.CatmullRomCurve3, side: 1 | -1, samples:
   return geo
 }
 
+interface RibbonInputRefs {
+  progressRef: MutableRefObject<number>
+  activeRef: MutableRefObject<number>
+  dragExtraRef: MutableRefObject<number>
+  pointerRef: MutableRefObject<{ x: number; y: number }>
+}
+
 function FilmRibbon({
   progressRef,
   activeRef,
+  dragExtraRef,
+  pointerRef,
   accent,
-}: {
-  progressRef: MutableRefObject<number>
-  activeRef: MutableRefObject<number>
-  accent: string
-}) {
+  onSelect,
+}: RibbonInputRefs & { accent: string; onSelect: (i: number) => void }) {
   const groupRef = useRef<THREE.Group>(null)
   const frameRefs = useRef<(THREE.Mesh | null)[]>([])
 
@@ -164,11 +170,22 @@ function FilmRibbon({
   const topGeo = useMemo(() => buildRailGeometry(curve, 1, 140), [curve])
   const bottomGeo = useMemo(() => buildRailGeometry(curve, -1, 140), [curve])
 
-  useFrame(() => {
+  useFrame((state) => {
     const eased = progressRef.current
     if (groupRef.current) {
+      // Idle bob + mouse parallax + drag spin only fade in once the reel
+      // has (mostly) arrived, so they never fight the fly-in itself.
+      const t = state.clock.elapsedTime
+      const bobY = Math.sin(t * 0.6) * 0.06 * eased
+      const bobRotZ = Math.sin(t * 0.5 + 1.3) * 0.015 * eased
+      const parallaxRotY = pointerRef.current.x * 0.12 * eased
+      const parallaxRotX = -pointerRef.current.y * 0.06 * eased
+
       groupRef.current.position.lerpVectors(START_POS, END_POS, eased)
+      groupRef.current.position.y += bobY
       groupRef.current.quaternion.copy(START_QUAT).slerp(END_QUAT, eased)
+      const extra = new THREE.Euler(parallaxRotX, parallaxRotY + dragExtraRef.current * eased, bobRotZ, 'XYZ')
+      groupRef.current.quaternion.multiply(new THREE.Quaternion().setFromEuler(extra))
       groupRef.current.scale.setScalar(THREE.MathUtils.lerp(START_SCALE, END_SCALE, eased))
     }
 
@@ -200,6 +217,17 @@ function FilmRibbon({
             ref={(el) => {
               frameRefs.current[i] = el
             }}
+            onClick={(e) => {
+              e.stopPropagation()
+              onSelect(i)
+            }}
+            onPointerOver={(e) => {
+              e.stopPropagation()
+              document.body.style.cursor = 'pointer'
+            }}
+            onPointerOut={() => {
+              document.body.style.cursor = 'auto'
+            }}
           >
             <planeGeometry args={[FRAME_W, FRAME_H]} />
             <meshStandardMaterial
@@ -228,12 +256,11 @@ function FilmRibbon({
 function FilmReelScene({
   progressRef,
   activeRef,
+  dragExtraRef,
+  pointerRef,
   accent,
-}: {
-  progressRef: MutableRefObject<number>
-  activeRef: MutableRefObject<number>
-  accent: string
-}) {
+  onSelect,
+}: RibbonInputRefs & { accent: string; onSelect: (i: number) => void }) {
   return (
     <Canvas
       camera={{ position: [0, 0.5, 10.5], fov: 44 }}
@@ -244,7 +271,7 @@ function FilmReelScene({
       <directionalLight position={[4, 6, 6]} intensity={1.1} />
       <pointLight position={[-6, -1, 5]} intensity={0.5} color={accent} />
       <Suspense fallback={null}>
-        <FilmRibbon progressRef={progressRef} activeRef={activeRef} accent={accent} />
+        <FilmRibbon progressRef={progressRef} activeRef={activeRef} dragExtraRef={dragExtraRef} pointerRef={pointerRef} accent={accent} onSelect={onSelect} />
       </Suspense>
       <EffectComposer enableNormalPass={false}>
         <Bloom luminanceThreshold={0.35} luminanceSmoothing={0.9} intensity={0.65} mipmapBlur />
@@ -258,6 +285,13 @@ export default function IndustryReel({ accent }: { accent: string }) {
   const progressRef = useRef(0)
   const indexRef = useRef(0)
   const [index, setIndex] = useState(0)
+
+  // Drag-to-spin + mouse parallax state, read every frame inside the
+  // canvas without triggering React re-renders.
+  const dragExtraRef = useRef(0)
+  const pointerRef = useRef({ x: 0, y: 0 })
+  const dragStateRef = useRef({ active: false, startX: 0, lastX: 0 })
+  const [isDragging, setIsDragging] = useState(false)
 
   useEffect(() => {
     indexRef.current = index
@@ -292,6 +326,33 @@ export default function IndustryReel({ accent }: { accent: string }) {
   const go = (delta: number) => setIndex((i) => (i + delta + COUNT) % COUNT)
   const active = portfolioProjects[index]
 
+  const handlePointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    pointerRef.current.x = ((e.clientX - rect.left) / rect.width) * 2 - 1
+    pointerRef.current.y = ((e.clientY - rect.top) / rect.height) * 2 - 1
+    if (dragStateRef.current.active) {
+      const dx = e.clientX - dragStateRef.current.lastX
+      dragStateRef.current.lastX = e.clientX
+      dragExtraRef.current += dx * 0.006
+    }
+  }
+
+  const handlePointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if ((e.target as HTMLElement).closest('button')) return
+    gsap.killTweensOf(dragExtraRef)
+    dragStateRef.current = { active: true, startX: e.clientX, lastX: e.clientX }
+    setIsDragging(true)
+  }
+
+  const endDrag = () => {
+    if (!dragStateRef.current.active) return
+    const totalDx = dragStateRef.current.lastX - dragStateRef.current.startX
+    dragStateRef.current.active = false
+    setIsDragging(false)
+    if (Math.abs(totalDx) > 50) go(totalDx > 0 ? -1 : 1)
+    gsap.to(dragExtraRef, { current: 0, duration: 0.8, ease: 'elastic.out(1, 0.6)' })
+  }
+
   return (
     <section ref={sectionRef} className="relative w-full overflow-hidden py-20 md:py-24">
       <div
@@ -320,8 +381,15 @@ export default function IndustryReel({ accent }: { accent: string }) {
           </div>
         </div>
 
-        <div className="relative h-[46vh] min-h-[340px] max-h-[520px] w-full">
-          <FilmReelScene progressRef={progressRef} activeRef={indexRef} accent={accent} />
+        <div
+          className="relative h-[46vh] min-h-[340px] max-h-[520px] w-full touch-none"
+          style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={endDrag}
+          onPointerLeave={endDrag}
+        >
+          <FilmReelScene progressRef={progressRef} activeRef={indexRef} dragExtraRef={dragExtraRef} pointerRef={pointerRef} accent={accent} onSelect={setIndex} />
 
           <div className="reel-fade absolute left-1 bottom-1 sm:left-3 sm:bottom-3 flex items-center gap-3 pointer-events-none">
             <span
