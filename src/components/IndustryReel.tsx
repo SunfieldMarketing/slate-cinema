@@ -13,65 +13,54 @@ import { portfolioProjects } from '@/lib/portfolio-projects'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const FRAME_W = 2.7
-const FRAME_H = 1.75
-const FRAME_GAP = 0.34
-const RAIL_GAP = 0.16
+const FRAME_W = 2.6
+const FRAME_H = 1.7
+const RAIL_GAP = 0.15
 const RAIL_H = 0.22
 const COUNT = portfolioProjects.length
 
 /*
-  The reel is modelled as an actual roll of film: frames sit at radius R
-  around a winding axis N, with tangent = circumferential direction and
-  facing = radial direction (pointing outward from the roll), exactly like
-  a physical strip wound around a spindle. COILED = small radius, many
-  turns, axis tilted diagonally (reads as a thin distant sliver, edge-on).
-  FLAT = huge radius, a sliver of one turn (reads as a gently bowed strip
-  facing the camera). Progress (0-1) slerps the axis orientation and lerps
-  the radius + center between the two, so the reel visibly unrolls as it
-  flies in.
+  The ribbon's shape never changes — a single S-curve that dips and rises
+  in real depth (Z), not just a flat bow. That depth variation is what
+  gives each frame a different perspective skew along the strip (some
+  face-on, some sharply keystoned), matching a physical filmstrip caught
+  mid-wave instead of a flat curved plane. What animates is the whole
+  ribbon's rigid transform: it starts small, distant and rotated ~80°
+  off-axis (reading as a thin diagonal sliver, exactly like a wide strip
+  seen almost edge-on) and flies to identity as the section scrolls in —
+  a real cinematic fly-in rather than a geometry deformation.
 */
-const R_COILED = 3.1
-const R_FLAT = 17
-const SPIN_COILED = 5.4
+const CURVE_POINTS = [
+  new THREE.Vector3(-9.2, 1.85, 1.3),
+  new THREE.Vector3(-4.6, 0.85, -1.3),
+  new THREE.Vector3(0, 0.3, 0.9),
+  new THREE.Vector3(4.6, 0.95, -1.3),
+  new THREE.Vector3(9.2, 1.9, 1.1),
+]
 
-/*
-  FOCUS_* is where the visible cluster of frames should actually sit in
-  world space (near the camera, in the frustum). The circle CENTER that
-  the frames revolve around is derived from that focus point, offset
-  backward by the radius along the facing direction — for a huge R_FLAT
-  the center itself lands far away, which is expected (only the rim,
-  where the frames are, needs to be near the camera).
-*/
-const FOCUS_COILED = new THREE.Vector3(5.4, 4.9, -6)
-const FOCUS_FLAT = new THREE.Vector3(0, 1.0, 0.4)
+const START_POS = new THREE.Vector3(5.7, 4.6, -8.2)
+const START_QUAT = new THREE.Quaternion().setFromEuler(new THREE.Euler(0.16, 1.32, -0.4, 'XYZ'))
+const START_SCALE = 0.48
+const END_POS = new THREE.Vector3(0, 0, 0)
+const END_QUAT = new THREE.Quaternion()
+const END_SCALE = 1
 
-function orthonormalFromAxis(axis: THREE.Vector3, hint: THREE.Vector3) {
-  const n = axis.clone().normalize()
-  let h = hint
-  if (Math.abs(n.dot(hint)) > 0.98) h = new THREE.Vector3(1, 0, 0)
-  const u = new THREE.Vector3().crossVectors(h, n).normalize()
-  const v = new THREE.Vector3().crossVectors(n, u).normalize()
-  return { u, v, n }
+const worldUp = new THREE.Vector3(0, 1, 0)
+const worldFallback = new THREE.Vector3(0, 0, 1)
+
+function basisAt(curve: THREE.CatmullRomCurve3, u: number) {
+  const point = curve.getPointAt(u)
+  const tangent = curve.getTangentAt(u).normalize()
+  let up = worldUp.clone().sub(tangent.clone().multiplyScalar(tangent.dot(worldUp)))
+  if (up.lengthSq() < 1e-6) up = worldFallback.clone().sub(tangent.clone().multiplyScalar(tangent.dot(worldFallback)))
+  up.normalize()
+  const normal = new THREE.Vector3().crossVectors(tangent, up).normalize()
+  return { point, tangent, up, normal }
 }
-
-const AXIS_COILED = new THREE.Vector3(0.62, 0.5, 0.58)
-const AXIS_FLAT = new THREE.Vector3(0, 1, 0)
-const { u: U_COILED, v: V_COILED, n: N_COILED } = orthonormalFromAxis(AXIS_COILED, new THREE.Vector3(0, 1, 0))
-const { u: U_FLAT, v: V_FLAT, n: N_FLAT } = orthonormalFromAxis(AXIS_FLAT, new THREE.Vector3(0, 1, 0))
-
-const CENTER_COILED = FOCUS_COILED.clone().addScaledVector(U_COILED, -R_COILED)
-const CENTER_FLAT = FOCUS_FLAT.clone().addScaledVector(U_FLAT, -R_FLAT)
 
 function quaternionFromBasis(x: THREE.Vector3, y: THREE.Vector3, z: THREE.Vector3) {
   return new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(x, y, z))
 }
-
-const Q_COILED = quaternionFromBasis(U_COILED, V_COILED, N_COILED)
-const Q_FLAT = quaternionFromBasis(U_FLAT, V_FLAT, N_FLAT)
-const AXIS_X = new THREE.Vector3(1, 0, 0)
-const AXIS_Y = new THREE.Vector3(0, 1, 0)
-const AXIS_Z = new THREE.Vector3(0, 0, 1)
 
 /* Perforated sprocket-hole strip texture, tiled along each rail. */
 function useSprocketTexture() {
@@ -104,35 +93,7 @@ function useSprocketTexture() {
   }, [])
 }
 
-interface CoilState {
-  center: THREE.Vector3
-  U: THREE.Vector3
-  V: THREE.Vector3
-  N: THREE.Vector3
-  R: number
-  spin: number
-}
-
-function coilStateAt(eased: number): CoilState {
-  const q = Q_COILED.clone().slerp(Q_FLAT, eased)
-  return {
-    center: CENTER_COILED.clone().lerp(CENTER_FLAT, eased),
-    U: AXIS_X.clone().applyQuaternion(q),
-    V: AXIS_Y.clone().applyQuaternion(q),
-    N: AXIS_Z.clone().applyQuaternion(q),
-    R: THREE.MathUtils.lerp(R_COILED, R_FLAT, eased),
-    spin: THREE.MathUtils.lerp(SPIN_COILED, 0, eased),
-  }
-}
-
-function pointOnCoil(state: CoilState, theta: number) {
-  const radial = state.U.clone().multiplyScalar(Math.cos(theta)).addScaledVector(state.V, Math.sin(theta))
-  const circumferential = state.U.clone().multiplyScalar(-Math.sin(theta)).addScaledVector(state.V, Math.cos(theta))
-  const point = state.center.clone().addScaledVector(radial, state.R)
-  return { point, radial, circumferential }
-}
-
-function buildRailGeometry(state: CoilState, thetaStart: number, thetaEnd: number, side: 1 | -1, samples: number) {
+function buildRailGeometry(curve: THREE.CatmullRomCurve3, side: 1 | -1, samples: number) {
   const positions: number[] = []
   const uvs: number[] = []
   const indices: number[] = []
@@ -140,14 +101,13 @@ function buildRailGeometry(state: CoilState, thetaStart: number, thetaEnd: numbe
   const uRepeat = 16
 
   for (let i = 0; i <= samples; i++) {
-    const t = i / samples
-    const theta = THREE.MathUtils.lerp(thetaStart, thetaEnd, t)
-    const { point } = pointOnCoil(state, theta)
-    const railCenter = point.clone().addScaledVector(state.N, offset)
-    const top = railCenter.clone().addScaledVector(state.N, RAIL_H / 2)
-    const bottom = railCenter.clone().addScaledVector(state.N, -RAIL_H / 2)
+    const u = i / samples
+    const { point, up } = basisAt(curve, u)
+    const center = point.clone().addScaledVector(up, offset)
+    const top = center.clone().addScaledVector(up, RAIL_H / 2)
+    const bottom = center.clone().addScaledVector(up, -RAIL_H / 2)
     positions.push(top.x, top.y, top.z, bottom.x, bottom.y, bottom.z)
-    uvs.push(t * uRepeat, 1, t * uRepeat, 0)
+    uvs.push(u * uRepeat, 1, u * uRepeat, 0)
     if (i < samples) {
       const a = i * 2
       const b = a + 1
@@ -176,9 +136,6 @@ function FilmRibbon({
 }) {
   const groupRef = useRef<THREE.Group>(null)
   const frameRefs = useRef<(THREE.Mesh | null)[]>([])
-  const bezelRefs = useRef<(THREE.Mesh | null)[]>([])
-  const lastProgress = useRef(-1)
-  const railSamples = 100
 
   const textures = useTexture(portfolioProjects.map((p) => p.url))
   const sprocketTex = useSprocketTexture()
@@ -192,51 +149,30 @@ function FilmRibbon({
 
   const accentColor = useMemo(() => new THREE.Color(accent), [accent])
 
-  const topGeo = useMemo(() => new THREE.BufferGeometry(), [])
-  const bottomGeo = useMemo(() => new THREE.BufferGeometry(), [])
+  const curve = useMemo(() => new THREE.CatmullRomCurve3(CURVE_POINTS, false, 'catmullrom', 0.6), [])
+
+  const frameTransforms = useMemo(
+    () =>
+      portfolioProjects.map((_, i) => {
+        const u = (i + 0.5) / COUNT
+        const { point, tangent, up, normal } = basisAt(curve, u)
+        return { point, quat: quaternionFromBasis(tangent, up, normal), bezelPoint: point.clone().addScaledVector(normal, -0.02) }
+      }),
+    [curve]
+  )
+
+  const topGeo = useMemo(() => buildRailGeometry(curve, 1, 140), [curve])
+  const bottomGeo = useMemo(() => buildRailGeometry(curve, -1, 140), [curve])
 
   useFrame(() => {
-    const progress = progressRef.current
-    const changed = Math.abs(progress - lastProgress.current) > 0.0006
-    if (changed) {
-      lastProgress.current = progress
-      const eased = THREE.MathUtils.smoothstep(progress, 0, 1)
-      const state = coilStateAt(eased)
-      const anglePerFrame = (FRAME_W + FRAME_GAP) / state.R
-      const half = (COUNT - 1) / 2
-
-      for (let i = 0; i < COUNT; i++) {
-        const theta = (i - half) * anglePerFrame + state.spin
-        const { point, radial, circumferential } = pointOnCoil(state, theta)
-        const q = quaternionFromBasis(circumferential, state.N, radial)
-        const frame = frameRefs.current[i]
-        const bezel = bezelRefs.current[i]
-        if (frame) {
-          frame.position.copy(point)
-          frame.quaternion.copy(q)
-        }
-        if (bezel) {
-          bezel.position.copy(point).addScaledVector(radial, -0.02)
-          bezel.quaternion.copy(q)
-        }
-      }
-
-      const pad = anglePerFrame * 0.6
-      const thetaStart = -half * anglePerFrame - pad + state.spin
-      const thetaEnd = half * anglePerFrame + pad + state.spin
-      const newTop = buildRailGeometry(state, thetaStart, thetaEnd, 1, railSamples)
-      const newBottom = buildRailGeometry(state, thetaStart, thetaEnd, -1, railSamples)
-      topGeo.setAttribute('position', newTop.getAttribute('position'))
-      topGeo.setAttribute('uv', newTop.getAttribute('uv'))
-      topGeo.setIndex(newTop.getIndex())
-      topGeo.computeVertexNormals()
-      bottomGeo.setAttribute('position', newBottom.getAttribute('position'))
-      bottomGeo.setAttribute('uv', newBottom.getAttribute('uv'))
-      bottomGeo.setIndex(newBottom.getIndex())
-      bottomGeo.computeVertexNormals()
+    const eased = progressRef.current
+    if (groupRef.current) {
+      groupRef.current.position.lerpVectors(START_POS, END_POS, eased)
+      groupRef.current.quaternion.copy(START_QUAT).slerp(END_QUAT, eased)
+      groupRef.current.scale.setScalar(THREE.MathUtils.lerp(START_SCALE, END_SCALE, eased))
     }
 
-    // Highlight whichever frame is active, independent of the fly-in progress.
+    // Highlight whichever frame is active.
     for (let i = 0; i < COUNT; i++) {
       const frame = frameRefs.current[i]
       if (!frame) continue
@@ -254,15 +190,13 @@ function FilmRibbon({
     <group ref={groupRef}>
       {portfolioProjects.map((p, i) => (
         <group key={p.title}>
-          <mesh
-            ref={(el) => {
-              bezelRefs.current[i] = el
-            }}
-          >
+          <mesh position={frameTransforms[i].bezelPoint} quaternion={frameTransforms[i].quat}>
             <planeGeometry args={[FRAME_W + 0.14, FRAME_H + 0.14]} />
             <meshBasicMaterial color="#05070c" side={THREE.DoubleSide} />
           </mesh>
           <mesh
+            position={frameTransforms[i].point}
+            quaternion={frameTransforms[i].quat}
             ref={(el) => {
               frameRefs.current[i] = el
             }}
@@ -302,7 +236,7 @@ function FilmReelScene({
 }) {
   return (
     <Canvas
-      camera={{ position: [0, 0.3, 10.5], fov: 44 }}
+      camera={{ position: [0, 0.5, 10.5], fov: 44 }}
       dpr={[1, 2]}
       gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
     >
@@ -345,7 +279,7 @@ export default function IndustryReel({ accent }: { accent: string }) {
           gsap.to(progressRef, {
             current: 1,
             duration: 2.6,
-            ease: 'power2.out',
+            ease: 'power3.inOut',
             scrollTrigger: { trigger: sectionRef.current, start: 'top 78%', once: true },
           })
         }
