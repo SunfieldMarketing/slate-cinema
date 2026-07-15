@@ -13,6 +13,10 @@ import PageHero from '@/components/ui/PageHero'
 import StatsBand from '@/components/ui/StatsBand'
 import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
 import { Lens } from '@/components/ui/lens'
+import IndustryReel from '@/components/IndustryReel'
+import IndustryFormats from '@/components/IndustryFormats'
+import IndustryProcess from '@/components/IndustryProcess'
+import IndustryFaq from '@/components/IndustryFaq'
 import { getIndustryBySlug, type IndustryData } from '@/lib/industries'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -64,21 +68,48 @@ function GallerySection({ industry }: { industry: IndustryData }) {
     return () => ctx.revert()
   }, { scope: ref })
 
+  const caseStudies = industry.caseStudies
+
   return (
-    <section ref={ref} className="relative w-full overflow-hidden py-20 md:py-24">
+    <section ref={ref} id="gallery" className="relative w-full overflow-hidden py-20 md:py-24">
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         <div className="text-center mb-12 max-w-2xl mx-auto">
           <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase block mb-4" style={{ color: industry.accent }}>The Work</span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.05]">A closer look</h2>
         </div>
-        <div className="gal-grid grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {industry.gallery.map((src, i) => (
-            <div key={i} className="gal-tile relative rounded-2xl overflow-hidden border border-white/10 aspect-[4/5]">
-              <img src={src} alt={`${industry.label} shot ${i + 1}`} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out hover:scale-110" />
-              <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent" />
-            </div>
-          ))}
-        </div>
+
+        {caseStudies ? (
+          <div className="gal-grid grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {caseStudies.map((cs) => (
+              <div key={cs.title} className="gal-tile group relative rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02]">
+                <div className="relative aspect-[4/3]">
+                  <img src={cs.image} alt={cs.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
+                  <span
+                    className="absolute top-3 left-3 font-mono text-[9px] tracking-[0.2em] uppercase px-2.5 py-1.5 rounded-full backdrop-blur-md border whitespace-nowrap"
+                    style={{ color: industry.accent, borderColor: `${industry.accent}55`, backgroundColor: 'rgba(5,7,12,0.75)' }}
+                  >
+                    {cs.category}
+                  </span>
+                </div>
+                <div className="p-5">
+                  <h3 className="text-base font-semibold text-white mb-1.5">{cs.title}</h3>
+                  <p className="text-xs text-white/55 leading-relaxed font-light mb-3.5">{cs.description}</p>
+                  <div className="font-mono text-[11px] tracking-[0.1em]" style={{ color: industry.accent }}>{cs.stat}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="gal-grid grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {industry.gallery.map((src, i) => (
+              <div key={i} className="gal-tile relative rounded-2xl overflow-hidden border border-white/10 aspect-[4/5]">
+                <img src={src} alt={`${industry.label} shot ${i + 1}`} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out hover:scale-110" />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent" />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )
@@ -135,12 +166,20 @@ export default function IndustryPageContent({ slug }: { slug: string }) {
 
         <IntroSection industry={industry} />
 
+        {industry.reel && <IndustryReel projects={industry.reel} accent={industry.accent} />}
+
         <GallerySection industry={industry} />
 
         <TestimonialSection industry={industry} />
 
+        {industry.formats && <IndustryFormats formats={industry.formats} accent={industry.accent} />}
+
+        {industry.process && <IndustryProcess steps={industry.process} accent={industry.accent} />}
+
         {/* Reuse the shared filterable grid — same "everything we've made" view as the main Portfolio page */}
         <Portfolio />
+
+        {industry.faqs && <IndustryFaq faqs={industry.faqs} accent={industry.accent} />}
 
         <FinalCTA />
 

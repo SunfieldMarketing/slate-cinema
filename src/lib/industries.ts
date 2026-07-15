@@ -7,6 +7,42 @@ export interface IndustryStat {
   label: string
 }
 
+/** A single flagship project shown in the industry-page reel carousel. */
+export interface IndustryReelProject {
+  name: string
+  kind: string
+  /** Hue (0-360) driving the reel's ambient glow for this project. */
+  hue: number
+  copy: string
+  stat: string
+}
+
+/** A "closer look" gallery tile, upgraded to a focused case-study card. */
+export interface IndustryCaseStudy {
+  image: string
+  category: string
+  title: string
+  stat: string
+  description: string
+}
+
+export interface IndustryFormat {
+  title: string
+  description: string
+  meta: string
+}
+
+export interface IndustryProcessStep {
+  week: string
+  title: string
+  body: string
+}
+
+export interface IndustryFaq {
+  question: string
+  answer: string
+}
+
 export interface IndustryData {
   id: string
   slug: string
@@ -24,6 +60,17 @@ export interface IndustryData {
   stats: IndustryStat[]
   services: string[]
   testimonial: { quote: string; name: string; role: string; company: string }
+  /**
+   * Extended industry-page sections (reel carousel, case studies, formats,
+   * process timeline, FAQ). Optional and currently only populated for
+   * Animation — any industry gains these sections automatically once its
+   * data is filled in, no component changes needed.
+   */
+  reel?: IndustryReelProject[]
+  caseStudies?: IndustryCaseStudy[]
+  formats?: IndustryFormat[]
+  process?: IndustryProcessStep[]
+  faqs?: IndustryFaq[]
 }
 
 export const industries: IndustryData[] = [
@@ -51,6 +98,57 @@ export const industries: IndustryData[] = [
     ],
     services: ['Explainer videos', 'Motion brand identity', '2D & 3D character work', 'Kinetic typography'],
     testimonial: { quote: 'They turned an eight-page technical deck into a 45-second video our sales team actually uses.', name: 'Priya Sharma', role: 'Head of Product Marketing', company: 'Nimbus Systems' },
+    reel: [
+      { name: 'Voltbrew', kind: 'Product CGI', hue: 210, copy: 'Carbonation sim and macro renders for a DTC energy launch.', stat: '+212% PDP conversion' },
+      { name: 'Playgrid', kind: 'Game Launch Trailer', hue: 226, copy: '60-second cinematic plus twelve social cutdowns for launch week.', stat: '2.1M views in week 1' },
+      { name: 'Nordform', kind: 'Assembly Explainer', hue: 200, copy: 'Flat-pack assembly explained with zero words, one continuous take.', stat: '-34% support tickets' },
+      { name: 'Kinetic Coffee', kind: 'Character Mascot', hue: 232, copy: 'A bean with opinions — a 22-spot social season.', stat: '+61% brand recall' },
+      { name: 'Halcyon Bank', kind: 'Motion Branding', hue: 206, copy: 'Logo language and broadcast package across nine teams.', stat: 'One system, 9 teams' },
+    ],
+    caseStudies: [
+      {
+        image: '/images/ind_anim_gal1.png',
+        category: 'Product CGI',
+        title: 'Voltbrew — Launch Film',
+        stat: '+212% PDP conversion',
+        description: 'A carbonation sim and macro product renders replaced a live shoot entirely for a DTC energy-drink launch, cutting production time from six weeks to two.',
+      },
+      {
+        image: '/images/ind_anim_gal2.png',
+        category: 'Assembly Explainer',
+        title: 'Nordform — Zero-Words Assembly',
+        stat: '-34% support tickets',
+        description: 'One continuous animated take replaced a 40-page paper manual, explained with motion alone so it reads the same in every language Nordform ships to.',
+      },
+      {
+        image: '/images/ind_anim_gal3.png',
+        category: 'Character Mascot',
+        title: 'Kinetic Coffee — Season One',
+        stat: '+61% brand recall',
+        description: 'A 22-spot social season built around a single recurring character — same rig, same crew, every sprint — so the brand voice never drifted.',
+      },
+    ],
+    formats: [
+      { title: 'Explainers', description: 'Complex products in 90 seconds anyone can follow.', meta: '60–120s · 4–6 wks' },
+      { title: 'Product & CGI', description: "Photoreal renders when the real thing can't be filmed.", meta: '30–60s · 5–7 wks' },
+      { title: 'Motion branding', description: 'Logo language and a motion spec your org can reuse.', meta: 'System · 3–5 wks' },
+      { title: 'Character', description: 'A recurring face for the brand, every platform.', meta: 'Season · 6–8 wks' },
+      { title: 'Social loops', description: 'Seamless, sound-off loops engineered for the scroll.', meta: '6–15s × N · 2–4 wks' },
+    ],
+    process: [
+      { week: 'Wk 1', title: 'Discover', body: 'Goals, audience and references — then a one-page brief.' },
+      { week: 'Wk 1–2', title: 'Script & boards', body: 'Story signed off as boards and a timed animatic.' },
+      { week: 'Wk 2–3', title: 'Design', body: "Style frames and asset builds — the film's world, decided." },
+      { week: 'Wk 3–5', title: 'Animate', body: 'Motion, sim and sound with two review checkpoints.' },
+      { week: 'Wk 6', title: 'Deliver', body: 'Grade, mix, every ratio — source files included.' },
+    ],
+    faqs: [
+      { question: 'How fast can you deliver?', answer: "Standard explainers run 4–6 weeks from kickoff to delivery. Rush lanes exist for launches — ask, and we'll tell you honestly what's possible without cutting corners." },
+      { question: 'What do you need from us to start?', answer: 'One stakeholder, one hour, and whatever exists — decks, CAD files, brand guides, competitor links. We handle script, boards and everything downstream.' },
+      { question: 'Do you work from our brand guidelines?', answer: "Yes — and if the guidelines don't cover motion, we'll extend them: easing curves, transitions and a mini motion spec your other vendors can reuse." },
+      { question: 'Who owns the work?', answer: 'You do. Full usage rights on every deliverable, every platform, in perpetuity — plus source files on final invoice.' },
+      { question: 'What if we hate the first cut?', answer: "You won't see a first cut cold — you approve boards and an animatic first, so animation holds no surprises. Two structured revision rounds are built in regardless." },
+    ],
   },
   {
     id: 'athletics',
