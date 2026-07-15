@@ -166,7 +166,7 @@ export default function IndustryPageContent({ slug }: { slug: string }) {
 
         <IntroSection industry={industry} />
 
-        {industry.reel && <IndustryReel projects={industry.reel} accent={industry.accent} />}
+        <IndustryReel accent={industry.accent} />
 
         <GallerySection industry={industry} />
 

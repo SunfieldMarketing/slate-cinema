@@ -5,28 +5,9 @@ import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { Play, ArrowUpRight } from 'lucide-react'
+import { portfolioProjects as projects } from '@/lib/portfolio-projects'
 
 gsap.registerPlugin(ScrollTrigger)
-
-interface Project {
-  title: string
-  category: string
-  company: string
-  url: string
-  metrics: { label: string; value: string }[]
-  span?: 'wide' | 'tall' | 'normal'
-}
-
-const projects: Project[] = [
-  { title: 'Neon Nights', category: 'Commercial', company: 'HyperDrive Motors', url: '/images/portfolio-brand.png', metrics: [{ label: 'Views', value: '4.2M' }, { label: 'Conv.', value: '+34%' }], span: 'wide' },
-  { title: 'Velocity', category: 'Social', company: 'Apex Athletics', url: '/images/portfolio-social.png', metrics: [{ label: 'Reach', value: '12.1M' }, { label: 'Engage', value: '18.5%' }], span: 'tall' },
-  { title: 'The Blueprint', category: 'Documentary', company: 'Nexus Architecture', url: '/images/portfolio-production.png', metrics: [{ label: 'Brand Lift', value: '+45%' }, { label: 'Watch', value: '1:45' }] },
-  { title: 'Ascension', category: 'Event', company: 'Summit Conf.', url: '/images/portfolio-event.png', metrics: [{ label: 'Attendees', value: '15k+' }, { label: 'Shares', value: '4.8k' }] },
-  { title: 'Automotive Cinema', category: 'Action', company: 'Velocity Co', url: '/images/portfolio_auto_bright.png', metrics: [{ label: 'Views', value: '8.4M' }, { label: 'Shares', value: '245k' }], span: 'tall' },
-  { title: 'Product Focus', category: 'E-Commerce', company: 'Lumiere Beauty', url: '/images/portfolio_beauty_bright.png', metrics: [{ label: 'ROAS', value: '4.2x' }, { label: 'Sales', value: '+$1.2M' }] },
-  { title: 'Aerial Cinematography', category: 'Drone', company: 'Vista Real Estate', url: '/images/portfolio_realestate_bright.png', metrics: [{ label: 'Watch', value: '98%' }, { label: 'Shares', value: '12k' }], span: 'wide' },
-  { title: 'Impact Film', category: 'Narrative', company: 'Global Health Org', url: '/images/portfolio_impact_bright.png', metrics: [{ label: 'Awards', value: '3' }, { label: 'Views', value: '1.1M' }] },
-]
 
 const filters = ['All', 'Commercial', 'Social', 'Documentary', 'Event', 'Action']
 

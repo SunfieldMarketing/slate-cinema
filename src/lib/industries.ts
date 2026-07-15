@@ -7,16 +7,6 @@ export interface IndustryStat {
   label: string
 }
 
-/** A single flagship project shown in the industry-page reel carousel. */
-export interface IndustryReelProject {
-  name: string
-  kind: string
-  /** Hue (0-360) driving the reel's ambient glow for this project. */
-  hue: number
-  copy: string
-  stat: string
-}
-
 /** A "closer look" gallery tile, upgraded to a focused case-study card. */
 export interface IndustryCaseStudy {
   image: string
@@ -61,12 +51,13 @@ export interface IndustryData {
   services: string[]
   testimonial: { quote: string; name: string; role: string; company: string }
   /**
-   * Extended industry-page sections (reel carousel, case studies, formats,
-   * process timeline, FAQ). Optional and currently only populated for
-   * Animation — any industry gains these sections automatically once its
-   * data is filled in, no component changes needed.
+   * Extended industry-page sections (case studies, formats, process
+   * timeline, FAQ). Optional and currently only populated for Animation —
+   * any industry gains these sections automatically once its data is
+   * filled in, no component changes needed. The reel showcase itself is
+   * global (see IndustryReel.tsx / portfolio-projects.ts) and needs no
+   * per-industry data.
    */
-  reel?: IndustryReelProject[]
   caseStudies?: IndustryCaseStudy[]
   formats?: IndustryFormat[]
   process?: IndustryProcessStep[]
@@ -98,13 +89,6 @@ export const industries: IndustryData[] = [
     ],
     services: ['Explainer videos', 'Motion brand identity', '2D & 3D character work', 'Kinetic typography'],
     testimonial: { quote: 'They turned an eight-page technical deck into a 45-second video our sales team actually uses.', name: 'Priya Sharma', role: 'Head of Product Marketing', company: 'Nimbus Systems' },
-    reel: [
-      { name: 'Voltbrew', kind: 'Product CGI', hue: 210, copy: 'Carbonation sim and macro renders for a DTC energy launch.', stat: '+212% PDP conversion' },
-      { name: 'Playgrid', kind: 'Game Launch Trailer', hue: 226, copy: '60-second cinematic plus twelve social cutdowns for launch week.', stat: '2.1M views in week 1' },
-      { name: 'Nordform', kind: 'Assembly Explainer', hue: 200, copy: 'Flat-pack assembly explained with zero words, one continuous take.', stat: '-34% support tickets' },
-      { name: 'Kinetic Coffee', kind: 'Character Mascot', hue: 232, copy: 'A bean with opinions — a 22-spot social season.', stat: '+61% brand recall' },
-      { name: 'Halcyon Bank', kind: 'Motion Branding', hue: 206, copy: 'Logo language and broadcast package across nine teams.', stat: 'One system, 9 teams' },
-    ],
     caseStudies: [
       {
         image: '/images/ind_anim_gal1.png',
