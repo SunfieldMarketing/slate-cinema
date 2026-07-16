@@ -43,19 +43,22 @@ const STEP = (2 * Math.PI) / SLOTS
 const FRAME_ARC = FRAME_W / RADIUS
 
 /*
-  Fly-in choreography: the band starts close-ish but steeply tilted (a
-  loose reel caught mid-air), and each channel resolves on its own curve —
-  position arrives early, the tilt rights itself late, and the band spins
-  around its own axis as it settles (the film visibly "unspooling" into
-  the carousel) — so mid-flight it reads as a big tilted strip sweeping
-  past the camera rather than a small ring gliding in.
+  Fly-in choreography, keyframed to the reference sequence: the strip
+  first appears as a tiny, nearly edge-on sliver deep in the fog (barely
+  a couple of frames catching light), swoops forward into a large canted
+  band hanging right-of-center with its frames readable, then rights
+  itself and settles into the carousel. The band also spins around its
+  own axis throughout (the "unspool"), so film visibly streams past as
+  it arrives. Each segment eases through its keyframe so the two flight
+  poses register instead of blurring by.
 */
-const START_POS = new THREE.Vector3(5.5, 3.4, -15)
-const START_QUAT = new THREE.Quaternion().setFromEuler(new THREE.Euler(0.6, 0.9, -0.4, 'XYZ'))
-const START_SCALE = 0.5
-const END_POS = new THREE.Vector3(0, 0.3, -10.8)
-const END_QUAT = new THREE.Quaternion().setFromEuler(new THREE.Euler(0.035, 0, 0.02, 'XYZ'))
-const END_SCALE = 1
+const quatFromEuler = (x: number, y: number, z: number) => new THREE.Quaternion().setFromEuler(new THREE.Euler(x, y, z, 'XYZ'))
+const FLY_KEYFRAMES = [
+  { pos: new THREE.Vector3(6.2, 4.2, -30), quat: quatFromEuler(0.55, 1.25, -0.5), scale: 0.32 },
+  { pos: new THREE.Vector3(2.8, 1.9, -14.5), quat: quatFromEuler(0.42, 0.55, -0.28), scale: 0.62 },
+  { pos: new THREE.Vector3(0, 0.3, -10.8), quat: quatFromEuler(0.035, 0, 0.02), scale: 1 },
+]
+const FLY_SPLIT = 0.55
 const UNSPOOL_TURNS = 2.6
 
 /* Perforated sprocket-hole strip texture, tiled around each rail ring. */
@@ -191,24 +194,26 @@ function FilmBand({
     const p = progressRef.current
     const t = state.clock.elapsedTime
 
-    // Per-channel curves: position/scale lead, tilt trails, so the band is
-    // already big and close while still visibly canted mid-flight.
-    const posT = 1 - Math.pow(1 - p, 1.7)
-    const tiltT = Math.pow(p, 1.5)
-    const scaleT = 1 - Math.pow(1 - p, 1.4)
-
     if (flyRef.current) {
+      // Pick the keyframe segment and ease through it, so the flight
+      // lingers at each reference pose instead of blurring past it.
+      const seg = p < FLY_SPLIT ? 0 : 1
+      const lt = seg === 0 ? p / FLY_SPLIT : (p - FLY_SPLIT) / (1 - FLY_SPLIT)
+      const s = lt * lt * (3 - 2 * lt)
+      const a = FLY_KEYFRAMES[seg]
+      const b = FLY_KEYFRAMES[seg + 1]
+
       const bobY = Math.sin(t * 0.55) * 0.07 * p
       const bobRotZ = Math.sin(t * 0.45 + 1.3) * 0.012 * p
       const parallaxRotY = pointerRef.current.x * 0.09 * p
       const parallaxRotX = -pointerRef.current.y * 0.05 * p
 
-      flyRef.current.position.lerpVectors(START_POS, END_POS, posT)
+      flyRef.current.position.lerpVectors(a.pos, b.pos, s)
       flyRef.current.position.y += bobY
-      flyRef.current.quaternion.copy(START_QUAT).slerp(END_QUAT, tiltT)
+      flyRef.current.quaternion.copy(a.quat).slerp(b.quat, s)
       const extra = new THREE.Euler(parallaxRotX, parallaxRotY, bobRotZ, 'XYZ')
       flyRef.current.quaternion.multiply(new THREE.Quaternion().setFromEuler(extra))
-      flyRef.current.scale.setScalar(THREE.MathUtils.lerp(START_SCALE, END_SCALE, scaleT))
+      flyRef.current.scale.setScalar(THREE.MathUtils.lerp(a.scale, b.scale, s))
     }
 
     if (spinGroupRef.current) {
@@ -360,8 +365,10 @@ export default function IndustryReel({ accent }: { accent: string }) {
         } else {
           gsap.to(progressRef, {
             current: 1,
-            duration: 2.6,
-            ease: 'power3.inOut',
+            // Segments ease individually (smoothstep per keyframe), so the
+            // master progress runs linear to avoid double-easing stalls.
+            duration: 3.4,
+            ease: 'none',
             scrollTrigger: { trigger: sectionRef.current, start: 'top 78%', once: true },
           })
         }
