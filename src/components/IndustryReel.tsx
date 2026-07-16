@@ -24,22 +24,39 @@ gsap.registerPlugin(ScrollTrigger)
   pose (reading as a loose reel tumbling in) down to its resting tilt.
 */
 const FRAME_W = 6.4
-const FRAME_H = 4.0
-const GAP = 1.15
+const FRAME_H = 4.4
+const GAP = 0.55
+const BORDER = 0.14
 const SPACING = FRAME_W + GAP
-const RAIL_GAP = 0.22
-const RAIL_H = 0.3
+const RAIL_GAP = 0.15
+const RAIL_H = 0.26
 const COUNT = portfolioProjects.length
-const RADIUS = (COUNT * SPACING) / (2 * Math.PI)
-const STEP = (2 * Math.PI) / COUNT
+/*
+  Each project appears twice around the loop (16 slots), doubling the
+  ring's radius so the band sweeps nearly the full viewport width — like
+  the reference — while the front frame stays the same apparent size.
+  Navigation happens in slots; the active *project* is slot % COUNT.
+*/
+const SLOTS = COUNT * 2
+const RADIUS = (SLOTS * SPACING) / (2 * Math.PI)
+const STEP = (2 * Math.PI) / SLOTS
 const FRAME_ARC = FRAME_W / RADIUS
 
-const START_POS = new THREE.Vector3(7.5, 6.0, -16)
-const START_QUAT = new THREE.Quaternion().setFromEuler(new THREE.Euler(0.85, 0.7, -0.45, 'XYZ'))
-const START_SCALE = 0.4
-const END_POS = new THREE.Vector3(0, -0.2, -2.2)
-const END_QUAT = new THREE.Quaternion().setFromEuler(new THREE.Euler(0.12, 0, 0.03, 'XYZ'))
+/*
+  Fly-in choreography: the band starts close-ish but steeply tilted (a
+  loose reel caught mid-air), and each channel resolves on its own curve —
+  position arrives early, the tilt rights itself late, and the band spins
+  around its own axis as it settles (the film visibly "unspooling" into
+  the carousel) — so mid-flight it reads as a big tilted strip sweeping
+  past the camera rather than a small ring gliding in.
+*/
+const START_POS = new THREE.Vector3(5.5, 3.4, -15)
+const START_QUAT = new THREE.Quaternion().setFromEuler(new THREE.Euler(0.6, 0.9, -0.4, 'XYZ'))
+const START_SCALE = 0.5
+const END_POS = new THREE.Vector3(0, 0.3, -10.8)
+const END_QUAT = new THREE.Quaternion().setFromEuler(new THREE.Euler(0.035, 0, 0.02, 'XYZ'))
 const END_SCALE = 1
+const UNSPOOL_TURNS = 2.6
 
 /* Perforated sprocket-hole strip texture, tiled around each rail ring. */
 function useSprocketTexture() {
@@ -48,12 +65,12 @@ function useSprocketTexture() {
     canvas.width = 128
     canvas.height = 64
     const ctx = canvas.getContext('2d')!
-    ctx.fillStyle = '#05070c'
+    ctx.fillStyle = '#04060b'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
-    ctx.fillStyle = '#e8ecf2'
-    const holeW = 46
-    const holeH = 34
-    const r = 8
+    ctx.fillStyle = '#aab4c4'
+    const holeW = 28
+    const holeH = 20
+    const r = 6
     const x = (canvas.width - holeW) / 2
     const y = (canvas.height - holeH) / 2
     ctx.beginPath()
@@ -68,7 +85,7 @@ function useSprocketTexture() {
     tex.wrapS = THREE.RepeatWrapping
     tex.wrapT = THREE.ClampToEdgeWrapping
     tex.colorSpace = THREE.SRGBColorSpace
-    tex.repeat.set(84, 1)
+    tex.repeat.set(110, 1)
     return tex
   }, [])
 }
@@ -106,23 +123,44 @@ function FilmBand({
 
   const accentColor = useMemo(() => new THREE.Color(accent), [accent])
 
-  // Curved cylinder segment per frame, already placed at its angle around
+  const slots = useMemo(() => Array.from({ length: SLOTS }, (_, j) => j), [])
+
+  // Curved cylinder segment per slot, already placed at its angle around
   // the ring, so the mesh transform stays identity and highlight-scaling
   // pops the frame radially outward.
   const frameGeos = useMemo(
+    () => slots.map((j) => new THREE.CylinderGeometry(RADIUS, RADIUS, FRAME_H, 32, 1, true, j * STEP - FRAME_ARC / 2, FRAME_ARC)),
+    [slots]
+  )
+
+  // White slide-film border behind each image, slightly recessed and a
+  // touch larger so it reads as a printed frame edge around the picture.
+  const borderGeos = useMemo(
     () =>
-      portfolioProjects.map((_, i) => new THREE.CylinderGeometry(RADIUS, RADIUS, FRAME_H, 32, 1, true, i * STEP - FRAME_ARC / 2, FRAME_ARC)),
-    []
+      slots.map(
+        (j) =>
+          new THREE.CylinderGeometry(
+            RADIUS - 0.008,
+            RADIUS - 0.008,
+            FRAME_H + BORDER * 2,
+            32,
+            1,
+            true,
+            j * STEP - (FRAME_ARC + (BORDER * 2) / RADIUS) / 2,
+            FRAME_ARC + (BORDER * 2) / RADIUS
+          )
+      ),
+    [slots]
   )
 
   // Dark film base between frames, slightly recessed so it never z-fights.
   const fillerGeos = useMemo(
     () =>
-      portfolioProjects.map((_, i) => {
+      slots.map((j) => {
         const ovl = 0.12 / RADIUS
-        return new THREE.CylinderGeometry(RADIUS - 0.02, RADIUS - 0.02, FRAME_H + 0.12, 12, 1, true, i * STEP + FRAME_ARC / 2 - ovl, STEP - FRAME_ARC + ovl * 2)
+        return new THREE.CylinderGeometry(RADIUS - 0.02, RADIUS - 0.02, FRAME_H + 0.4, 12, 1, true, j * STEP + FRAME_ARC / 2 - ovl, STEP - FRAME_ARC + ovl * 2)
       }),
-    []
+    [slots]
   )
 
   // Dark margins between the image edge and each sprocket rail.
@@ -131,7 +169,7 @@ function FilmBand({
       [1, -1].map((s) => {
         const yInner = s * (FRAME_H / 2 - 0.04)
         const yOuter = s * (FRAME_H / 2 + RAIL_GAP + 0.02)
-        const g = new THREE.CylinderGeometry(RADIUS - 0.015, RADIUS - 0.015, Math.abs(yOuter - yInner), 128, 1, true)
+        const g = new THREE.CylinderGeometry(RADIUS - 0.015, RADIUS - 0.015, Math.abs(yOuter - yInner), 200, 1, true)
         g.translate(0, (yInner + yOuter) / 2, 0)
         return g
       }),
@@ -142,7 +180,7 @@ function FilmBand({
   const railGeos = useMemo(
     () =>
       [1, -1].map((s) => {
-        const g = new THREE.CylinderGeometry(RADIUS, RADIUS, RAIL_H, 160, 1, true)
+        const g = new THREE.CylinderGeometry(RADIUS, RADIUS, RAIL_H, 256, 1, true)
         g.translate(0, s * (FRAME_H / 2 + RAIL_GAP + RAIL_H / 2), 0)
         return g
       }),
@@ -150,33 +188,41 @@ function FilmBand({
   )
 
   useFrame((state) => {
-    const eased = progressRef.current
+    const p = progressRef.current
     const t = state.clock.elapsedTime
 
-    if (flyRef.current) {
-      const bobY = Math.sin(t * 0.55) * 0.07 * eased
-      const bobRotZ = Math.sin(t * 0.45 + 1.3) * 0.012 * eased
-      const parallaxRotY = pointerRef.current.x * 0.09 * eased
-      const parallaxRotX = -pointerRef.current.y * 0.05 * eased
+    // Per-channel curves: position/scale lead, tilt trails, so the band is
+    // already big and close while still visibly canted mid-flight.
+    const posT = 1 - Math.pow(1 - p, 1.7)
+    const tiltT = Math.pow(p, 1.5)
+    const scaleT = 1 - Math.pow(1 - p, 1.4)
 
-      flyRef.current.position.lerpVectors(START_POS, END_POS, eased)
+    if (flyRef.current) {
+      const bobY = Math.sin(t * 0.55) * 0.07 * p
+      const bobRotZ = Math.sin(t * 0.45 + 1.3) * 0.012 * p
+      const parallaxRotY = pointerRef.current.x * 0.09 * p
+      const parallaxRotX = -pointerRef.current.y * 0.05 * p
+
+      flyRef.current.position.lerpVectors(START_POS, END_POS, posT)
       flyRef.current.position.y += bobY
-      flyRef.current.quaternion.copy(START_QUAT).slerp(END_QUAT, eased)
+      flyRef.current.quaternion.copy(START_QUAT).slerp(END_QUAT, tiltT)
       const extra = new THREE.Euler(parallaxRotX, parallaxRotY, bobRotZ, 'XYZ')
       flyRef.current.quaternion.multiply(new THREE.Quaternion().setFromEuler(extra))
-      flyRef.current.scale.setScalar(THREE.MathUtils.lerp(START_SCALE, END_SCALE, eased))
+      flyRef.current.scale.setScalar(THREE.MathUtils.lerp(START_SCALE, END_SCALE, scaleT))
     }
 
     if (spinGroupRef.current) {
-      spinGroupRef.current.rotation.y = spinRef.current + dragExtraRef.current
+      // The unspool: the band arrives mid-spin and rotates to rest.
+      const unspool = Math.pow(1 - p, 1.3) * UNSPOOL_TURNS
+      spinGroupRef.current.rotation.y = spinRef.current + dragExtraRef.current + unspool
     }
 
-    // Brighten whichever frame is active; pop it slightly outward.
-    for (let i = 0; i < COUNT; i++) {
-      const frame = frameRefs.current[i]
+    // Brighten whichever project is active; pop its frames slightly outward.
+    for (let j = 0; j < SLOTS; j++) {
+      const frame = frameRefs.current[j]
       if (!frame) continue
-      const isActive = i === activeRef.current
-      const targetScale = isActive ? 1.03 : 1
+      const isActive = j % COUNT === activeRef.current
+      const targetScale = isActive ? 1.02 : 1
       const s = THREE.MathUtils.lerp(frame.scale.x, targetScale, 0.1)
       frame.scale.setScalar(s)
       const mat = frame.material as THREE.MeshStandardMaterial
@@ -188,17 +234,17 @@ function FilmBand({
   return (
     <group ref={flyRef}>
       <group ref={spinGroupRef}>
-        {portfolioProjects.map((p, i) => (
+        {slots.map((j) => (
           <mesh
-            key={p.title}
-            geometry={frameGeos[i]}
+            key={`slot-${j}`}
+            geometry={frameGeos[j]}
             ref={(el) => {
-              frameRefs.current[i] = el
+              frameRefs.current[j] = el
             }}
             onClick={(e) => {
               if (e.delta > 8) return
               e.stopPropagation()
-              onSelect(i)
+              onSelect(j)
             }}
             onPointerOver={(e) => {
               e.stopPropagation()
@@ -209,7 +255,7 @@ function FilmBand({
             }}
           >
             <meshStandardMaterial
-              map={textures[i]}
+              map={textures[j % COUNT]}
               emissive={accentColor}
               emissiveIntensity={0}
               roughness={0.55}
@@ -220,6 +266,11 @@ function FilmBand({
           </mesh>
         ))}
 
+        {borderGeos.map((g, i) => (
+          <mesh key={`border-${i}`} geometry={g}>
+            <meshStandardMaterial color="#dfe3e8" roughness={0.7} metalness={0} side={THREE.DoubleSide} />
+          </mesh>
+        ))}
         {fillerGeos.map((g, i) => (
           <mesh key={`filler-${i}`} geometry={g}>
             <meshBasicMaterial color="#05070c" side={THREE.DoubleSide} />
@@ -244,7 +295,7 @@ function FilmBand({
 function ResponsiveCamera() {
   useFrame((state) => {
     const aspect = state.size.width / state.size.height
-    const targetZ = aspect < 1.1 ? 25 : aspect < 1.8 ? 20 : 17.5
+    const targetZ = aspect < 1.1 ? 24 : aspect < 1.8 ? 19 : 16
     if (Math.abs(state.camera.position.z - targetZ) > 0.001) {
       state.camera.position.z = THREE.MathUtils.lerp(state.camera.position.z, targetZ, 0.15)
     }
@@ -260,7 +311,7 @@ function FilmReelScene(props: ReelRefs & { accent: string; onSelect: (i: number)
       gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
     >
       <ResponsiveCamera />
-      <fog attach="fog" args={['#101c38', 16, 42]} />
+      <fog attach="fog" args={['#101c38', 18, 58]} />
       <ambientLight intensity={0.55} />
       <directionalLight position={[4, 6, 8]} intensity={1.1} />
       <pointLight position={[-6, -1, 8]} intensity={0.5} color={props.accent} />
@@ -268,7 +319,7 @@ function FilmReelScene(props: ReelRefs & { accent: string; onSelect: (i: number)
         <FilmBand {...props} />
       </Suspense>
       <EffectComposer enableNormalPass={false}>
-        <Bloom luminanceThreshold={0.35} luminanceSmoothing={0.9} intensity={0.6} mipmapBlur />
+        <Bloom luminanceThreshold={0.72} luminanceSmoothing={0.9} intensity={0.3} mipmapBlur />
       </EffectComposer>
     </Canvas>
   )
@@ -320,21 +371,33 @@ export default function IndustryReel({ accent }: { accent: string }) {
     { scope: sectionRef }
   )
 
-  const goTo = (virtual: number) => {
-    virtualRef.current = virtual
-    setIndex(((virtual % COUNT) + COUNT) % COUNT)
+  // Navigation counts in ring slots (each project occupies two opposite
+  // slots); the active project is slot % COUNT.
+  const goTo = (virtualSlot: number) => {
+    virtualRef.current = virtualSlot
+    setIndex((((virtualSlot % SLOTS) + SLOTS) % SLOTS) % COUNT)
     gsap.killTweensOf(spinRef)
-    gsap.to(spinRef, { current: -virtual * STEP, duration: 1.15, ease: 'power3.out' })
+    gsap.to(spinRef, { current: -virtualSlot * STEP, duration: 1.15, ease: 'power3.out' })
   }
 
   const go = (delta: number) => goTo(virtualRef.current + delta)
 
-  const selectIndex = (i: number) => {
-    const curMod = ((virtualRef.current % COUNT) + COUNT) % COUNT
-    let diff = i - curMod
-    if (diff > COUNT / 2) diff -= COUNT
-    if (diff < -COUNT / 2) diff += COUNT
-    goTo(virtualRef.current + diff)
+  const shortestSlotDiff = (target: number) => {
+    const curSlot = ((virtualRef.current % SLOTS) + SLOTS) % SLOTS
+    let d = target - curSlot
+    while (d > SLOTS / 2) d -= SLOTS
+    while (d < -SLOTS / 2) d += SLOTS
+    return d
+  }
+
+  /* Jump to a specific slot (frame click) — straight to the one clicked. */
+  const selectSlot = (j: number) => goTo(virtualRef.current + shortestSlotDiff(j))
+
+  /* Jump to a project (dots) — nearest of its two slots on the ring. */
+  const selectProject = (i: number) => {
+    const a = shortestSlotDiff(i)
+    const b = shortestSlotDiff(i + COUNT)
+    goTo(virtualRef.current + (Math.abs(a) <= Math.abs(b) ? a : b))
   }
 
   const handlePointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
@@ -344,7 +407,7 @@ export default function IndustryReel({ accent }: { accent: string }) {
     if (dragStateRef.current.active) {
       const dx = e.clientX - dragStateRef.current.lastX
       dragStateRef.current.lastX = e.clientX
-      dragExtraRef.current += dx * 0.004
+      dragExtraRef.current += dx * 0.0028
     }
   }
 
@@ -375,14 +438,14 @@ export default function IndustryReel({ accent }: { accent: string }) {
     <section ref={sectionRef} className="relative w-full overflow-hidden py-14 md:py-16">
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: 'linear-gradient(180deg, #050810 0%, #0a1226 32%, #142748 55%, #0a1226 78%, #050810 100%)' }}
+        style={{ background: 'linear-gradient(180deg, #04070f 0%, #0a1430 38%, #14315f 70%, #29508d 92%, #0a1226 100%)' }}
       />
       <div
         className="absolute inset-0 pointer-events-none opacity-40"
         style={{ background: `radial-gradient(ellipse 55% 45% at 50% 45%, ${accent}22, transparent 70%)` }}
       />
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
+      <div className="relative z-10 w-full px-2 sm:px-4">
         <div
           className="relative h-[62vh] min-h-[460px] max-h-[700px] w-full touch-none"
           style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
@@ -415,7 +478,7 @@ export default function IndustryReel({ accent }: { accent: string }) {
             dragExtraRef={dragExtraRef}
             pointerRef={pointerRef}
             accent={accent}
-            onSelect={selectIndex}
+            onSelect={selectSlot}
           />
 
           <button
@@ -441,7 +504,7 @@ export default function IndustryReel({ accent }: { accent: string }) {
                 key={p.title}
                 type="button"
                 aria-label={`Show ${p.title}`}
-                onClick={() => selectIndex(i)}
+                onClick={() => selectProject(i)}
                 className="pointer-events-auto h-1.5 rounded-full transition-all"
                 style={{ width: i === index ? 20 : 6, background: i === index ? accent : 'rgba(255,255,255,0.3)' }}
               />
