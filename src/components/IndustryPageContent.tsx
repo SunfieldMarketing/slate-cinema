@@ -18,7 +18,7 @@ import IndustryServices from '@/components/IndustryServices'
 import IndustryProcess from '@/components/IndustryProcess'
 import IndustryFaq from '@/components/IndustryFaq'
 import IndustryVideoTestimonials from '@/components/IndustryVideoTestimonials'
-import LogoStrip from '@/components/LogoStrip'
+import TrustBanner from '@/components/TrustBanner'
 import MidCtaBand from '@/components/MidCtaBand'
 import StickyCta from '@/components/StickyCta'
 import { getIndustryBySlug, type IndustryData } from '@/lib/industries'
@@ -180,15 +180,23 @@ export default function IndustryPageContent({ slug }: { slug: string }) {
 
         <StatsBand stats={industry.stats} />
 
-        <LogoStrip />
+        {/* Trust cluster: stats + logos back-to-back, right under the hero,
+            before anything else is asked of the visitor. */}
+        <TrustBanner />
 
         <IntroSection industry={industry} />
 
+        {/* The sell: what you can actually hire us for. Moved directly
+            after the intro — a visitor should see the menu before being
+            walked through proof, not after. */}
+        {industry.serviceCards && <IndustryServices services={industry.serviceCards} accent={industry.accent} />}
+
+        {/* Proof cluster: flagship reel -> case studies -> client voices,
+            capped by a single re-ask (MidCtaBand) rather than interrupted
+            partway through. */}
         <IndustryReel accent={industry.accent} />
 
         <GallerySection industry={industry} />
-
-        <MidCtaBand accent={industry.accent} />
 
         {industry.videoTestimonials ? (
           <IndustryVideoTestimonials testimonials={industry.videoTestimonials} accent={industry.accent} />
@@ -196,8 +204,10 @@ export default function IndustryPageContent({ slug }: { slug: string }) {
           <TestimonialSection industry={industry} />
         )}
 
-        {industry.serviceCards && <IndustryServices services={industry.serviceCards} accent={industry.accent} />}
+        <MidCtaBand accent={industry.accent} />
 
+        {/* Logistics: how it works, then the full archive for anyone still
+            browsing, then objection-handling right before the close. */}
         {industry.process && <IndustryProcess steps={industry.process} accent={industry.accent} />}
 
         {/* Reuse the shared filterable grid — same "everything we've made" view as the main Portfolio page */}
