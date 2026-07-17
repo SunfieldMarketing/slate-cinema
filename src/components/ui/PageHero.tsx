@@ -76,7 +76,6 @@ export default function PageHero({
       {/* ── Video / imagery backdrop ── */}
       {videoSrc && (
         <div className="absolute inset-0 z-0">
-          {/* @ts-expect-error fetchPriority not in React 18 types */}
           <video
             src={videoSrc}
             poster={posterSrc}
