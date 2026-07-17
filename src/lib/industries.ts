@@ -93,12 +93,12 @@ export const industries: IndustryData[] = [
     blurb: 'Motion-designed brand stories, explainers, and stylized 2D/3D pieces that make complex ideas feel effortless.',
     description: 'From explainer videos to fully stylized 2D/3D brand worlds, our animation work turns dense or abstract ideas into something an audience actually wants to watch. Every project starts as a storyboard, gets a bespoke motion language, and ships platform-native — because a great animated idea still needs to land in six seconds on a phone screen.',
     stat: '2D · 3D · Motion',
-    heroImage: '/images/ind_anim_hero.png',
+    heroImage: '/images/ai_hero_anim.png',
     heroVideo: '/videos/post-production.mp4',
     gallery: [
-      '/images/ind_anim_gal1.png',
-      '/images/ind_anim_gal2.png',
-      '/images/ind_anim_gal3.png',
+      '/images/ai_anim_gal_1.png',
+      '/images/ai_anim_gal_2.png',
+      '/images/ai_anim_gal_3.png',
     ],
     stats: [
       { value: 40, suffix: '+', label: 'Animated Pieces' },
@@ -115,7 +115,7 @@ export const industries: IndustryData[] = [
         outcome: '+3.1x demo requests',
         deliverables: ['Script & storyboard', 'Timed animatic', 'Full motion + sound design', 'Every aspect ratio'],
         meta: '60–120s · 4–6 wks',
-        image: '/images/ind_anim_gal2.png',
+        image: '/images/ai_anim_svc_explainer.png',
         video: '/videos/post-production.mp4',
         featured: true,
       },
@@ -125,7 +125,7 @@ export const industries: IndustryData[] = [
         outcome: '+212% PDP conversion',
         deliverables: ['Macro product renders', 'Physics simulation', 'Studio lighting'],
         meta: '30–60s · 5–7 wks',
-        image: '/images/ind_anim_gal1.png',
+        image: '/images/ai_anim_svc_cgi.png',
       },
       {
         title: 'Motion Branding',
@@ -133,7 +133,7 @@ export const industries: IndustryData[] = [
         outcome: 'One system, 9 teams',
         deliverables: ['Animated logo suite', 'Motion spec doc', 'Broadcast package'],
         meta: 'System · 3–5 wks',
-        image: '/images/portfolio-brand.png',
+        image: '/images/ai_anim_svc_branding.png',
       },
       {
         title: 'Character Work',
@@ -141,7 +141,7 @@ export const industries: IndustryData[] = [
         outcome: '+61% brand recall',
         deliverables: ['Character design + rig', 'Season of spots', 'Platform cutdowns'],
         meta: 'Season · 6–8 wks',
-        image: '/images/ind_anim_gal3.png',
+        image: '/images/ai_anim_svc_character.png',
       },
       {
         title: 'Social Loops',
@@ -149,7 +149,7 @@ export const industries: IndustryData[] = [
         outcome: '2.1M views in week 1',
         deliverables: ['6–15s seamless loops', 'Sound-off captions', 'Feed-native ratios'],
         meta: '6–15s × N · 2–4 wks',
-        image: '/images/portfolio-social.png',
+        image: '/images/ai_anim_svc_social.png',
       },
     ],
     videoTestimonials: [
@@ -160,7 +160,7 @@ export const industries: IndustryData[] = [
         company: 'Nimbus Systems',
         outcome: '+3.1x demo requests',
         video: '/videos/pre-production.mp4',
-        poster: '/images/mediavoid_team_bright.png',
+        poster: '/images/ai_anim_test_1.png',
         logo: '/images/clients/lucida-testimonials.webp',
       },
       {
@@ -170,7 +170,7 @@ export const industries: IndustryData[] = [
         company: 'Voltbrew',
         outcome: '+212% PDP conversion',
         video: '/videos/production.mp4',
-        poster: '/images/mediavoid_creative_bright.png',
+        poster: '/images/ai_anim_test_2.png',
         logo: '/images/clients/dream-testimonials.webp',
       },
       {
@@ -180,7 +180,7 @@ export const industries: IndustryData[] = [
         company: 'Nordform',
         outcome: '-34% support tickets',
         video: '/videos/distribution.mp4',
-        poster: '/images/portfolio-event.png',
+        poster: '/images/ai_anim_test_3.png',
         logo: '/images/clients/inhale-testimonails.webp',
       },
     ],
