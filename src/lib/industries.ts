@@ -116,7 +116,6 @@ export const industries: IndustryData[] = [
         deliverables: ['Script & storyboard', 'Timed animatic', 'Full motion + sound design', 'Every aspect ratio'],
         meta: '60–120s · 4–6 wks',
         image: '/images/ai_anim_svc_explainer.png',
-        video: '/videos/post-production.mp4',
         featured: true,
       },
       {
@@ -160,7 +159,7 @@ export const industries: IndustryData[] = [
         company: 'Nimbus Systems',
         outcome: '+3.1x demo requests',
         video: '/videos/pre-production.mp4',
-        poster: '/images/ai_anim_test_1.png',
+        poster: '/images/mediavoid_team_bright.png',
         logo: '/images/clients/lucida-testimonials.webp',
       },
       {
@@ -170,7 +169,7 @@ export const industries: IndustryData[] = [
         company: 'Voltbrew',
         outcome: '+212% PDP conversion',
         video: '/videos/production.mp4',
-        poster: '/images/ai_anim_test_2.png',
+        poster: '/images/mediavoid_creative_bright.png',
         logo: '/images/clients/dream-testimonials.webp',
       },
       {
@@ -180,7 +179,7 @@ export const industries: IndustryData[] = [
         company: 'Nordform',
         outcome: '-34% support tickets',
         video: '/videos/distribution.mp4',
-        poster: '/images/ai_anim_test_3.png',
+        poster: '/images/portfolio-event.png',
         logo: '/images/clients/inhale-testimonails.webp',
       },
     ],

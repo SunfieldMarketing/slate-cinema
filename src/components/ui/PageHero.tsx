@@ -21,12 +21,17 @@ interface Props {
   secondaryCta?: { label: string; href: string }
   /** Optional one-line trust note rendered under the CTAs. */
   trustNote?: string
+  /** Optional poster image to show instantly before video loads. */
+  posterSrc?: string
 }
 
-export default function PageHero({ eyebrow, title, subtitle, videoSrc, accent = '#00AEEF', cta, secondaryCta, trustNote }: Props) {
+export default function PageHero({ eyebrow, title, subtitle, videoSrc, posterSrc, accent = '#00AEEF', cta, secondaryCta, trustNote }: Props) {
   const ref = useRef<HTMLElement>(null)
 
   // Preload the video immediately with high priority so it's ready instantly
+  if (posterSrc) {
+    preload(posterSrc, { as: 'image', fetchPriority: 'high' })
+  }
   if (videoSrc) {
     preload(videoSrc, { as: 'video', fetchPriority: 'high' })
   }
@@ -46,7 +51,7 @@ export default function PageHero({ eyebrow, title, subtitle, videoSrc, accent = 
       {videoSrc && (
         <div className="absolute inset-0 z-0">
           {/* @ts-expect-error fetchPriority not in React 18 types */}
-          <video src={videoSrc} autoPlay loop muted playsInline preload="auto" fetchPriority="high" className="w-full h-full object-cover opacity-40" />
+          <video src={videoSrc} poster={posterSrc} autoPlay loop muted playsInline preload="auto" fetchPriority="high" className="w-full h-full object-cover opacity-40" />
           <div className="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/40 to-ink" />
         </div>
       )}

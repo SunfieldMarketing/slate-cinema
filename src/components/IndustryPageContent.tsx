@@ -144,6 +144,7 @@ export default function IndustryPageContent({ slug }: { slug: string }) {
           title={[industry.label]}
           subtitle={industry.blurb}
           videoSrc={industry.heroVideo}
+          posterSrc={industry.heroImage}
           accent={industry.accent}
           cta={{ label: 'Book a Call', href: '/contact' }}
           secondaryCta={{ label: 'Watch the work', href: '#reel' }}
