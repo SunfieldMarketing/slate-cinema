@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
+import posthog from 'posthog-js'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -120,7 +121,10 @@ export default function CustomCalendar() {
                 {dates.map((date) => (
                   <button
                     key={date}
-                    onClick={() => setSelectedDate(date)}
+                    onClick={() => {
+                      setSelectedDate(date)
+                      posthog.capture('calendar_date_selected', { date })
+                    }}
                     className={`cal-date aspect-square rounded-full flex items-center justify-center text-sm transition-all duration-300 ${
                       selectedDate === date 
                         ? 'bg-[#00AEEF] text-white shadow-[0_0_15px_rgba(0,174,239,0.5)] scale-110' 
@@ -140,7 +144,10 @@ export default function CustomCalendar() {
                 {times.map((time) => (
                   <button
                     key={time}
-                    onClick={() => setSelectedTime(time)}
+                    onClick={() => {
+                      setSelectedTime(time)
+                      posthog.capture('calendar_time_selected', { time, date: selectedDate })
+                    }}
                     disabled={!selectedDate}
                     className={`cal-time w-full py-3 px-4 rounded-lg text-sm font-mono tracking-wider transition-all duration-300 flex items-center justify-between ${
                       !selectedDate ? 'opacity-30 cursor-not-allowed bg-transparent border border-white/5 text-white/20' :
@@ -159,6 +166,11 @@ export default function CustomCalendar() {
               <div className="mt-8">
                 <button
                   disabled={!selectedDate || !selectedTime}
+                  onClick={() => {
+                    if (selectedDate && selectedTime) {
+                      posthog.capture('call_booking_confirmed', { date: selectedDate, time: selectedTime })
+                    }
+                  }}
                   className={`w-full py-4 rounded-lg font-bold tracking-wide uppercase transition-all duration-500 ${
                     selectedDate && selectedTime 
                       ? 'bg-white text-[#030305] hover:bg-[#00AEEF] hover:text-white shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(0,174,239,0.4)]'

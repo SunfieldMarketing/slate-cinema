@@ -6,6 +6,7 @@ import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { Heart } from 'lucide-react'
 import { MODEL_CREDITS } from '@/components/storyboard/config'
+import posthog from 'posthog-js'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -127,9 +128,17 @@ export default function Footer() {
 
             <div>
               <h4 className="text-lg font-semibold text-white mb-4">Subscribe to our Newsletter</h4>
-              <form className="flex w-full max-w-md" onSubmit={(e) => e.preventDefault()}>
+              <form
+                className="flex w-full max-w-md"
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  const input = (e.currentTarget.elements.namedItem('footer-email') as HTMLInputElement)?.value
+                  if (input) posthog.capture('newsletter_signed_up', { source: 'footer' })
+                }}
+              >
                 <input
                   type="email"
+                  name="footer-email"
                   placeholder="Your email address"
                   className="flex-1 bg-white/5 border border-white/10 border-r-0 rounded-l-full px-6 py-4 text-white placeholder:text-white/30 focus:outline-none focus:border-[#00AEEF] transition-colors"
                 />
@@ -170,6 +179,7 @@ export default function Footer() {
                     href="#"
                     onMouseMove={handleMagneticMove}
                     onMouseLeave={handleMagneticLeave}
+                    onClick={() => posthog.capture('social_link_clicked', { platform: social })}
                     className="footer-link text-sm font-medium text-white/60 hover:text-[#00AEEF] transition-colors block w-max"
                   >
                     {social}

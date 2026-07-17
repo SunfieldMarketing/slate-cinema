@@ -7,6 +7,7 @@ import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { ArrowRight } from 'lucide-react'
 import { BorderBeam } from '@/components/ui/border-beam'
+import posthog from 'posthog-js'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -93,6 +94,7 @@ export default function FinalCTA() {
               href="/contact"
               onMouseMove={handleMagneticMove}
               onMouseLeave={handleMagneticLeave}
+              onClick={() => posthog.capture('book_call_clicked', { source: 'final_cta' })}
               className="group relative px-10 py-5 bg-[#00AEEF] text-black font-semibold rounded-full overflow-hidden transition-shadow duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80 shadow-[0_0_40px_rgba(0,174,239,0.35)] hover:shadow-[0_0_56px_rgba(0,174,239,0.55)]"
             >
               <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -103,6 +105,7 @@ export default function FinalCTA() {
             </a>
             <Link
               href="/portfolio"
+              onClick={() => posthog.capture('see_more_work_clicked', { source: 'final_cta' })}
               className="px-8 py-5 rounded-full text-sm font-semibold text-white border border-white/20 bg-white/[0.03] hover:border-white/50 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
             >
               See more work

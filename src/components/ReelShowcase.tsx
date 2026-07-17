@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Play } from 'lucide-react'
 import { ContainerScroll } from '@/components/ui/container-scroll-animation'
+import posthog from 'posthog-js'
 
 /*
   ReelShowcase — the site's biggest single visual moment on the portfolio
@@ -46,7 +47,10 @@ export default function ReelShowcase() {
               />
             ) : (
               <button
-                onClick={() => setPlaying(true)}
+                onClick={() => {
+                  setPlaying(true)
+                  posthog.capture('showreel_played')
+                }}
                 className="group absolute inset-0 w-full h-full"
                 aria-label="Play the Slate Cinema showreel"
               >

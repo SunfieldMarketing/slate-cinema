@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { ArrowRight } from 'lucide-react'
+import posthog from 'posthog-js'
 
 /*
   Persistent booking path — a small pill that slides in bottom-right once
@@ -23,6 +24,7 @@ export default function StickyCta({ accent }: { accent: string }) {
       href="/contact"
       aria-hidden={!visible}
       tabIndex={visible ? 0 : -1}
+      onClick={() => posthog.capture('sticky_cta_clicked')}
       className={`fixed bottom-5 right-5 z-40 group inline-flex items-center gap-2 pl-4 pr-3 py-3 rounded-full text-xs font-semibold text-black backdrop-blur-md transition-all duration-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80 ${
         visible ? 'translate-y-0 opacity-100' : 'translate-y-16 opacity-0 pointer-events-none'
       }`}
