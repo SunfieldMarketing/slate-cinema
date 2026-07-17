@@ -4,9 +4,13 @@ import { useRef } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
+import { Search, PenTool, Palette, Clapperboard, Package, type LucideIcon } from 'lucide-react'
 import type { IndustryProcessStep } from '@/lib/industries'
 
 gsap.registerPlugin(ScrollTrigger)
+
+/* Step iconography mapped by position, so the data stays copy-only. */
+const STEP_ICONS: LucideIcon[] = [Search, PenTool, Palette, Clapperboard, Package]
 
 export default function IndustryProcess({ steps, accent }: { steps: IndustryProcessStep[]; accent: string }) {
   const ref = useRef<HTMLElement>(null)
@@ -83,22 +87,31 @@ export default function IndustryProcess({ steps, accent }: { steps: IndustryProc
         </div>
 
         <div className="proc-fade grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 mt-10">
-          {steps.map((s, i) => (
-            <div
-              key={s.title}
-              ref={(el) => {
-                cardRefs.current[i] = el
-              }}
-              className="rounded-xl border bg-white/[0.02] p-5 transition-colors duration-300"
-              style={{ borderColor: i === 0 ? `${accent}80` : 'rgba(255,255,255,0.09)' }}
-            >
-              <div className="font-mono text-[9px] tracking-[0.2em] uppercase mb-2.5" style={{ color: accent }}>
-                Keyframe {String(i + 1).padStart(2, '0')} · {s.week}
+          {steps.map((s, i) => {
+            const Icon = STEP_ICONS[i % STEP_ICONS.length]
+            return (
+              <div
+                key={s.title}
+                ref={(el) => {
+                  cardRefs.current[i] = el
+                }}
+                className="group rounded-xl border bg-white/[0.02] p-5 transition-colors duration-300"
+                style={{ borderColor: i === 0 ? `${accent}80` : 'rgba(255,255,255,0.09)' }}
+              >
+                <div
+                  className="w-10 h-10 rounded-lg border flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110"
+                  style={{ borderColor: `${accent}40`, background: `${accent}14` }}
+                >
+                  <Icon className="w-[18px] h-[18px]" style={{ color: accent }} />
+                </div>
+                <div className="font-mono text-[9px] tracking-[0.2em] uppercase mb-2.5" style={{ color: accent }}>
+                  Keyframe {String(i + 1).padStart(2, '0')} · {s.week}
+                </div>
+                <h3 className="text-sm font-semibold text-white mb-1.5">{s.title}</h3>
+                <p className="text-xs text-white/55 leading-relaxed font-light">{s.body}</p>
               </div>
-              <h3 className="text-sm font-semibold text-white mb-1.5">{s.title}</h3>
-              <p className="text-xs text-white/55 leading-relaxed font-light">{s.body}</p>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>

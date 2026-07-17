@@ -16,10 +16,32 @@ export interface IndustryCaseStudy {
   description: string
 }
 
-export interface IndustryFormat {
+/** A service offering shown as a rich bento card on the industry page. */
+export interface IndustryServiceCard {
   title: string
   description: string
+  /** Headline outcome, results-first (e.g. "+212% PDP conversion"). */
+  outcome: string
+  deliverables: string[]
+  /** Runtime/timeline meta (e.g. "60–120s · 4–6 wks"). */
   meta: string
+  image: string
+  /** Optional looping video background — used by the featured card. */
+  video?: string
+  /** The one card rendered large in the bento grid. */
+  featured?: boolean
+}
+
+/** A playable client video testimonial card. */
+export interface IndustryVideoTestimonial {
+  quote: string
+  name: string
+  role: string
+  company: string
+  video: string
+  /** Poster frame shown before playback (and wherever video can't render). */
+  poster?: string
+  logo?: string
 }
 
 export interface IndustryProcessStep {
@@ -51,7 +73,7 @@ export interface IndustryData {
   services: string[]
   testimonial: { quote: string; name: string; role: string; company: string }
   /**
-   * Extended industry-page sections (case studies, formats, process
+   * Extended industry-page sections (case studies, service cards, video testimonials, process
    * timeline, FAQ). Optional and currently only populated for Animation —
    * any industry gains these sections automatically once its data is
    * filled in, no component changes needed. The reel showcase itself is
@@ -59,7 +81,8 @@ export interface IndustryData {
    * per-industry data.
    */
   caseStudies?: IndustryCaseStudy[]
-  formats?: IndustryFormat[]
+  serviceCards?: IndustryServiceCard[]
+  videoTestimonials?: IndustryVideoTestimonial[]
   process?: IndustryProcessStep[]
   faqs?: IndustryFaq[]
 }
@@ -112,12 +135,78 @@ export const industries: IndustryData[] = [
         description: 'A 22-spot social season built around a single recurring character — same rig, same crew, every sprint — so the brand voice never drifted.',
       },
     ],
-    formats: [
-      { title: 'Explainers', description: 'Complex products in 90 seconds anyone can follow.', meta: '60–120s · 4–6 wks' },
-      { title: 'Product & CGI', description: "Photoreal renders when the real thing can't be filmed.", meta: '30–60s · 5–7 wks' },
-      { title: 'Motion branding', description: 'Logo language and a motion spec your org can reuse.', meta: 'System · 3–5 wks' },
-      { title: 'Character', description: 'A recurring face for the brand, every platform.', meta: 'Season · 6–8 wks' },
-      { title: 'Social loops', description: 'Seamless, sound-off loops engineered for the scroll.', meta: '6–15s × N · 2–4 wks' },
+    serviceCards: [
+      {
+        title: 'Explainer Films',
+        description: 'Complex products distilled into 90 seconds anyone can follow — script, boards, voiceover and motion, end to end.',
+        outcome: '+3.1x demo requests',
+        deliverables: ['Script & storyboard', 'Timed animatic', 'Full motion + sound design', 'Every aspect ratio'],
+        meta: '60–120s · 4–6 wks',
+        image: '/images/ind_anim_gal2.png',
+        video: '/videos/post-production.mp4',
+        featured: true,
+      },
+      {
+        title: 'Product & CGI',
+        description: "Photoreal renders and simulations when the real thing can't be filmed.",
+        outcome: '+212% PDP conversion',
+        deliverables: ['Macro product renders', 'Physics simulation', 'Studio lighting'],
+        meta: '30–60s · 5–7 wks',
+        image: '/images/ind_anim_gal1.png',
+      },
+      {
+        title: 'Motion Branding',
+        description: 'Logo language, transitions and a motion spec your whole org can reuse.',
+        outcome: 'One system, 9 teams',
+        deliverables: ['Animated logo suite', 'Motion spec doc', 'Broadcast package'],
+        meta: 'System · 3–5 wks',
+        image: '/images/portfolio-brand.png',
+      },
+      {
+        title: 'Character Work',
+        description: 'A recurring face for the brand — same rig, every platform, season after season.',
+        outcome: '+61% brand recall',
+        deliverables: ['Character design + rig', 'Season of spots', 'Platform cutdowns'],
+        meta: 'Season · 6–8 wks',
+        image: '/images/ind_anim_gal3.png',
+      },
+      {
+        title: 'Social Loops',
+        description: 'Seamless, sound-off loops engineered to stop the scroll mid-thumb.',
+        outcome: '2.1M views in week 1',
+        deliverables: ['6–15s seamless loops', 'Sound-off captions', 'Feed-native ratios'],
+        meta: '6–15s × N · 2–4 wks',
+        image: '/images/portfolio-social.png',
+      },
+    ],
+    videoTestimonials: [
+      {
+        quote: 'They turned an eight-page technical deck into a 45-second video our sales team actually uses.',
+        name: 'Priya Sharma',
+        role: 'Head of Product Marketing',
+        company: 'Nimbus Systems',
+        video: '/videos/pre-production.mp4',
+        poster: '/images/mediavoid_team_bright.png',
+        logo: '/images/clients/lucida-testimonials.webp',
+      },
+      {
+        quote: 'The launch film paid for itself in the first week. We reallocated our whole Q3 photo budget to animation.',
+        name: 'Marcus Webb',
+        role: 'VP of Growth',
+        company: 'Voltbrew',
+        video: '/videos/production.mp4',
+        poster: '/images/mediavoid_creative_bright.png',
+        logo: '/images/clients/dream-testimonials.webp',
+      },
+      {
+        quote: "Fastest studio we've worked with, and the first that made revisions painless — boards first, no surprises.",
+        name: 'Elena Ruiz',
+        role: 'Brand Director',
+        company: 'Nordform',
+        video: '/videos/distribution.mp4',
+        poster: '/images/portfolio-event.png',
+        logo: '/images/clients/inhale-testimonails.webp',
+      },
     ],
     process: [
       { week: 'Wk 1', title: 'Discover', body: 'Goals, audience and references — then a one-page brief.' },

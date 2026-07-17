@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useRef } from 'react'
+import Link from 'next/link'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -87,18 +88,30 @@ export default function FinalCTA() {
             Don&apos;t let your brand fade into the background. Partner with Slate Cinema to engineer attention, drive engagement, and generate scalable ROI.
           </p>
 
-          <a
-            href="#contact"
-            onMouseMove={handleMagneticMove}
-            onMouseLeave={handleMagneticLeave}
-            className="cta-fade group relative px-10 py-5 bg-white text-black font-semibold rounded-full overflow-hidden transition-shadow duration-300 shadow-[0_0_30px_rgba(255,255,255,0.15)] hover:shadow-[0_0_40px_rgba(0,174,239,0.4)]"
-          >
-            <div className="absolute inset-0 bg-[#00AEEF] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <span className="relative z-10 flex items-center group-hover:text-white transition-colors">
-              Book A Strategy Call
-              <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </span>
-          </a>
+          <div className="cta-fade flex items-center justify-center gap-4 flex-wrap">
+            <a
+              href="/contact"
+              onMouseMove={handleMagneticMove}
+              onMouseLeave={handleMagneticLeave}
+              className="group relative px-10 py-5 bg-[#00AEEF] text-black font-semibold rounded-full overflow-hidden transition-shadow duration-300 shadow-[0_0_40px_rgba(0,174,239,0.35)] hover:shadow-[0_0_56px_rgba(0,174,239,0.55)]"
+            >
+              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <span className="relative z-10 flex items-center transition-colors">
+                Book A Strategy Call
+                <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </span>
+            </a>
+            <Link
+              href="/portfolio"
+              className="px-8 py-5 rounded-full text-sm font-semibold text-white border border-white/20 bg-white/[0.03] hover:border-white/50 transition-colors"
+            >
+              See more work
+            </Link>
+          </div>
+
+          <p className="cta-fade mt-8 font-mono text-[10px] tracking-[0.22em] uppercase text-white/35">
+            20-minute call · No pitch deck · Replies within one business day
+          </p>
         </div>
       </div>
     </section>

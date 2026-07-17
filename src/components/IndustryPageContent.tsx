@@ -4,7 +4,7 @@ import { useRef } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-import { Star } from 'lucide-react'
+import { ArrowRight, Star } from 'lucide-react'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import FinalCTA from '@/components/FinalCTA'
@@ -14,9 +14,13 @@ import StatsBand from '@/components/ui/StatsBand'
 import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
 import { Lens } from '@/components/ui/lens'
 import IndustryReel from '@/components/IndustryReel'
-import IndustryFormats from '@/components/IndustryFormats'
+import IndustryServices from '@/components/IndustryServices'
 import IndustryProcess from '@/components/IndustryProcess'
 import IndustryFaq from '@/components/IndustryFaq'
+import IndustryVideoTestimonials from '@/components/IndustryVideoTestimonials'
+import LogoStrip from '@/components/LogoStrip'
+import MidCtaBand from '@/components/MidCtaBand'
+import StickyCta from '@/components/StickyCta'
 import { getIndustryBySlug, type IndustryData } from '@/lib/industries'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -81,7 +85,13 @@ function GallerySection({ industry }: { industry: IndustryData }) {
         {caseStudies ? (
           <div className="gal-grid grid grid-cols-1 sm:grid-cols-3 gap-4">
             {caseStudies.map((cs) => (
-              <div key={cs.title} className="gal-tile group relative rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02]">
+              <a
+                key={cs.title}
+                href="/contact"
+                className="gal-tile group relative rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02] flex flex-col transition-all duration-300 hover:-translate-y-1"
+                onMouseEnter={(e) => (e.currentTarget.style.borderColor = `${industry.accent}70`)}
+                onMouseLeave={(e) => (e.currentTarget.style.borderColor = '')}
+              >
                 <div className="relative aspect-[4/3]">
                   <img src={cs.image} alt={cs.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
@@ -92,12 +102,16 @@ function GallerySection({ industry }: { industry: IndustryData }) {
                     {cs.category}
                   </span>
                 </div>
-                <div className="p-5">
+                <div className="p-5 flex flex-col grow">
+                  {/* Results-first: the outcome is the loudest element on the card. */}
+                  <div className="text-xl font-bold tracking-tight mb-2" style={{ color: industry.accent }}>{cs.stat}</div>
                   <h3 className="text-base font-semibold text-white mb-1.5">{cs.title}</h3>
-                  <p className="text-xs text-white/55 leading-relaxed font-light mb-3.5">{cs.description}</p>
-                  <div className="font-mono text-[11px] tracking-[0.1em]" style={{ color: industry.accent }}>{cs.stat}</div>
+                  <p className="text-xs text-white/55 leading-relaxed font-light mb-4 grow">{cs.description}</p>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/80 group-hover:text-white group-hover:gap-2.5 transition-all">
+                    Get results like this <ArrowRight className="w-3.5 h-3.5" style={{ color: industry.accent }} />
+                  </span>
                 </div>
-              </div>
+              </a>
             ))}
           </div>
         ) : (
@@ -159,10 +173,14 @@ export default function IndustryPageContent({ slug }: { slug: string }) {
           subtitle={industry.blurb}
           videoSrc={industry.heroVideo}
           accent={industry.accent}
-          cta={{ label: 'Start Your Project', href: '/contact' }}
+          cta={{ label: 'Book a Call', href: '/contact' }}
+          secondaryCta={{ label: 'Watch the work', href: '#gallery' }}
+          trustNote="40+ projects shipped · Replies within one business day"
         />
 
         <StatsBand stats={industry.stats} />
+
+        <LogoStrip />
 
         <IntroSection industry={industry} />
 
@@ -170,9 +188,15 @@ export default function IndustryPageContent({ slug }: { slug: string }) {
 
         <GallerySection industry={industry} />
 
-        <TestimonialSection industry={industry} />
+        <MidCtaBand accent={industry.accent} />
 
-        {industry.formats && <IndustryFormats formats={industry.formats} accent={industry.accent} />}
+        {industry.videoTestimonials ? (
+          <IndustryVideoTestimonials testimonials={industry.videoTestimonials} accent={industry.accent} />
+        ) : (
+          <TestimonialSection industry={industry} />
+        )}
+
+        {industry.serviceCards && <IndustryServices services={industry.serviceCards} accent={industry.accent} />}
 
         {industry.process && <IndustryProcess steps={industry.process} accent={industry.accent} />}
 
@@ -184,6 +208,8 @@ export default function IndustryPageContent({ slug }: { slug: string }) {
         <FinalCTA />
 
         <Footer />
+
+        <StickyCta accent={industry.accent} />
       </div>
     </main>
   )

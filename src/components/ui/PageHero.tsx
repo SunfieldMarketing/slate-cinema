@@ -17,9 +17,13 @@ interface Props {
   videoSrc?: string
   accent?: string
   cta?: { label: string; href: string }
+  /** Optional low-commitment secondary action (e.g. "Watch the reel"). */
+  secondaryCta?: { label: string; href: string }
+  /** Optional one-line trust note rendered under the CTAs. */
+  trustNote?: string
 }
 
-export default function PageHero({ eyebrow, title, subtitle, videoSrc, accent = '#00AEEF', cta }: Props) {
+export default function PageHero({ eyebrow, title, subtitle, videoSrc, accent = '#00AEEF', cta, secondaryCta, trustNote }: Props) {
   const ref = useRef<HTMLElement>(null)
 
   // Preload the video immediately with high priority so it's ready instantly
@@ -68,17 +72,32 @@ export default function PageHero({ eyebrow, title, subtitle, videoSrc, accent = 
           </p>
         )}
 
-        {cta && (
-          <div className="ph-fade mt-10">
-            <a
-              href={cta.href}
-              className="group inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-sm text-black bg-white hover:text-white transition-colors duration-300 shadow-[0_0_30px_rgba(255,255,255,0.15)]"
-              style={{ ['--acc' as string]: accent }}
-            >
-              <span className="absolute" />
-              {cta.label}
-            </a>
+        {(cta || secondaryCta) && (
+          <div className="ph-fade mt-10 flex items-center justify-center gap-4 flex-wrap">
+            {cta && (
+              <a
+                href={cta.href}
+                className="group inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-sm text-black bg-white hover:text-white transition-colors duration-300 shadow-[0_0_30px_rgba(255,255,255,0.15)]"
+                style={{ ['--acc' as string]: accent }}
+              >
+                <span className="absolute" />
+                {cta.label}
+              </a>
+            )}
+            {secondaryCta && (
+              <a
+                href={secondaryCta.href}
+                className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full font-semibold text-sm text-white border border-white/25 bg-white/[0.04] backdrop-blur-md hover:border-white/60 transition-colors duration-300"
+              >
+                <span className="w-2 h-2 rounded-full" style={{ background: accent }} />
+                {secondaryCta.label}
+              </a>
+            )}
           </div>
+        )}
+
+        {trustNote && (
+          <p className="ph-fade mt-6 font-mono text-[10px] tracking-[0.2em] uppercase text-white/40">{trustNote}</p>
         )}
       </div>
 
