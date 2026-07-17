@@ -5,6 +5,7 @@ import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { Mail, Phone, MapPin, ArrowRight, FileText, PhoneCall, FileCheck2, Clapperboard, Clock, Navigation } from 'lucide-react'
+import posthog from 'posthog-js'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import CustomCalendar from '@/components/CustomCalendar'
@@ -141,7 +142,7 @@ function ContactMethods() {
             gradientOpacity={0.15}
             gradientSize={180}
           >
-            <a href={c.href} className="group flex items-center gap-4 p-5">
+            <a href={c.href} onClick={() => posthog.capture('contact_method_clicked', { method: c.label })} className="group flex items-center gap-4 p-5">
               <div className="w-11 h-11 rounded-full border border-white/15 flex items-center justify-center group-hover:border-[#00AEEF]/50 group-hover:bg-[#00AEEF]/10 transition-colors shrink-0">
                 <c.icon className="w-5 h-5 text-white/80 group-hover:text-[#00AEEF] transition-colors" />
               </div>
@@ -186,7 +187,13 @@ function DontBeAStranger() {
         </p>
 
         <form
-          onSubmit={(e) => { e.preventDefault(); if (email) setSent(true) }}
+          onSubmit={(e) => {
+            e.preventDefault()
+            if (email) {
+              setSent(true)
+              posthog.capture('newsletter_signed_up', { source: 'contact_page' })
+            }
+          }}
           className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
         >
           <input

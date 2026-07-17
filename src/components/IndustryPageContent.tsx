@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -21,6 +21,7 @@ import TrustBanner from '@/components/TrustBanner'
 import MidCtaBand from '@/components/MidCtaBand'
 import StickyCta from '@/components/StickyCta'
 import { getIndustryBySlug, type IndustryData } from '@/lib/industries'
+import posthog from 'posthog-js'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -129,6 +130,14 @@ export default function IndustryPageContent({ slug }: { slug: string }) {
   // the industry object directly since it carries lucide icon *components*
   // (functions), which aren't serializable across the server/client boundary.
   const industry = getIndustryBySlug(slug)
+
+  useEffect(() => {
+    const ind = getIndustryBySlug(slug)
+    if (ind) {
+      posthog.capture('portfolio_industry_viewed', { industry: ind.slug, industry_label: ind.label })
+    }
+  }, [slug])
+
   if (!industry) return null
 
   return (
