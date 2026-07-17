@@ -4,7 +4,7 @@ import { useRef } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-import { ArrowRight, Star } from 'lucide-react'
+import { Star } from 'lucide-react'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import FinalCTA from '@/components/FinalCTA'
@@ -28,6 +28,7 @@ gsap.registerPlugin(ScrollTrigger)
 function IntroSection({ industry }: { industry: IndustryData }) {
   const ref = useRef<HTMLElement>(null)
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
       gsap.fromTo('.intro-fade', { y: 40, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: ref.current, start: 'top 75%', once: true } })
     }, ref)
@@ -63,67 +64,37 @@ function IntroSection({ industry }: { industry: IndustryData }) {
   )
 }
 
+/*
+  Simple image gallery for industries that don't yet have client story
+  cards — the built-out pages carry their work proof inside the merged
+  Client Stories section instead.
+*/
 function GallerySection({ industry }: { industry: IndustryData }) {
   const ref = useRef<HTMLElement>(null)
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
       gsap.fromTo('.gal-tile', { y: 50, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 0.7, ease: 'power3.out', scrollTrigger: { trigger: '.gal-grid', start: 'top 85%', once: true } })
     }, ref)
     return () => ctx.revert()
   }, { scope: ref })
 
-  const caseStudies = industry.caseStudies
-
   return (
-    <section ref={ref} id="gallery" className="relative w-full overflow-hidden py-20 md:py-24">
+    <section ref={ref} className="relative w-full overflow-hidden py-20 md:py-24">
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         <div className="text-center mb-12 max-w-2xl mx-auto">
           <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase block mb-4" style={{ color: industry.accent }}>The Work</span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.05]">A closer look</h2>
         </div>
 
-        {caseStudies ? (
-          <div className="gal-grid grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {caseStudies.map((cs) => (
-              <a
-                key={cs.title}
-                href="/contact"
-                className="gal-tile group relative rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02] flex flex-col transition-all duration-300 hover:-translate-y-1"
-                onMouseEnter={(e) => (e.currentTarget.style.borderColor = `${industry.accent}70`)}
-                onMouseLeave={(e) => (e.currentTarget.style.borderColor = '')}
-              >
-                <div className="relative aspect-[4/3]">
-                  <img src={cs.image} alt={cs.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
-                  <span
-                    className="absolute top-3 left-3 font-mono text-[9px] tracking-[0.2em] uppercase px-2.5 py-1.5 rounded-full backdrop-blur-md border whitespace-nowrap"
-                    style={{ color: industry.accent, borderColor: `${industry.accent}55`, backgroundColor: 'rgba(5,7,12,0.75)' }}
-                  >
-                    {cs.category}
-                  </span>
-                </div>
-                <div className="p-5 flex flex-col grow">
-                  {/* Results-first: the outcome is the loudest element on the card. */}
-                  <div className="text-xl font-bold tracking-tight mb-2" style={{ color: industry.accent }}>{cs.stat}</div>
-                  <h3 className="text-base font-semibold text-white mb-1.5">{cs.title}</h3>
-                  <p className="text-xs text-white/55 leading-relaxed font-light mb-4 grow">{cs.description}</p>
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/80 group-hover:text-white group-hover:gap-2.5 transition-all">
-                    Get results like this <ArrowRight className="w-3.5 h-3.5" style={{ color: industry.accent }} />
-                  </span>
-                </div>
-              </a>
-            ))}
-          </div>
-        ) : (
-          <div className="gal-grid grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {industry.gallery.map((src, i) => (
-              <div key={i} className="gal-tile relative rounded-2xl overflow-hidden border border-white/10 aspect-[4/5]">
-                <img src={src} alt={`${industry.label} shot ${i + 1}`} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out hover:scale-110" />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent" />
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="gal-grid grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {industry.gallery.map((src, i) => (
+            <div key={i} className="gal-tile relative rounded-2xl overflow-hidden border border-white/10 aspect-[4/5]">
+              <img src={src} alt={`${industry.label} shot ${i + 1}`} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent" />
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   )
@@ -132,6 +103,7 @@ function GallerySection({ industry }: { industry: IndustryData }) {
 function TestimonialSection({ industry }: { industry: IndustryData }) {
   const ref = useRef<HTMLElement>(null)
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
       gsap.fromTo('.tm-fade', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: ref.current, start: 'top 80%', once: true } })
     }, ref)
@@ -174,7 +146,7 @@ export default function IndustryPageContent({ slug }: { slug: string }) {
           videoSrc={industry.heroVideo}
           accent={industry.accent}
           cta={{ label: 'Book a Call', href: '/contact' }}
-          secondaryCta={{ label: 'Watch the work', href: '#gallery' }}
+          secondaryCta={{ label: 'Watch the work', href: '#reel' }}
           trustNote="40+ projects shipped · Replies within one business day"
         />
 
@@ -191,17 +163,19 @@ export default function IndustryPageContent({ slug }: { slug: string }) {
             walked through proof, not after. */}
         {industry.serviceCards && <IndustryServices services={industry.serviceCards} accent={industry.accent} />}
 
-        {/* Proof cluster: flagship reel -> case studies -> client voices,
-            capped by a single re-ask (MidCtaBand) rather than interrupted
-            partway through. */}
+        {/* Proof cluster: flagship reel, then client stories (case study +
+            testimonial merged into one card: outcome stat, video, quote),
+            capped by a single re-ask. Industries without story cards show
+            their plain image gallery instead. */}
         <IndustryReel accent={industry.accent} />
-
-        <GallerySection industry={industry} />
 
         {industry.videoTestimonials ? (
           <IndustryVideoTestimonials testimonials={industry.videoTestimonials} accent={industry.accent} />
         ) : (
-          <TestimonialSection industry={industry} />
+          <>
+            <GallerySection industry={industry} />
+            <TestimonialSection industry={industry} />
+          </>
         )}
 
         <MidCtaBand accent={industry.accent} />
@@ -210,8 +184,12 @@ export default function IndustryPageContent({ slug }: { slug: string }) {
             browsing, then objection-handling right before the close. */}
         {industry.process && <IndustryProcess steps={industry.process} accent={industry.accent} />}
 
-        {/* Reuse the shared filterable grid — same "everything we've made" view as the main Portfolio page */}
-        <Portfolio />
+        {/* Reuse the shared filterable grid — same "everything we've made"
+            view as the main Portfolio page. Carries the #gallery anchor the
+            reel's "View project" link points at. */}
+        <div id="gallery">
+          <Portfolio />
+        </div>
 
         {industry.faqs && <IndustryFaq faqs={industry.faqs} accent={industry.accent} />}
 

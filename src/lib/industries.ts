@@ -7,15 +7,6 @@ export interface IndustryStat {
   label: string
 }
 
-/** A "closer look" gallery tile, upgraded to a focused case-study card. */
-export interface IndustryCaseStudy {
-  image: string
-  category: string
-  title: string
-  stat: string
-  description: string
-}
-
 /** A service offering shown as a rich bento card on the industry page. */
 export interface IndustryServiceCard {
   title: string
@@ -32,13 +23,19 @@ export interface IndustryServiceCard {
   featured?: boolean
 }
 
-/** A playable client video testimonial card. */
+/**
+ * A playable client story card — video testimonial and case study merged
+ * into one proof unit: the measurable outcome leads, the client's own
+ * words back it up.
+ */
 export interface IndustryVideoTestimonial {
   quote: string
   name: string
   role: string
   company: string
   video: string
+  /** Headline result for this engagement (e.g. "+212% PDP conversion"). */
+  outcome: string
   /** Poster frame shown before playback (and wherever video can't render). */
   poster?: string
   logo?: string
@@ -73,14 +70,13 @@ export interface IndustryData {
   services: string[]
   testimonial: { quote: string; name: string; role: string; company: string }
   /**
-   * Extended industry-page sections (case studies, service cards, video testimonials, process
-   * timeline, FAQ). Optional and currently only populated for Animation —
+   * Extended industry-page sections (service cards, client story cards,
+   * process timeline, FAQ). Optional and currently only populated for Animation —
    * any industry gains these sections automatically once its data is
    * filled in, no component changes needed. The reel showcase itself is
    * global (see IndustryReel.tsx / portfolio-projects.ts) and needs no
    * per-industry data.
    */
-  caseStudies?: IndustryCaseStudy[]
   serviceCards?: IndustryServiceCard[]
   videoTestimonials?: IndustryVideoTestimonial[]
   process?: IndustryProcessStep[]
@@ -112,29 +108,6 @@ export const industries: IndustryData[] = [
     ],
     services: ['Explainer videos', 'Motion brand identity', '2D & 3D character work', 'Kinetic typography'],
     testimonial: { quote: 'They turned an eight-page technical deck into a 45-second video our sales team actually uses.', name: 'Priya Sharma', role: 'Head of Product Marketing', company: 'Nimbus Systems' },
-    caseStudies: [
-      {
-        image: '/images/ind_anim_gal1.png',
-        category: 'Product CGI',
-        title: 'Voltbrew — Launch Film',
-        stat: '+212% PDP conversion',
-        description: 'A carbonation sim and macro product renders replaced a live shoot entirely for a DTC energy-drink launch, cutting production time from six weeks to two.',
-      },
-      {
-        image: '/images/ind_anim_gal2.png',
-        category: 'Assembly Explainer',
-        title: 'Nordform — Zero-Words Assembly',
-        stat: '-34% support tickets',
-        description: 'One continuous animated take replaced a 40-page paper manual, explained with motion alone so it reads the same in every language Nordform ships to.',
-      },
-      {
-        image: '/images/ind_anim_gal3.png',
-        category: 'Character Mascot',
-        title: 'Kinetic Coffee — Season One',
-        stat: '+61% brand recall',
-        description: 'A 22-spot social season built around a single recurring character — same rig, same crew, every sprint — so the brand voice never drifted.',
-      },
-    ],
     serviceCards: [
       {
         title: 'Explainer Films',
@@ -185,6 +158,7 @@ export const industries: IndustryData[] = [
         name: 'Priya Sharma',
         role: 'Head of Product Marketing',
         company: 'Nimbus Systems',
+        outcome: '+3.1x demo requests',
         video: '/videos/pre-production.mp4',
         poster: '/images/mediavoid_team_bright.png',
         logo: '/images/clients/lucida-testimonials.webp',
@@ -194,6 +168,7 @@ export const industries: IndustryData[] = [
         name: 'Marcus Webb',
         role: 'VP of Growth',
         company: 'Voltbrew',
+        outcome: '+212% PDP conversion',
         video: '/videos/production.mp4',
         poster: '/images/mediavoid_creative_bright.png',
         logo: '/images/clients/dream-testimonials.webp',
@@ -203,6 +178,7 @@ export const industries: IndustryData[] = [
         name: 'Elena Ruiz',
         role: 'Brand Director',
         company: 'Nordform',
+        outcome: '-34% support tickets',
         video: '/videos/distribution.mp4',
         poster: '/images/portfolio-event.png',
         logo: '/images/clients/inhale-testimonails.webp',

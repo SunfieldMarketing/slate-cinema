@@ -442,7 +442,7 @@ export default function IndustryReel({ accent }: { accent: string }) {
   const active = portfolioProjects[index]
 
   return (
-    <section ref={sectionRef} className="relative w-full overflow-hidden py-14 md:py-16">
+    <section ref={sectionRef} id="reel" className="relative w-full overflow-hidden py-14 md:py-16">
       <div
         className="absolute inset-0 pointer-events-none"
         style={{ background: 'linear-gradient(180deg, #04070f 0%, #0a1430 38%, #14315f 70%, #29508d 92%, #0a1226 100%)' }}
@@ -472,7 +472,7 @@ export default function IndustryReel({ accent }: { accent: string }) {
             </h3>
             <div className="mt-2.5 font-mono text-[11px] tracking-[0.22em] text-white/60 uppercase" style={{ textShadow: '0 2px 14px rgba(0,0,0,.9)' }}>
               {active.category} · {active.company} ·{' '}
-              <a href="#gallery" className="pointer-events-auto inline-flex items-center gap-1.5 hover:text-white transition-colors" style={{ color: accent }}>
+              <a href="#gallery" className="pointer-events-auto inline-flex items-center gap-1.5 hover:text-white transition-colors rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80" style={{ color: accent }}>
                 View project <ArrowRight className="w-3 h-3" />
               </a>
             </div>
@@ -492,7 +492,7 @@ export default function IndustryReel({ accent }: { accent: string }) {
             type="button"
             onClick={() => go(-1)}
             aria-label="Previous project"
-            className="reel-fade absolute left-1 bottom-1 sm:left-2 sm:bottom-2 w-10 h-10 rounded-lg border border-white/10 bg-black/60 backdrop-blur-md text-white flex items-center justify-center transition-colors hover:border-white/40"
+            className="reel-fade absolute left-1 bottom-1 sm:left-2 sm:bottom-2 w-11 h-11 rounded-lg border border-white/10 bg-black/60 backdrop-blur-md text-white flex items-center justify-center transition-colors hover:border-white/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
           >
             ←
           </button>
@@ -500,21 +500,25 @@ export default function IndustryReel({ accent }: { accent: string }) {
             type="button"
             onClick={() => go(1)}
             aria-label="Next project"
-            className="reel-fade absolute right-1 bottom-1 sm:right-2 sm:bottom-2 w-10 h-10 rounded-lg border border-white/10 bg-black/60 backdrop-blur-md text-white flex items-center justify-center transition-colors hover:border-white/40"
+            className="reel-fade absolute right-1 bottom-1 sm:right-2 sm:bottom-2 w-11 h-11 rounded-lg border border-white/10 bg-black/60 backdrop-blur-md text-white flex items-center justify-center transition-colors hover:border-white/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
           >
             →
           </button>
 
-          <div className="reel-fade absolute inset-x-0 bottom-4 z-10 flex items-center justify-center gap-2 pointer-events-none">
+          <div className="reel-fade absolute inset-x-0 bottom-2 z-10 flex items-center justify-center pointer-events-none">
             {portfolioProjects.map((p, i) => (
               <button
                 key={p.title}
                 type="button"
                 aria-label={`Show ${p.title}`}
                 onClick={() => selectProject(i)}
-                className="pointer-events-auto h-1.5 rounded-full transition-all"
-                style={{ width: i === index ? 20 : 6, background: i === index ? accent : 'rgba(255,255,255,0.3)' }}
-              />
+                className="pointer-events-auto group/dot px-1.5 py-3 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-white/80 rounded"
+              >
+                <span
+                  className="block h-1.5 rounded-full transition-all"
+                  style={{ width: i === index ? 20 : 6, background: i === index ? accent : 'rgba(255,255,255,0.35)' }}
+                />
+              </button>
             ))}
           </div>
         </div>

@@ -20,6 +20,7 @@ export default function IndustryServices({ services, accent }: { services: Indus
   const ref = useRef<HTMLElement>(null)
 
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
       gsap.fromTo(
         '.svc-card',
@@ -48,7 +49,7 @@ export default function IndustryServices({ services, accent }: { services: Indus
           </div>
           <a
             href="/contact"
-            className="group inline-flex items-center gap-2 px-5 py-3 rounded-full text-xs font-semibold text-black transition-transform hover:scale-[1.03]"
+            className="group inline-flex items-center gap-2 px-5 py-3 rounded-full text-xs font-semibold text-black transition-transform hover:scale-[1.03] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
             style={{ background: accent }}
           >
             Book a call <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
@@ -59,7 +60,7 @@ export default function IndustryServices({ services, accent }: { services: Indus
           {/* Featured card — spans 2x2 with a looping video backdrop */}
           <a
             href="/contact"
-            className="svc-card group relative md:col-span-2 md:row-span-2 rounded-2xl overflow-hidden border border-white/10 flex flex-col justify-end min-h-[420px] transition-colors duration-300"
+            className="svc-card group relative md:col-span-2 md:row-span-2 rounded-2xl overflow-hidden border border-white/10 flex flex-col justify-end min-h-[420px] transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
             style={{ ['--acc' as string]: accent }}
             onMouseEnter={(e) => (e.currentTarget.style.borderColor = `${accent}80`)}
             onMouseLeave={(e) => (e.currentTarget.style.borderColor = '')}
@@ -106,7 +107,7 @@ export default function IndustryServices({ services, accent }: { services: Indus
                 <span className="inline-flex items-center gap-2 text-sm font-semibold text-white group-hover:gap-3 transition-all">
                   Book this <ArrowRight className="w-4 h-4" style={{ color: accent }} />
                 </span>
-                <span className="font-mono text-[10px] tracking-[0.14em] text-white/40 uppercase">{featured.meta}</span>
+                <span className="font-mono text-[10px] tracking-[0.14em] text-white/55 uppercase">{featured.meta}</span>
               </div>
             </div>
           </a>
@@ -115,7 +116,7 @@ export default function IndustryServices({ services, accent }: { services: Indus
             <a
               key={s.title}
               href="/contact"
-              className="svc-card group relative rounded-2xl overflow-hidden border border-white/10 flex flex-col justify-end min-h-[240px] transition-colors duration-300"
+              className="svc-card group relative rounded-2xl overflow-hidden border border-white/10 flex flex-col justify-end min-h-[240px] transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
               onMouseEnter={(e) => (e.currentTarget.style.borderColor = `${accent}80`)}
               onMouseLeave={(e) => (e.currentTarget.style.borderColor = '')}
             >
@@ -147,7 +148,7 @@ export default function IndustryServices({ services, accent }: { services: Indus
                   <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-white group-hover:gap-2.5 transition-all">
                     Book this <ArrowRight className="w-3.5 h-3.5" style={{ color: accent }} />
                   </span>
-                  <span className="font-mono text-[9px] tracking-[0.12em] text-white/35 uppercase">{s.meta}</span>
+                  <span className="font-mono text-[9px] tracking-[0.12em] text-white/55 uppercase">{s.meta}</span>
                 </div>
               </div>
             </a>

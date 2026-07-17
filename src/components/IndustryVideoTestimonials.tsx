@@ -28,7 +28,12 @@ function TestimonialCard({ t, accent }: { t: IndustryVideoTestimonial; accent: s
 
   return (
     <div className="vt-card group relative rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02] flex flex-col">
-      <button type="button" onClick={toggle} className="relative aspect-video w-full overflow-hidden" aria-label={playing ? `Pause testimonial from ${t.name}` : `Play testimonial from ${t.name}`}>
+      <button
+        type="button"
+        onClick={toggle}
+        className="relative aspect-video w-full overflow-hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
+        aria-label={playing ? `Pause testimonial from ${t.name}` : `Play testimonial from ${t.name}`}
+      >
         {t.poster && (
           <img src={t.poster} alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover" />
         )}
@@ -64,13 +69,18 @@ function TestimonialCard({ t, accent }: { t: IndustryVideoTestimonial; accent: s
       </button>
 
       <div className="p-5 flex flex-col grow">
-        <div className="flex items-center gap-1 mb-3">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Star key={i} className="w-3.5 h-3.5" fill={accent} stroke={accent} />
-          ))}
+        {/* The case study folded in: measurable outcome leads the card,
+            the client's own words back it up. */}
+        <div className="flex items-center justify-between gap-3 mb-3">
+          <div className="text-xl font-bold tracking-tight" style={{ color: accent }}>{t.outcome}</div>
+          <div className="flex items-center gap-1 shrink-0">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star key={i} className="w-3.5 h-3.5" fill={accent} stroke={accent} />
+            ))}
+          </div>
         </div>
         <p className="text-sm text-white/80 leading-relaxed mb-4 grow">&ldquo;{t.quote}&rdquo;</p>
-        <div className="text-xs text-white/50">
+        <div className="text-xs text-white/55">
           <span className="text-white font-semibold">{t.name}</span> · {t.role}, {t.company}
         </div>
       </div>
@@ -87,6 +97,7 @@ export default function IndustryVideoTestimonials({ testimonials, accent }: { te
   const ref = useRef<HTMLElement>(null)
 
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
       gsap.fromTo(
         '.vt-card',
@@ -104,7 +115,7 @@ export default function IndustryVideoTestimonials({ testimonials, accent }: { te
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         <div className="text-center mb-12 max-w-2xl mx-auto">
           <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-4" style={{ color: accent }}>
-            <span className="w-8 h-px" style={{ background: `${accent}66` }} /> Client Stories
+            <span className="w-8 h-px" style={{ background: `${accent}66` }} /> The Work · Client Stories
             <span className="w-8 h-px" style={{ background: `${accent}66` }} />
           </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.05]">

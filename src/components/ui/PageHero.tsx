@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef, useEffect } from 'react'
+import React, { useRef } from 'react'
 import { preload } from 'react-dom'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
@@ -32,6 +32,7 @@ export default function PageHero({ eyebrow, title, subtitle, videoSrc, accent = 
   }
 
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
       gsap.fromTo('.ph-line', { yPercent: 120 }, { yPercent: 0, stagger: 0.1, duration: 0.9, ease: 'power4.out', delay: 0.1 })
       gsap.fromTo('.ph-fade', { y: 30, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.12, duration: 0.7, ease: 'power3.out', delay: 0.4 })
@@ -77,7 +78,7 @@ export default function PageHero({ eyebrow, title, subtitle, videoSrc, accent = 
             {cta && (
               <a
                 href={cta.href}
-                className="group inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-sm text-black bg-white hover:text-white transition-colors duration-300 shadow-[0_0_30px_rgba(255,255,255,0.15)]"
+                className="group inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-sm text-black bg-white hover:text-white transition-colors duration-300 shadow-[0_0_30px_rgba(255,255,255,0.15)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
                 style={{ ['--acc' as string]: accent }}
               >
                 <span className="absolute" />
@@ -87,7 +88,7 @@ export default function PageHero({ eyebrow, title, subtitle, videoSrc, accent = 
             {secondaryCta && (
               <a
                 href={secondaryCta.href}
-                className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full font-semibold text-sm text-white border border-white/25 bg-white/[0.04] backdrop-blur-md hover:border-white/60 transition-colors duration-300"
+                className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full font-semibold text-sm text-white border border-white/25 bg-white/[0.04] backdrop-blur-md hover:border-white/60 transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
               >
                 <span className="w-2 h-2 rounded-full" style={{ background: accent }} />
                 {secondaryCta.label}
@@ -97,7 +98,7 @@ export default function PageHero({ eyebrow, title, subtitle, videoSrc, accent = 
         )}
 
         {trustNote && (
-          <p className="ph-fade mt-6 font-mono text-[10px] tracking-[0.2em] uppercase text-white/40">{trustNote}</p>
+          <p className="ph-fade mt-6 font-mono text-[10px] tracking-[0.2em] uppercase text-white/55">{trustNote}</p>
         )}
       </div>
 

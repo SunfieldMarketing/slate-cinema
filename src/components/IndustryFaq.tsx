@@ -14,6 +14,7 @@ export default function IndustryFaq({ faqs, accent }: { faqs: IndustryFaqItem[];
   const ref = useRef<HTMLElement>(null)
 
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
       gsap.fromTo(
         '.faq-fade',
@@ -69,12 +70,12 @@ export default function IndustryFaq({ faqs, accent }: { faqs: IndustryFaqItem[];
             </p>
             <a
               href="/contact"
-              className="group inline-flex w-full items-center justify-center gap-2 px-6 py-3.5 rounded-full text-sm font-semibold text-black transition-transform hover:scale-[1.02]"
+              className="group inline-flex w-full items-center justify-center gap-2 px-6 py-3.5 rounded-full text-sm font-semibold text-black transition-transform hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
               style={{ background: accent }}
             >
               Book a call <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
             </a>
-            <p className="mt-4 text-center font-mono text-[9px] tracking-[0.18em] uppercase text-white/35">
+            <p className="mt-4 text-center font-mono text-[9px] tracking-[0.18em] uppercase text-white/55">
               Replies within one business day
             </p>
           </div>

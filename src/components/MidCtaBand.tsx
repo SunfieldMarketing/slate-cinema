@@ -16,6 +16,7 @@ export default function MidCtaBand({ accent, label }: { accent: string; label?: 
   const ref = useRef<HTMLElement>(null)
 
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
       gsap.fromTo(
         '.mcb-in',
@@ -47,7 +48,7 @@ export default function MidCtaBand({ accent, label }: { accent: string; label?: 
           </div>
           <a
             href="/contact"
-            className="relative group inline-flex items-center gap-2.5 shrink-0 px-7 py-3.5 rounded-full text-sm font-semibold text-black transition-transform hover:scale-[1.04]"
+            className="relative group inline-flex items-center gap-2.5 shrink-0 px-7 py-3.5 rounded-full text-sm font-semibold text-black transition-transform hover:scale-[1.04] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
             style={{ background: accent, boxShadow: `0 0 32px ${accent}55` }}
           >
             Book a call <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />

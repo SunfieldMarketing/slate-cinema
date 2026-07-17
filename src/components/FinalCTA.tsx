@@ -93,7 +93,7 @@ export default function FinalCTA() {
               href="/contact"
               onMouseMove={handleMagneticMove}
               onMouseLeave={handleMagneticLeave}
-              className="group relative px-10 py-5 bg-[#00AEEF] text-black font-semibold rounded-full overflow-hidden transition-shadow duration-300 shadow-[0_0_40px_rgba(0,174,239,0.35)] hover:shadow-[0_0_56px_rgba(0,174,239,0.55)]"
+              className="group relative px-10 py-5 bg-[#00AEEF] text-black font-semibold rounded-full overflow-hidden transition-shadow duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80 shadow-[0_0_40px_rgba(0,174,239,0.35)] hover:shadow-[0_0_56px_rgba(0,174,239,0.55)]"
             >
               <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <span className="relative z-10 flex items-center transition-colors">
@@ -103,13 +103,13 @@ export default function FinalCTA() {
             </a>
             <Link
               href="/portfolio"
-              className="px-8 py-5 rounded-full text-sm font-semibold text-white border border-white/20 bg-white/[0.03] hover:border-white/50 transition-colors"
+              className="px-8 py-5 rounded-full text-sm font-semibold text-white border border-white/20 bg-white/[0.03] hover:border-white/50 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
             >
               See more work
             </Link>
           </div>
 
-          <p className="cta-fade mt-8 font-mono text-[10px] tracking-[0.22em] uppercase text-white/35">
+          <p className="cta-fade mt-8 font-mono text-[10px] tracking-[0.22em] uppercase text-white/55">
             20-minute call · No pitch deck · Replies within one business day
           </p>
         </div>
