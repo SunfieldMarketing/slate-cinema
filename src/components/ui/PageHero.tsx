@@ -84,7 +84,7 @@ export default function PageHero({
             muted
             playsInline
             preload="auto"
-            fetchPriority="high"
+            {...({ fetchPriority: 'high' } as Record<string, unknown>)}
             className="w-full h-full object-cover opacity-40"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/40 to-ink" />
