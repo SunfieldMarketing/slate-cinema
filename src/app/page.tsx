@@ -4,7 +4,7 @@ import React from 'react'
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import FlagshipClients from "@/components/FlagshipClients";
-import Positioning from "@/components/Positioning";
+import Results from "@/components/Results";
 import Pipeline from "@/components/Pipeline";
 import IndustryStandards from "@/components/IndustryStandards";
 import Reviews from "@/components/Reviews";
@@ -29,7 +29,7 @@ export default function Home() {
         <div data-scroll-section="hero"><Hero /></div>
         <div data-scroll-section="flagship"><FlagshipClients /></div>
         <div data-scroll-section="trust"><TrustBanner /></div>
-        <div data-scroll-section="positioning"><Positioning /></div>
+        <div data-scroll-section="results"><Results /></div>
         <div id="how" data-scroll-section="pipeline"><Pipeline /></div>
         <div data-scroll-section="standards"><IndustryStandards /></div>
         <div data-scroll-section="reviews"><Reviews /></div>
