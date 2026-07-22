@@ -23,6 +23,7 @@ import {
   Target,
   Clock3,
   Wallet,
+  ChevronDown,
 } from 'lucide-react'
 import posthog from 'posthog-js'
 import Nav from '@/components/Nav'
@@ -180,7 +181,7 @@ function LeadForm() {
   }
 
   return (
-    <section ref={ref} id="lead-form" className="relative w-full overflow-hidden py-16 md:py-20 scroll-mt-24">
+    <section ref={ref} id="lead-form" className="relative w-full overflow-hidden py-12 md:py-16 scroll-mt-24">
       <div className="lf-inner relative z-10 w-full max-w-2xl mx-auto px-5 sm:px-8">
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-8 sm:p-10">
           <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{'// Not Sure Yet'}</span>
@@ -277,7 +278,7 @@ function ProjectForm() {
   }
 
   return (
-    <section ref={ref} id="project-form" className="relative w-full overflow-hidden py-16 md:py-20 scroll-mt-24">
+    <section ref={ref} id="project-form" className="relative w-full overflow-hidden py-12 md:py-16 scroll-mt-24">
       <div className="pf-inner relative z-10 w-full max-w-3xl mx-auto px-5 sm:px-8">
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-8 sm:p-10">
           <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{'// Know What You Need'}</span>
@@ -375,11 +376,23 @@ function ProjectForm() {
   )
 }
 
-/* ── Divider — a quiet beat between the three stages ────────────────── */
+/* ── Divider — a real beat between stages, not a hairline squeeze ──── */
 function StageDivider() {
+  const ref = useRef<HTMLDivElement>(null)
+  useGSAP(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo('.sd-line', { scaleY: 0 }, { scaleY: 1, duration: 0.8, ease: 'power2.out', transformOrigin: 'top', scrollTrigger: { trigger: ref.current, start: 'top 90%', once: true } })
+      gsap.fromTo('.sd-dot', { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(1.7)', scrollTrigger: { trigger: ref.current, start: 'top 85%', once: true } })
+    }, ref)
+    return () => ctx.revert()
+  }, { scope: ref })
+
   return (
-    <div className="relative w-full max-w-2xl mx-auto px-5 sm:px-8">
-      <div className="h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+    <div ref={ref} className="relative w-full flex items-center justify-center py-10 md:py-16">
+      <div className="sd-line w-px h-16 md:h-24 bg-gradient-to-b from-transparent via-white/15 to-transparent" />
+      <div className="sd-dot absolute w-9 h-9 rounded-full border border-white/15 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(0,174,239,0.12)]">
+        <ChevronDown className="w-4 h-4 text-white/40" />
+      </div>
     </div>
   )
 }
@@ -401,7 +414,7 @@ function ReadyToTalk() {
   }, { scope: ref })
 
   return (
-    <section ref={ref} id="ready-to-talk" className="relative w-full overflow-hidden py-16 md:py-20 scroll-mt-24">
+    <section ref={ref} id="ready-to-talk" className="relative w-full overflow-hidden py-12 md:py-16 scroll-mt-24">
       <div className="rt-inner relative z-10 w-full max-w-2xl mx-auto px-5 sm:px-8">
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-8 sm:p-10">
           <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{'// Ready to Talk'}</span>
@@ -552,7 +565,7 @@ function ContactMethods() {
   }, { scope: ref })
 
   return (
-    <section ref={ref} className="relative w-full overflow-hidden py-16">
+    <section ref={ref} className="relative w-full overflow-hidden py-20 md:py-24">
       <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
         {contactCards.map((c) => (
           <MagicCard
@@ -595,7 +608,7 @@ export default function ContactPageContent() {
         />
 
         <StageRouter />
-
+        <StageDivider />
         <LeadForm />
         <StageDivider />
         <ProjectForm />
