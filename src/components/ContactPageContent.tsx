@@ -816,6 +816,7 @@ export default function ContactPageContent() {
             title={['Let’s get', 'you started']}
             subtitle="Tell us where you’re at and we’ll point you to the right next step. We reply within one business day."
             accent="#00AEEF"
+            videoSrc="/videos/performance.mp4"
           />
 
           <WhatHappensNext />

@@ -6,6 +6,7 @@ import Hero from "@/components/Hero";
 import FlagshipClients from "@/components/FlagshipClients";
 import Results from "@/components/Results";
 import Pipeline from "@/components/Pipeline";
+import MediaVoid from "@/components/MediaVoid";
 import IndustryStandards from "@/components/IndustryStandards";
 import Reviews from "@/components/Reviews";
 import Portfolio from "@/components/Portfolio";
@@ -31,6 +32,7 @@ export default function Home() {
         <div data-scroll-section="trust"><TrustBanner /></div>
         <div data-scroll-section="results"><Results /></div>
         <div id="how" data-scroll-section="pipeline"><Pipeline /></div>
+        <div data-scroll-section="mediavoid"><MediaVoid /></div>
         <div data-scroll-section="standards"><IndustryStandards /></div>
         <div data-scroll-section="reviews"><Reviews /></div>
         <div id="reel" data-scroll-section="portfolio"><Portfolio limit={6} showFilters={false} /></div>
