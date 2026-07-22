@@ -20,7 +20,6 @@ export default function IndustryServices({ services, accent }: { services: Indus
   const ref = useRef<HTMLElement>(null)
 
   useGSAP(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
       gsap.fromTo(
         '.svc-card',

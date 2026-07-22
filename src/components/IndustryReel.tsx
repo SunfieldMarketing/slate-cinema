@@ -10,6 +10,7 @@ import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { ArrowRight } from 'lucide-react'
 import { portfolioProjects } from '@/lib/portfolio-projects'
+import ProjectCardModal from '@/components/ProjectCardModal'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -53,10 +54,15 @@ const FRAME_ARC = FRAME_W / RADIUS
   poses register instead of blurring by.
 */
 const quatFromEuler = (x: number, y: number, z: number) => new THREE.Quaternion().setFromEuler(new THREE.Euler(x, y, z, 'XYZ'))
+/*
+  The resting pose is deliberately off-axis — pitched, yawed and rolled
+  like the reference — so the loop reads as a strip unraveling diagonally
+  across the frame rather than a straight-on carousel cylinder.
+*/
 const FLY_KEYFRAMES = [
   { pos: new THREE.Vector3(6.2, 4.2, -30), quat: quatFromEuler(0.55, 1.25, -0.5), scale: 0.32 },
   { pos: new THREE.Vector3(2.8, 1.9, -14.5), quat: quatFromEuler(0.42, 0.55, -0.28), scale: 0.62 },
-  { pos: new THREE.Vector3(0, 0.3, -10.8), quat: quatFromEuler(0.035, 0, 0.02), scale: 1 },
+  { pos: new THREE.Vector3(0, 0.55, -10.8), quat: quatFromEuler(0.1, 0.02, -0.1), scale: 1 },
 ]
 const FLY_SPLIT = 0.55
 const UNSPOOL_TURNS = 2.6
@@ -98,7 +104,6 @@ interface ReelRefs {
   activeRef: MutableRefObject<number>
   spinRef: MutableRefObject<number>
   dragExtraRef: MutableRefObject<number>
-  pointerRef: MutableRefObject<{ x: number; y: number }>
 }
 
 function FilmBand({
@@ -106,7 +111,6 @@ function FilmBand({
   activeRef,
   spinRef,
   dragExtraRef,
-  pointerRef,
   accent,
   onSelect,
 }: ReelRefs & { accent: string; onSelect: (i: number) => void }) {
@@ -190,29 +194,22 @@ function FilmBand({
     []
   )
 
-  useFrame((state) => {
+  useFrame(() => {
     const p = progressRef.current
-    const t = state.clock.elapsedTime
 
     if (flyRef.current) {
       // Pick the keyframe segment and ease through it, so the flight
       // lingers at each reference pose instead of blurring past it.
+      // Once settled the band holds perfectly still — motion only comes
+      // from the visitor dragging or paging it.
       const seg = p < FLY_SPLIT ? 0 : 1
       const lt = seg === 0 ? p / FLY_SPLIT : (p - FLY_SPLIT) / (1 - FLY_SPLIT)
       const s = lt * lt * (3 - 2 * lt)
       const a = FLY_KEYFRAMES[seg]
       const b = FLY_KEYFRAMES[seg + 1]
 
-      const bobY = Math.sin(t * 0.55) * 0.07 * p
-      const bobRotZ = Math.sin(t * 0.45 + 1.3) * 0.012 * p
-      const parallaxRotY = pointerRef.current.x * 0.09 * p
-      const parallaxRotX = -pointerRef.current.y * 0.05 * p
-
       flyRef.current.position.lerpVectors(a.pos, b.pos, s)
-      flyRef.current.position.y += bobY
       flyRef.current.quaternion.copy(a.quat).slerp(b.quat, s)
-      const extra = new THREE.Euler(parallaxRotX, parallaxRotY, bobRotZ, 'XYZ')
-      flyRef.current.quaternion.multiply(new THREE.Quaternion().setFromEuler(extra))
       flyRef.current.scale.setScalar(THREE.MathUtils.lerp(a.scale, b.scale, s))
     }
 
@@ -227,12 +224,12 @@ function FilmBand({
       const frame = frameRefs.current[j]
       if (!frame) continue
       const isActive = j % COUNT === activeRef.current
-      const targetScale = isActive ? 1.02 : 1
+      const targetScale = isActive ? 1.16 : 1
       const s = THREE.MathUtils.lerp(frame.scale.x, targetScale, 0.1)
       frame.scale.setScalar(s)
       const mat = frame.material as THREE.MeshStandardMaterial
-      mat.emissiveIntensity = THREE.MathUtils.lerp(mat.emissiveIntensity, isActive ? 0.08 : 0, 0.1)
-      mat.color.setScalar(THREE.MathUtils.lerp(mat.color.r, isActive ? 1 : 0.55, 0.1))
+      mat.emissiveIntensity = THREE.MathUtils.lerp(mat.emissiveIntensity, isActive ? 0.04 : 0, 0.1)
+      mat.color.setScalar(THREE.MathUtils.lerp(mat.color.r, isActive ? 1 : 0.4, 0.1))
     }
   })
 
@@ -342,9 +339,9 @@ export default function IndustryReel({ accent }: { accent: string }) {
   const virtualRef = useRef(0)
   const spinRef = useRef(0)
   const dragExtraRef = useRef(0)
-  const pointerRef = useRef({ x: 0, y: 0 })
   const dragStateRef = useRef({ active: false, startX: 0, lastX: 0 })
   const [isDragging, setIsDragging] = useState(false)
+  const [openProject, setOpenProject] = useState<number | null>(null)
 
   useEffect(() => {
     indexRef.current = index
@@ -359,19 +356,14 @@ export default function IndustryReel({ accent }: { accent: string }) {
           { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: sectionRef.current, start: 'top 75%', once: true } }
         )
 
-        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        if (reduced) {
-          progressRef.current = 1
-        } else {
-          gsap.to(progressRef, {
-            current: 1,
-            // Segments ease individually (smoothstep per keyframe), so the
-            // master progress runs linear to avoid double-easing stalls.
-            duration: 3.4,
-            ease: 'none',
-            scrollTrigger: { trigger: sectionRef.current, start: 'top 78%', once: true },
-          })
-        }
+        gsap.to(progressRef, {
+          current: 1,
+          // Segments ease individually (smoothstep per keyframe), so the
+          // master progress runs linear to avoid double-easing stalls.
+          duration: 3.4,
+          ease: 'none',
+          scrollTrigger: { trigger: sectionRef.current, start: 'top 78%', once: true },
+        })
       }, sectionRef)
       return () => ctx.revert()
     },
@@ -397,8 +389,11 @@ export default function IndustryReel({ accent }: { accent: string }) {
     return d
   }
 
-  /* Jump to a specific slot (frame click) — straight to the one clicked. */
-  const selectSlot = (j: number) => goTo(virtualRef.current + shortestSlotDiff(j))
+  /* Frame click: rotate to the clicked slot and open its project card. */
+  const selectSlot = (j: number) => {
+    goTo(virtualRef.current + shortestSlotDiff(j))
+    setOpenProject(j % COUNT)
+  }
 
   /* Jump to a project (dots) — nearest of its two slots on the ring. */
   const selectProject = (i: number) => {
@@ -408,9 +403,6 @@ export default function IndustryReel({ accent }: { accent: string }) {
   }
 
   const handlePointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    pointerRef.current.x = ((e.clientX - rect.left) / rect.width) * 2 - 1
-    pointerRef.current.y = ((e.clientY - rect.top) / rect.height) * 2 - 1
     if (dragStateRef.current.active) {
       const dx = e.clientX - dragStateRef.current.lastX
       dragStateRef.current.lastX = e.clientX
@@ -442,7 +434,7 @@ export default function IndustryReel({ accent }: { accent: string }) {
   const active = portfolioProjects[index]
 
   return (
-    <section ref={sectionRef} id="reel" className="relative w-full overflow-hidden py-14 md:py-16">
+    <section ref={sectionRef} id="reel" className="relative w-full overflow-hidden py-24 md:py-32">
       <div
         className="absolute inset-0 pointer-events-none"
         style={{ background: 'linear-gradient(180deg, #04070f 0%, #0a1430 38%, #14315f 70%, #29508d 92%, #0a1226 100%)' }}
@@ -453,37 +445,42 @@ export default function IndustryReel({ accent }: { accent: string }) {
       />
 
       <div className="relative z-10 w-full px-2 sm:px-4">
+        {/* Title block sits fully above the strip — clear separation from
+            the band, per the reference's spacing. */}
+        <div className="reel-fade relative z-10 text-center mb-10 md:mb-14">
+          <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-4" style={{ color: accent }}>
+            <span className="w-8 h-px" style={{ background: `${accent}66` }} /> The Reel
+            <span className="w-8 h-px" style={{ background: `${accent}66` }} />
+          </span>
+          <h3 className="font-serif-accent italic text-4xl sm:text-5xl md:text-6xl text-white" style={{ textShadow: '0 4px 40px rgba(0,0,0,.9)' }}>
+            {active.title}
+          </h3>
+          <div className="mt-3.5 font-mono text-[11px] tracking-[0.22em] text-white/60 uppercase" style={{ textShadow: '0 2px 14px rgba(0,0,0,.9)' }}>
+            {active.category} · {active.company} ·{' '}
+            <button
+              type="button"
+              onClick={() => setOpenProject(index)}
+              className="inline-flex items-center gap-1.5 uppercase tracking-[0.22em] hover:text-white transition-colors rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
+              style={{ color: accent }}
+            >
+              View project <ArrowRight className="w-3 h-3" />
+            </button>
+          </div>
+        </div>
+
         <div
-          className="relative h-[62vh] min-h-[460px] max-h-[700px] w-full touch-none"
+          className="relative h-[70vh] min-h-[540px] max-h-[860px] w-full touch-none"
           style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={endDrag}
           onPointerLeave={endDrag}
         >
-          {/* Title overlays the top of the band, like the reference. */}
-          <div className="reel-fade pointer-events-none absolute inset-x-0 top-2 z-10 text-center">
-            <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-3" style={{ color: accent }}>
-              <span className="w-8 h-px" style={{ background: `${accent}66` }} /> The Reel
-              <span className="w-8 h-px" style={{ background: `${accent}66` }} />
-            </span>
-            <h3 className="font-serif-accent italic text-4xl sm:text-5xl md:text-6xl text-white" style={{ textShadow: '0 4px 40px rgba(0,0,0,.9)' }}>
-              {active.title}
-            </h3>
-            <div className="mt-2.5 font-mono text-[11px] tracking-[0.22em] text-white/60 uppercase" style={{ textShadow: '0 2px 14px rgba(0,0,0,.9)' }}>
-              {active.category} · {active.company} ·{' '}
-              <a href="#gallery" className="pointer-events-auto inline-flex items-center gap-1.5 hover:text-white transition-colors rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80" style={{ color: accent }}>
-                View project <ArrowRight className="w-3 h-3" />
-              </a>
-            </div>
-          </div>
-
           <FilmReelScene
             progressRef={progressRef}
             activeRef={indexRef}
             spinRef={spinRef}
             dragExtraRef={dragExtraRef}
-            pointerRef={pointerRef}
             accent={accent}
             onSelect={selectSlot}
           />
@@ -523,6 +520,12 @@ export default function IndustryReel({ accent }: { accent: string }) {
           </div>
         </div>
       </div>
+
+      <ProjectCardModal
+        project={openProject === null ? null : portfolioProjects[openProject]}
+        accent={accent}
+        onClose={() => setOpenProject(null)}
+      />
     </section>
   )
 }

@@ -28,7 +28,6 @@ gsap.registerPlugin(ScrollTrigger)
 function IntroSection({ industry }: { industry: IndustryData }) {
   const ref = useRef<HTMLElement>(null)
   useGSAP(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
       gsap.fromTo('.intro-fade', { y: 40, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: ref.current, start: 'top 75%', once: true } })
     }, ref)
@@ -72,7 +71,6 @@ function IntroSection({ industry }: { industry: IndustryData }) {
 function GallerySection({ industry }: { industry: IndustryData }) {
   const ref = useRef<HTMLElement>(null)
   useGSAP(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
       gsap.fromTo('.gal-tile', { y: 50, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 0.7, ease: 'power3.out', scrollTrigger: { trigger: '.gal-grid', start: 'top 85%', once: true } })
     }, ref)
@@ -103,7 +101,6 @@ function GallerySection({ industry }: { industry: IndustryData }) {
 function TestimonialSection({ industry }: { industry: IndustryData }) {
   const ref = useRef<HTMLElement>(null)
   useGSAP(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
       gsap.fromTo('.tm-fade', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: ref.current, start: 'top 80%', once: true } })
     }, ref)

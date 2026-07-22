@@ -97,7 +97,6 @@ export default function IndustryVideoTestimonials({ testimonials, accent }: { te
   const ref = useRef<HTMLElement>(null)
 
   useGSAP(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
       gsap.fromTo(
         '.vt-card',

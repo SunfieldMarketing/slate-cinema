@@ -5,6 +5,8 @@ export interface PortfolioProject {
   url: string
   copy: string
   metrics: { label: string; value: string }[]
+  /** Featured cut shown in the project card modal. */
+  video?: string
   span?: 'wide' | 'tall' | 'normal'
 }
 
@@ -15,6 +17,7 @@ export interface PortfolioProject {
 export const portfolioProjects: PortfolioProject[] = [
   {
     title: 'Neon Nights',
+    video: '/videos/production.mp4',
     category: 'Commercial',
     company: 'HyperDrive Motors',
     url: '/images/portfolio-brand.png',
@@ -24,6 +27,7 @@ export const portfolioProjects: PortfolioProject[] = [
   },
   {
     title: 'Velocity',
+    video: '/videos/performance.mp4',
     category: 'Social',
     company: 'Apex Athletics',
     url: '/images/portfolio-social.png',
@@ -33,6 +37,7 @@ export const portfolioProjects: PortfolioProject[] = [
   },
   {
     title: 'The Blueprint',
+    video: '/videos/pre-production.mp4',
     category: 'Documentary',
     company: 'Nexus Architecture',
     url: '/images/portfolio-production.png',
@@ -41,6 +46,7 @@ export const portfolioProjects: PortfolioProject[] = [
   },
   {
     title: 'Ascension',
+    video: '/videos/dj-vinyl.mp4',
     category: 'Event',
     company: 'Summit Conf.',
     url: '/images/portfolio-event.png',
@@ -49,6 +55,7 @@ export const portfolioProjects: PortfolioProject[] = [
   },
   {
     title: 'Automotive Cinema',
+    video: '/videos/hero-camera.mp4',
     category: 'Action',
     company: 'Velocity Co',
     url: '/images/portfolio_auto_bright.png',
@@ -58,6 +65,7 @@ export const portfolioProjects: PortfolioProject[] = [
   },
   {
     title: 'Product Focus',
+    video: '/videos/post-production.mp4',
     category: 'E-Commerce',
     company: 'Lumiere Beauty',
     url: '/images/portfolio_beauty_bright.png',
@@ -66,6 +74,7 @@ export const portfolioProjects: PortfolioProject[] = [
   },
   {
     title: 'Aerial Cinematography',
+    video: '/videos/hero.mp4',
     category: 'Drone',
     company: 'Vista Real Estate',
     url: '/images/portfolio_realestate_bright.png',
@@ -75,6 +84,7 @@ export const portfolioProjects: PortfolioProject[] = [
   },
   {
     title: 'Impact Film',
+    video: '/videos/distribution.mp4',
     category: 'Narrative',
     company: 'Global Health Org',
     url: '/images/portfolio_impact_bright.png',

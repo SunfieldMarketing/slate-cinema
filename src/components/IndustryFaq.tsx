@@ -14,7 +14,6 @@ export default function IndustryFaq({ faqs, accent }: { faqs: IndustryFaqItem[];
   const ref = useRef<HTMLElement>(null)
 
   useGSAP(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
       gsap.fromTo(
         '.faq-fade',

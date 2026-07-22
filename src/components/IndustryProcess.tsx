@@ -19,9 +19,8 @@ export default function IndustryProcess({ steps, accent }: { steps: IndustryProc
   const cardRefs = useRef<(HTMLDivElement | null)[]>([])
 
   useGSAP(() => {
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const ctx = gsap.context(() => {
-      if (!reduced) gsap.fromTo(
+      gsap.fromTo(
         '.proc-fade',
         { y: 30, opacity: 0 },
         { y: 0, opacity: 1, stagger: 0.06, duration: 0.7, ease: 'power3.out', scrollTrigger: { trigger: ref.current, start: 'top 78%', once: true } }

@@ -59,7 +59,6 @@ export default function PageHero({
   }
 
   useGSAP(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
       gsap.fromTo('.ph-line',  { yPercent: 120 }, { yPercent: 0, stagger: 0.1,  duration: 0.9, ease: 'power4.out', delay: 0.1 })
       gsap.fromTo('.ph-fade',  { y: 30, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.12, duration: 0.7, ease: 'power3.out', delay: 0.4 })

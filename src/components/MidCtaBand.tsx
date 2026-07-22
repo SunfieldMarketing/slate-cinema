@@ -17,7 +17,6 @@ export default function MidCtaBand({ accent, label }: { accent: string; label?: 
   const ref = useRef<HTMLElement>(null)
 
   useGSAP(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
       gsap.fromTo(
         '.mcb-in',
