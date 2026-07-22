@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
-import { Film, Dumbbell, Plane, Building2, HeartPulse, ShoppingBag, Briefcase, Users, GraduationCap } from 'lucide-react'
+import { Film, Dumbbell, Plane, Building2, HeartPulse, ShoppingBag, Music, Briefcase, Users, GraduationCap } from 'lucide-react'
 
 export interface IndustryStat {
   value: number

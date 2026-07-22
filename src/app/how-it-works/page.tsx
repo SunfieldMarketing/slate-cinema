@@ -205,7 +205,7 @@ function ProcessWalkthrough() {
         <div className="pw-head text-center mb-14 max-w-2xl mx-auto">
           <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase block mb-4">Every Project Includes</span>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-[1.05] mb-5">Watch it move through every phase</h2>
-          <p className="text-white/55 text-sm sm:text-base font-light">A complete production — not just raw footage. Scroll through to see what's actually happening at each stage.</p>
+          <p className="text-white/55 text-sm sm:text-base font-light">A complete production — not just raw footage. Scroll through to see what&apos;s actually happening at each stage.</p>
         </div>
 
         <StickyScroll
