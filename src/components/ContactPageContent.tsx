@@ -24,6 +24,12 @@ import {
   Clock3,
   Wallet,
   ChevronDown,
+  Zap,
+  ShieldCheck,
+  Timer,
+  ListChecks,
+  MessageCircleMore,
+  type LucideIcon,
 } from 'lucide-react'
 import posthog from 'posthog-js'
 import Nav from '@/components/Nav'
@@ -34,6 +40,34 @@ import { MagicCard } from '@/components/ui/magic-card'
 import { industries } from '@/lib/industries'
 
 gsap.registerPlugin(ScrollTrigger)
+
+/* ── Shared: per-section backdrop — grid + soft glow, edge-masked so
+   consecutive sections bleed into one another instead of hard-cutting ── */
+const backdropPosition: Record<'center' | 'left' | 'right' | 'top', string> = {
+  center: 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
+  left: 'top-1/3 left-[6%] -translate-y-1/2',
+  right: 'top-1/3 right-[6%] -translate-y-1/2',
+  top: 'top-0 left-1/2 -translate-x-1/2',
+}
+
+function SectionBackdrop({ variant = 'center', dim = false }: { variant?: keyof typeof backdropPosition; dim?: boolean }) {
+  return (
+    <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+      <div className="absolute inset-0 opacity-[0.05] bg-[linear-gradient(rgba(255,255,255,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.5)_1px,transparent_1px)] bg-[size:56px_56px] [mask-image:radial-gradient(ellipse_65%_75%_at_50%_50%,black_25%,transparent_100%)]" />
+      <div className={`absolute w-[32rem] h-[32rem] rounded-full blur-[130px] ${backdropPosition[variant]} ${dim ? 'bg-[#00AEEF]/[0.045]' : 'bg-[#00AEEF]/[0.08]'}`} />
+    </div>
+  )
+}
+
+/* ── Shared: trust badge — a small credibility pill ─────────────────── */
+function TrustBadge({ icon: Icon, label }: { icon: LucideIcon; label: string }) {
+  return (
+    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-sm text-white/55 text-[11px] font-mono tracking-wide uppercase">
+      <Icon className="w-3.5 h-3.5 text-[#00AEEF]" />
+      {label}
+    </span>
+  )
+}
 
 /* ── Stage router — the three intent tiers ─────────────────────────── */
 const stages = [
@@ -75,11 +109,17 @@ function StageRouter() {
 
   return (
     <section ref={ref} id="get-started" className="relative w-full overflow-hidden py-24 md:py-28">
+      <SectionBackdrop variant="top" />
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         <div className="sr-head text-center mb-14 max-w-2xl mx-auto">
           <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{'// Get Started'}</span>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05]">What stage are you at?</h2>
           <p className="mt-5 text-white/55 font-light text-base sm:text-lg">Pick the option that fits and we&rsquo;ll route you to the right next step.</p>
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+            <TrustBadge icon={Zap} label="1-Hour Response" />
+            <TrustBadge icon={Mail} label="Reply Within 1 Business Day" />
+            <TrustBadge icon={ShieldCheck} label="No Obligation" />
+          </div>
         </div>
 
         <div className="sr-grid grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -182,11 +222,20 @@ function LeadForm() {
 
   return (
     <section ref={ref} id="lead-form" className="relative w-full overflow-hidden py-12 md:py-16 scroll-mt-24">
+      <SectionBackdrop variant="left" />
       <div className="lf-inner relative z-10 w-full max-w-2xl mx-auto px-5 sm:px-8">
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-8 sm:p-10">
-          <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{'// Not Sure Yet'}</span>
+          <div className="flex items-center gap-4 mb-5">
+            <div className="w-12 h-12 shrink-0 rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(0,174,239,0.2)]">
+              <HelpCircle className="w-5 h-5 text-[#00AEEF]" />
+            </div>
+            <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase">{'// Not Sure Yet'}</span>
+          </div>
           <h2 className="text-3xl sm:text-4xl font-black tracking-tighter text-white mb-3">Drop us a line</h2>
-          <p className="text-white/55 font-light mb-8 max-w-lg">Not sure what you need? Leave your info and we&rsquo;ll reach out. Takes about ten seconds.</p>
+          <p className="text-white/55 font-light mb-5 max-w-lg">Not sure what you need? Leave your info and we&rsquo;ll reach out.</p>
+          <div className="mb-8">
+            <TrustBadge icon={Timer} label="~10 Seconds" />
+          </div>
 
           {submitted ? (
             <SuccessNote text="We’ll be in touch within one business day." />
@@ -279,11 +328,20 @@ function ProjectForm() {
 
   return (
     <section ref={ref} id="project-form" className="relative w-full overflow-hidden py-12 md:py-16 scroll-mt-24">
+      <SectionBackdrop variant="right" />
       <div className="pf-inner relative z-10 w-full max-w-3xl mx-auto px-5 sm:px-8">
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-8 sm:p-10">
-          <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{'// Know What You Need'}</span>
+          <div className="flex items-center gap-4 mb-5">
+            <div className="w-12 h-12 shrink-0 rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(0,174,239,0.2)]">
+              <ClipboardList className="w-5 h-5 text-[#00AEEF]" />
+            </div>
+            <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase">{'// Know What You Need'}</span>
+          </div>
           <h2 className="text-3xl sm:text-4xl font-black tracking-tighter text-white mb-3">Tell us about the project</h2>
-          <p className="text-white/55 font-light mb-8 max-w-lg">The more detail you give us, the sharper our first proposal will be.</p>
+          <p className="text-white/55 font-light mb-5 max-w-lg">The more detail you give us, the sharper our first proposal will be.</p>
+          <div className="mb-8">
+            <TrustBadge icon={ListChecks} label="9 Quick Fields" />
+          </div>
 
           {submitted ? (
             <SuccessNote text="We’ll review your details and be in touch within one business day with next steps." />
@@ -415,14 +473,23 @@ function ReadyToTalk() {
 
   return (
     <section ref={ref} id="ready-to-talk" className="relative w-full overflow-hidden py-12 md:py-16 scroll-mt-24">
+      <SectionBackdrop variant="left" dim />
       <div className="rt-inner relative z-10 w-full max-w-2xl mx-auto px-5 sm:px-8">
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-8 sm:p-10">
-          <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{'// Ready to Talk'}</span>
+          <div className="flex items-center gap-4 mb-5">
+            <div className="w-12 h-12 shrink-0 rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(0,174,239,0.2)]">
+              <CalendarClock className="w-5 h-5 text-[#00AEEF]" />
+            </div>
+            <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase">{'// Ready to Talk'}</span>
+          </div>
           <h2 className="text-3xl sm:text-4xl font-black tracking-tighter text-white mb-3">Book a time on our calendar</h2>
-          <p className="text-white/55 font-light mb-8 max-w-lg">
+          <p className="text-white/55 font-light mb-5 max-w-lg">
             Prefer to talk it through live? Grab a 20-minute slot — no pitch deck, just an honest read on scope,
             timeline, and budget.
           </p>
+          <div className="mb-8">
+            <TrustBadge icon={Clock3} label="20-Minute Call" />
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-9">
             {prepItems.map((p) => (
@@ -471,10 +538,12 @@ function WhatHappensNext() {
 
   return (
     <section ref={ref} className="relative w-full overflow-hidden py-24 md:py-28">
+      <SectionBackdrop variant="center" dim />
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
         <div className="whn-head text-center mb-14 max-w-2xl mx-auto">
           <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{'// After You Reach Out'}</span>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05]">What happens next</h2>
+          <p className="mt-5 text-white/55 font-light text-base sm:text-lg">From first message to first day on set — here&rsquo;s the whole path.</p>
         </div>
         <div className="whn-grid relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {/* connecting line on desktop */}
@@ -507,6 +576,7 @@ function StudioLocation() {
 
   return (
     <section ref={ref} className="relative w-full overflow-hidden py-24 md:py-28">
+      <SectionBackdrop variant="right" dim />
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         <div className="sl-inner grid lg:grid-cols-2 gap-6 items-stretch">
           {/* Stylized map / studio visual */}
@@ -527,7 +597,10 @@ function StudioLocation() {
           {/* Studio details */}
           <div className="flex flex-col justify-center rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-8 sm:p-10">
             <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase mb-4">{'// The Studio'}</span>
-            <h2 className="text-3xl sm:text-4xl font-black tracking-tighter text-white mb-6">Based in Brooklyn,<br />shooting everywhere.</h2>
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tighter text-white mb-5">Based in Brooklyn,<br />shooting everywhere.</h2>
+            <div className="mb-6">
+              <TrustBadge icon={Navigation} label="On-Location Nationwide" />
+            </div>
             <div className="flex flex-col gap-5">
               <div className="flex items-start gap-4">
                 <MapPin className="w-5 h-5 text-[#00AEEF] mt-0.5 shrink-0" />
@@ -566,7 +639,19 @@ function ContactMethods() {
 
   return (
     <section ref={ref} className="relative w-full overflow-hidden py-20 md:py-24">
-      <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <SectionBackdrop variant="top" dim />
+      <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-8">
+        <div className="cm-head text-center mb-10 max-w-xl mx-auto">
+          <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase mb-4">
+            <span className="w-8 h-px bg-[#00AEEF]/40" /> Or Reach Us Directly <span className="w-8 h-px bg-[#00AEEF]/40" />
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-black tracking-tighter text-white leading-[1.05] mb-4">Prefer the direct route?</h2>
+          <p className="text-white/55 font-light text-base">Email, call, or stop by the studio — whatever&rsquo;s easiest.</p>
+          <div className="mt-6 flex justify-center">
+            <TrustBadge icon={MessageCircleMore} label="We Reply Fast" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {contactCards.map((c) => (
           <MagicCard
             key={c.label}
@@ -588,6 +673,7 @@ function ContactMethods() {
             </a>
           </MagicCard>
         ))}
+        </div>
       </div>
     </section>
   )
