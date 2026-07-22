@@ -20,6 +20,9 @@ import {
   ClipboardList,
   CalendarClock,
   CheckCircle2,
+  Target,
+  Clock3,
+  Wallet,
 } from 'lucide-react'
 import posthog from 'posthog-js'
 import Nav from '@/components/Nav'
@@ -372,6 +375,68 @@ function ProjectForm() {
   )
 }
 
+/* ── Divider — a quiet beat between the three stages ────────────────── */
+function StageDivider() {
+  return (
+    <div className="relative w-full max-w-2xl mx-auto px-5 sm:px-8">
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+    </div>
+  )
+}
+
+/* ── Ready to Talk — the high-intent, "just book it" option ────────── */
+const prepItems = [
+  { icon: Target, label: 'Your goals', desc: 'What the video needs to do for your business.' },
+  { icon: Clock3, label: 'Your timeline', desc: 'When you need it shot, edited, and live.' },
+  { icon: Wallet, label: 'A budget ballpark', desc: 'Rough range is fine — it keeps the call efficient.' },
+]
+
+function ReadyToTalk() {
+  const ref = useRef<HTMLElement>(null)
+  useGSAP(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo('.rt-inner', { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: ref.current, start: 'top 85%', once: true } })
+    }, ref)
+    return () => ctx.revert()
+  }, { scope: ref })
+
+  return (
+    <section ref={ref} id="ready-to-talk" className="relative w-full overflow-hidden py-16 md:py-20 scroll-mt-24">
+      <div className="rt-inner relative z-10 w-full max-w-2xl mx-auto px-5 sm:px-8">
+        <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-8 sm:p-10">
+          <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{'// Ready to Talk'}</span>
+          <h2 className="text-3xl sm:text-4xl font-black tracking-tighter text-white mb-3">Book a time on our calendar</h2>
+          <p className="text-white/55 font-light mb-8 max-w-lg">
+            Prefer to talk it through live? Grab a 20-minute slot — no pitch deck, just an honest read on scope,
+            timeline, and budget.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-9">
+            {prepItems.map((p) => (
+              <div key={p.label} className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+                <div className="w-9 h-9 rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center mb-3.5 shadow-[0_0_20px_rgba(0,174,239,0.2)]">
+                  <p.icon className="w-4 h-4 text-[#00AEEF]" />
+                </div>
+                <div className="text-white font-bold text-sm mb-1">{p.label}</div>
+                <p className="text-white/50 text-xs font-light leading-relaxed">{p.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <Link
+            href="/schedule-a-call"
+            onClick={() => posthog.capture('ready_to_talk_clicked', { source: 'contact_page' })}
+            className="group inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full text-sm font-semibold text-black bg-white hover:bg-[#00AEEF] hover:text-white transition-colors duration-300"
+          >
+            Schedule a Call
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 /* ── What happens next — response steps ────────────────────────────── */
 const nextSteps = [
   { icon: FileText, step: '01', title: 'Share Your Scope', desc: 'Fill out a form above or reach out directly with your goals and timeline.' },
@@ -532,7 +597,10 @@ export default function ContactPageContent() {
         <StageRouter />
 
         <LeadForm />
+        <StageDivider />
         <ProjectForm />
+        <StageDivider />
+        <ReadyToTalk />
 
         <WhatHappensNext />
 
