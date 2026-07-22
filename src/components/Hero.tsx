@@ -78,18 +78,25 @@ export default function Hero() {
       } catch {}
     }
 
-    // Load frames 1 → FRAME_COUNT in order (browser will pipeline them)
-    // First load frames 1-30 at high priority so the first scroll is instant,
-    // then load the rest sequentially.
+    // Load frames 1 → FRAME_COUNT in order. First load frames 1-30 at high
+    // priority so the first scroll is instant, then load the rest in
+    // parallel batches — one-at-a-time serial fetching here was the reason
+    // the sequence kept cutting off mid-scroll: 261 sequential round trips
+    // simply couldn't keep up with a normal scroll speed, however fast the
+    // network was. Batching lets the browser's connection pool actually
+    // pipeline the requests.
+    const BATCH_SIZE = 16
     const loadAll = async () => {
       // Priority batch: first 30 frames
       const priority = []
       for (let i = 1; i <= Math.min(30, FRAME_COUNT); i++) priority.push(loadFrame(i))
       await Promise.all(priority)
-      // Rest of the frames
-      for (let i = 31; i <= FRAME_COUNT; i++) {
+      // Rest of the frames, in parallel batches
+      for (let start = 31; start <= FRAME_COUNT; start += BATCH_SIZE) {
         if (cancelled) break
-        await loadFrame(i)
+        const batch = []
+        for (let i = start; i < start + BATCH_SIZE && i <= FRAME_COUNT; i++) batch.push(loadFrame(i))
+        await Promise.all(batch)
       }
     }
     loadAll()

@@ -55,6 +55,10 @@ const Carousel = memo(
     const radius = cylinderWidth / (2 * Math.PI)
     const rotation = useMotionValue(0)
     const transform = useTransform(rotation, (v) => `rotate3d(0, 1, 0, ${v}deg)`)
+    // Scaled by cylinder width so the same physical drag distance always
+    // sweeps roughly the same fraction of the ring, regardless of breakpoint.
+    const dragSensitivity = 130 / cylinderWidth
+    const flingSensitivity = 45 / cylinderWidth
 
     return (
       <div className="flex h-full items-center justify-center" style={{ perspective: '1800px', transformStyle: 'preserve-3d' }}>
@@ -63,12 +67,17 @@ const Carousel = memo(
           dragElastic={0.02}
           className="relative flex h-full origin-center cursor-grab justify-center active:cursor-grabbing touch-none"
           style={{ transform, rotateY: rotation, width: cylinderWidth, transformStyle: 'preserve-3d' }}
-          onDrag={(_, info) => isActive && rotation.set(rotation.get() + info.offset.x * 0.05)}
+          // `info.delta` is the incremental movement since the last drag
+          // event — using `info.offset` (cumulative since the drag
+          // started) here instead would re-add the whole running total on
+          // every single pointer-move tick, compounding into a runaway
+          // spin that gets faster the more events a gesture produces.
+          onDrag={(_, info) => isActive && rotation.set(rotation.get() + info.delta.x * dragSensitivity)}
           onDragEnd={(_, info) =>
             isActive &&
             controls.start({
-              rotateY: rotation.get() + info.velocity.x * 0.05,
-              transition: { type: 'spring', stiffness: 100, damping: 30, mass: 0.1 },
+              rotateY: rotation.get() + info.velocity.x * flingSensitivity,
+              transition: { type: 'spring', stiffness: 60, damping: 40, mass: 0.3 },
             })
           }
           animate={controls}
@@ -86,8 +95,8 @@ const Carousel = memo(
                   alt={card.title}
                   draggable={false}
                   className="pointer-events-none absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  initial={{ filter: 'blur(4px)', opacity: 0 }}
-                  animate={{ filter: 'blur(0px)', opacity: 1 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
                   transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />

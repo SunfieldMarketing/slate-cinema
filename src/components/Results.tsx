@@ -10,7 +10,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 export default function Results() {
   const containerRef = useRef<HTMLElement>(null)
-  const buttonRef = useRef<HTMLButtonElement>(null)
+  const buttonRef = useRef<HTMLAnchorElement>(null)
   const textRef = useRef<HTMLSpanElement>(null)
   const [views, setViews] = useState(0)
   const [likes, setLikes] = useState(0)
@@ -200,14 +200,15 @@ export default function Results() {
 
           {/* CTA */}
           <div className="results-cta mt-12" style={{ transform: 'translateZ(40px)' }}>
-            <button
+            <a
               ref={buttonRef}
-              className="relative px-12 py-5 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full text-white font-medium text-lg overflow-hidden group cursor-pointer transition-all hover:bg-white hover:text-black hover:shadow-[0_0_30px_rgba(255,255,255,0.3)]"
+              href="/portfolio"
+              className="relative px-12 py-5 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full text-white font-medium text-lg overflow-hidden group cursor-pointer transition-all hover:bg-white hover:text-black hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] inline-flex"
             >
               <span ref={textRef} className="relative z-10 flex items-center gap-4 pointer-events-none">
                 See Case Studies <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
               </span>
-            </button>
+            </a>
           </div>
         </div>
 
