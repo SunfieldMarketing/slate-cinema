@@ -46,20 +46,37 @@ import { industries } from '@/lib/industries'
 
 gsap.registerPlugin(ScrollTrigger)
 
-/* ── Shared: per-section backdrop — grid + soft glow, edge-masked so
-   consecutive sections bleed into one another instead of hard-cutting ── */
-const backdropPosition: Record<'center' | 'left' | 'right' | 'top', string> = {
-  center: 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
-  left: 'top-1/3 left-[6%] -translate-y-1/2',
-  right: 'top-1/3 right-[6%] -translate-y-1/2',
-  top: 'top-0 left-1/2 -translate-x-1/2',
-}
-
-function SectionBackdrop({ variant = 'center', dim = false }: { variant?: keyof typeof backdropPosition; dim?: boolean }) {
+/* ── One continuous backdrop for the whole page flow — a single grid
+   field plus a chain of overlapping glows and a spine line running top
+   to bottom, so sections read as one woven surface instead of each
+   restarting its own isolated, barely-visible background. Rendered once,
+   absolutely positioned behind the whole Hero→Studio stack. ────────── */
+function PageBackdrop() {
   return (
     <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-      <div className="absolute inset-0 opacity-[0.05] bg-[linear-gradient(rgba(255,255,255,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.5)_1px,transparent_1px)] bg-[size:56px_56px] [mask-image:radial-gradient(ellipse_65%_75%_at_50%_50%,black_25%,transparent_100%)]" />
-      <div className={`absolute w-[32rem] h-[32rem] rounded-full blur-[130px] ${backdropPosition[variant]} ${dim ? 'bg-[#00AEEF]/[0.045]' : 'bg-[#00AEEF]/[0.08]'}`} />
+      {/* unmasked, continuous grid — tiles the entire height, no per-section fade */}
+      <div className="absolute inset-0 opacity-[0.16] bg-[linear-gradient(rgba(255,255,255,0.9)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.9)_1px,transparent_1px)] bg-[size:64px_64px]" />
+      {/* a second, larger grid layer for depth — two scales of texture instead of one flat tile */}
+      <div className="absolute inset-0 opacity-[0.07] bg-[linear-gradient(rgba(0,174,239,1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,174,239,1)_1px,transparent_1px)] bg-[size:256px_256px]" />
+
+      {/* a chain of large, overlapping glows down the length of the page —
+          bright enough to actually read against pure black, alternating a
+          touch of cyan-white into the blue so it isn't one flat hue */}
+      <div className="absolute top-[2%] left-1/2 -translate-x-1/2 w-[75rem] h-[75rem] bg-[#00AEEF]/[0.24] rounded-full blur-[170px]" />
+      <div className="absolute top-[20%] left-[5%] w-[58rem] h-[58rem] bg-[#00AEEF]/[0.19] rounded-full blur-[160px]" />
+      <div className="absolute top-[34%] right-[3%] w-[62rem] h-[62rem] bg-[#5fd4ff]/[0.15] rounded-full blur-[170px]" />
+      <div className="absolute top-[50%] left-[6%] w-[58rem] h-[58rem] bg-[#00AEEF]/[0.20] rounded-full blur-[160px]" />
+      <div className="absolute top-[64%] right-[4%] w-[62rem] h-[62rem] bg-[#5fd4ff]/[0.16] rounded-full blur-[170px]" />
+      <div className="absolute top-[80%] left-1/2 -translate-x-1/2 w-[65rem] h-[65rem] bg-[#00AEEF]/[0.21] rounded-full blur-[170px]" />
+      <div className="absolute top-[96%] left-[12%] w-[58rem] h-[58rem] bg-[#00AEEF]/[0.18] rounded-full blur-[160px]" />
+
+      {/* a persistent vertical spine — the connective tissue tying every
+          section together, same idea as the StageDivider connectors */}
+      <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-px bg-gradient-to-b from-transparent via-[#00AEEF]/[0.3] to-transparent" />
+
+      {/* fade into the hero above and the footer below rather than cutting */}
+      <div className="absolute inset-x-0 top-0 h-56 bg-gradient-to-b from-ink to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-ink to-transparent" />
     </div>
   )
 }
@@ -67,7 +84,7 @@ function SectionBackdrop({ variant = 'center', dim = false }: { variant?: keyof 
 /* ── Shared: trust badge — a small credibility pill ─────────────────── */
 function TrustBadge({ icon: Icon, label }: { icon: LucideIcon; label: string }) {
   return (
-    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-sm text-white/55 text-[11px] font-mono tracking-wide uppercase">
+    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/[0.16] bg-white/[0.06] backdrop-blur-sm text-white/70 text-[11px] font-mono tracking-wide uppercase shadow-[0_4px_16px_rgba(0,0,0,0.25)]">
       <Icon className="w-3.5 h-3.5 text-[#00AEEF]" />
       {label}
     </span>
@@ -83,6 +100,10 @@ const stages = [
     desc: 'Not sure what you need? Leave your info and we’ll reach out.',
     cta: 'Send a Quick Note',
     href: '#lead-form',
+    accent: '#00AEEF',
+    accentClass: 'text-[#00AEEF]',
+    borderClass: 'border-[#00AEEF]/40',
+    glow: '0 0 20px rgba(0,174,239,0.2)',
   },
   {
     icon: ClipboardList,
@@ -91,6 +112,10 @@ const stages = [
     desc: 'Have a project in mind? Walk us through the details and we’ll follow up with a plan.',
     cta: 'Start the Intake Form',
     href: '#project-form',
+    accent: '#c084fc',
+    accentClass: 'text-purple-400',
+    borderClass: 'border-purple-400/40',
+    glow: '0 0 20px rgba(192,132,252,0.25)',
   },
   {
     icon: CalendarClock,
@@ -99,6 +124,10 @@ const stages = [
     desc: 'Prefer to talk it through live? Grab a time on our calendar.',
     cta: 'Schedule a Call',
     href: '/schedule-a-call',
+    accent: '#34d399',
+    accentClass: 'text-emerald-400',
+    borderClass: 'border-emerald-400/40',
+    glow: '0 0 20px rgba(52,211,153,0.25)',
   },
 ]
 
@@ -114,7 +143,6 @@ function StageRouter() {
 
   return (
     <section ref={ref} id="get-started" className="relative w-full overflow-hidden py-24 md:py-28">
-      <SectionBackdrop variant="top" />
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         <div className="sr-head text-center mb-14 max-w-2xl mx-auto">
           <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{'// Get Started'}</span>
@@ -137,16 +165,16 @@ function StageRouter() {
               <MagicCard
                 key={s.step}
                 className="sr-card rounded-3xl transition-transform duration-300 hover:-translate-y-1"
-                gradientFrom="#00AEEF"
-                gradientTo="#0369A1"
-                gradientColor="#00AEEF"
-                gradientOpacity={0.15}
-                gradientSize={220}
+                gradientFrom={s.accent}
+                gradientTo={s.accent}
+                gradientColor={s.accent}
+                gradientOpacity={0.2}
+                gradientSize={240}
               >
-                <div className="flex flex-col h-full p-8 sm:p-9">
+                <div className="relative flex flex-col h-full p-8 sm:p-9 border-t-2 rounded-t-3xl overflow-hidden" style={{ borderColor: `${s.accent}55` }}>
                   <div className="flex items-center justify-between mb-6">
-                    <div className="w-12 h-12 rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(0,174,239,0.2)]">
-                      <s.icon className="w-5 h-5 text-[#00AEEF]" />
+                    <div className={`w-12 h-12 rounded-full border ${s.borderClass} bg-ink flex items-center justify-center`} style={{ boxShadow: s.glow }}>
+                      <s.icon className={`w-5 h-5 ${s.accentClass}`} />
                     </div>
                     <span className="font-mono text-[10px] tracking-widest text-white/25">{s.step}</span>
                   </div>
@@ -156,7 +184,9 @@ function StageRouter() {
                     <a
                       href={s.href}
                       onClick={() => posthog.capture('stage_router_clicked', { stage: s.title, destination: s.href })}
-                      className="group inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 rounded-full text-sm font-semibold text-black bg-white hover:bg-[#00AEEF] hover:text-white transition-colors duration-300"
+                      className="group inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 rounded-full text-sm font-semibold text-black bg-white transition-colors duration-300"
+                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = s.accent; e.currentTarget.style.color = '#fff' }}
+                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = '' }}
                     >
                       {s.cta}
                       <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -165,7 +195,9 @@ function StageRouter() {
                     <Link
                       href={s.href}
                       onClick={() => posthog.capture('stage_router_clicked', { stage: s.title, destination: s.href })}
-                      className="group inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 rounded-full text-sm font-semibold text-black bg-white hover:bg-[#00AEEF] hover:text-white transition-colors duration-300"
+                      className="group inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 rounded-full text-sm font-semibold text-black bg-white transition-colors duration-300"
+                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = s.accent; e.currentTarget.style.color = '#fff' }}
+                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = '' }}
                     >
                       {s.cta}
                       <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -231,7 +263,6 @@ function LeadForm() {
 
   return (
     <section ref={ref} id="lead-form" className="relative w-full overflow-hidden py-16 md:py-20 scroll-mt-24">
-      <SectionBackdrop variant="left" />
       <div className="lf-inner relative z-10 w-full max-w-3xl mx-auto px-5 sm:px-8">
         <div className="text-center mb-10 md:mb-12">
           <div className="inline-flex items-center gap-4 mb-6">
@@ -252,7 +283,8 @@ function LeadForm() {
           </div>
         </div>
 
-        <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-8 sm:p-10 max-w-2xl mx-auto">
+        <div className="relative rounded-3xl border border-white/[0.14] bg-white/[0.05] backdrop-blur-md p-8 sm:p-10 max-w-2xl mx-auto shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#00AEEF] to-transparent" />
           {submitted ? (
             <SuccessNote text="We’ll be in touch within one business day." />
           ) : (
@@ -344,14 +376,13 @@ function ProjectForm() {
 
   return (
     <section ref={ref} id="project-form" className="relative w-full overflow-hidden py-16 md:py-20 scroll-mt-24">
-      <SectionBackdrop variant="right" />
       <div className="pf-inner relative z-10 w-full max-w-3xl mx-auto px-5 sm:px-8">
         <div className="text-center mb-10 md:mb-12">
           <div className="inline-flex items-center gap-4 mb-6">
-            <div className="w-14 h-14 shrink-0 rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(0,174,239,0.2)]">
-              <ClipboardList className="w-6 h-6 text-[#00AEEF]" />
+            <div className="w-14 h-14 shrink-0 rounded-full border border-purple-400/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(192,132,252,0.25)]">
+              <ClipboardList className="w-6 h-6 text-purple-400" />
             </div>
-            <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase">{'// Know What You Need'}</span>
+            <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-purple-400 uppercase">{'// Know What You Need'}</span>
           </div>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05] mb-5">Tell us about the project</h2>
           <p className="text-white/55 font-light text-base sm:text-lg max-w-xl mx-auto mb-7">
@@ -365,7 +396,8 @@ function ProjectForm() {
           </div>
         </div>
 
-        <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-8 sm:p-10">
+        <div className="relative rounded-3xl border border-white/[0.14] bg-white/[0.05] backdrop-blur-md p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-purple-400 to-transparent" />
           {submitted ? (
             <SuccessNote text="We’ll review your details and be in touch within one business day with next steps." />
           ) : (
@@ -497,14 +529,13 @@ function ReadyToTalk() {
 
   return (
     <section ref={ref} id="ready-to-talk" className="relative w-full overflow-hidden py-16 md:py-20 scroll-mt-24">
-      <SectionBackdrop variant="left" dim />
       <div className="rt-inner relative z-10 w-full max-w-3xl mx-auto px-5 sm:px-8">
         <div className="text-center mb-10 md:mb-12">
           <div className="inline-flex items-center gap-4 mb-6">
-            <div className="w-14 h-14 shrink-0 rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(0,174,239,0.2)]">
-              <CalendarClock className="w-6 h-6 text-[#00AEEF]" />
+            <div className="w-14 h-14 shrink-0 rounded-full border border-emerald-400/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.25)]">
+              <CalendarClock className="w-6 h-6 text-emerald-400" />
             </div>
-            <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase">{'// Ready to Talk'}</span>
+            <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-emerald-400 uppercase">{'// Ready to Talk'}</span>
           </div>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05] mb-5">Book a time on our calendar</h2>
           <p className="text-white/55 font-light text-base sm:text-lg max-w-xl mx-auto mb-7">
@@ -518,10 +549,11 @@ function ReadyToTalk() {
           </div>
         </div>
 
-        <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-8 sm:p-10">
+        <div className="relative rounded-3xl border border-emerald-400/20 bg-white/[0.05] backdrop-blur-md p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-9">
             {prepItems.map((p) => (
-              <div key={p.label} className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+              <div key={p.label} className="rounded-2xl border border-white/[0.12] bg-white/[0.03] p-5">
                 <div className="w-9 h-9 rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center mb-3.5 shadow-[0_0_20px_rgba(0,174,239,0.2)]">
                   <p.icon className="w-4 h-4 text-[#00AEEF]" />
                 </div>
@@ -569,7 +601,6 @@ function WhatHappensNext() {
 
   return (
     <section ref={ref} className="relative w-full overflow-hidden py-24 md:py-28">
-      <SectionBackdrop variant="center" dim />
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
         <div className="whn-head text-center mb-14 max-w-2xl mx-auto">
           <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{'// After You Reach Out'}</span>
@@ -615,7 +646,6 @@ function StudioLocation() {
 
   return (
     <section ref={ref} className="relative w-full overflow-hidden py-24 md:py-28">
-      <SectionBackdrop variant="right" dim />
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         <div className="sl-inner grid lg:grid-cols-2 gap-6 items-stretch">
           {/* Stylized map / studio visual */}
@@ -634,7 +664,8 @@ function StudioLocation() {
           </div>
 
           {/* Studio details */}
-          <div className="flex flex-col justify-center rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-8 sm:p-10">
+          <div className="relative flex flex-col justify-center rounded-3xl border border-white/[0.14] bg-white/[0.05] backdrop-blur-md p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#00AEEF] to-transparent" />
             <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase mb-4">{'// The Studio'}</span>
             <h2 className="text-3xl sm:text-4xl font-black tracking-tighter text-white mb-5">Based in Brooklyn,<br />shooting everywhere.</h2>
             <div className="mb-6 flex flex-wrap gap-3">
@@ -679,7 +710,6 @@ function ContactMethods() {
 
   return (
     <section ref={ref} className="relative w-full overflow-hidden py-20 md:py-24">
-      <SectionBackdrop variant="top" dim />
       <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-8">
         <div className="cm-head text-center mb-10 max-w-xl mx-auto">
           <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase mb-4">
@@ -729,26 +759,31 @@ export default function ContactPageContent() {
 
       <div className="relative z-10 w-full">
         <Nav />
-        <PageHero
-          eyebrow="Get Started"
-          title={['Let’s get', 'you started']}
-          subtitle="Tell us where you’re at and we’ll point you to the right next step. We reply within one business day."
-          accent="#00AEEF"
-        />
 
-        <WhatHappensNext />
+        <div className="relative">
+          <PageBackdrop />
 
-        <StageRouter />
-        <StageDivider />
-        <LeadForm />
-        <StageDivider />
-        <ProjectForm />
-        <StageDivider />
-        <ReadyToTalk />
+          <PageHero
+            eyebrow="Get Started"
+            title={['Let’s get', 'you started']}
+            subtitle="Tell us where you’re at and we’ll point you to the right next step. We reply within one business day."
+            accent="#00AEEF"
+          />
 
-        <ContactMethods />
+          <WhatHappensNext />
 
-        <StudioLocation />
+          <StageRouter />
+          <StageDivider />
+          <LeadForm />
+          <StageDivider />
+          <ProjectForm />
+          <StageDivider />
+          <ReadyToTalk />
+
+          <ContactMethods />
+
+          <StudioLocation />
+        </div>
 
         <Footer />
       </div>
