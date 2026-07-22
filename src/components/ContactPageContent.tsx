@@ -119,18 +119,12 @@ function PageBackdrop() {
       <div className="absolute left-3 md:left-6 top-0 bottom-0 w-[3px] opacity-[0.16] [background-image:radial-gradient(circle,rgba(255,255,255,0.95)_1.5px,transparent_1.5px)] [background-size:100%_28px]" />
       <div className="absolute right-3 md:right-6 top-0 bottom-0 w-[3px] opacity-[0.16] [background-image:radial-gradient(circle,rgba(255,255,255,0.95)_1.5px,transparent_1.5px)] [background-size:100%_28px]" />
 
-      {/* the spine itself carries the color journey top to bottom */}
-      <div
-        className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-px opacity-[0.35]"
-        style={{ background: 'linear-gradient(to bottom, transparent, #00AEEF 20%, #00AEEF 40%, #c084fc 55%, #34d399 68%, #fbbf24 82%, #22d3ee 94%, transparent)' }}
-      />
-
-      {/* vignette for depth */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_75%_55%_at_50%_50%,transparent_35%,rgba(0,0,0,0.4)_100%)]" />
+      {/* vignette for depth — lighter than before so the page doesn't read dark */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,transparent_45%,rgba(0,0,0,0.22)_100%)]" />
 
       {/* fade into the hero above and the footer below rather than cutting */}
-      <div className="absolute inset-x-0 top-0 h-56 bg-gradient-to-b from-ink to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-ink to-transparent" />
+      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-ink to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-ink to-transparent" />
     </div>
   )
 }
@@ -196,12 +190,12 @@ function StageRouter() {
   }, { scope: ref })
 
   return (
-    <section ref={ref} id="get-started" className="relative w-full overflow-hidden py-24 md:py-28">
+    <section ref={ref} id="get-started" className="relative w-full overflow-hidden py-16 md:py-20">
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
-        <div className="sr-head text-center mb-14 max-w-2xl mx-auto">
+        <div className="sr-head text-center mb-10 max-w-2xl mx-auto">
           <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{'// Get Started'}</span>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05]">What stage are you at?</h2>
-          <p className="mt-5 text-white/55 font-light text-base sm:text-lg">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1]">What stage are you at?</h2>
+          <p className="mt-5 text-white/55 font-light text-sm sm:text-base">
             No wrong answer here — pick whichever fits where you&rsquo;re at right now, and we&rsquo;ll route you
             to the right next step. All three land in front of a real person, not a queue.
           </p>
@@ -316,17 +310,17 @@ function LeadForm() {
   }
 
   return (
-    <section ref={ref} id="lead-form" className="relative w-full overflow-hidden py-16 md:py-20 scroll-mt-24">
+    <section ref={ref} id="lead-form" className="relative w-full overflow-hidden py-12 md:py-14 scroll-mt-24">
       <div className="lf-inner relative z-10 w-full max-w-3xl mx-auto px-5 sm:px-8">
-        <div className="text-center mb-10 md:mb-12">
+        <div className="text-center mb-8 md:mb-9">
           <div className="inline-flex items-center gap-4 mb-6">
-            <div className="w-14 h-14 shrink-0 rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(0,174,239,0.2)]">
-              <HelpCircle className="w-6 h-6 text-[#00AEEF]" />
+            <div className="w-12 h-12 shrink-0 rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(0,174,239,0.2)]">
+              <HelpCircle className="w-5 h-5 text-[#00AEEF]" />
             </div>
             <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase">{'// Not Sure Yet'}</span>
           </div>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05] mb-5">Drop us a line</h2>
-          <p className="text-white/55 font-light text-base sm:text-lg max-w-xl mx-auto mb-7">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1] mb-5">Drop us a line</h2>
+          <p className="text-white/55 font-light text-sm sm:text-base max-w-xl mx-auto mb-6">
             Not sure exactly what you need yet? Totally fine — most people aren&rsquo;t at first. Leave your info
             and a real person on our team will reach out with the right next step, no matter how vague the ask.
           </p>
@@ -429,17 +423,17 @@ function ProjectForm() {
   }
 
   return (
-    <section ref={ref} id="project-form" className="relative w-full overflow-hidden py-16 md:py-20 scroll-mt-24">
+    <section ref={ref} id="project-form" className="relative w-full overflow-hidden py-12 md:py-14 scroll-mt-24">
       <div className="pf-inner relative z-10 w-full max-w-3xl mx-auto px-5 sm:px-8">
-        <div className="text-center mb-10 md:mb-12">
+        <div className="text-center mb-8 md:mb-9">
           <div className="inline-flex items-center gap-4 mb-6">
-            <div className="w-14 h-14 shrink-0 rounded-full border border-purple-400/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(192,132,252,0.25)]">
-              <ClipboardList className="w-6 h-6 text-purple-400" />
+            <div className="w-12 h-12 shrink-0 rounded-full border border-purple-400/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(192,132,252,0.25)]">
+              <ClipboardList className="w-5 h-5 text-purple-400" />
             </div>
             <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-purple-400 uppercase">{'// Know What You Need'}</span>
           </div>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05] mb-5">Tell us about the project</h2>
-          <p className="text-white/55 font-light text-base sm:text-lg max-w-xl mx-auto mb-7">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1] mb-5">Tell us about the project</h2>
+          <p className="text-white/55 font-light text-sm sm:text-base max-w-xl mx-auto mb-6">
             Already know roughly what you want? The more detail you give us here, the sharper and more accurate
             our first proposal will be — no back-and-forth just to scope the basics.
           </p>
@@ -555,8 +549,8 @@ function StageDivider() {
   }, { scope: ref })
 
   return (
-    <div ref={ref} className="relative w-full flex items-center justify-center py-10 md:py-16">
-      <div className="sd-line w-px h-16 md:h-24 bg-gradient-to-b from-transparent via-white/15 to-transparent" />
+    <div ref={ref} className="relative w-full flex items-center justify-center py-6 md:py-9">
+      <div className="sd-line w-px h-10 md:h-14 bg-gradient-to-b from-transparent via-white/15 to-transparent" />
       <div className="sd-dot absolute w-9 h-9 rounded-full border border-white/15 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(0,174,239,0.12)]">
         <ChevronDown className="w-4 h-4 text-white/40" />
       </div>
@@ -582,17 +576,17 @@ function ReadyToTalk() {
   }, { scope: ref })
 
   return (
-    <section ref={ref} id="ready-to-talk" className="relative w-full overflow-hidden py-16 md:py-20 scroll-mt-24">
+    <section ref={ref} id="ready-to-talk" className="relative w-full overflow-hidden py-12 md:py-14 scroll-mt-24">
       <div className="rt-inner relative z-10 w-full max-w-3xl mx-auto px-5 sm:px-8">
-        <div className="text-center mb-10 md:mb-12">
+        <div className="text-center mb-8 md:mb-9">
           <div className="inline-flex items-center gap-4 mb-6">
-            <div className="w-14 h-14 shrink-0 rounded-full border border-emerald-400/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.25)]">
-              <CalendarClock className="w-6 h-6 text-emerald-400" />
+            <div className="w-12 h-12 shrink-0 rounded-full border border-emerald-400/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.25)]">
+              <CalendarClock className="w-5 h-5 text-emerald-400" />
             </div>
             <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-emerald-400 uppercase">{'// Ready to Talk'}</span>
           </div>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05] mb-5">Book a time on our calendar</h2>
-          <p className="text-white/55 font-light text-base sm:text-lg max-w-xl mx-auto mb-7">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1] mb-5">Book a time on our calendar</h2>
+          <p className="text-white/55 font-light text-sm sm:text-base max-w-xl mx-auto mb-6">
             Prefer to talk it through live? Grab a 20-minute slot with our team — no pitch deck, no sales script,
             just an honest read on scope, timeline, and budget so you know exactly where you stand.
           </p>
@@ -654,12 +648,12 @@ function WhatHappensNext() {
   }, { scope: ref })
 
   return (
-    <section ref={ref} className="relative w-full overflow-hidden py-24 md:py-28">
+    <section ref={ref} className="relative w-full overflow-hidden py-16 md:py-20">
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
-        <div className="whn-head text-center mb-14 max-w-2xl mx-auto">
+        <div className="whn-head text-center mb-10 max-w-2xl mx-auto">
           <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{'// After You Reach Out'}</span>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05]">What happens next</h2>
-          <p className="mt-5 text-white/55 font-light text-base sm:text-lg">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1]">What happens next</h2>
+          <p className="mt-5 text-white/55 font-light text-sm sm:text-base">
             From first message to first day on set — here&rsquo;s the whole path, so there&rsquo;s no guessing
             what comes after you reach out.
           </p>
@@ -699,7 +693,7 @@ function StudioLocation() {
   }, { scope: ref })
 
   return (
-    <section ref={ref} className="relative w-full overflow-hidden py-24 md:py-28">
+    <section ref={ref} className="relative w-full overflow-hidden py-16 md:py-20">
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         <div className="sl-inner grid lg:grid-cols-2 gap-6 items-stretch">
           {/* Stylized map / studio visual */}
@@ -763,14 +757,14 @@ function ContactMethods() {
   }, { scope: ref })
 
   return (
-    <section ref={ref} className="relative w-full overflow-hidden py-20 md:py-24">
+    <section ref={ref} className="relative w-full overflow-hidden py-14 md:py-16">
       <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-8">
         <div className="cm-head text-center mb-10 max-w-xl mx-auto">
           <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#fbbf24] uppercase mb-4">
             <span className="w-8 h-px bg-[#fbbf24]/40" /> Or Reach Us Directly <span className="w-8 h-px bg-[#fbbf24]/40" />
           </span>
-          <h2 className="text-4xl sm:text-5xl font-black tracking-tighter text-white leading-[1.05] mb-5">Prefer the direct route?</h2>
-          <p className="text-white/55 font-light text-base sm:text-lg max-w-lg mx-auto">
+          <h2 className="text-3xl sm:text-4xl font-black tracking-tighter text-white leading-[1.1] mb-4">Prefer the direct route?</h2>
+          <p className="text-white/55 font-light text-sm sm:text-base max-w-lg mx-auto">
             No forms, no queue — email, call, or stop by the studio directly. Whatever&rsquo;s easiest for you.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
