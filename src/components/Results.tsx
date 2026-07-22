@@ -139,11 +139,6 @@ export default function Results() {
         {/* Central Metrics Block */}
         <div className="metrics-block flex flex-col items-center max-w-4xl w-full" style={{ transformStyle: 'preserve-3d' }}>
 
-          {/* Label */}
-          <span className="font-mono text-[10px] text-[#00AEEF] tracking-[0.4em] uppercase mb-8 border border-[#00AEEF]/20 px-4 py-2 rounded-full bg-[#00AEEF]/5 backdrop-blur-sm">
-            Performance Dashboard
-          </span>
-
           {/* Views Counter */}
           <div className="flex items-baseline gap-4 md:gap-8 justify-center flex-wrap">
             <div className="text-[5rem] md:text-[8rem] lg:text-[11rem] font-bold text-white tracking-tighter leading-none" style={{ textShadow: '0 0 100px rgba(0,174,239,0.25), 0 10px 40px rgba(0,0,0,0.5)' }}>

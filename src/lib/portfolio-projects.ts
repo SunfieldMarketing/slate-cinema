@@ -7,7 +7,6 @@ export interface PortfolioProject {
   metrics: { label: string; value: string }[]
   /** Featured cut shown in the project card modal. */
   video?: string
-  span?: 'wide' | 'tall' | 'normal'
 }
 
 /**
@@ -23,7 +22,6 @@ export const portfolioProjects: PortfolioProject[] = [
     url: '/images/portfolio-brand.png',
     copy: 'A neon-lit launch film for the flagship model, cut for broadcast and the feed alike.',
     metrics: [{ label: 'Views', value: '4.2M' }, { label: 'Conv.', value: '+34%' }],
-    span: 'wide',
   },
   {
     title: 'Velocity',
@@ -33,7 +31,6 @@ export const portfolioProjects: PortfolioProject[] = [
     url: '/images/portfolio-social.png',
     copy: "Fast-cut training footage built for Apex Athletics' always-on social calendar.",
     metrics: [{ label: 'Reach', value: '12.1M' }, { label: 'Engage', value: '18.5%' }],
-    span: 'tall',
   },
   {
     title: 'The Blueprint',
@@ -61,7 +58,6 @@ export const portfolioProjects: PortfolioProject[] = [
     url: '/images/portfolio_auto_bright.png',
     copy: 'High-speed cinematography engineered for the scroll.',
     metrics: [{ label: 'Views', value: '8.4M' }, { label: 'Shares', value: '245k' }],
-    span: 'tall',
   },
   {
     title: 'Product Focus',
@@ -80,7 +76,6 @@ export const portfolioProjects: PortfolioProject[] = [
     url: '/images/portfolio_realestate_bright.png',
     copy: 'Drone-native property reveals that move listings faster.',
     metrics: [{ label: 'Watch', value: '98%' }, { label: 'Shares', value: '12k' }],
-    span: 'wide',
   },
   {
     title: 'Impact Film',

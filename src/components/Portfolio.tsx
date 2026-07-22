@@ -68,14 +68,12 @@ export default function Portfolio({ limit, showFilters = true }: { limit?: numbe
           )}
         </div>
 
-        {/* Cinematic card grid */}
-        <div className="pf-grid grid grid-flow-dense grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-[240px] sm:auto-rows-[260px] gap-4">
+        {/* Cinematic card grid — uniform squares, fully tiled, no gaps */}
+        <div className="pf-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {visible.map((p, i) => (
             <article
               key={p.title}
-              className={`pf-card group relative rounded-2xl overflow-hidden border border-white/10 cursor-pointer transition-all duration-500 hover:border-[#00AEEF]/50 ${
-                p.span === 'wide' ? 'sm:col-span-2' : ''
-              } ${p.span === 'tall' ? 'sm:row-span-2' : ''}`}
+              className="pf-card group relative aspect-square rounded-2xl overflow-hidden border border-white/10 cursor-pointer transition-all duration-500 hover:border-[#00AEEF]/50"
             >
               {/* Image */}
               <img

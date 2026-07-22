@@ -30,9 +30,9 @@ export default function Home() {
         <div data-scroll-section="hero"><Hero /></div>
         <div data-scroll-section="flagship"><FlagshipClients /></div>
         <div data-scroll-section="trust"><TrustBanner /></div>
-        <div data-scroll-section="results"><Results /></div>
         <div id="how" data-scroll-section="pipeline"><Pipeline /></div>
         <div data-scroll-section="mediavoid"><MediaVoid /></div>
+        <div data-scroll-section="results"><Results /></div>
         <div data-scroll-section="standards"><IndustryStandards /></div>
         <div data-scroll-section="reviews"><Reviews /></div>
         <div id="reel" data-scroll-section="portfolio"><Portfolio limit={6} showFilters={false} /></div>
