@@ -355,9 +355,6 @@ export default function StoryboardHero({ eyebrow = 'The Process', title, subtitl
               <a href={cta.href} className="sb-cta-btn-primary px-8 py-4 rounded-full font-semibold text-sm text-black bg-white">
                 {cta.label}
               </a>
-              <a href="/contact" className="sb-cta-btn-secondary px-8 py-4 rounded-full font-semibold text-sm text-white border border-white/15">
-                Book A Call
-              </a>
             </div>
           )}
         </div>

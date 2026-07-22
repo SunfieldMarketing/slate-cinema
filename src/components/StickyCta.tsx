@@ -30,7 +30,7 @@ export default function StickyCta({ accent }: { accent: string }) {
       }`}
       style={{ background: accent, boxShadow: `0 8px 32px ${accent}66` }}
     >
-      Start your project
+      Get Started
       <span className="w-6 h-6 rounded-full bg-black/15 flex items-center justify-center">
         <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
       </span>

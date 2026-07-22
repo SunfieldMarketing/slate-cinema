@@ -28,10 +28,10 @@ export default function TrustBanner() {
               <Star key={i} className="w-3.5 h-3.5" fill="#00AEEF" stroke="#00AEEF" />
             ))}
           </div>
-          <span className="font-mono text-[11px] text-white/50 tracking-wide">4.9/5 · 120+ campaigns delivered</span>
+          <span className="font-mono text-[11px] text-white/50 tracking-wide">5.0/5 · 44 Google reviews</span>
         </div>
         <div className="hidden sm:block w-px h-4 bg-white/15" />
-        <span className="font-mono text-[10px] tracking-[0.3em] text-white/35 uppercase">Trusted by brands scaling on video</span>
+        <span className="font-mono text-[10px] tracking-[0.3em] text-white/35 uppercase">More collaborations &amp; partnerships</span>
       </div>
 
       {/* Masked (not painted) edge fade — logos dissolve via alpha, so

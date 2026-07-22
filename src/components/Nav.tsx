@@ -13,7 +13,7 @@ gsap.registerPlugin(ScrollTrigger)
 const navLinks: { label: string; href: string }[] = [
   { label: 'Home', href: '/' },
   { label: 'How It Works', href: '/how-it-works' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'Get Started', href: '/contact' },
 ]
 
 export default function Nav() {
@@ -149,7 +149,7 @@ export default function Nav() {
           {/* CTA + Portal */}
           <div className="hidden md:flex items-center gap-4">
             <a href="#" className="text-xs font-mono text-white/25 hover:text-white/50 transition-colors tracking-widest uppercase">Client Portal</a>
-            <Link href="/contact" className="relative px-5 py-2.5 rounded-full text-sm font-semibold text-[#030305] bg-white overflow-hidden group">
+            <Link href="/schedule-a-call" className="relative px-5 py-2.5 rounded-full text-sm font-semibold text-[#030305] bg-white overflow-hidden group">
               <div className="absolute inset-0 bg-[#00AEEF] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
               <span className="relative group-hover:text-white transition-colors">Schedule Call</span>
             </Link>
@@ -200,7 +200,7 @@ export default function Nav() {
               {link.label}
             </Link>
           ))}
-          <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="bg-[#00AEEF] text-white px-8 py-4 rounded-full text-lg font-semibold mt-4 shadow-[0_0_20px_rgba(0,174,239,0.3)]">
+          <Link href="/schedule-a-call" onClick={() => setMobileMenuOpen(false)} className="bg-[#00AEEF] text-white px-8 py-4 rounded-full text-lg font-semibold mt-4 shadow-[0_0_20px_rgba(0,174,239,0.3)]">
             Schedule Call
           </Link>
         </div>

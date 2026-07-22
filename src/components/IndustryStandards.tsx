@@ -122,10 +122,6 @@ export default function IndustryStandards() {
           <p className="mt-8 text-white/60 max-w-2xl text-lg md:text-xl font-light leading-relaxed">
             In a crowded digital landscape, being 'good enough' means being invisible. We build content systems designed specifically to hijack feeds, halt thumbs, and demand viewer retention from the very first frame.
           </p>
-          <button className="mt-12 group inline-flex items-center justify-center px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-[#00AEEF] hover:text-white transition-all duration-300">
-            See Our Work
-            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </button>
         </div>
 
         {/* Phase 2 */}
@@ -145,10 +141,6 @@ export default function IndustryStandards() {
           <p className="mt-8 text-white/60 max-w-xl text-lg font-light leading-relaxed">
             We don't just shoot video. We engineer visual experiences designed to capture and hold attention in a world that never stops scrolling.
           </p>
-          <button className="mt-12 group inline-flex items-center justify-center px-8 py-4 border border-purple-500/50 bg-purple-500/10 backdrop-blur-md text-white font-semibold rounded-full hover:bg-purple-500 hover:text-white transition-all duration-300 pointer-events-auto">
-            Discover Our Process
-            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </button>
         </div>
 
         {/* Phase 3 - DOMINATE YOUR MARKET */}
@@ -166,13 +158,10 @@ export default function IndustryStandards() {
             The result is scalable, predictable growth. We turn passive viewers into active communities, and organic reach into tangible ROI.
           </p>
           
-          <button className="group inline-flex items-center justify-center px-10 py-5 bg-emerald-500 text-black font-bold text-lg rounded-full hover:bg-emerald-400 hover:scale-105 transition-all duration-300 pointer-events-auto shadow-[0_0_40px_rgba(16,185,129,0.5)]">
-            Book a Strategy Call
+          <a href="/contact" className="group inline-flex items-center justify-center px-10 py-5 bg-emerald-500 text-black font-bold text-lg rounded-full hover:bg-emerald-400 hover:scale-105 transition-all duration-300 pointer-events-auto shadow-[0_0_40px_rgba(16,185,129,0.5)]">
+            Get Started
             <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform" />
-          </button>
-
-
-
+          </a>
         </div>
 
       </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useRef } from 'react'
+import Link from 'next/link'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -104,25 +105,19 @@ export default function Footer() {
 
         <div className="w-full flex flex-col lg:flex-row justify-between items-start border-b border-white/10 pb-16 mb-16 gap-12 lg:gap-8">
 
-          {/* Left: CTA + Newsletter */}
-          <div className="w-full lg:w-5/12 flex flex-col gap-12">
+          {/* CTA + Newsletter */}
+          <div className="w-full lg:max-w-md flex flex-col gap-12">
             <div>
               <h3 className="text-3xl font-bold text-white mb-6">Ready to create?</h3>
               <div className="flex flex-col sm:flex-row gap-4">
-                <button
+                <Link
+                  href="/contact"
                   onMouseMove={handleMagneticMove}
                   onMouseLeave={handleMagneticLeave}
-                  className="footer-btn px-8 py-4 bg-[#00AEEF] text-[#030305] font-bold rounded-full hover:bg-white transition-colors"
+                  className="footer-btn px-8 py-4 bg-[#00AEEF] text-[#030305] font-bold rounded-full hover:bg-white transition-colors text-center"
                 >
-                  Start Your Campaign
-                </button>
-                <button
-                  onMouseMove={handleMagneticMove}
-                  onMouseLeave={handleMagneticLeave}
-                  className="footer-btn px-8 py-4 bg-transparent border border-white/20 text-white font-bold rounded-full hover:bg-white/10 transition-colors"
-                >
-                  Book a Consultation
-                </button>
+                  Get Started
+                </Link>
               </div>
             </div>
 
@@ -152,39 +147,14 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Right: Sitemap */}
-          <div className="w-full lg:w-7/12 flex flex-col sm:flex-row justify-between lg:justify-end gap-12 lg:gap-24 pt-4 lg:pt-0">
+          {/* Sitemap — only real destinations */}
+          <div className="w-full lg:w-auto flex flex-col sm:flex-row justify-between lg:justify-end gap-12 lg:gap-24 pt-4 lg:pt-0">
             <div className="flex flex-col">
               <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Studio</h4>
               <div className="flex flex-col gap-4">
-                {['Work', 'Directors', 'About Us', 'Journal'].map((link) => (
-                  <a key={link} href="#" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">{link}</a>
-                ))}
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Services</h4>
-              <div className="flex flex-col gap-4">
-                {['Commercials', 'Music Videos', 'Documentary', 'VFX & Color'].map((link) => (
-                  <a key={link} href="#" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">{link}</a>
-                ))}
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Social</h4>
-              <div className="flex flex-col gap-4">
-                {['Instagram', 'LinkedIn', 'Vimeo', 'YouTube'].map((social) => (
-                  <a
-                    key={social}
-                    href="#"
-                    onMouseMove={handleMagneticMove}
-                    onMouseLeave={handleMagneticLeave}
-                    onClick={() => posthog.capture('social_link_clicked', { platform: social })}
-                    className="footer-link text-sm font-medium text-white/60 hover:text-[#00AEEF] transition-colors block w-max"
-                  >
-                    {social}
-                  </a>
-                ))}
+                <Link href="/portfolio" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">Work</Link>
+                <Link href="/how-it-works" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">How It Works</Link>
+                <Link href="/contact" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">Get Started</Link>
               </div>
             </div>
           </div>

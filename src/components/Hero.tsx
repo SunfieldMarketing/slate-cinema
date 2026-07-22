@@ -349,35 +349,21 @@ export default function Hero() {
               <div className="absolute left-0 right-0 top-1/2 h-px bg-white -translate-y-1/2" />
             </div>
 
-            {/* CTA Buttons */}
+            {/* CTA Buttons — Get Started leads, Watch Our Reel is the one secondary option */}
             <div className="flex flex-wrap items-center gap-4 justify-center pointer-events-auto mt-12 z-40 relative">
-              <span className="hero-subtitle font-mono text-[10px] text-white/30 tracking-widest uppercase mr-4">
-                Quick Links:
-              </span>
               <a
-                href="#reel"
-                className="hero-cta group relative px-6 py-3 rounded-full overflow-hidden border border-[#00AEEF]/30 bg-[#00AEEF]/10"
+                href="/contact"
+                className="hero-cta group relative px-7 py-3.5 rounded-full overflow-hidden bg-white"
               >
                 <div className="absolute inset-0 bg-[#00AEEF] scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
-                <span className="relative text-sm font-medium text-white tracking-wide">Watch Our Reel</span>
+                <span className="relative text-sm font-semibold text-black group-hover:text-white tracking-wide transition-colors">Get Started</span>
               </a>
               <a
-                href="#quote"
-                className="hero-cta group relative px-6 py-3 rounded-full overflow-hidden border border-white/10 bg-white/[0.03]"
+                href="#reel"
+                className="hero-cta group relative px-6 py-3 rounded-full overflow-hidden border border-white/15 bg-white/[0.03]"
               >
                 <div className="absolute inset-0 bg-white/10 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
-                <span className="relative text-sm font-medium text-white/70 group-hover:text-white tracking-wide transition-colors">
-                  Get A Quote
-                </span>
-              </a>
-              <a
-                href="#how"
-                className="hero-cta group relative px-6 py-3 rounded-full overflow-hidden border border-white/10 bg-white/[0.03]"
-              >
-                <div className="absolute inset-0 bg-white/10 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
-                <span className="relative text-sm font-medium text-white/70 group-hover:text-white tracking-wide transition-colors">
-                  How It Works
-                </span>
+                <span className="relative text-sm font-medium text-white/80 group-hover:text-white tracking-wide transition-colors">Watch Our Reel</span>
               </a>
             </div>
           </div>

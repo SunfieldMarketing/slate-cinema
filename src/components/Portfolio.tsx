@@ -11,7 +11,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 const filters = ['All', 'Commercial', 'Social', 'Documentary', 'Event', 'Action']
 
-export default function Portfolio() {
+export default function Portfolio({ limit, showFilters = true }: { limit?: number; showFilters?: boolean } = {}) {
   const sectionRef = useRef<HTMLElement>(null)
   const [filter, setFilter] = useState('All')
 
@@ -31,7 +31,8 @@ export default function Portfolio() {
     return () => ctx.revert()
   }, { scope: sectionRef })
 
-  const visible = filter === 'All' ? projects : projects.filter((p) => p.category === filter)
+  const filtered = filter === 'All' ? projects : projects.filter((p) => p.category === filter)
+  const visible = limit ? filtered.slice(0, limit) : filtered
 
   return (
     <section ref={sectionRef} className="relative w-full min-h-screen overflow-hidden py-24 md:py-28">
@@ -44,25 +45,27 @@ export default function Portfolio() {
               <span className="w-8 h-px bg-[#00AEEF]/40" /> Our Work
             </span>
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05]">
-              A Gallery of Impact
+              {showFilters ? 'A Gallery of Impact' : 'Selected Work'}
             </h2>
           </div>
           {/* Filter chips */}
-          <div className="flex flex-wrap gap-2">
-            {filters.map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`px-4 py-2 rounded-full text-xs font-mono tracking-wide transition-all duration-300 border ${
-                  filter === f
-                    ? 'bg-[#00AEEF] text-black border-[#00AEEF]'
-                    : 'bg-white/[0.03] text-white/60 border-white/10 hover:border-white/30 hover:text-white'
-                }`}
-              >
-                {f}
-              </button>
-            ))}
-          </div>
+          {showFilters && (
+            <div className="flex flex-wrap gap-2">
+              {filters.map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setFilter(f)}
+                  className={`px-4 py-2 rounded-full text-xs font-mono tracking-wide transition-all duration-300 border ${
+                    filter === f
+                      ? 'bg-[#00AEEF] text-black border-[#00AEEF]'
+                      : 'bg-white/[0.03] text-white/60 border-white/10 hover:border-white/30 hover:text-white'
+                  }`}
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Cinematic card grid */}
@@ -125,7 +128,7 @@ export default function Portfolio() {
         {/* CTA */}
         <div className="flex justify-center mt-12">
           <a
-            href="#contact"
+            href="/portfolio"
             className="group relative inline-flex items-center gap-2 px-8 py-4 rounded-full overflow-hidden border border-white/20 bg-white/5 backdrop-blur-md"
           >
             <div className="absolute inset-0 bg-white scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />

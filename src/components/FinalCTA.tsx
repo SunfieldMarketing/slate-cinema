@@ -99,21 +99,21 @@ export default function FinalCTA() {
             >
               <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <span className="relative z-10 flex items-center transition-colors">
-                Book A Strategy Call
+                Get Started
                 <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </span>
             </a>
             <Link
-              href="/portfolio"
+              href="/schedule-a-call"
               onClick={() => posthog.capture('see_more_work_clicked', { source: 'final_cta' })}
-              className="px-8 py-5 rounded-full text-sm font-semibold text-white border border-white/20 bg-white/[0.03] hover:border-white/50 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
+              className="px-6 py-5 text-sm font-semibold text-white/60 hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
             >
-              See more work
+              Schedule a call
             </Link>
           </div>
 
           <p className="cta-fade mt-8 font-mono text-[10px] tracking-[0.22em] uppercase text-white/55">
-            20-minute call · No pitch deck · Replies within one business day
+            Replies within one business day
           </p>
         </div>
       </div>

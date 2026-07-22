@@ -3,14 +3,12 @@
 import React from 'react'
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
+import FlagshipClients from "@/components/FlagshipClients";
+import Positioning from "@/components/Positioning";
 import Pipeline from "@/components/Pipeline";
-import MediaVoid from "@/components/MediaVoid";
-import Results from "@/components/Results";
 import IndustryStandards from "@/components/IndustryStandards";
 import Reviews from "@/components/Reviews";
 import Portfolio from "@/components/Portfolio";
-import LeadMagnet from "@/components/LeadMagnet";
-import CustomCalendar from "@/components/CustomCalendar";
 import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
 import TrustBanner from "@/components/TrustBanner";
@@ -29,15 +27,13 @@ export default function Home() {
 
       <div className="relative z-10 w-full">
         <div data-scroll-section="hero"><Hero /></div>
+        <div data-scroll-section="flagship"><FlagshipClients /></div>
         <div data-scroll-section="trust"><TrustBanner /></div>
+        <div data-scroll-section="positioning"><Positioning /></div>
         <div id="how" data-scroll-section="pipeline"><Pipeline /></div>
-        <div id="reel" data-scroll-section="mediavoid"><MediaVoid /></div>
-        <div data-scroll-section="results"><Results /></div>
         <div data-scroll-section="standards"><IndustryStandards /></div>
         <div data-scroll-section="reviews"><Reviews /></div>
-        <div data-scroll-section="portfolio"><Portfolio /></div>
-        <div data-scroll-section="leadmagnet"><LeadMagnet /></div>
-        <div id="quote" data-scroll-section="calendar"><CustomCalendar /></div>
+        <div id="reel" data-scroll-section="portfolio"><Portfolio limit={6} showFilters={false} /></div>
         <div data-scroll-section="finalcta"><FinalCTA /></div>
         <div data-scroll-section="footer"><Footer /></div>
       </div>

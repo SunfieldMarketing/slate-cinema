@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-import { Star, Quote } from 'lucide-react'
+import { Star, Quote, Play } from 'lucide-react'
 import { MagicCard } from '@/components/ui/magic-card'
+import { industries } from '@/lib/industries'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -15,55 +16,38 @@ interface Testimonial {
   role: string
   company: string
   rating: number
-  featured?: boolean
 }
 
+// Three real Google reviews, curated per the client's own instruction —
+// no need for six, and every one of these is a genuine review.
 const testimonials: Testimonial[] = [
   {
-    quote: "Slate Cinema didn't just make us a video — they built us a content engine. Our launch reel hit 4.2M views in a week and conversions jumped 34%.",
-    name: 'Priya Sharma',
-    role: 'VP Marketing',
-    company: 'HyperDrive Motors',
-    rating: 5,
-    featured: true,
-  },
-  {
-    quote: 'The most intuitive creative partner we\'ve worked with. From brief to final cut in days, not weeks.',
-    name: 'Marcus Johnson',
-    role: 'Head of Ops',
-    company: 'Synergy Corp',
+    quote: "The attention to detail is better than anyone we've ever worked with! I would highly recommend using Slate for any and all media. We've been working hand-in-hand with Slate for 6+ years now — I would never go back to using anyone else!",
+    name: 'Dan Jennings',
+    role: 'Local Guide',
+    company: 'Google Review',
     rating: 5,
   },
   {
-    quote: 'It feels like a true partnership. They\'re invested in our numbers, not just the footage.',
-    name: 'Isabella Rossi',
-    role: 'Client Success',
-    company: 'Horizon',
+    quote: "Slate Cinema is hands-down one of the best video production companies in Brooklyn. They took our ideas and turned them into stunning, high-quality content that perfectly captured our brand. The team is creative, professional, and easy to work with from start to finish.",
+    name: 'Sara Greenberg',
+    role: 'Client',
+    company: 'Google Review',
     rating: 5,
   },
   {
-    quote: 'Every frame is intentional. The color grade alone lifted our brand perception overnight.',
-    name: 'Kenji Tanaka',
-    role: 'Brand Director',
-    company: 'CodeCrafters',
-    rating: 5,
-  },
-  {
-    quote: 'The ROI was almost immediate — we cut project delivery times by nearly 30% and doubled our social output.',
-    name: 'Fatima Al-Jamil',
-    role: 'CFO',
-    company: 'Apex Financial',
-    rating: 5,
-    featured: true,
-  },
-  {
-    quote: 'Cinematic quality with a social-first brain. Rare combination, huge results.',
-    name: 'David Chen',
-    role: 'Founder',
-    company: 'Apex Athletics',
+    quote: "Jake created an amazing promotional video for my organization and I couldn't be happier with the result. He was professional, creative, and really understood the message we wanted to share. The final product was polished, engaging, and better than I imagined.",
+    name: 'Chana W',
+    role: 'Local Guide',
+    company: 'Google Review',
     rating: 5,
   },
 ]
+
+// Pull whichever industry currently has real video testimonials wired up
+// (only the flagship industry does today) rather than hardcoding a slug —
+// stays correct regardless of which industry that ends up being.
+const videoTestimonials = industries.find((i) => i.videoTestimonials?.length)?.videoTestimonials?.slice(0, 2) ?? []
 
 function initials(name: string) {
   return name.split(' ').map((p) => p[0]).join('').slice(0, 2).toUpperCase()
@@ -79,19 +63,68 @@ function StarRow({ n }: { n: number }) {
   )
 }
 
+function VideoCard({ t }: { t: NonNullable<typeof videoTestimonials>[number] }) {
+  const [playing, setPlaying] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  const toggle = () => {
+    const v = videoRef.current
+    if (!v) return
+    if (playing) {
+      v.pause()
+      setPlaying(false)
+    } else {
+      v.muted = false
+      v.play()
+      setPlaying(true)
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      className="rv-card group relative rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02] aspect-video w-full text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
+      aria-label={playing ? `Pause testimonial from ${t.name}` : `Play testimonial from ${t.name}`}
+    >
+      {t.poster && <img src={t.poster} alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover" />}
+      <video
+        ref={videoRef}
+        src={t.video}
+        poster={t.poster}
+        muted
+        playsInline
+        preload="metadata"
+        onEnded={() => setPlaying(false)}
+        className={`absolute inset-0 w-full h-full object-cover ${playing ? '' : 'opacity-0'}`}
+      />
+      <div className={`absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/20 to-transparent transition-opacity duration-500 ${playing ? 'opacity-0' : 'opacity-100'}`} />
+      {!playing && (
+        <span className="absolute inset-0 flex items-center justify-center">
+          <span className="w-14 h-14 rounded-full backdrop-blur-md border border-[#00AEEF]/60 bg-[rgba(5,7,12,0.55)] flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+            <Play className="w-5 h-5 text-white ml-0.5" fill="currentColor" />
+          </span>
+        </span>
+      )}
+      {!playing && (
+        <div className="absolute bottom-0 left-0 right-0 p-5">
+          <div className="text-white font-semibold text-sm">{t.name}</div>
+          <div className="text-white/50 text-xs">{t.role} · {t.company}</div>
+        </div>
+      )}
+    </button>
+  )
+}
+
 export default function Reviews() {
   const sectionRef = useRef<HTMLElement>(null)
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
-      // fromTo (not from) so a mis-fired trigger can never leave content
-      // permanently invisible; once:true keeps it a one-shot reveal.
       gsap.fromTo('.rv-head', { y: 40, opacity: 0 }, {
         y: 0, opacity: 1, duration: 0.8, ease: 'power3.out',
         scrollTrigger: { trigger: sectionRef.current, start: 'top 80%', once: true },
       })
-      // Iris-in reveal — cards settle from a slight zoom rather than sliding
-      // up, so this grid doesn't read as the same entrance as every other one.
       gsap.fromTo('.rv-card', { scale: 0.9, opacity: 0 }, {
         scale: 1, opacity: 1, stagger: 0.08, duration: 0.6, ease: 'back.out(1.4)',
         scrollTrigger: { trigger: '.rv-grid', start: 'top 90%', once: true },
@@ -115,31 +148,38 @@ export default function Reviews() {
           </h2>
           <div className="mt-6 inline-flex items-center gap-3 text-white/50 text-sm">
             <StarRow n={5} />
-            <span className="font-mono">4.9/5 average · 120+ campaigns delivered</span>
+            <span className="font-mono">5.0/5 average · 44 Google reviews</span>
           </div>
         </div>
 
-        {/* Masonry-style card grid */}
-        <div className="rv-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {/* Video testimonials, when available — real face, real name */}
+        {videoTestimonials.length > 0 && (
+          <div className="rv-grid grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5 max-w-3xl mx-auto">
+            {videoTestimonials.map((t) => (
+              <VideoCard key={t.name} t={t} />
+            ))}
+          </div>
+        )}
+
+        {/* Review cards — fixed, consistent sizing across all three */}
+        <div className="rv-grid grid grid-cols-1 md:grid-cols-3 gap-5">
           {testimonials.map((t, i) => (
             <MagicCard
               key={i}
-              className={`rv-card rounded-2xl transition-transform duration-500 hover:-translate-y-1 ${
-                t.featured ? 'lg:row-span-1 md:col-span-1' : ''
-              }`}
+              className="rv-card rounded-2xl transition-transform duration-500 hover:-translate-y-1"
               gradientFrom="#00AEEF"
               gradientTo="#0369A1"
               gradientColor="#00AEEF"
               gradientOpacity={0.15}
               gradientSize={220}
             >
-              <article className="relative z-10 flex flex-col h-full p-6 sm:p-7">
+              <article className="relative z-10 flex flex-col h-full min-h-[280px] p-6 sm:p-7">
                 <div className="flex items-center justify-between mb-4">
                   <Quote className="w-7 h-7 text-[#00AEEF]/40" fill="currentColor" />
                   <StarRow n={t.rating} />
                 </div>
 
-                <p className={`text-white/80 font-light leading-relaxed mb-6 flex-1 ${t.featured ? 'text-lg sm:text-xl' : 'text-[15px]'}`}>
+                <p className="text-[15px] text-white/80 font-light leading-relaxed mb-6 flex-1">
                   &ldquo;{t.quote}&rdquo;
                 </p>
 
@@ -154,13 +194,6 @@ export default function Reviews() {
                 </div>
               </article>
             </MagicCard>
-          ))}
-        </div>
-
-        {/* Logo strip */}
-        <div className="mt-14 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 opacity-40">
-          {['HyperDrive', 'Synergy', 'Horizon', 'Apex', 'CodeCrafters', 'Lumiere'].map((brand) => (
-            <span key={brand} className="font-mono text-sm tracking-widest text-white/60 uppercase">{brand}</span>
           ))}
         </div>
       </div>

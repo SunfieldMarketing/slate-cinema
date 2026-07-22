@@ -125,9 +125,26 @@ export default function IndustryWheel({ industries, accent = '#00AEEF' }: { indu
         <span className="font-mono text-[11px] sm:text-xs tracking-[0.3em] uppercase mb-3 block text-center lg:text-left" style={{ color: accent }}>
           {current.label}
         </span>
-        <p className="text-white/70 text-lg sm:text-xl font-light leading-relaxed mb-6 text-center lg:text-left">
-          {current.blurb}
-        </p>
+
+        {/*
+          Every industry's blurb is stacked in the same grid cell (all
+          children get grid-area 1/1), so the cell's height is always the
+          tallest blurb in the set — switching industries crossfades in
+          place instead of resizing the row and shoving the reel below it
+          up/down under the visitor's cursor.
+        */}
+        <div className="grid mb-6">
+          {industries.map((ind) => (
+            <p
+              key={ind.id}
+              aria-hidden={ind.id !== current.id}
+              className="[grid-area:1/1] text-white/70 text-lg sm:text-xl font-light leading-relaxed text-center lg:text-left transition-opacity duration-300"
+              style={{ opacity: ind.id === current.id ? 1 : 0, pointerEvents: ind.id === current.id ? 'auto' : 'none' }}
+            >
+              {ind.blurb}
+            </p>
+          ))}
+        </div>
 
         <Link
           href={`/portfolio/${current.slug}`}
@@ -153,7 +170,7 @@ export default function IndustryWheel({ industries, accent = '#00AEEF' }: { indu
         <div className="flex justify-center w-full">
           <Link
             href={`/portfolio/${current.slug}`}
-            className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full font-semibold text-sm text-black transition-transform duration-300 hover:scale-[1.03]"
+            className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full font-semibold text-sm text-black transition-transform duration-300 hover:scale-[1.03] whitespace-nowrap"
             style={{ background: `linear-gradient(135deg, #ffffff, ${accent})` }}
           >
             Explore {current.label} Work
