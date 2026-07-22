@@ -46,33 +46,63 @@ import { industries } from '@/lib/industries'
 
 gsap.registerPlugin(ScrollTrigger)
 
-/* ── One continuous backdrop for the whole page flow — a single grid
-   field plus a chain of overlapping glows and a spine line running top
-   to bottom, so sections read as one woven surface instead of each
-   restarting its own isolated, barely-visible background. Rendered once,
-   absolutely positioned behind the whole Hero→Studio stack. ────────── */
+/* ── One continuous backdrop for the whole page flow — cinematic rather
+   than mechanical: soft light-leak sweeps, an asymmetric chain of glows,
+   scattered bokeh, and film-strip sprocket-hole edges instead of a hard
+   engineering grid. Rendered once, absolutely positioned behind the
+   whole Hero→Studio stack, so it reads as one woven surface. ───────── */
+const bokehDots = [
+  { top: '6%', left: '78%', size: 10, opacity: 0.22 },
+  { top: '14%', left: '18%', size: 6, opacity: 0.18 },
+  { top: '24%', left: '88%', size: 8, opacity: 0.2 },
+  { top: '33%', left: '10%', size: 14, opacity: 0.15 },
+  { top: '41%', left: '92%', size: 7, opacity: 0.2 },
+  { top: '48%', left: '25%', size: 5, opacity: 0.22 },
+  { top: '57%', left: '85%', size: 11, opacity: 0.16 },
+  { top: '66%', left: '15%', size: 7, opacity: 0.2 },
+  { top: '74%', left: '95%', size: 9, opacity: 0.17 },
+  { top: '83%', left: '8%', size: 6, opacity: 0.22 },
+  { top: '90%', left: '70%', size: 12, opacity: 0.14 },
+]
+
 function PageBackdrop() {
   return (
     <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-      {/* unmasked, continuous grid — tiles the entire height, no per-section fade */}
-      <div className="absolute inset-0 opacity-[0.16] bg-[linear-gradient(rgba(255,255,255,0.9)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.9)_1px,transparent_1px)] bg-[size:64px_64px]" />
-      {/* a second, larger grid layer for depth — two scales of texture instead of one flat tile */}
-      <div className="absolute inset-0 opacity-[0.07] bg-[linear-gradient(rgba(0,174,239,1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,174,239,1)_1px,transparent_1px)] bg-[size:256px_256px]" />
+      {/* faint dot texture — grain-like, not graph paper */}
+      <div className="absolute inset-0 opacity-[0.05] [background-image:radial-gradient(rgba(255,255,255,0.9)_1px,transparent_1px)] [background-size:34px_34px]" />
 
-      {/* a chain of large, overlapping glows down the length of the page —
-          bright enough to actually read against pure black, alternating a
-          touch of cyan-white into the blue so it isn't one flat hue */}
-      <div className="absolute top-[2%] left-1/2 -translate-x-1/2 w-[75rem] h-[75rem] bg-[#00AEEF]/[0.24] rounded-full blur-[170px]" />
-      <div className="absolute top-[20%] left-[5%] w-[58rem] h-[58rem] bg-[#00AEEF]/[0.19] rounded-full blur-[160px]" />
-      <div className="absolute top-[34%] right-[3%] w-[62rem] h-[62rem] bg-[#5fd4ff]/[0.15] rounded-full blur-[170px]" />
-      <div className="absolute top-[50%] left-[6%] w-[58rem] h-[58rem] bg-[#00AEEF]/[0.20] rounded-full blur-[160px]" />
-      <div className="absolute top-[64%] right-[4%] w-[62rem] h-[62rem] bg-[#5fd4ff]/[0.16] rounded-full blur-[170px]" />
-      <div className="absolute top-[80%] left-1/2 -translate-x-1/2 w-[65rem] h-[65rem] bg-[#00AEEF]/[0.21] rounded-full blur-[170px]" />
-      <div className="absolute top-[96%] left-[12%] w-[58rem] h-[58rem] bg-[#00AEEF]/[0.18] rounded-full blur-[160px]" />
+      {/* diagonal light-leak sweeps, angled like light hitting a lens —
+          the film/production motif, not a data-grid motif */}
+      <div className="absolute -top-[8%] -left-[25%] w-[150%] h-[42%] bg-gradient-to-br from-[#00AEEF]/[0.09] via-transparent to-transparent -rotate-6 blur-[110px]" />
+      <div className="absolute top-[30%] -right-[25%] w-[150%] h-[38%] bg-gradient-to-bl from-[#7fe0ff]/[0.08] via-transparent to-transparent rotate-6 blur-[110px]" />
+      <div className="absolute top-[62%] -left-[20%] w-[140%] h-[40%] bg-gradient-to-tr from-[#00AEEF]/[0.08] via-transparent to-transparent -rotate-4 blur-[110px]" />
 
-      {/* a persistent vertical spine — the connective tissue tying every
-          section together, same idea as the StageDivider connectors */}
-      <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-px bg-gradient-to-b from-transparent via-[#00AEEF]/[0.3] to-transparent" />
+      {/* an asymmetric chain of glows — varied size/position so it never
+          reads as one solid column, alternating blue and pale cyan */}
+      <div className="absolute top-[3%] left-[22%] w-[42rem] h-[42rem] bg-[#00AEEF]/[0.14] rounded-full blur-[150px]" />
+      <div className="absolute top-[19%] right-[10%] w-[30rem] h-[30rem] bg-[#7fe0ff]/[0.11] rounded-full blur-[130px]" />
+      <div className="absolute top-[37%] left-[3%] w-[36rem] h-[36rem] bg-[#00AEEF]/[0.12] rounded-full blur-[140px]" />
+      <div className="absolute top-[53%] right-[16%] w-[32rem] h-[32rem] bg-[#7fe0ff]/[0.11] rounded-full blur-[130px]" />
+      <div className="absolute top-[69%] left-[12%] w-[38rem] h-[38rem] bg-[#00AEEF]/[0.13] rounded-full blur-[140px]" />
+      <div className="absolute top-[85%] right-[6%] w-[34rem] h-[34rem] bg-[#00AEEF]/[0.12] rounded-full blur-[140px]" />
+      <div className="absolute top-[99%] left-[30%] w-[30rem] h-[30rem] bg-[#7fe0ff]/[0.1] rounded-full blur-[130px]" />
+
+      {/* scattered bokeh — soft out-of-focus points, a camera-glass motif */}
+      {bokehDots.map((d, i) => (
+        <div
+          key={i}
+          className="absolute rounded-full blur-[5px]"
+          style={{ top: d.top, left: d.left, width: d.size, height: d.size, background: `rgba(127,224,255,${d.opacity})` }}
+        />
+      ))}
+
+      {/* film-strip sprocket holes tracing both edges — the one motif no
+          generic template has, and it says "cinema" instead of "SaaS" */}
+      <div className="absolute left-3 md:left-6 top-0 bottom-0 w-[3px] opacity-[0.16] [background-image:radial-gradient(circle,rgba(255,255,255,0.95)_1.5px,transparent_1.5px)] [background-size:100%_28px]" />
+      <div className="absolute right-3 md:right-6 top-0 bottom-0 w-[3px] opacity-[0.16] [background-image:radial-gradient(circle,rgba(255,255,255,0.95)_1.5px,transparent_1.5px)] [background-size:100%_28px]" />
+
+      {/* vignette for depth */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_75%_55%_at_50%_50%,transparent_35%,rgba(0,0,0,0.4)_100%)]" />
 
       {/* fade into the hero above and the footer below rather than cutting */}
       <div className="absolute inset-x-0 top-0 h-56 bg-gradient-to-b from-ink to-transparent" />
