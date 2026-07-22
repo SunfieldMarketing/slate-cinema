@@ -9,7 +9,7 @@ import Pipeline from "@/components/Pipeline";
 import MediaVoid from "@/components/MediaVoid";
 import IndustryStandards from "@/components/IndustryStandards";
 import Reviews from "@/components/Reviews";
-import Portfolio from "@/components/Portfolio";
+import PortfolioCarousel from "@/components/PortfolioCarousel";
 import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
 import TrustBanner from "@/components/TrustBanner";
@@ -35,7 +35,7 @@ export default function Home() {
         <div data-scroll-section="results"><Results /></div>
         <div data-scroll-section="standards"><IndustryStandards /></div>
         <div data-scroll-section="reviews"><Reviews /></div>
-        <div id="reel" data-scroll-section="portfolio"><Portfolio limit={6} showFilters={false} /></div>
+        <div id="reel" data-scroll-section="portfolio"><PortfolioCarousel /></div>
         <div data-scroll-section="finalcta"><FinalCTA /></div>
         <div data-scroll-section="footer"><Footer /></div>
       </div>

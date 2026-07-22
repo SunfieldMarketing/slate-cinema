@@ -85,6 +85,20 @@ const glowChain = [
 function PageBackdrop() {
   return (
     <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+      {/* Cinematic backdrop video — fixed to the viewport so it reads as
+          atmosphere behind the whole page rather than stretching across
+          the tall document, sitting well beneath the grid/glow/bokeh
+          layers below so it never competes with them. */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="fixed inset-0 w-full h-full object-cover opacity-[0.16]"
+        src="/videos/performance.mp4"
+      />
+      <div className="fixed inset-0 bg-ink/70 mix-blend-multiply" />
+
       {/* faint dot texture — grain-like, not graph paper */}
       <div className="absolute inset-0 opacity-[0.05] [background-image:radial-gradient(rgba(255,255,255,0.9)_1px,transparent_1px)] [background-size:34px_34px]" />
 
@@ -816,7 +830,6 @@ export default function ContactPageContent() {
             title={['Let’s get', 'you started']}
             subtitle="Tell us where you’re at and we’ll point you to the right next step. We reply within one business day."
             accent="#00AEEF"
-            videoSrc="/videos/performance.mp4"
           />
 
           <WhatHappensNext />

@@ -11,6 +11,24 @@ gsap.registerPlugin(ScrollTrigger)
 
 const filters = ['All', 'Commercial', 'Social', 'Documentary', 'Event', 'Action']
 
+/*
+  Explicit bento placement for the full, unfiltered 8-project set — hand
+  tiled (not auto-packed) so the mixed wide/tall/normal cards fill every
+  cell of a 4-col x 3-row grid exactly, with zero leftover gaps. Only
+  applies to that exact 8-item "All" view; a filtered subset falls back
+  to plain uniform cards, which can never gap regardless of count.
+*/
+const bentoPlacement = [
+  'lg:col-start-1 lg:col-span-2 lg:row-start-1 lg:row-span-1', // wide
+  'lg:col-start-3 lg:col-span-1 lg:row-start-1 lg:row-span-2', // tall
+  'lg:col-start-4 lg:col-span-1 lg:row-start-1 lg:row-span-1',
+  'lg:col-start-1 lg:col-span-1 lg:row-start-2 lg:row-span-1',
+  'lg:col-start-2 lg:col-span-1 lg:row-start-2 lg:row-span-2', // tall
+  'lg:col-start-4 lg:col-span-1 lg:row-start-2 lg:row-span-1',
+  'lg:col-start-3 lg:col-span-2 lg:row-start-3 lg:row-span-1', // wide
+  'lg:col-start-1 lg:col-span-1 lg:row-start-3 lg:row-span-1',
+]
+
 export default function Portfolio({ limit, showFilters = true }: { limit?: number; showFilters?: boolean } = {}) {
   const sectionRef = useRef<HTMLElement>(null)
   const [filter, setFilter] = useState('All')
@@ -33,6 +51,7 @@ export default function Portfolio({ limit, showFilters = true }: { limit?: numbe
 
   const filtered = filter === 'All' ? projects : projects.filter((p) => p.category === filter)
   const visible = limit ? filtered.slice(0, limit) : filtered
+  const useBento = filter === 'All' && !limit && visible.length === bentoPlacement.length
 
   return (
     <section ref={sectionRef} className="relative w-full min-h-screen overflow-hidden py-24 md:py-28">
@@ -68,12 +87,14 @@ export default function Portfolio({ limit, showFilters = true }: { limit?: numbe
           )}
         </div>
 
-        {/* Cinematic card grid — uniform squares, fully tiled, no gaps */}
-        <div className="pf-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Cinematic bento grid — hand-tiled for the full set so it fills
+            every cell with no gaps; falls back to plain squares when
+            filtered down to a smaller, variable count. */}
+        <div className="pf-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-[240px] sm:auto-rows-[260px] gap-4">
           {visible.map((p, i) => (
             <article
               key={p.title}
-              className="pf-card group relative aspect-square rounded-2xl overflow-hidden border border-white/10 cursor-pointer transition-all duration-500 hover:border-[#00AEEF]/50"
+              className={`pf-card group relative rounded-2xl overflow-hidden border border-white/10 cursor-pointer transition-all duration-500 hover:border-[#00AEEF]/50 ${useBento ? bentoPlacement[i] : ''}`}
             >
               {/* Image */}
               <img
