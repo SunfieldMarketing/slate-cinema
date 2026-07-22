@@ -85,10 +85,11 @@ const glowChain = [
 function PageBackdrop() {
   return (
     <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-      {/* Hero backdrop video — dissolves out via a soft mask rather than
-          cutting off at a hard edge, so it melts into the same
-          dot/glow/bokeh field the rest of the page uses instead of
-          reading as a separate hero-only treatment. Sits underneath
+      {/* Hero backdrop video — solid for the hero's full height (matching
+          its min-h-screen), then dissolves out via a soft mask once
+          you're past the hero rather than fading partway through it, so
+          it melts into the same dot/glow/bokeh field the rest of the
+          page uses only after the hero is actually done. Sits underneath
           those layers so the color and texture stay fully visible over
           it, never washed out. */}
       <video
@@ -96,10 +97,10 @@ function PageBackdrop() {
         loop
         muted
         playsInline
-        className="absolute top-0 inset-x-0 h-[135vh] w-full object-cover opacity-[0.26]"
+        className="absolute top-0 inset-x-0 h-[150vh] w-full object-cover opacity-[0.26]"
         style={{
-          maskImage: 'linear-gradient(to bottom, black 0%, black 50%, transparent 96%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 50%, transparent 96%)',
+          maskImage: 'linear-gradient(to bottom, black 0, black 100vh, transparent 145vh)',
+          WebkitMaskImage: 'linear-gradient(to bottom, black 0, black 100vh, transparent 145vh)',
         }}
         src="/videos/performance.mp4"
       />
@@ -667,9 +668,9 @@ function WhatHappensNext() {
   }, { scope: ref })
 
   return (
-    <section ref={ref} className="relative w-full overflow-hidden py-16 md:py-20">
+    <section ref={ref} className="relative w-full overflow-hidden mt-6 md:mt-12 pt-28 md:pt-40 pb-16 md:pb-20">
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
-        <div className="whn-head text-center mb-10 max-w-2xl mx-auto">
+        <div className="whn-head text-center mb-12 max-w-2xl mx-auto">
           <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{'// After You Reach Out'}</span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1]">What happens next</h2>
           <p className="mt-5 text-white/55 font-light text-sm sm:text-base">
