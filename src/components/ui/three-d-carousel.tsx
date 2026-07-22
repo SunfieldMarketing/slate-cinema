@@ -48,7 +48,8 @@ const Carousel = memo(
     isActive: boolean
   }) => {
     const isSmall = useMediaQuery('(max-width: 640px)')
-    const cylinderWidth = isSmall ? 940 : 1560
+    const isMedium = useMediaQuery('(max-width: 1024px)')
+    const cylinderWidth = isSmall ? 1600 : isMedium ? 2400 : 3520
     const faceCount = cards.length
     const faceWidth = cylinderWidth / faceCount
     const radius = cylinderWidth / (2 * Math.PI)
@@ -56,7 +57,7 @@ const Carousel = memo(
     const transform = useTransform(rotation, (v) => `rotate3d(0, 1, 0, ${v}deg)`)
 
     return (
-      <div className="flex h-full items-center justify-center" style={{ perspective: '1400px', transformStyle: 'preserve-3d' }}>
+      <div className="flex h-full items-center justify-center" style={{ perspective: '1800px', transformStyle: 'preserve-3d' }}>
         <motion.div
           drag={isActive ? 'x' : false}
           dragElastic={0.02}
@@ -75,11 +76,11 @@ const Carousel = memo(
           {cards.map((card, i) => (
             <motion.div
               key={`${card.title}-${i}`}
-              className="group absolute flex h-full origin-center items-center justify-center p-2"
+              className="group absolute flex h-full origin-center items-center justify-center p-3"
               style={{ width: `${faceWidth}px`, transform: `rotateY(${i * (360 / faceCount)}deg) translateZ(${radius}px)` }}
               onClick={() => onSelect(i)}
             >
-              <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-white/10 bg-ink cursor-pointer transition-colors duration-300 group-hover:border-[#00AEEF]/50">
+              <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-ink cursor-pointer transition-colors duration-300 group-hover:border-[#00AEEF]/50 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
                 <motion.img
                   src={card.image}
                   alt={card.title}
@@ -94,14 +95,14 @@ const Carousel = memo(
                 {/* Play affordance on hover — signals "click to open", not
                     just "drag to spin". */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="w-11 h-11 rounded-full bg-white/10 backdrop-blur-md border border-white/30 flex items-center justify-center scale-90 group-hover:scale-100 transition-transform duration-300">
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-white ml-0.5"><path d="M8 5v14l11-7z" /></svg>
+                  <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/30 flex items-center justify-center scale-90 group-hover:scale-100 transition-transform duration-300">
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-white ml-0.5"><path d="M8 5v14l11-7z" /></svg>
                   </div>
                 </div>
 
-                <div className="pointer-events-none absolute bottom-0 left-0 right-0 p-3">
-                  <div className="text-white font-bold text-sm leading-tight truncate">{card.title}</div>
-                  <div className="text-white/50 text-[11px] font-mono truncate">{card.subtitle}</div>
+                <div className="pointer-events-none absolute bottom-0 left-0 right-0 p-4">
+                  <div className="text-white font-bold text-base leading-tight truncate">{card.title}</div>
+                  <div className="text-white/50 text-xs font-mono truncate">{card.subtitle}</div>
                 </div>
               </div>
             </motion.div>
@@ -127,7 +128,7 @@ export default function ThreeDPhotoCarousel({ cards, onSelect }: { cards: Carous
   }
 
   return (
-    <div className="relative h-[280px] sm:h-[340px] md:h-[400px] w-full overflow-hidden">
+    <div className="relative h-[300px] sm:h-[380px] md:h-[460px] lg:h-[520px] w-full overflow-hidden">
       <Carousel cards={cards} onSelect={handleSelect} controls={controls} isActive={isActive} />
     </div>
   )

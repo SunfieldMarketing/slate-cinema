@@ -15,6 +15,26 @@ export default function Results() {
   const [views, setViews] = useState(0)
   const [likes, setLikes] = useState(0)
   const [comments, setComments] = useState(0)
+  // Defer this section's video until it's actually approaching the
+  // viewport — mounting it immediately competes for bandwidth/decode with
+  // the hero's own critical frame-sequence load right at page load.
+  const [videoInView, setVideoInView] = useState(false)
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVideoInView(true)
+          io.disconnect()
+        }
+      },
+      { rootMargin: '600px 0px' }
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -113,16 +133,18 @@ export default function Results() {
   return (
     <section ref={containerRef} className="relative w-full h-screen overflow-hidden" style={{ perspective: '1200px' }}>
 
-      {/* Background Local Video */}
+      {/* Background Local Video — src withheld until in view, see videoInView above */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute w-full h-full object-cover top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-70"
-          src="/videos/performance.mp4"
-        />
+        {videoInView && (
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute w-full h-full object-cover top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-70"
+            src="/videos/performance.mp4"
+          />
+        )}
         <div className="absolute inset-0 bg-ink/60 mix-blend-multiply" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink opacity-80" />
       </div>

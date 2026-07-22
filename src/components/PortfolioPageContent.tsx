@@ -1,13 +1,9 @@
 'use client'
 
 /*
-  Portfolio page — cut down to roughly one screen per client feedback:
-  "there's not gonna be any all-projects [grid]... this is just a big open
-  blank space... I like that spinning gallery you did, when you click
-  portfolio, it can be that thing." The page's job is routing (which
-  industry/who we serve) plus one flagship visual moment (the 3D reel),
-  not reselling the studio a second time — that's what the rest of the
-  site already does.
+  Portfolio page — routing (which industry/who we serve) plus the full
+  project archive as one filterable grid, rather than reselling the
+  studio a second time — that's what the rest of the site already does.
 */
 
 import { useRef } from 'react'
@@ -17,7 +13,7 @@ import { useGSAP } from '@gsap/react'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import IndustryWheel from '@/components/IndustryWheel'
-import IndustryReel from '@/components/IndustryReel'
+import Portfolio from '@/components/Portfolio'
 import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
 import ScrollExpandMedia from '@/components/ui/scroll-expand-media'
 import { industries } from '@/lib/industries'
@@ -89,10 +85,8 @@ export default function PortfolioPageContent() {
         {/* Who we serve — the main routing interaction on this page */}
         <Industries />
 
-        {/* The flagship 3D reel, unfiltered — every project from the shared
-            portfolio-projects source, as the one big visual moment client
-            asked to bring back to the portfolio page. */}
-        <IndustryReel accent={PORTFOLIO_ACCENT} />
+        {/* The full, filterable project archive. */}
+        <Portfolio />
 
         <Footer />
       </div>
