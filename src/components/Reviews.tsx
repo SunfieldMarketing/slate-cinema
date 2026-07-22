@@ -69,6 +69,10 @@ function StarRow({ n }: { n: number }) {
 function PhoneVideoCard({ t }: { t: NonNullable<typeof videoTestimonials>[number] }) {
   const [playing, setPlaying] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
+  // The clip itself (several MB) is only fetched once someone actually
+  // presses play — no `src` in the JSX below means nothing loads while
+  // this card just sits on screen showing its poster.
+  const loadedRef = useRef(false)
 
   const toggle = () => {
     const v = videoRef.current
@@ -77,6 +81,10 @@ function PhoneVideoCard({ t }: { t: NonNullable<typeof videoTestimonials>[number
       v.pause()
       setPlaying(false)
     } else {
+      if (!loadedRef.current) {
+        loadedRef.current = true
+        v.src = t.video
+      }
       v.muted = false
       v.play()
       setPlaying(true)
@@ -94,11 +102,10 @@ function PhoneVideoCard({ t }: { t: NonNullable<typeof videoTestimonials>[number
         {t.poster && <img src={t.poster} alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover" />}
         <video
           ref={videoRef}
-          src={t.video}
           poster={t.poster}
           muted
           playsInline
-          preload="metadata"
+          preload="none"
           onEnded={() => setPlaying(false)}
           className={`absolute inset-0 w-full h-full object-cover ${playing ? '' : 'opacity-0'}`}
         />

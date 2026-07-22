@@ -1,11 +1,10 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { ChevronDown, Play } from 'lucide-react'
-import { preload } from 'react-dom'
 import { categories } from '@/lib/pipeline-data'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -14,9 +13,26 @@ export default function Pipeline() {
   const sectionRef = useRef<HTMLElement>(null)
   const [open, setOpen] = useState(0)
   const [activeService, setActiveService] = useState(0)
+  // Hold off loading any category video until this section is actually
+  // approaching the viewport — the hero's own frame sequence needs a clear
+  // network runway right at page load.
+  const [videosEnabled, setVideosEnabled] = useState(false)
 
-  // Removed heavy aggressive preloading for pipeline videos to let the Hero video load instantly.
-  // The browser will fetch these when they enter the viewport naturally.
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVideosEnabled(true)
+          io.disconnect()
+        }
+      },
+      { rootMargin: '600px 0px' }
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -45,7 +61,7 @@ export default function Pipeline() {
             The Production Pipeline
           </h2>
           <p className="mt-5 text-white/50 max-w-2xl mx-auto text-sm sm:text-base font-light leading-relaxed">
-            Four phases, each broken down into the exact services behind it. Open a phase to see what's included.
+            Four phases, each broken down into the exact services behind it. Open a phase to see what&apos;s included.
           </p>
         </div>
 
@@ -105,18 +121,25 @@ export default function Pipeline() {
                 >
                   <div className="overflow-hidden">
                     <div className="px-6 sm:px-8 pb-8 grid md:grid-cols-[minmax(0,260px)_1fr] gap-6 md:gap-8">
-                      {/* Category video */}
+                      {/* Category video — only mounted for the open panel. The
+                          panel above it stays in the DOM at all times (CSS
+                          grid-row collapse, not unmount) so an unconditional
+                          <video autoPlay> here would fetch and play all four
+                          categories' clips simultaneously on load, fighting
+                          the hero's frame sequence for bandwidth. */}
                       <div className="relative rounded-xl overflow-hidden border border-white/10 aspect-video md:aspect-auto md:h-full min-h-[160px]">
-                        <video
-                          key={cat.video}
-                          src={cat.video}
-                          autoPlay
-                          loop
-                          muted
-                          playsInline
-                          preload="auto"
-                          className="absolute inset-0 w-full h-full object-cover"
-                        />
+                        {isOpen && videosEnabled && (
+                          <video
+                            key={cat.video}
+                            src={cat.video}
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            preload="auto"
+                            className="absolute inset-0 w-full h-full object-cover"
+                          />
+                        )}
                         <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" />
                         <div className="absolute bottom-3 left-3 flex items-center gap-1.5 font-mono text-[9px] tracking-widest uppercase px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-sm text-white/80">
                           <Play className="w-2.5 h-2.5" fill="currentColor" /> Live Preview

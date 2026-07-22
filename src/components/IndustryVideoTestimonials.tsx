@@ -12,6 +12,9 @@ gsap.registerPlugin(ScrollTrigger)
 function TestimonialCard({ t, accent }: { t: IndustryVideoTestimonial; accent: string }) {
   const [playing, setPlaying] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
+  // Fetch the clip only once someone presses play, not while it's just
+  // sitting on screen as a poster.
+  const loadedRef = useRef(false)
 
   const toggle = () => {
     const v = videoRef.current
@@ -20,6 +23,10 @@ function TestimonialCard({ t, accent }: { t: IndustryVideoTestimonial; accent: s
       v.pause()
       setPlaying(false)
     } else {
+      if (!loadedRef.current) {
+        loadedRef.current = true
+        v.src = t.video
+      }
       v.muted = false
       v.play()
       setPlaying(true)
@@ -39,11 +46,10 @@ function TestimonialCard({ t, accent }: { t: IndustryVideoTestimonial; accent: s
         )}
         <video
           ref={videoRef}
-          src={t.video}
           poster={t.poster}
           muted
           playsInline
-          preload="metadata"
+          preload="none"
           onEnded={() => setPlaying(false)}
           className={`absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105 ${playing ? '' : 'opacity-0'}`}
         />
