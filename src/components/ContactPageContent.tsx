@@ -65,6 +65,23 @@ const bokehDots = [
   { top: '90%', left: '70%', size: 12, opacity: 0.14 },
 ]
 
+/* Each glow is tuned to the section that actually sits at that scroll
+   depth, so the wash of color shifts to match what's on screen —
+   blue through the orientation sections, purple for the intake form,
+   emerald for Ready to Talk, amber for direct contact, teal for the
+   studio — while still overlapping enough (huge blur radii) that one
+   never hard-cuts into the next. */
+const glowChain = [
+  { top: '3%', pos: 'left-[22%]', size: 42, color: '#00AEEF', opacity: 0.14 }, // Hero
+  { top: '13%', pos: 'right-[10%]', size: 32, color: '#00AEEF', opacity: 0.12 }, // What Happens Next
+  { top: '25%', pos: 'left-[4%]', size: 38, color: '#00AEEF', opacity: 0.13 }, // Stage Router
+  { top: '36%', pos: 'right-[14%]', size: 34, color: '#00AEEF', opacity: 0.12 }, // Lead Form
+  { top: '48%', pos: 'left-[8%]', size: 40, color: '#c084fc', opacity: 0.13 }, // Project Form
+  { top: '65%', pos: 'right-[10%]', size: 40, color: '#34d399', opacity: 0.13 }, // Ready to Talk
+  { top: '80%', pos: 'left-[16%]', size: 34, color: '#fbbf24', opacity: 0.1 }, // Contact Methods
+  { top: '94%', pos: 'right-[8%]', size: 36, color: '#22d3ee', opacity: 0.12 }, // Studio
+]
+
 function PageBackdrop() {
   return (
     <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
@@ -72,20 +89,21 @@ function PageBackdrop() {
       <div className="absolute inset-0 opacity-[0.05] [background-image:radial-gradient(rgba(255,255,255,0.9)_1px,transparent_1px)] [background-size:34px_34px]" />
 
       {/* diagonal light-leak sweeps, angled like light hitting a lens —
-          the film/production motif, not a data-grid motif */}
+          color-matched to the zone they cross so the sweep itself
+          carries the blue → purple → emerald/teal story */}
       <div className="absolute -top-[8%] -left-[25%] w-[150%] h-[42%] bg-gradient-to-br from-[#00AEEF]/[0.09] via-transparent to-transparent -rotate-6 blur-[110px]" />
-      <div className="absolute top-[30%] -right-[25%] w-[150%] h-[38%] bg-gradient-to-bl from-[#7fe0ff]/[0.08] via-transparent to-transparent rotate-6 blur-[110px]" />
-      <div className="absolute top-[62%] -left-[20%] w-[140%] h-[40%] bg-gradient-to-tr from-[#00AEEF]/[0.08] via-transparent to-transparent -rotate-4 blur-[110px]" />
+      <div className="absolute top-[38%] -right-[25%] w-[150%] h-[38%] bg-gradient-to-bl from-[#c084fc]/[0.08] via-transparent to-transparent rotate-6 blur-[110px]" />
+      <div className="absolute top-[64%] -left-[20%] w-[140%] h-[38%] bg-gradient-to-tr from-[#34d399]/[0.07] via-transparent to-transparent -rotate-4 blur-[110px]" />
+      <div className="absolute top-[86%] -right-[20%] w-[140%] h-[30%] bg-gradient-to-bl from-[#22d3ee]/[0.08] via-transparent to-transparent rotate-4 blur-[110px]" />
 
-      {/* an asymmetric chain of glows — varied size/position so it never
-          reads as one solid column, alternating blue and pale cyan */}
-      <div className="absolute top-[3%] left-[22%] w-[42rem] h-[42rem] bg-[#00AEEF]/[0.14] rounded-full blur-[150px]" />
-      <div className="absolute top-[19%] right-[10%] w-[30rem] h-[30rem] bg-[#7fe0ff]/[0.11] rounded-full blur-[130px]" />
-      <div className="absolute top-[37%] left-[3%] w-[36rem] h-[36rem] bg-[#00AEEF]/[0.12] rounded-full blur-[140px]" />
-      <div className="absolute top-[53%] right-[16%] w-[32rem] h-[32rem] bg-[#7fe0ff]/[0.11] rounded-full blur-[130px]" />
-      <div className="absolute top-[69%] left-[12%] w-[38rem] h-[38rem] bg-[#00AEEF]/[0.13] rounded-full blur-[140px]" />
-      <div className="absolute top-[85%] right-[6%] w-[34rem] h-[34rem] bg-[#00AEEF]/[0.12] rounded-full blur-[140px]" />
-      <div className="absolute top-[99%] left-[30%] w-[30rem] h-[30rem] bg-[#7fe0ff]/[0.1] rounded-full blur-[130px]" />
+      {/* the color-matched glow chain */}
+      {glowChain.map((g, i) => (
+        <div
+          key={i}
+          className={`absolute ${g.pos} rounded-full blur-[150px]`}
+          style={{ top: g.top, width: `${g.size}rem`, height: `${g.size}rem`, backgroundColor: g.color, opacity: g.opacity }}
+        />
+      ))}
 
       {/* scattered bokeh — soft out-of-focus points, a camera-glass motif */}
       {bokehDots.map((d, i) => (
@@ -101,6 +119,12 @@ function PageBackdrop() {
       <div className="absolute left-3 md:left-6 top-0 bottom-0 w-[3px] opacity-[0.16] [background-image:radial-gradient(circle,rgba(255,255,255,0.95)_1.5px,transparent_1.5px)] [background-size:100%_28px]" />
       <div className="absolute right-3 md:right-6 top-0 bottom-0 w-[3px] opacity-[0.16] [background-image:radial-gradient(circle,rgba(255,255,255,0.95)_1.5px,transparent_1.5px)] [background-size:100%_28px]" />
 
+      {/* the spine itself carries the color journey top to bottom */}
+      <div
+        className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-px opacity-[0.35]"
+        style={{ background: 'linear-gradient(to bottom, transparent, #00AEEF 20%, #00AEEF 40%, #c084fc 55%, #34d399 68%, #fbbf24 82%, #22d3ee 94%, transparent)' }}
+      />
+
       {/* vignette for depth */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_75%_55%_at_50%_50%,transparent_35%,rgba(0,0,0,0.4)_100%)]" />
 
@@ -112,10 +136,10 @@ function PageBackdrop() {
 }
 
 /* ── Shared: trust badge — a small credibility pill ─────────────────── */
-function TrustBadge({ icon: Icon, label }: { icon: LucideIcon; label: string }) {
+function TrustBadge({ icon: Icon, label, accent = '#00AEEF' }: { icon: LucideIcon; label: string; accent?: string }) {
   return (
     <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/[0.16] bg-white/[0.06] backdrop-blur-sm text-white/70 text-[11px] font-mono tracking-wide uppercase shadow-[0_4px_16px_rgba(0,0,0,0.25)]">
-      <Icon className="w-3.5 h-3.5 text-[#00AEEF]" />
+      <Icon className="w-3.5 h-3.5" style={{ color: accent }} />
       {label}
     </span>
   )
@@ -420,9 +444,9 @@ function ProjectForm() {
             our first proposal will be — no back-and-forth just to scope the basics.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <TrustBadge icon={ListChecks} label="9 Quick Fields" />
-            <TrustBadge icon={Receipt} label="Fixed-Price Proposal" />
-            <TrustBadge icon={ShieldCheck} label="Kept Confidential" />
+            <TrustBadge icon={ListChecks} label="9 Quick Fields" accent="#c084fc" />
+            <TrustBadge icon={Receipt} label="Fixed-Price Proposal" accent="#c084fc" />
+            <TrustBadge icon={ShieldCheck} label="Kept Confidential" accent="#c084fc" />
           </div>
         </div>
 
@@ -573,9 +597,9 @@ function ReadyToTalk() {
             just an honest read on scope, timeline, and budget so you know exactly where you stand.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <TrustBadge icon={Clock3} label="20-Minute Call" />
-            <TrustBadge icon={Users} label="Talk to a Real Producer" />
-            <TrustBadge icon={ShieldCheck} label="No Pitch Deck" />
+            <TrustBadge icon={Clock3} label="20-Minute Call" accent="#34d399" />
+            <TrustBadge icon={Users} label="Talk to a Real Producer" accent="#34d399" />
+            <TrustBadge icon={ShieldCheck} label="No Pitch Deck" accent="#34d399" />
           </div>
         </div>
 
@@ -683,37 +707,37 @@ function StudioLocation() {
             <img src="/images/contact_bg_bright.png" alt="Brooklyn, NY" className="absolute inset-0 w-full h-full object-cover opacity-45 transition-transform duration-[1400ms] group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
             {/* map grid overlay */}
-            <div className="absolute inset-0 opacity-[0.12] bg-[linear-gradient(rgba(0,174,239,0.6)_1px,transparent_1px),linear-gradient(90deg,rgba(0,174,239,0.6)_1px,transparent_1px)] bg-[size:40px_40px]" />
+            <div className="absolute inset-0 opacity-[0.12] bg-[linear-gradient(rgba(34,211,238,0.6)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.6)_1px,transparent_1px)] bg-[size:40px_40px]" />
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-              <div className="w-4 h-4 rounded-full bg-[#00AEEF] shadow-[0_0_20px_#00AEEF] animate-pulse" />
-              <div className="absolute inset-0 -m-4 rounded-full border border-[#00AEEF]/40 animate-ping" />
+              <div className="w-4 h-4 rounded-full bg-[#22d3ee] shadow-[0_0_20px_#22d3ee] animate-pulse" />
+              <div className="absolute inset-0 -m-4 rounded-full border border-[#22d3ee]/40 animate-ping" />
             </div>
             <div className="absolute bottom-5 left-5 flex items-center gap-2 font-mono text-[11px] tracking-widest text-white/80 uppercase">
-              <Navigation className="w-4 h-4 text-[#00AEEF]" /> 40.6782° N, 73.9442° W
+              <Navigation className="w-4 h-4 text-[#22d3ee]" /> 40.6782° N, 73.9442° W
             </div>
           </div>
 
           {/* Studio details */}
           <div className="relative flex flex-col justify-center rounded-3xl border border-white/[0.14] bg-white/[0.05] backdrop-blur-md p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#00AEEF] to-transparent" />
-            <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase mb-4">{'// The Studio'}</span>
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#22d3ee] to-transparent" />
+            <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#22d3ee] uppercase mb-4">{'// The Studio'}</span>
             <h2 className="text-3xl sm:text-4xl font-black tracking-tighter text-white mb-5">Based in Brooklyn,<br />shooting everywhere.</h2>
             <div className="mb-6 flex flex-wrap gap-3">
-              <TrustBadge icon={Navigation} label="On-Location Nationwide" />
-              <TrustBadge icon={Clock} label="Mon–Fri, 9am–7pm ET" />
+              <TrustBadge icon={Navigation} label="On-Location Nationwide" accent="#22d3ee" />
+              <TrustBadge icon={Clock} label="Mon–Fri, 9am–7pm ET" accent="#22d3ee" />
             </div>
             <div className="flex flex-col gap-5">
               <div className="flex items-start gap-4">
-                <MapPin className="w-5 h-5 text-[#00AEEF] mt-0.5 shrink-0" />
+                <MapPin className="w-5 h-5 text-[#22d3ee] mt-0.5 shrink-0" />
                 <div><div className="text-white font-medium text-sm">Slate Cinema Studio</div><div className="text-white/50 text-sm">Brooklyn, New York</div></div>
               </div>
               <div className="flex items-start gap-4">
-                <Clock className="w-5 h-5 text-[#00AEEF] mt-0.5 shrink-0" />
+                <Clock className="w-5 h-5 text-[#22d3ee] mt-0.5 shrink-0" />
                 <div><div className="text-white font-medium text-sm">Studio Hours</div><div className="text-white/50 text-sm">Mon–Fri · 9am – 7pm ET · On-location by appointment</div></div>
               </div>
               <div className="flex items-start gap-4">
-                <Mail className="w-5 h-5 text-[#00AEEF] mt-0.5 shrink-0" />
-                <a href="mailto:info@slatecinema.com" className="text-white/70 text-sm hover:text-[#00AEEF] transition-colors">info@slatecinema.com</a>
+                <Mail className="w-5 h-5 text-[#22d3ee] mt-0.5 shrink-0" />
+                <a href="mailto:info@slatecinema.com" className="text-white/70 text-sm hover:text-[#22d3ee] transition-colors">info@slatecinema.com</a>
               </div>
             </div>
           </div>
@@ -742,16 +766,16 @@ function ContactMethods() {
     <section ref={ref} className="relative w-full overflow-hidden py-20 md:py-24">
       <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-8">
         <div className="cm-head text-center mb-10 max-w-xl mx-auto">
-          <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase mb-4">
-            <span className="w-8 h-px bg-[#00AEEF]/40" /> Or Reach Us Directly <span className="w-8 h-px bg-[#00AEEF]/40" />
+          <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#fbbf24] uppercase mb-4">
+            <span className="w-8 h-px bg-[#fbbf24]/40" /> Or Reach Us Directly <span className="w-8 h-px bg-[#fbbf24]/40" />
           </span>
           <h2 className="text-4xl sm:text-5xl font-black tracking-tighter text-white leading-[1.05] mb-5">Prefer the direct route?</h2>
           <p className="text-white/55 font-light text-base sm:text-lg max-w-lg mx-auto">
             No forms, no queue — email, call, or stop by the studio directly. Whatever&rsquo;s easiest for you.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <TrustBadge icon={MessageCircleMore} label="We Reply Fast" />
-            <TrustBadge icon={Users} label="Real Humans, Not Bots" />
+            <TrustBadge icon={MessageCircleMore} label="We Reply Fast" accent="#fbbf24" />
+            <TrustBadge icon={Users} label="Real Humans, Not Bots" accent="#fbbf24" />
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -759,15 +783,15 @@ function ContactMethods() {
           <MagicCard
             key={c.label}
             className="cm-card rounded-2xl transition-transform duration-300 hover:-translate-y-0.5"
-            gradientFrom="#00AEEF"
-            gradientTo="#0369A1"
-            gradientColor="#00AEEF"
+            gradientFrom="#fbbf24"
+            gradientTo="#f59e0b"
+            gradientColor="#fbbf24"
             gradientOpacity={0.15}
             gradientSize={180}
           >
             <a href={c.href} onClick={() => posthog.capture('contact_method_clicked', { method: c.label })} className="group flex items-center gap-4 p-5">
-              <div className="w-11 h-11 rounded-full border border-white/15 flex items-center justify-center group-hover:border-[#00AEEF]/50 group-hover:bg-[#00AEEF]/10 transition-colors shrink-0">
-                <c.icon className="w-5 h-5 text-white/80 group-hover:text-[#00AEEF] transition-colors" />
+              <div className="w-11 h-11 rounded-full border border-white/15 flex items-center justify-center group-hover:border-[#fbbf24]/50 group-hover:bg-[#fbbf24]/10 transition-colors shrink-0">
+                <c.icon className="w-5 h-5 text-white/80 group-hover:text-[#fbbf24] transition-colors" />
               </div>
               <div className="min-w-0">
                 <div className="font-mono text-[10px] tracking-widest text-white/40 uppercase mb-0.5">{c.label}</div>
