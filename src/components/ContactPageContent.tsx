@@ -85,16 +85,22 @@ const glowChain = [
 function PageBackdrop() {
   return (
     <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-      {/* Hero-only backdrop video — capped to one viewport height so it
-          never bleeds past the hero, sitting underneath the dot
-          texture/glow/bokeh layers below so the color and texture stay
-          fully visible over it instead of being washed out. */}
+      {/* Hero backdrop video — dissolves out via a soft mask rather than
+          cutting off at a hard edge, so it melts into the same
+          dot/glow/bokeh field the rest of the page uses instead of
+          reading as a separate hero-only treatment. Sits underneath
+          those layers so the color and texture stay fully visible over
+          it, never washed out. */}
       <video
         autoPlay
         loop
         muted
         playsInline
-        className="absolute top-0 inset-x-0 h-screen w-full object-cover opacity-[0.22]"
+        className="absolute top-0 inset-x-0 h-[135vh] w-full object-cover opacity-[0.26]"
+        style={{
+          maskImage: 'linear-gradient(to bottom, black 0%, black 50%, transparent 96%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 50%, transparent 96%)',
+        }}
         src="/videos/performance.mp4"
       />
 
@@ -233,14 +239,14 @@ function StageRouter() {
                 gradientSize={240}
               >
                 <div className="relative flex flex-col h-full p-8 sm:p-9 border-t-2 rounded-t-3xl overflow-hidden" style={{ borderColor: `${s.accent}55` }}>
-                  <div className="flex items-center justify-between mb-6">
-                    <div className={`w-12 h-12 rounded-full border ${s.borderClass} bg-ink flex items-center justify-center`} style={{ boxShadow: s.glow }}>
-                      <s.icon className={`w-5 h-5 ${s.accentClass}`} />
+                  <span className="absolute top-8 right-8 sm:top-9 sm:right-9 font-mono text-[10px] tracking-widest text-white/25">{s.step}</span>
+                  <div className="flex flex-col items-center text-center flex-1">
+                    <div className={`w-16 h-16 rounded-full border ${s.borderClass} bg-ink flex items-center justify-center`} style={{ boxShadow: s.glow }}>
+                      <s.icon className={`w-7 h-7 ${s.accentClass}`} />
                     </div>
-                    <span className="font-mono text-[10px] tracking-widest text-white/25">{s.step}</span>
+                    <h3 className="text-white font-black text-2xl sm:text-3xl tracking-tight mt-5 mb-3">{s.title}</h3>
+                    <p className="text-white/55 text-sm font-light leading-relaxed mb-8 flex-1">{s.desc}</p>
                   </div>
-                  <h3 className="text-white font-bold text-xl mb-3">{s.title}</h3>
-                  <p className="text-white/55 text-sm font-light leading-relaxed mb-8 flex-1">{s.desc}</p>
                   {s.href.startsWith('#') ? (
                     <a
                       href={s.href}
