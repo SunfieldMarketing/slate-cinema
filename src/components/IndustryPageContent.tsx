@@ -4,7 +4,7 @@ import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-import { Star } from 'lucide-react'
+import { Star, ExternalLink } from 'lucide-react'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import FinalCTA from '@/components/FinalCTA'
@@ -122,6 +122,70 @@ function TestimonialSection({ industry }: { industry: IndustryData }) {
   )
 }
 
+/*
+  Healthcare doesn't get Slate Cinema's own industry template — it routes
+  visitors to WaveCare, our sister brand that handles healthcare marketing.
+  A stripped page (Nav + a short message + one external CTA + Footer),
+  reusing PageHero for the header so it still feels like part of the site.
+*/
+function WaveCareRedirect({ industry }: { industry: IndustryData }) {
+  const ref = useRef<HTMLElement>(null)
+  useGSAP(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo('.wc-fade', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: ref.current, start: 'top 85%', once: true } })
+    }, ref)
+    return () => ctx.revert()
+  }, { scope: ref })
+
+  return (
+    <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-brand-blue selection:text-white">
+      <AmbientBackdrop accent={industry.accent} />
+
+      <div className="relative z-10 w-full">
+        <Nav />
+
+        <PageHero
+          eyebrow="Our Work"
+          title={[industry.label]}
+          subtitle={industry.blurb}
+          videoSrc={industry.heroVideo}
+          posterSrc={industry.heroImage}
+          accent={industry.accent}
+        />
+
+        <section ref={ref} className="relative w-full overflow-hidden py-20 md:py-28">
+          <div className="wc-fade relative z-10 w-full max-w-2xl mx-auto px-5 sm:px-8 text-center">
+            <span
+              className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-6"
+              style={{ color: industry.accent }}
+            >
+              <span className="w-8 h-px" style={{ background: `${industry.accent}66` }} /> Sister Brand
+              <span className="w-8 h-px" style={{ background: `${industry.accent}66` }} />
+            </span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.1] mb-6">
+              Want to see what our healthcare marketing does?
+            </h2>
+            <p className="text-white/60 font-light leading-relaxed mb-10 text-lg">
+              We operate under WaveCare, our sister brand.
+            </p>
+            <a
+              href="https://wavecare.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-sm text-black bg-white hover:text-white transition-colors duration-300 shadow-[0_0_30px_rgba(255,255,255,0.15)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
+            >
+              Visit WaveCare
+              <ExternalLink className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </a>
+          </div>
+        </section>
+
+        <Footer />
+      </div>
+    </main>
+  )
+}
+
 export default function IndustryPageContent({ slug }: { slug: string }) {
   // Re-derived on the client from the slug — a Server Component can't pass
   // the industry object directly since it carries lucide icon *components*
@@ -136,6 +200,10 @@ export default function IndustryPageContent({ slug }: { slug: string }) {
   }, [slug])
 
   if (!industry) return null
+
+  if (industry.slug === 'healthcare') {
+    return <WaveCareRedirect industry={industry} />
+  }
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-brand-blue selection:text-white">

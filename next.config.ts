@@ -1,6 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      {
+        source: "/portfolio/animation",
+        destination: "/portfolio/ai",
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     return [
       {
