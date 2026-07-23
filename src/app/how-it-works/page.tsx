@@ -100,10 +100,10 @@ function ProcessOverview() {
 
         {/* Labels + one-liners — kept to a single row, one line each */}
         <div className="po-fade grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-3">
-          {timelineSteps.map((s, i) => (
+          {timelineSteps.map((s) => (
             <div key={s.title} className="text-center px-1">
-              <div className="font-mono text-[9px] tracking-[0.2em] uppercase mb-1.5" style={{ color: s.color }}>
-                {String(i + 1).padStart(2, '0')} · {s.title}
+              <div className="font-bold text-base sm:text-lg tracking-tight mb-1.5" style={{ color: s.color }}>
+                {s.title}
               </div>
               <p className="text-white/50 text-xs font-light leading-snug">{s.line}</p>
             </div>
