@@ -26,25 +26,32 @@ export default function IntakeCTABand() {
   const accent = '#c084fc'
 
   return (
-    <section ref={ref} className="relative w-full py-6">
-      <div className="w-full max-w-6xl mx-auto px-5 sm:px-8">
+    <section ref={ref} className="relative w-full overflow-hidden py-12 md:py-14">
+      <div className="icb-in relative z-10 w-full max-w-3xl mx-auto px-5 sm:px-8">
         <div
-          className="icb-in relative overflow-hidden rounded-2xl border px-6 sm:px-10 py-6 sm:py-7 flex flex-col sm:flex-row items-center justify-between gap-5"
-          style={{ borderColor: `${accent}40`, background: `linear-gradient(100deg, ${accent}1f 0%, rgba(5,7,12,0.6) 55%, ${accent}14 100%)` }}
+          className="relative overflow-hidden rounded-3xl border bg-white/[0.05] backdrop-blur-md p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.4)] flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-8"
+          style={{ borderColor: `${accent}33` }}
         >
           <div
-            className="absolute inset-0 opacity-30 pointer-events-none"
-            style={{ background: `radial-gradient(ellipse 40% 130% at 8% 50%, ${accent}44, transparent 65%)` }}
+            className="absolute top-0 left-0 right-0 h-[3px]"
+            style={{ backgroundImage: `linear-gradient(to right, transparent, ${accent}, transparent)` }}
+          />
+          <div
+            className="absolute inset-0 opacity-20 pointer-events-none"
+            style={{ background: `radial-gradient(ellipse 45% 140% at 8% 50%, ${accent}44, transparent 65%)` }}
           />
           <div className="relative text-center sm:text-left">
-            <div className="text-lg sm:text-xl font-bold text-white leading-snug">Already know exactly what you want?</div>
-            <div className="text-sm text-white/55 font-light mt-1">
+            <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase block mb-3" style={{ color: accent }}>
+              {'// Already Know?'}
+            </span>
+            <div className="text-xl sm:text-2xl font-bold text-white leading-snug">Already know exactly what you want?</div>
+            <p className="mt-2 text-white/55 font-light text-sm sm:text-base max-w-md">
               Skip the call — walk us through the project details directly and we&apos;ll follow up with a plan.
-            </div>
+            </p>
           </div>
           <a
             href="/contact/project"
-            className="relative group inline-flex items-center gap-2.5 shrink-0 px-7 py-3.5 rounded-full text-sm font-semibold text-black transition-transform hover:scale-[1.04] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
+            className="relative group inline-flex items-center justify-center gap-2.5 shrink-0 px-8 py-4 rounded-full text-sm font-semibold text-black transition-transform hover:scale-[1.04] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
             style={{ background: accent, boxShadow: `0 0 32px ${accent}55` }}
           >
             Start the Intake Form <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
