@@ -554,18 +554,19 @@ function StudioLocation() {
     <section ref={ref} className="relative w-full overflow-hidden py-16 md:py-20">
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         <div className="sl-inner grid lg:grid-cols-2 gap-6 items-stretch">
-          {/* Stylized map / studio visual */}
+          {/* Real studio location */}
           <div className="relative rounded-3xl overflow-hidden border border-white/10 min-h-[320px] group">
-            <img src="/images/contact_bg_bright.png" alt="Brooklyn, NY" className="absolute inset-0 w-full h-full object-cover opacity-45 transition-transform duration-[1400ms] group-hover:scale-105" />
-            <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
-            {/* map grid overlay */}
-            <div className="absolute inset-0 opacity-[0.12] bg-[linear-gradient(rgba(34,211,238,0.6)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.6)_1px,transparent_1px)] bg-[size:40px_40px]" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-              <div className="w-4 h-4 rounded-full bg-[#22d3ee] shadow-[0_0_20px_#22d3ee] animate-pulse" />
-              <div className="absolute inset-0 -m-4 rounded-full border border-[#22d3ee]/40 animate-ping" />
-            </div>
-            <div className="absolute bottom-5 left-5 flex items-center gap-2 font-mono text-[11px] tracking-widest text-white/80 uppercase">
-              <Navigation className="w-4 h-4 text-[#22d3ee]" /> 40.6782° N, 73.9442° W
+            <iframe
+              title="Slate Cinema Studio location"
+              src="https://www.google.com/maps?q=132+32nd+St,+Brooklyn,+NY+11232&output=embed"
+              className="absolute inset-0 w-full h-full grayscale-[0.3] opacity-90"
+              style={{ border: 0 }}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+            <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-ink via-transparent to-transparent" />
+            <div className="absolute bottom-5 left-5 flex items-center gap-2 font-mono text-[11px] tracking-widest text-white/80 uppercase pointer-events-none [text-shadow:0_1px_6px_rgba(0,0,0,0.9)]">
+              <Navigation className="w-4 h-4 text-[#22d3ee]" /> 132 32nd St, Brooklyn, NY 11232
             </div>
           </div>
 

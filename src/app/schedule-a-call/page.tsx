@@ -5,6 +5,7 @@ import Footer from '@/components/Footer'
 import PageHero from '@/components/ui/PageHero'
 import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
 import CustomCalendar from '@/components/CustomCalendar'
+import IntakeCTABand from '@/components/IntakeCTABand'
 
 export const metadata: Metadata = {
   title: 'Schedule a Call | Slate Cinema',
@@ -59,6 +60,8 @@ export default function ScheduleACallPage() {
         <CallFraming />
 
         <CustomCalendar />
+
+        <IntakeCTABand />
 
         <Footer />
       </div>
