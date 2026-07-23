@@ -214,6 +214,9 @@ function StageRouter() {
         <div className="sr-head text-center mb-10 max-w-2xl mx-auto">
           <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{'// Get Started'}</span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1]">What stage are you at?</h2>
+          <p className="mt-5 text-white/55 font-light text-sm sm:text-base">
+            No wrong answer here, pick whichever fits where you&rsquo;re at now.
+          </p>
         </div>
 
         <div className="sr-grid grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -234,7 +237,12 @@ function StageRouter() {
                     <div className={`w-16 h-16 rounded-full border ${s.borderClass} bg-ink flex items-center justify-center`} style={{ boxShadow: s.glow }}>
                       <s.icon className={`w-7 h-7 ${s.accentClass}`} />
                     </div>
-                    <h3 className="text-white font-black text-2xl sm:text-3xl tracking-tight mt-5 mb-3">{s.title}</h3>
+                    {/* Fixed-height slot so a two-line title (e.g. "Know What
+                        You Need") doesn't push its card's description and
+                        button lower than the single-line titles either side. */}
+                    <div className="flex items-center justify-center min-h-[3.75rem] sm:min-h-[4.75rem] mt-5 mb-3">
+                      <h3 className="text-white font-black text-2xl sm:text-3xl tracking-tight">{s.title}</h3>
+                    </div>
                     <p className="text-white/55 text-sm font-light leading-relaxed mb-8 flex-1">{s.desc}</p>
                   </div>
                   {s.href.startsWith('#') ? (
@@ -502,8 +510,10 @@ function WhatHappensNext() {
           <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{'// After You Reach Out'}</span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1]">What happens next</h2>
           <p className="mt-5 text-white/55 font-light text-sm sm:text-base">
-            From hello until final delivery, here&rsquo;s the road map laid out — fill out a form below to get
-            started.
+            From hello until final delivery, here&rsquo;s the road map laid out.
+          </p>
+          <p className="mt-2 font-mono text-[11px] tracking-[0.15em] text-[#00AEEF] uppercase">
+            Fill out a form below
           </p>
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
             <TrustBadge icon={Receipt} label="Fixed-Price Proposals" />
@@ -611,13 +621,13 @@ function ContactMethods() {
           <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#fbbf24] uppercase mb-4">
             <span className="w-8 h-px bg-[#fbbf24]/40" /> Or Reach Us Directly <span className="w-8 h-px bg-[#fbbf24]/40" />
           </span>
-          <h2 className="text-3xl sm:text-4xl font-black tracking-tighter text-white leading-[1.1] mb-4">Prefer the direct route?</h2>
+          <h2 className="text-3xl sm:text-4xl font-black tracking-tighter text-white leading-[1.1] mb-4">Real Humans. Real Work.</h2>
           <p className="text-white/55 font-light text-sm sm:text-base max-w-lg mx-auto">
             No forms, no queue — email, call, or stop by the studio directly. Whatever&rsquo;s easiest for you.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <TrustBadge icon={MessageCircleMore} label="We Reply Fast" accent="#fbbf24" />
-            <TrustBadge icon={Users} label="Real Humans. Real Work." accent="#fbbf24" />
+            <TrustBadge icon={Users} label="No Bots, Ever" accent="#fbbf24" />
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
