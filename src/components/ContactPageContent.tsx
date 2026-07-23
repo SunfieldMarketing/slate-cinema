@@ -85,25 +85,27 @@ const glowChain = [
 function PageBackdrop() {
   return (
     <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-      {/* Hero backdrop video — solid for the hero's full height (matching
-          its min-h-screen), then dissolves out via a soft mask once
-          you're past the hero rather than fading partway through it, so
-          it melts into the same dot/glow/bokeh field the rest of the
-          page uses only after the hero is actually done. Sits underneath
-          those layers so the color and texture stay fully visible over
-          it, never washed out. */}
+      {/* Hero backdrop video — capped to exactly one viewport height so it
+          never bleeds into the next section, and dissolves out over the
+          last quarter of the hero so it still reads as a soft transition
+          rather than a hard-edged rectangle by the time you hit the
+          bottom. Sits underneath those layers so the color and texture
+          stay fully visible over it, never washed out. */}
       <video
         autoPlay
         loop
         muted
         playsInline
-        className="absolute top-0 inset-x-0 h-[150vh] w-full object-cover opacity-[0.26]"
+        className="absolute top-0 inset-x-0 h-screen w-full object-cover opacity-[0.18]"
         style={{
-          maskImage: 'linear-gradient(to bottom, black 0, black 100vh, transparent 145vh)',
-          WebkitMaskImage: 'linear-gradient(to bottom, black 0, black 100vh, transparent 145vh)',
+          maskImage: 'linear-gradient(to bottom, black 0, black 75vh, transparent 100vh)',
+          WebkitMaskImage: 'linear-gradient(to bottom, black 0, black 75vh, transparent 100vh)',
         }}
         src="/videos/performance.mp4"
       />
+      {/* Extra darkening over just the hero, on top of the video but
+          beneath the dot/glow/bokeh layers below. */}
+      <div className="absolute top-0 inset-x-0 h-screen bg-black/25" />
 
       {/* faint dot texture — grain-like, not graph paper */}
       <div className="absolute inset-0 opacity-[0.05] [background-image:radial-gradient(rgba(255,255,255,0.9)_1px,transparent_1px)] [background-size:34px_34px]" />
