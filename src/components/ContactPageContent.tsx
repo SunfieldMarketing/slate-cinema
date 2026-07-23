@@ -40,6 +40,7 @@ import Footer from '@/components/Footer'
 import PageHero from '@/components/ui/PageHero'
 import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
 import { MagicCard } from '@/components/ui/magic-card'
+import IntakeCTABand from '@/components/IntakeCTABand'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -558,7 +559,7 @@ function StudioLocation() {
           <div className="relative rounded-3xl overflow-hidden border border-white/10 min-h-[320px] group">
             <iframe
               title="Slate Cinema Studio location"
-              src="https://www.google.com/maps?q=132+32nd+St,+Brooklyn,+NY+11232&output=embed"
+              src="https://www.google.com/maps?q=132+32nd+St,+Brooklyn,+NY+11232&output=embed&z=14"
               className="absolute inset-0 w-full h-full grayscale-[0.3] opacity-90"
               style={{ border: 0 }}
               loading="lazy"
@@ -684,6 +685,8 @@ export default function ContactPageContent() {
           <LeadForm />
           <StageDivider />
           <ReadyToTalk />
+
+          <IntakeCTABand />
 
           <ContactMethods />
 
