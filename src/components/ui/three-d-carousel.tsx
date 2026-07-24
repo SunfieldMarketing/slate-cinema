@@ -1,6 +1,6 @@
 'use client'
 
-import { memo, useEffect, useLayoutEffect, useState } from 'react'
+import { memo, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { motion, useAnimation, useMotionValue, type LegacyAnimationControls } from 'motion/react'
 
 export const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
@@ -34,6 +34,16 @@ export interface CarouselCard {
   it off to the caller (opens the shared project modal) rather than
   zooming in place, so it stays a fast, tactile "spin through the reel"
   interaction instead of a second lightbox.
+
+  Driven entirely off raw Pointer Events rather than Framer's `drag` gesture.
+  Two rounds of using `drag` produced real, hard-to-fully-kill artifacts —
+  it also physically translates the element by its internal x/y value (had
+  to be fought with constraints, which damped the gesture itself; then with
+  a manual reset-every-tick, which could itself flicker a frame between the
+  drag-applied and reset-to-zero writes). Reading clientX deltas straight
+  off pointermove and feeding them into `rotation` directly removes that
+  whole category of transform-composition conflicts — there is nothing else
+  writing to this element's transform for `rotation` to fight with.
 */
 const Carousel = memo(
   ({
@@ -54,54 +64,67 @@ const Carousel = memo(
     const faceWidth = cylinderWidth / faceCount
     const radius = cylinderWidth / (2 * Math.PI)
     const rotation = useMotionValue(0)
-    // A self-owned `x` we explicitly hand to `drag` and then snap back to 0
-    // every tick — see the note on `onDrag` below for why.
-    const dragX = useMotionValue(0)
     // Scaled by cylinder width so the same physical drag distance always
     // sweeps roughly the same fraction of the ring, regardless of breakpoint.
     const dragSensitivity = 130 / cylinderWidth
     const flingSensitivity = 45 / cylinderWidth
 
+    const draggingRef = useRef(false)
+    const lastXRef = useRef(0)
+    // Small rolling window of recent {time, x} samples, used to compute a
+    // release velocity by hand (Framer's PanInfo.velocity did this for us
+    // previously) — only the last ~120ms matter for a "flick" read.
+    const samplesRef = useRef<{ t: number; x: number }[]>([])
+
+    const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+      if (!isActive) return
+      draggingRef.current = true
+      lastXRef.current = e.clientX
+      samplesRef.current = [{ t: performance.now(), x: e.clientX }]
+      controls.stop()
+      e.currentTarget.setPointerCapture(e.pointerId)
+    }
+
+    const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+      if (!draggingRef.current || !isActive) return
+      const delta = e.clientX - lastXRef.current
+      lastXRef.current = e.clientX
+      rotation.set(rotation.get() + delta * dragSensitivity)
+      const now = performance.now()
+      samplesRef.current.push({ t: now, x: e.clientX })
+      while (samplesRef.current.length > 1 && now - samplesRef.current[0].t > 120) samplesRef.current.shift()
+    }
+
+    const endDrag = (e: React.PointerEvent<HTMLDivElement>) => {
+      if (!draggingRef.current) return
+      draggingRef.current = false
+      try { e.currentTarget.releasePointerCapture(e.pointerId) } catch {}
+      if (!isActive) return
+
+      const samples = samplesRef.current
+      let velocity = 0 // px/ms, matching Framer's PanInfo.velocity convention
+      if (samples.length >= 2) {
+        const first = samples[0]
+        const last = samples[samples.length - 1]
+        const dt = last.t - first.t
+        if (dt > 0) velocity = (last.x - first.x) / dt
+      }
+
+      controls.start({
+        rotateY: rotation.get() + velocity * flingSensitivity,
+        transition: { type: 'spring', stiffness: 60, damping: 40, mass: 0.3 },
+      })
+    }
+
     return (
       <div className="flex h-full items-center justify-center" style={{ perspective: '1800px', transformStyle: 'preserve-3d' }}>
         <motion.div
-          drag={isActive ? 'x' : false}
-          // Framer's `drag="x"` also physically translates the element by
-          // the raw drag `x` value by default — on top of the rotateY spin
-          // we compute by hand below, and that x offset accumulates across
-          // every drag gesture without ever resetting. A first attempt at
-          // fixing that used `dragConstraints={{ left: 0, right: 0 }}` to
-          // pin it in place — but constraining `x` also makes Framer apply
-          // elastic resistance to the *drag gesture itself*, so `info.delta`
-          // got increasingly damped the further from the starting point you
-          // dragged, which is exactly the "slows down weirdly moving away
-          // from the middle" symptom. Passing our own `x` motion value and
-          // snapping it back to 0 every tick (instead of constraining it)
-          // keeps the gesture completely unconstrained — `info.delta` and
-          // `info.velocity` stay raw and linear the whole time — while the
-          // element itself never visibly moves, since it's reset before the
-          // next paint.
-          dragMomentum={false}
-          className="relative flex h-full origin-center cursor-grab justify-center active:cursor-grabbing touch-none"
-          style={{ x: dragX, rotateY: rotation, width: cylinderWidth, transformStyle: 'preserve-3d' }}
-          // `info.delta` is the incremental movement since the last drag
-          // event — using `info.offset` (cumulative since the drag
-          // started) here instead would re-add the whole running total on
-          // every single pointer-move tick, compounding into a runaway
-          // spin that gets faster the more events a gesture produces.
-          onDrag={(_, info) => {
-            if (!isActive) return
-            rotation.set(rotation.get() + info.delta.x * dragSensitivity)
-            dragX.set(0)
-          }}
-          onDragEnd={(_, info) => {
-            if (!isActive) return
-            dragX.set(0)
-            controls.start({
-              rotateY: rotation.get() + info.velocity.x * flingSensitivity,
-              transition: { type: 'spring', stiffness: 60, damping: 40, mass: 0.3 },
-            })
-          }}
+          className="relative flex h-full origin-center cursor-grab justify-center active:cursor-grabbing touch-none select-none"
+          style={{ rotateY: rotation, width: cylinderWidth, transformStyle: 'preserve-3d' }}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
           animate={controls}
         >
           {cards.map((card, i) => (
