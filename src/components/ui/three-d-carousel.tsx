@@ -54,6 +54,9 @@ const Carousel = memo(
     const faceWidth = cylinderWidth / faceCount
     const radius = cylinderWidth / (2 * Math.PI)
     const rotation = useMotionValue(0)
+    // A self-owned `x` we explicitly hand to `drag` and then snap back to 0
+    // every tick — see the note on `onDrag` below for why.
+    const dragX = useMotionValue(0)
     // Scaled by cylinder width so the same physical drag distance always
     // sweeps roughly the same fraction of the ring, regardless of breakpoint.
     const dragSensitivity = 130 / cylinderWidth
@@ -66,37 +69,39 @@ const Carousel = memo(
           // Framer's `drag="x"` also physically translates the element by
           // the raw drag `x` value by default — on top of the rotateY spin
           // we compute by hand below, and that x offset accumulates across
-          // every drag gesture without ever resetting (it doesn't snap back
-          // without constraints). Left unconstrained, a few drags visibly
-          // slide the whole cylinder sideways instead of just spinning it
-          // in place, which is what actually read as "choppy" — locking
-          // the constraint to a single point keeps the gesture (and its
-          // delta/velocity) fully working while stopping it from ever
-          // moving the element itself.
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.02}
-          // Framer's default drag momentum animates the internal `x` value
-          // this gesture registers with — but this carousel never renders
-          // from `x` (rotation is computed by hand below), so that phantom
-          // inertia animation was still running invisibly every frame after
-          // release, competing for animation-frame budget with the actual
-          // spring in onDragEnd and making the release feel choppy.
+          // every drag gesture without ever resetting. A first attempt at
+          // fixing that used `dragConstraints={{ left: 0, right: 0 }}` to
+          // pin it in place — but constraining `x` also makes Framer apply
+          // elastic resistance to the *drag gesture itself*, so `info.delta`
+          // got increasingly damped the further from the starting point you
+          // dragged, which is exactly the "slows down weirdly moving away
+          // from the middle" symptom. Passing our own `x` motion value and
+          // snapping it back to 0 every tick (instead of constraining it)
+          // keeps the gesture completely unconstrained — `info.delta` and
+          // `info.velocity` stay raw and linear the whole time — while the
+          // element itself never visibly moves, since it's reset before the
+          // next paint.
           dragMomentum={false}
           className="relative flex h-full origin-center cursor-grab justify-center active:cursor-grabbing touch-none"
-          style={{ rotateY: rotation, width: cylinderWidth, transformStyle: 'preserve-3d' }}
+          style={{ x: dragX, rotateY: rotation, width: cylinderWidth, transformStyle: 'preserve-3d' }}
           // `info.delta` is the incremental movement since the last drag
           // event — using `info.offset` (cumulative since the drag
           // started) here instead would re-add the whole running total on
           // every single pointer-move tick, compounding into a runaway
           // spin that gets faster the more events a gesture produces.
-          onDrag={(_, info) => isActive && rotation.set(rotation.get() + info.delta.x * dragSensitivity)}
-          onDragEnd={(_, info) =>
-            isActive &&
+          onDrag={(_, info) => {
+            if (!isActive) return
+            rotation.set(rotation.get() + info.delta.x * dragSensitivity)
+            dragX.set(0)
+          }}
+          onDragEnd={(_, info) => {
+            if (!isActive) return
+            dragX.set(0)
             controls.start({
               rotateY: rotation.get() + info.velocity.x * flingSensitivity,
               transition: { type: 'spring', stiffness: 60, damping: 40, mass: 0.3 },
             })
-          }
+          }}
           animate={controls}
         >
           {cards.map((card, i) => (
