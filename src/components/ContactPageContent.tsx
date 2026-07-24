@@ -135,11 +135,33 @@ function PageBackdrop({ rootRef }: { rootRef: React.RefObject<HTMLDivElement | n
         }}
         src="/videos/performance.mp4"
       />
+      {/* Color-grade wash on the video itself — a blue duotone rather than
+          a flat darken, so the hero reads as graded footage instead of a
+          washed-out clip with a black rectangle over it. */}
+      <div
+        className="absolute top-0 inset-x-0 h-screen"
+        style={{
+          background: 'linear-gradient(180deg, rgba(0,174,239,0.16) 0%, rgba(0,174,239,0.04) 35%, transparent 55%, rgba(3,3,5,0.55) 100%)',
+          maskImage: 'linear-gradient(to bottom, black 0, black 75vh, transparent 100vh)',
+          WebkitMaskImage: 'linear-gradient(to bottom, black 0, black 75vh, transparent 100vh)',
+        }}
+      />
       {/* Extra darkening over just the hero, on top of the video but
           beneath the dot/glow/bokeh layers below. */}
       <div className="absolute top-0 inset-x-0 h-screen bg-black/25" />
 
-      {/* faint dot texture — grain-like, not graph paper */}
+      {/* Hero-specific dot grid — denser and a touch brighter than the
+          page-wide grain below, so the hero reads as deliberately
+          textured rather than just dark video. Fades out with the video. */}
+      <div
+        className="absolute top-0 inset-x-0 h-screen opacity-[0.09] [background-image:radial-gradient(rgba(127,224,255,0.9)_1px,transparent_1px)] [background-size:26px_26px]"
+        style={{
+          maskImage: 'linear-gradient(to bottom, black 0, black 65vh, transparent 95vh)',
+          WebkitMaskImage: 'linear-gradient(to bottom, black 0, black 65vh, transparent 95vh)',
+        }}
+      />
+
+      {/* faint dot texture — grain-like, not graph paper — for the rest of the page */}
       <div className="absolute inset-0 opacity-[0.05] [background-image:radial-gradient(rgba(255,255,255,0.9)_1px,transparent_1px)] [background-size:34px_34px]" />
 
       {/* diagonal light-leak sweeps, angled like light hitting a lens —
@@ -660,7 +682,7 @@ function ContactMethods() {
   }, { scope: ref })
 
   return (
-    <section ref={ref} className="relative w-full overflow-hidden py-14 md:py-16">
+    <section ref={ref} className="relative w-full overflow-hidden mt-8 md:mt-20 pt-16 md:pt-24 pb-14 md:pb-16">
       <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-8">
         <div className="cm-head text-center mb-10 max-w-xl mx-auto">
           <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#fbbf24] uppercase mb-4">

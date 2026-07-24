@@ -1,7 +1,7 @@
 'use client'
 
 import { memo, useEffect, useLayoutEffect, useState } from 'react'
-import { motion, useAnimation, useMotionValue, useTransform, type LegacyAnimationControls } from 'motion/react'
+import { motion, useAnimation, useMotionValue, type LegacyAnimationControls } from 'motion/react'
 
 export const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
@@ -54,7 +54,6 @@ const Carousel = memo(
     const faceWidth = cylinderWidth / faceCount
     const radius = cylinderWidth / (2 * Math.PI)
     const rotation = useMotionValue(0)
-    const transform = useTransform(rotation, (v) => `rotate3d(0, 1, 0, ${v}deg)`)
     // Scaled by cylinder width so the same physical drag distance always
     // sweeps roughly the same fraction of the ring, regardless of breakpoint.
     const dragSensitivity = 130 / cylinderWidth
@@ -64,9 +63,27 @@ const Carousel = memo(
       <div className="flex h-full items-center justify-center" style={{ perspective: '1800px', transformStyle: 'preserve-3d' }}>
         <motion.div
           drag={isActive ? 'x' : false}
+          // Framer's `drag="x"` also physically translates the element by
+          // the raw drag `x` value by default — on top of the rotateY spin
+          // we compute by hand below, and that x offset accumulates across
+          // every drag gesture without ever resetting (it doesn't snap back
+          // without constraints). Left unconstrained, a few drags visibly
+          // slide the whole cylinder sideways instead of just spinning it
+          // in place, which is what actually read as "choppy" — locking
+          // the constraint to a single point keeps the gesture (and its
+          // delta/velocity) fully working while stopping it from ever
+          // moving the element itself.
+          dragConstraints={{ left: 0, right: 0 }}
           dragElastic={0.02}
+          // Framer's default drag momentum animates the internal `x` value
+          // this gesture registers with — but this carousel never renders
+          // from `x` (rotation is computed by hand below), so that phantom
+          // inertia animation was still running invisibly every frame after
+          // release, competing for animation-frame budget with the actual
+          // spring in onDragEnd and making the release feel choppy.
+          dragMomentum={false}
           className="relative flex h-full origin-center cursor-grab justify-center active:cursor-grabbing touch-none"
-          style={{ transform, rotateY: rotation, width: cylinderWidth, transformStyle: 'preserve-3d' }}
+          style={{ rotateY: rotation, width: cylinderWidth, transformStyle: 'preserve-3d' }}
           // `info.delta` is the incremental movement since the last drag
           // event — using `info.offset` (cumulative since the drag
           // started) here instead would re-add the whole running total on
