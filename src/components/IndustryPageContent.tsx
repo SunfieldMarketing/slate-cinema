@@ -10,6 +10,7 @@ import Footer from '@/components/Footer'
 import FinalCTA from '@/components/FinalCTA'
 import Portfolio from '@/components/Portfolio'
 import PageHero from '@/components/ui/PageHero'
+import IndustryHeroSequence from '@/components/IndustryHeroSequence'
 import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
 import { Lens } from '@/components/ui/lens'
 import IndustryReel from '@/components/IndustryReel'
@@ -212,18 +213,19 @@ export default function IndustryPageContent({ slug }: { slug: string }) {
       <div className="relative z-10 w-full">
         <Nav />
 
-        <PageHero
-          eyebrow="Our Work"
-          title={[industry.label]}
-          subtitle={industry.blurb}
-          videoSrc={industry.heroVideo}
-          posterSrc={industry.heroImage}
-          accent={industry.accent}
-          stats={industry.stats}
-          cta={{ label: 'Book a Call', href: '/contact' }}
-          secondaryCta={{ label: 'Watch the work', href: '#reel' }}
-          trustNote="40+ projects shipped · Replies within one business day"
-        />
+        <div className="relative">
+          <IndustryHeroSequence />
+          <PageHero
+            eyebrow="Our Work"
+            title={[industry.label]}
+            subtitle={industry.blurb}
+            accent={industry.accent}
+            stats={industry.stats}
+            cta={{ label: 'Get Started', href: '/contact' }}
+            secondaryCta={{ label: 'Watch the work', href: '#reel' }}
+            trustNote="40+ projects shipped · Replies within one business day"
+          />
+        </div>
 
         {/* Trust cluster: stats + logos back-to-back, right under the hero,
             before anything else is asked of the visitor. */}

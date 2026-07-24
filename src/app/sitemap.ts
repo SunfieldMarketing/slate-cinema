@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { industries } from '@/lib/industries'
+import { journalPosts } from '@/lib/journal'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://slatecinema.com'
 
@@ -10,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/how-it-works`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${BASE_URL}/contact`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${BASE_URL}/schedule-a-call`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${BASE_URL}/journal`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
   ]
 
   const industryRoutes: MetadataRoute.Sitemap = industries.map((industry) => ({
@@ -19,5 +21,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }))
 
-  return [...staticRoutes, ...industryRoutes]
+  const journalRoutes: MetadataRoute.Sitemap = journalPosts.map((post) => ({
+    url: `${BASE_URL}/journal/${post.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly',
+    priority: 0.6,
+  }))
+
+  return [...staticRoutes, ...industryRoutes, ...journalRoutes]
 }

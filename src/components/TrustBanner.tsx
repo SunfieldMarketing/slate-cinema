@@ -21,7 +21,7 @@ const clients = [
 export default function TrustBanner() {
   return (
     <section className="relative w-full py-8 overflow-hidden">
-      <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 flex flex-col sm:flex-row items-center gap-4 sm:gap-8 mb-5">
+      <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mb-5">
         <div className="flex items-center gap-2 shrink-0">
           <div className="flex">
             {Array.from({ length: 5 }).map((_, i) => (

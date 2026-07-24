@@ -13,6 +13,7 @@ gsap.registerPlugin(ScrollTrigger)
 const navLinks: { label: string; href: string }[] = [
   { label: 'Home', href: '/' },
   { label: 'How It Works', href: '/how-it-works' },
+  { label: 'Journal', href: '/journal' },
   { label: 'Get Started', href: '/contact' },
 ]
 
