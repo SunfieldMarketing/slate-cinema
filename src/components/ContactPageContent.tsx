@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import Link from 'next/link'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
@@ -64,23 +64,57 @@ const bokehDots = [
 ]
 
 /* Each glow is tuned to the section that actually sits at that scroll
-   depth, so the wash of color shifts to match what's on screen —
-   blue through the orientation sections, purple for the intake form,
-   emerald for Ready to Talk, amber for direct contact, teal for the
-   studio — while still overlapping enough (huge blur radii) that one
-   never hard-cuts into the next. */
-const glowChain = [
-  { top: '3%', pos: 'left-[22%]', size: 42, color: '#00AEEF', opacity: 0.14 }, // Hero
-  { top: '13%', pos: 'right-[10%]', size: 32, color: '#00AEEF', opacity: 0.12 }, // What Happens Next
-  { top: '25%', pos: 'left-[4%]', size: 38, color: '#00AEEF', opacity: 0.13 }, // Stage Router
-  { top: '36%', pos: 'right-[14%]', size: 34, color: '#00AEEF', opacity: 0.12 }, // Lead Form
-  { top: '48%', pos: 'left-[8%]', size: 40, color: '#c084fc', opacity: 0.13 }, // Project Form
-  { top: '65%', pos: 'right-[10%]', size: 40, color: '#34d399', opacity: 0.13 }, // Ready to Talk
-  { top: '80%', pos: 'left-[16%]', size: 34, color: '#fbbf24', opacity: 0.1 }, // Contact Methods
-  { top: '94%', pos: 'right-[8%]', size: 36, color: '#22d3ee', opacity: 0.12 }, // Studio
-]
+   depth, so the wash of color shifts to match what's on screen — blue
+   through the orientation sections, purple for the intake CTA, emerald
+   for Ready to Talk, amber for direct contact, teal for the studio —
+   while still overlapping enough (huge blur radii) that one never
+   hard-cuts into the next.
 
-function PageBackdrop() {
+   These used to be hand-tuned percentages of total page height, which
+   drifted out of sync with the actual section boundaries every time
+   content above them changed length (which happened repeatedly this
+   project). Now measured live off `[data-glow-color]` markers placed on
+   the real sections, relative to the same backdrop root they render
+   inside, so the color always tracks whatever's actually on screen. */
+type Glow = { top: number; pos: string; size: number; color: string; opacity: number }
+
+function useGlowChain(rootRef: React.RefObject<HTMLDivElement | null>) {
+  const [glows, setGlows] = useState<Glow[]>([])
+
+  useEffect(() => {
+    const measure = () => {
+      const root = rootRef.current
+      if (!root) return
+      const rootTop = root.getBoundingClientRect().top
+      const nodes = Array.from(root.querySelectorAll<HTMLElement>('[data-glow-color]'))
+      setGlows(
+        nodes.map((el, i) => {
+          const rect = el.getBoundingClientRect()
+          return {
+            top: rect.top - rootTop + rect.height / 2,
+            pos: i % 2 === 0 ? 'left-[8%]' : 'right-[10%]',
+            size: Number(el.dataset.glowSize) || 38,
+            color: el.dataset.glowColor!,
+            opacity: Number(el.dataset.glowOpacity) || 0.13,
+          }
+        })
+      )
+    }
+    measure()
+    // Re-measure after fonts/images settle layout, and on resize.
+    const settleTimer = setTimeout(measure, 600)
+    window.addEventListener('resize', measure)
+    return () => {
+      clearTimeout(settleTimer)
+      window.removeEventListener('resize', measure)
+    }
+  }, [rootRef])
+
+  return glows
+}
+
+function PageBackdrop({ rootRef }: { rootRef: React.RefObject<HTMLDivElement | null> }) {
+  const glowChain = useGlowChain(rootRef)
   return (
     <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
       {/* Hero backdrop video — capped to exactly one viewport height so it
@@ -109,19 +143,28 @@ function PageBackdrop() {
       <div className="absolute inset-0 opacity-[0.05] [background-image:radial-gradient(rgba(255,255,255,0.9)_1px,transparent_1px)] [background-size:34px_34px]" />
 
       {/* diagonal light-leak sweeps, angled like light hitting a lens —
-          color-matched to the zone they cross so the sweep itself
-          carries the blue → purple → emerald/teal story */}
-      <div className="absolute -top-[8%] -left-[25%] w-[150%] h-[42%] bg-gradient-to-br from-[#00AEEF]/[0.09] via-transparent to-transparent -rotate-6 blur-[110px]" />
-      <div className="absolute top-[38%] -right-[25%] w-[150%] h-[38%] bg-gradient-to-bl from-[#c084fc]/[0.08] via-transparent to-transparent rotate-6 blur-[110px]" />
-      <div className="absolute top-[64%] -left-[20%] w-[140%] h-[38%] bg-gradient-to-tr from-[#34d399]/[0.07] via-transparent to-transparent -rotate-4 blur-[110px]" />
-      <div className="absolute top-[86%] -right-[20%] w-[140%] h-[30%] bg-gradient-to-bl from-[#22d3ee]/[0.08] via-transparent to-transparent rotate-4 blur-[110px]" />
+          positioned off the same measured glow points so the sweep
+          always crosses the section its color actually belongs to */}
+      {glowChain.map((g, i) => (
+        <div
+          key={`sweep-${i}`}
+          className={`absolute w-[150%] ${i % 2 === 0 ? '-left-[25%] -rotate-6' : '-right-[25%] rotate-6'}`}
+          style={{
+            top: `${g.top - 320}px`,
+            height: '38rem',
+            backgroundImage: `linear-gradient(${i % 2 === 0 ? 'to bottom right' : 'to bottom left'}, ${g.color}18, transparent 60%)`,
+            filter: 'blur(110px)',
+          }}
+        />
+      ))}
 
-      {/* the color-matched glow chain */}
+      {/* the color-matched glow chain — centered on each section's
+          measured midpoint */}
       {glowChain.map((g, i) => (
         <div
           key={i}
           className={`absolute ${g.pos} rounded-full blur-[150px]`}
-          style={{ top: g.top, width: `${g.size}rem`, height: `${g.size}rem`, backgroundColor: g.color, opacity: g.opacity }}
+          style={{ top: `${g.top - g.size * 8}px`, width: `${g.size}rem`, height: `${g.size}rem`, backgroundColor: g.color, opacity: g.opacity }}
         />
       ))}
 
@@ -661,6 +704,8 @@ function ContactMethods() {
 }
 
 export default function ContactPageContent() {
+  const backdropRootRef = useRef<HTMLDivElement>(null)
+
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-[#00AEEF] selection:text-white">
       <AmbientBackdrop accent="#00AEEF" />
@@ -668,8 +713,8 @@ export default function ContactPageContent() {
       <div className="relative z-10 w-full">
         <Nav />
 
-        <div className="relative">
-          <PageBackdrop />
+        <div className="relative" ref={backdropRootRef}>
+          <PageBackdrop rootRef={backdropRootRef} />
 
           <PageHero
             eyebrow="Get Started"
@@ -678,19 +723,33 @@ export default function ContactPageContent() {
             accent="#00AEEF"
           />
 
-          <WhatHappensNext />
+          <div data-glow-color="#00AEEF" data-glow-size="32" data-glow-opacity="0.12">
+            <WhatHappensNext />
+          </div>
 
-          <StageRouter />
+          <div data-glow-color="#00AEEF" data-glow-size="38" data-glow-opacity="0.13">
+            <StageRouter />
+          </div>
           <StageDivider />
-          <LeadForm />
+          <div data-glow-color="#00AEEF" data-glow-size="34" data-glow-opacity="0.12">
+            <LeadForm />
+          </div>
           <StageDivider />
-          <ReadyToTalk />
+          <div data-glow-color="#34d399" data-glow-size="40" data-glow-opacity="0.13">
+            <ReadyToTalk />
+          </div>
 
-          <IntakeCTABand />
+          <div data-glow-color="#00AEEF" data-glow-size="34" data-glow-opacity="0.12">
+            <IntakeCTABand />
+          </div>
 
-          <ContactMethods />
+          <div data-glow-color="#fbbf24" data-glow-size="34" data-glow-opacity="0.1">
+            <ContactMethods />
+          </div>
 
-          <StudioLocation />
+          <div data-glow-color="#22d3ee" data-glow-size="36" data-glow-opacity="0.12">
+            <StudioLocation />
+          </div>
         </div>
 
         <Footer />

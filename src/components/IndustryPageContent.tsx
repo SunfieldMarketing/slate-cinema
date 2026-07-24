@@ -200,6 +200,8 @@ export default function IndustryPageContent({ slug }: { slug: string }) {
     }
   }, [slug])
 
+  const heroRef = useRef<HTMLDivElement>(null)
+
   if (!industry) return null
 
   if (industry.slug === 'healthcare') {
@@ -213,8 +215,8 @@ export default function IndustryPageContent({ slug }: { slug: string }) {
       <div className="relative z-10 w-full">
         <Nav />
 
-        <div className="relative">
-          <IndustryHeroSequence />
+        <div className="relative" ref={heroRef}>
+          <IndustryHeroSequence containerRef={heroRef} />
           <PageHero
             eyebrow="Our Work"
             title={[industry.label]}

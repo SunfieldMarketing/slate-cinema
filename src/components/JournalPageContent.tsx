@@ -106,8 +106,8 @@ export default function JournalPageContent() {
 
         <PageHero
           eyebrow="The Slate Journal"
-          title={['Notes on video,', 'storytelling & brand']}
-          subtitle="Working notes from inside our own production process — what actually earns attention, what pre-production really covers, and what makes people watch to the end."
+          title={['What it takes', 'to get watched']}
+          subtitle="Field notes from inside our own production process — on story, strategy, and the craft decisions that decide whether someone keeps watching or scrolls past."
           accent={JOURNAL_ACCENT}
         />
 

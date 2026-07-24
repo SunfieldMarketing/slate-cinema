@@ -12,7 +12,10 @@ gsap.registerPlugin(ScrollTrigger)
   Slim CTA band for visitors who land on the calendar but already know
   exactly what they want — routes them to the project intake page
   instead of booking a call, same compact language as NextStepBand on
-  How It Works.
+  How It Works. Uses the site's primary brand blue rather than a
+  stage-specific color, since this band renders on two pages with
+  different neighboring section colors (Get Started, Schedule a Call)
+  and needs to read as a default UI element on both rather than clash.
 */
 export default function IntakeCTABand() {
   const ref = useRef<HTMLElement>(null)
@@ -23,7 +26,7 @@ export default function IntakeCTABand() {
     return () => ctx.revert()
   }, { scope: ref })
 
-  const accent = '#c084fc'
+  const accent = '#00AEEF'
 
   return (
     <section ref={ref} className="relative w-full overflow-hidden py-12 md:py-14">

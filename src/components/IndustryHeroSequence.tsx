@@ -1,17 +1,19 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, type RefObject } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
-import { useGSAP } from '@gsap/react'
 
 gsap.registerPlugin(ScrollTrigger)
 
 /*
   Apple-style scroll-scrubbed frame sequence used as the industry-page hero
   backdrop, in place of a looping video — same canvas/ImageBitmap approach as
-  the homepage Hero, but scrubbed (not pinned) across the hero's own natural
-  height so it doesn't add extra scroll length on every industry page.
+  the homepage Hero. `containerRef` points at the hero's outer wrapper (the
+  element that also holds the PageHero title/CTAs on top of this canvas) —
+  that whole wrapper gets pinned for the length of the scroll-through, so the
+  visitor can't scroll past the hero until the full sequence has played, then
+  the page releases into the next section normally.
 
   Currently a single shared placeholder clip (an exploded cinema-camera rig
   assembling itself) reused across every industry until real per-industry
@@ -19,17 +21,18 @@ gsap.registerPlugin(ScrollTrigger)
   industry once those exist.
 */
 interface Props {
+  containerRef: RefObject<HTMLDivElement | null>
   basePath?: string
   frameCount?: number
   opacity?: number
 }
 
 export default function IndustryHeroSequence({
+  containerRef,
   basePath = '/videos/industry-frames/frame_',
   frameCount = 169,
   opacity = 0.55,
 }: Props) {
-  const wrapRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const bitmapsRef = useRef<(ImageBitmap | null)[]>(Array(frameCount + 1).fill(null))
   const currentFrameRef = useRef(1)
@@ -71,8 +74,15 @@ export default function IndustryHeroSequence({
     return () => { cancelled = true }
   }, [basePath, frameCount])
 
-  useGSAP(() => {
-    if (!wrapRef.current || !canvasRef.current) return
+  useEffect(() => {
+    // A plain (passive) effect rather than useGSAP's layout effect —
+    // `containerRef` points at a DOM node owned by the *parent* component
+    // (it wraps this component as a sibling to PageHero), and a parent
+    // host node's ref only attaches after all of its descendants —
+    // including this component's own layout effects — have already run.
+    // A passive effect fires after the whole tree's refs are attached, so
+    // `containerRef.current` is guaranteed to be populated here.
+    if (!containerRef.current || !canvasRef.current) return
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
     if (!ctx) return
@@ -82,7 +92,7 @@ export default function IndustryHeroSequence({
       const bmp = bitmapsRef.current[Math.max(1, Math.min(frameCount, index))]
       if (!bmp) return
       const dpr = window.devicePixelRatio || 1
-      const rect = wrapRef.current!.getBoundingClientRect()
+      const rect = containerRef.current!.getBoundingClientRect()
       const pw = Math.round(rect.width * dpr)
       const ph = Math.round(rect.height * dpr)
       if (canvas.width !== pw || canvas.height !== ph) {
@@ -105,20 +115,28 @@ export default function IndustryHeroSequence({
         snap: 'frame',
         ease: 'none',
         scrollTrigger: {
-          trigger: wrapRef.current,
+          trigger: containerRef.current,
           start: 'top top',
-          end: 'bottom top',
+          // Scroll distance the sequence plays out over, while the hero
+          // stays pinned in place — long enough to read as a deliberate
+          // "watch this play out" beat, short enough not to feel stuck.
+          end: () => `+=${window.innerHeight * 1.15}`,
           scrub: 0.4,
+          pin: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
           onUpdate: () => renderFrame(Math.round(playhead.frame)),
         },
       })
-    }, wrapRef)
+    }, containerRef)
+
+    ScrollTrigger.refresh()
 
     return () => { ctxScope.revert(); renderRef.current = null }
-  }, { scope: wrapRef })
+  }, [containerRef, frameCount])
 
   return (
-    <div ref={wrapRef} className="absolute inset-0 z-0 overflow-hidden bg-ink">
+    <div className="absolute inset-0 z-0 overflow-hidden bg-ink">
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" style={{ opacity }} />
       <div className="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/40 to-ink" />
     </div>
