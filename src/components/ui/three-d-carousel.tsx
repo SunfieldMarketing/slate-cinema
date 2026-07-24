@@ -81,6 +81,15 @@ const Carousel = memo(
       draggingRef.current = true
       lastXRef.current = e.clientX
       samplesRef.current = [{ t: performance.now(), x: e.clientX }]
+      // Grabbing mid-fling needs to kill the release spring immediately —
+      // `controls.stop()` stops the AnimationControls abstraction, but the
+      // spring is actually still ticking the `rotation` MotionValue itself
+      // underneath it; stopping `rotation` directly is what guarantees it
+      // can't write one more frame after this and fight the drag that's
+      // about to start setting it by hand. This is exactly why re-grabbing
+      // mid-spin (but not from a resting frame, where there's nothing to
+      // interrupt) was the specifically choppy case.
+      rotation.stop()
       controls.stop()
       e.currentTarget.setPointerCapture(e.pointerId)
     }
