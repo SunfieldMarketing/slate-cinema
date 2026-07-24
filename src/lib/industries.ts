@@ -73,9 +73,9 @@ export interface IndustryData {
    * Extended industry-page sections (service cards, client story cards,
    * process timeline, FAQ). Optional and currently only populated for Animation —
    * any industry gains these sections automatically once its data is
-   * filled in, no component changes needed. The reel showcase itself is
-   * global (see IndustryReel.tsx / portfolio-projects.ts) and needs no
-   * per-industry data.
+   * filled in, no component changes needed. The drag-to-spin reel
+   * showcase lives on the general /portfolio page (see
+   * PortfolioPageContent.tsx / portfolio-projects.ts), not per-industry.
    */
   serviceCards?: IndustryServiceCard[]
   videoTestimonials?: IndustryVideoTestimonial[]

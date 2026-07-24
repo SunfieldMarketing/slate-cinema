@@ -6,7 +6,7 @@
   studio a second time — that's what the rest of the site already does.
 */
 
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -16,11 +16,63 @@ import IndustryWheel from '@/components/IndustryWheel'
 import Portfolio from '@/components/Portfolio'
 import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
 import ScrollExpandMedia from '@/components/ui/scroll-expand-media'
+import ThreeDPhotoCarousel from '@/components/ui/three-d-carousel'
+import ProjectCardModal from '@/components/ProjectCardModal'
 import { industries } from '@/lib/industries'
+import { portfolioProjects } from '@/lib/portfolio-projects'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const PORTFOLIO_ACCENT = '#a855f7'
+
+// The original drag-to-spin 3D reel, brought back specifically for the
+// general portfolio page — the client didn't like it as a per-industry
+// section (too heavy repeated 8 times) but wanted it as the showcase
+// centerpiece here, where it's a one-time "browse everything" moment.
+function ReelCarousel() {
+  const ref = useRef<HTMLElement>(null)
+  const [openProject, setOpenProject] = useState<number | null>(null)
+
+  useGSAP(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo('.rc-head', { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: ref.current, start: 'top 80%', once: true } })
+      gsap.fromTo('.rc-carousel', { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: ref.current, start: 'top 70%', once: true } })
+    }, ref)
+    return () => ctx.revert()
+  }, { scope: ref })
+
+  const cards = portfolioProjects.map((p) => ({
+    image: p.url,
+    title: p.title,
+    subtitle: `${p.category} · ${p.company}`,
+  }))
+
+  return (
+    <section ref={ref} className="relative w-full overflow-hidden py-20 md:py-24">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
+        <div className="rc-head text-center mb-10 md:mb-12">
+          <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#a855f7] uppercase mb-4">
+            <span className="w-8 h-px bg-[#a855f7]/40" /> The Reel <span className="w-8 h-px bg-[#a855f7]/40" />
+          </span>
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05]">
+            Spin through the work
+          </h2>
+          <p className="mt-4 text-white/50 text-sm font-mono">Drag to spin the reel · click a frame to open it</p>
+        </div>
+
+        <div className="rc-carousel">
+          <ThreeDPhotoCarousel cards={cards} onSelect={setOpenProject} />
+        </div>
+      </div>
+
+      <ProjectCardModal
+        project={openProject === null ? null : portfolioProjects[openProject]}
+        accent={PORTFOLIO_ACCENT}
+        onClose={() => setOpenProject(null)}
+      />
+    </section>
+  )
+}
 
 // A compact donut selector instead of a tab-grid-plus-image-panel — just a
 // browsable "who we serve" moment that routes into each industry's own page.
@@ -81,6 +133,9 @@ export default function PortfolioPageContent() {
             </a>
           </div>
         </ScrollExpandMedia>
+
+        {/* The showcase centerpiece — drag-to-spin reel of actual work */}
+        <ReelCarousel />
 
         {/* Who we serve — the main routing interaction on this page */}
         <Industries />

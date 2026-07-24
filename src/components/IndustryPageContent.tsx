@@ -13,7 +13,6 @@ import PageHero from '@/components/ui/PageHero'
 import IndustryHeroSequence from '@/components/IndustryHeroSequence'
 import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
 import { Lens } from '@/components/ui/lens'
-import IndustryReel from '@/components/IndustryReel'
 import IndustryServices from '@/components/IndustryServices'
 import IndustryProcess from '@/components/IndustryProcess'
 import IndustryFaq from '@/components/IndustryFaq'
@@ -224,7 +223,7 @@ export default function IndustryPageContent({ slug }: { slug: string }) {
             accent={industry.accent}
             stats={industry.stats}
             cta={{ label: 'Get Started', href: '/contact' }}
-            secondaryCta={{ label: 'Watch the work', href: '#reel' }}
+            secondaryCta={{ label: 'Watch the work', href: '/portfolio' }}
             trustNote="40+ projects shipped · Replies within one business day"
           />
         </div>
@@ -240,12 +239,13 @@ export default function IndustryPageContent({ slug }: { slug: string }) {
             walked through proof, not after. */}
         {industry.serviceCards && <IndustryServices services={industry.serviceCards} accent={industry.accent} />}
 
-        {/* Proof cluster: flagship reel, then client stories (case study +
-            testimonial merged into one card: outcome stat, video, quote),
-            capped by a single re-ask. Industries without story cards show
-            their plain image gallery instead. */}
-        <IndustryReel accent={industry.accent} />
-
+        {/* Proof cluster: client stories (case study + testimonial merged
+            into one card: outcome stat, video, quote), capped by a single
+            re-ask. Industries without story cards show their plain image
+            gallery instead. The film-strip reel used to lead this cluster
+            but the client didn't like the look on individual industry
+            pages — that drag-to-spin format now lives on the general
+            /portfolio page instead. */}
         {industry.videoTestimonials ? (
           <IndustryVideoTestimonials testimonials={industry.videoTestimonials} accent={industry.accent} />
         ) : (
