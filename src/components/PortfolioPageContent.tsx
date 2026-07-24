@@ -12,6 +12,7 @@ import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
+import FinalCTA from '@/components/FinalCTA'
 import IndustryWheel from '@/components/IndustryWheel'
 import Portfolio from '@/components/Portfolio'
 import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
@@ -142,6 +143,8 @@ export default function PortfolioPageContent() {
 
         {/* The full, filterable project archive. */}
         <Portfolio />
+
+        <FinalCTA />
 
         <Footer />
       </div>
