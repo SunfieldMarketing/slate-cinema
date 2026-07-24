@@ -13,12 +13,18 @@ gsap.registerPlugin(ScrollTrigger)
 /*
   One unified trust section — flagship partners (Meta, Alo, B&H) leading
   straight into the full collaborations marquee, instead of two separate
-  stacked sections that read as disconnected. Meta uses its real brand
-  mark (public/images/clients/meta-icon.svg, sourced from Simple Icons,
-  CC0); Alo and B&H render as clean text wordmarks until real logo files
-  are provided — swap in <img>/<Image> the moment those assets land.
+  stacked sections that read as disconnected. Real logo files for all
+  three (client-provided) — forced to a white silhouette via filter since
+  Alo's and Meta's wordmarks are print-dark and would be nearly invisible
+  on the page's near-black background otherwise; this also keeps them
+  visually consistent with the white/light client marks in the marquee
+  below rather than clashing brand colors against each other.
 */
-const flagship = ['Alo', 'B&H']
+const flagship = [
+  { name: 'Meta', src: '/images/clients/meta-logo.png' },
+  { name: 'Alo', src: '/images/clients/alo-logo.png' },
+  { name: 'B&H', src: '/images/clients/bh-logo.png' },
+]
 
 const clients = [
   { src: '/images/clients/dream-testimonials.webp', alt: 'Dream', width: 2000, height: 118 },
@@ -49,17 +55,13 @@ export default function TrustSection() {
         </span>
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-x-14 gap-y-6 sm:gap-x-20">
-          <span className="fc-mark inline-flex items-center gap-3 text-white/70 hover:text-white transition-colors duration-500">
-            <img src="/images/clients/meta-icon.svg" alt="" className="w-7 h-7 sm:w-8 sm:h-8" style={{ color: 'currentColor' }} />
-            <span className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">Meta</span>
-          </span>
-          {flagship.map((name) => (
-            <span
-              key={name}
-              className="fc-mark text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white/70 hover:text-white transition-colors duration-500"
-            >
-              {name}
-            </span>
+          {flagship.map((f) => (
+            <img
+              key={f.name}
+              src={f.src}
+              alt={f.name}
+              className="fc-mark h-8 sm:h-10 w-auto opacity-70 hover:opacity-100 transition-opacity duration-500 [filter:brightness(0)_invert(1)]"
+            />
           ))}
         </div>
 

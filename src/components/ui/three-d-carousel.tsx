@@ -66,8 +66,8 @@ const Carousel = memo(
     const rotation = useMotionValue(0)
     // Scaled by cylinder width so the same physical drag distance always
     // sweeps roughly the same fraction of the ring, regardless of breakpoint.
-    const dragSensitivity = 130 / cylinderWidth
-    const flingSensitivity = 45 / cylinderWidth
+    const dragSensitivity = 175 / cylinderWidth
+    const flingSensitivity = 60 / cylinderWidth
 
     const draggingRef = useRef(false)
     const lastXRef = useRef(0)

@@ -20,8 +20,8 @@ export const metadata: Metadata = {
   },
   description: "From concept to campaign, we create cinematic content built to capture attention, tell stories, and drive engagement. Brooklyn, NY.",
   icons: {
-    icon: '/images/logo.avif',
-    apple: '/images/logo.avif',
+    icon: '/images/logo-mark.png',
+    apple: '/images/logo-mark.png',
   },
   openGraph: {
     title: "Slate Cinema | Video Marketing at Your Fingertips",
