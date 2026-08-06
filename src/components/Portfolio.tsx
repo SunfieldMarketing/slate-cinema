@@ -5,11 +5,11 @@ import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { Play, ArrowUpRight } from 'lucide-react'
-import { portfolioProjects as projects } from '@/lib/portfolio-projects'
+import type { PortfolioProjectLocal } from '@/lib/normalize'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const filters = ['All', 'Commercial', 'Social', 'Documentary', 'Event', 'Action']
+const defaultFilters = ['All', 'Commercial', 'Social', 'Documentary', 'Event', 'Action']
 
 /*
   Explicit bento placement for the full, unfiltered 8-project set — hand
@@ -29,9 +29,20 @@ const bentoPlacement = [
   'lg:col-start-1 lg:col-span-1 lg:row-start-3 lg:row-span-1',
 ]
 
-export default function Portfolio({ limit, showFilters = true }: { limit?: number; showFilters?: boolean } = {}) {
+export default function Portfolio({
+  projects,
+  limit,
+  showFilters = true,
+  filters,
+}: {
+  projects: PortfolioProjectLocal[]
+  limit?: number
+  showFilters?: boolean
+  filters?: string[]
+}) {
   const sectionRef = useRef<HTMLElement>(null)
   const [filter, setFilter] = useState('All')
+  const filterOptions = filters && filters.length ? filters : defaultFilters
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -70,7 +81,7 @@ export default function Portfolio({ limit, showFilters = true }: { limit?: numbe
           {/* Filter chips */}
           {showFilters && (
             <div className="flex flex-wrap gap-2">
-              {filters.map((f) => (
+              {filterOptions.map((f) => (
                 <button
                   key={f}
                   onClick={() => setFilter(f)}

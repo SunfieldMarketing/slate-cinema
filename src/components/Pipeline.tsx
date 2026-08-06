@@ -5,12 +5,22 @@ import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { ChevronDown, Play } from 'lucide-react'
-import { categories } from '@/lib/pipeline-data'
+import type { Category } from '@/lib/pipeline-data'
 
 gsap.registerPlugin(ScrollTrigger)
 
-export default function Pipeline() {
+export default function Pipeline({
+  categories,
+  heading,
+}: {
+  categories: Category[]
+  heading?: { eyebrow?: string | null; title?: string | null; description?: string | null }
+}) {
   const sectionRef = useRef<HTMLElement>(null)
+  const eyebrow = heading?.eyebrow || 'How It Works'
+  const title = heading?.title || 'The Production Pipeline'
+  const description =
+    heading?.description || "Four phases, each broken down into the exact services behind it. Open a phase to see what's included."
   const [open, setOpen] = useState(0)
   const [activeService, setActiveService] = useState(0)
   // Hold off loading any category video until this section is actually
@@ -55,13 +65,13 @@ export default function Pipeline() {
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
         <div className="pipe-fade text-center mb-12 md:mb-16">
           <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase mb-5">
-            <span className="w-8 h-px bg-brand-blue/40" /> How It Works
+            <span className="w-8 h-px bg-brand-blue/40" /> {eyebrow}
           </span>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-[1.05]">
-            The Production Pipeline
+            {title}
           </h2>
           <p className="mt-5 text-white/50 max-w-2xl mx-auto text-sm sm:text-base font-light leading-relaxed">
-            Four phases, each broken down into the exact services behind it. Open a phase to see what&apos;s included.
+            {description}
           </p>
         </div>
 

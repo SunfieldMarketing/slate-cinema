@@ -101,11 +101,27 @@ export interface Config {
     navigation: Navigation;
     footer: Footer;
     'site-settings': SiteSetting;
+    pipeline: Pipeline;
+    'final-cta': FinalCta;
+    'ready-to-talk': ReadyToTalk;
+    'home-page': HomePage;
+    'how-it-works-page': HowItWorksPage;
+    'portfolio-index-page': PortfolioIndexPage;
+    'contact-page': ContactPage;
+    'schedule-a-call-page': ScheduleACallPage;
   };
   globalsSelect: {
     navigation: NavigationSelect<false> | NavigationSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    pipeline: PipelineSelect<false> | PipelineSelect<true>;
+    'final-cta': FinalCtaSelect<false> | FinalCtaSelect<true>;
+    'ready-to-talk': ReadyToTalkSelect<false> | ReadyToTalkSelect<true>;
+    'home-page': HomePageSelect<false> | HomePageSelect<true>;
+    'how-it-works-page': HowItWorksPageSelect<false> | HowItWorksPageSelect<true>;
+    'portfolio-index-page': PortfolioIndexPageSelect<false> | PortfolioIndexPageSelect<true>;
+    'contact-page': ContactPageSelect<false> | ContactPageSelect<true>;
+    'schedule-a-call-page': ScheduleACallPageSelect<false> | ScheduleACallPageSelect<true>;
   };
   locale: null;
   widgets: {
@@ -1179,6 +1195,568 @@ export interface SiteSetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pipeline".
+ */
+export interface Pipeline {
+  id: number;
+  /**
+   * Section header shown above the pipeline on both Home and How It Works
+   */
+  heading?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    description?: string | null;
+  };
+  categories?:
+    | {
+        /**
+         * e.g. "pre-production" -- used as the React key, keep stable
+         */
+        categoryId: string;
+        title: string;
+        video: number | Media;
+        /**
+         * Hex color
+         */
+        color: string;
+        services?:
+          | {
+              name: string;
+              /**
+               * Shown on How It Works detail panel
+               */
+              desc?: string | null;
+              /**
+               * Shown on Pre-Production beat overlay tags instead of a description
+               */
+              tags?:
+                | {
+                    tag: string;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "final-cta".
+ */
+export interface FinalCta {
+  id: number;
+  eyebrow?: string | null;
+  headlineLine1: string;
+  headlineLine2: string;
+  description: string;
+  buttonLabel: string;
+  buttonHref: string;
+  trustNote?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ready-to-talk".
+ */
+export interface ReadyToTalk {
+  id: number;
+  eyebrow?: string | null;
+  headline: string;
+  description: string;
+  badges?:
+    | {
+        icon: 'Clock3' | 'Users' | 'ShieldCheck' | 'Target' | 'Wallet' | 'Sparkles' | 'CalendarClock';
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  prepItems?:
+    | {
+        icon: 'Clock3' | 'Users' | 'ShieldCheck' | 'Target' | 'Wallet' | 'Sparkles' | 'CalendarClock';
+        label: string;
+        desc: string;
+        id?: string | null;
+      }[]
+    | null;
+  buttonLabel?: string | null;
+  buttonHref?: string | null;
+  note?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-page".
+ */
+export interface HomePage {
+  id: number;
+  hero: {
+    wordmarkPart1: string;
+    wordmarkPart2: string;
+    subtitle: string;
+    ctaLabel: string;
+    ctaHref: string;
+    secondaryCtaLabel?: string | null;
+    secondaryCtaHref?: string | null;
+  };
+  /**
+   * The scattered-then-assembled 3D text moment between Pipeline and Results
+   */
+  mediaVoid?: {
+    lines?:
+      | {
+          text: string;
+          /**
+           * Hex color
+           */
+          color: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * The 3-phase pinned scroll section ("WE ENGINEER ATTENTION" / "EVERY FRAME" / "DOMINATE YOUR MARKET")
+   */
+  industryStandards?: {
+    phase1?: {
+      eyebrow?: string | null;
+      headlineLine1?: string | null;
+      headlineLine2?: string | null;
+      description?: string | null;
+    };
+    phase2?: {
+      eyebrow?: string | null;
+      headline?: string | null;
+      /**
+       * Words that morph/cycle in place under the headline
+       */
+      morphWords?:
+        | {
+            word: string;
+            id?: string | null;
+          }[]
+        | null;
+      description?: string | null;
+    };
+    phase3?: {
+      eyebrow?: string | null;
+      headline?: string | null;
+      description?: string | null;
+      ctaLabel?: string | null;
+      ctaHref?: string | null;
+    };
+  };
+  trustSection: {
+    eyebrow: string;
+    ratingText?: string | null;
+    marqueeLabel?: string | null;
+    /**
+     * The 3 large partner marks (Meta, Alo, B&H)
+     */
+    flagshipLogos?:
+      | {
+          name: string;
+          logo: number | Media;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * The scrolling client-logo marquee below the flagship marks
+     */
+    marqueeClients?:
+      | {
+          name: string;
+          logo: number | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  results: {
+    viewsTarget?: number | null;
+    likesTarget?: number | null;
+    commentsTarget?: number | null;
+    reachPercent?: string | null;
+    description: string;
+    ctaLabel?: string | null;
+    ctaHref?: string | null;
+  };
+  reviews?: {
+    eyebrow?: string | null;
+    headlineLine1?: string | null;
+    headlineLine2?: string | null;
+    ratingText?: string | null;
+    videoTestimonialsLabel?: string | null;
+    googleReviewsLabel?: string | null;
+    /**
+     * Curated Google reviews -- kept to exactly 3 per the client's own instruction
+     */
+    testimonials?:
+      | {
+          quote: string;
+          name: string;
+          role: string;
+          company: string;
+          rating?: number | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "how-it-works-page".
+ */
+export interface HowItWorksPage {
+  id: number;
+  /**
+   * StoryboardHero text overlay -- the 3D scene/choreography itself stays code
+   */
+  hero?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    ctaLabel?: string | null;
+    ctaHref?: string | null;
+  };
+  processOverview?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    /**
+     * The connector-line summary strip -- should mirror Pipeline's 4 categories
+     */
+    timelineSteps?:
+      | {
+          title: string;
+          color: string;
+          line: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  behindTheScenes?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    subhead?: string | null;
+    stills?:
+      | {
+          image: number | Media;
+          label: string;
+          desc: string;
+          span?: ('normal' | 'wide' | 'tall') | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  processWalkthrough?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    subhead?: string | null;
+    /**
+     * Should mirror Pipeline's 4 categories
+     */
+    phases?:
+      | {
+          title: string;
+          color: string;
+          video: number | Media;
+          description: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * The 4 animated counters (1hr / 3wk / 90% / 50+)
+   */
+  statsBand?:
+    | {
+        value: number;
+        suffix?: string | null;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  guarantees?:
+    | {
+        icon: 'Clock' | 'ShieldCheck' | 'RefreshCw' | 'Handshake';
+        title: string;
+        desc: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "portfolio-index-page".
+ */
+export interface PortfolioIndexPage {
+  id: number;
+  hero?: {
+    video?: (number | null) | Media;
+    title?: string | null;
+    date?: string | null;
+    scrollToExpandLabel?: string | null;
+    description?: string | null;
+    ctaLabel?: string | null;
+    ctaHref?: string | null;
+  };
+  reelCarousel?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    subhead?: string | null;
+  };
+  industriesSection?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+  };
+  /**
+   * Category filter pills on the project grid (must include "All" plus every category used across PortfolioProjects)
+   */
+  portfolioFilters?:
+    | {
+        name: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-page".
+ */
+export interface ContactPage {
+  id: number;
+  hero?: {
+    eyebrow?: string | null;
+    titleLine1?: string | null;
+    titleLine2?: string | null;
+    subtitle?: string | null;
+  };
+  whatHappensNext?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    subhead?: string | null;
+    formPrompt?: string | null;
+    badges?:
+      | {
+          icon:
+            | 'FileText'
+            | 'PhoneCall'
+            | 'FileCheck2'
+            | 'Clapperboard'
+            | 'Receipt'
+            | 'Repeat'
+            | 'BadgeCheck'
+            | 'HelpCircle'
+            | 'ClipboardList'
+            | 'CalendarClock'
+            | 'Timer'
+            | 'ShieldCheck'
+            | 'Mail'
+            | 'Clock3'
+            | 'Users'
+            | 'Wallet'
+            | 'Target'
+            | 'Sparkles'
+            | 'MessageCircleMore'
+            | 'Phone'
+            | 'MapPin';
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+    steps?:
+      | {
+          icon:
+            | 'FileText'
+            | 'PhoneCall'
+            | 'FileCheck2'
+            | 'Clapperboard'
+            | 'Receipt'
+            | 'Repeat'
+            | 'BadgeCheck'
+            | 'HelpCircle'
+            | 'ClipboardList'
+            | 'CalendarClock'
+            | 'Timer'
+            | 'ShieldCheck'
+            | 'Mail'
+            | 'Clock3'
+            | 'Users'
+            | 'Wallet'
+            | 'Target'
+            | 'Sparkles'
+            | 'MessageCircleMore'
+            | 'Phone'
+            | 'MapPin';
+          step: string;
+          title: string;
+          desc: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  stageRouter?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    subhead?: string | null;
+    stages?:
+      | {
+          icon:
+            | 'FileText'
+            | 'PhoneCall'
+            | 'FileCheck2'
+            | 'Clapperboard'
+            | 'Receipt'
+            | 'Repeat'
+            | 'BadgeCheck'
+            | 'HelpCircle'
+            | 'ClipboardList'
+            | 'CalendarClock'
+            | 'Timer'
+            | 'ShieldCheck'
+            | 'Mail'
+            | 'Clock3'
+            | 'Users'
+            | 'Wallet'
+            | 'Target'
+            | 'Sparkles'
+            | 'MessageCircleMore'
+            | 'Phone'
+            | 'MapPin';
+          step: string;
+          title: string;
+          desc: string;
+          ctaLabel: string;
+          href: string;
+          accent: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  leadForm?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    description?: string | null;
+    badges?:
+      | {
+          icon:
+            | 'FileText'
+            | 'PhoneCall'
+            | 'FileCheck2'
+            | 'Clapperboard'
+            | 'Receipt'
+            | 'Repeat'
+            | 'BadgeCheck'
+            | 'HelpCircle'
+            | 'ClipboardList'
+            | 'CalendarClock'
+            | 'Timer'
+            | 'ShieldCheck'
+            | 'Mail'
+            | 'Clock3'
+            | 'Users'
+            | 'Wallet'
+            | 'Target'
+            | 'Sparkles'
+            | 'MessageCircleMore'
+            | 'Phone'
+            | 'MapPin';
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+    submitLabel?: string | null;
+    successMessage?: string | null;
+  };
+  contactMethods?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    description?: string | null;
+    /**
+     * "Handled With Care" per client feedback (was "No Bots, Ever")
+     */
+    badges?:
+      | {
+          icon:
+            | 'FileText'
+            | 'PhoneCall'
+            | 'FileCheck2'
+            | 'Clapperboard'
+            | 'Receipt'
+            | 'Repeat'
+            | 'BadgeCheck'
+            | 'HelpCircle'
+            | 'ClipboardList'
+            | 'CalendarClock'
+            | 'Timer'
+            | 'ShieldCheck'
+            | 'Mail'
+            | 'Clock3'
+            | 'Users'
+            | 'Wallet'
+            | 'Target'
+            | 'Sparkles'
+            | 'MessageCircleMore'
+            | 'Phone'
+            | 'MapPin';
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Address/hours/email pull from Site Settings > Contact -- this only covers section copy
+   */
+  studioLocation?: {
+    eyebrow?: string | null;
+    headlineLine1?: string | null;
+    headlineLine2?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "schedule-a-call-page".
+ */
+export interface ScheduleACallPage {
+  id: number;
+  hero?: {
+    eyebrow?: string | null;
+    titleLine1?: string | null;
+    titleLine2?: string | null;
+    subtitle?: string | null;
+  };
+  /**
+   * CustomCalendar labels -- the date/time grid itself is still a static mock, not a live booking integration (see Phase 0 inventory)
+   */
+  calendar?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    sessionLabel?: string | null;
+    durationLabel?: string | null;
+    monthLabel?: string | null;
+    selectDateLabel?: string | null;
+    selectTimeLabel?: string | null;
+    confirmLabel?: string | null;
+    confirmedLabel?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "navigation_select".
  */
 export interface NavigationSelect<T extends boolean = true> {
@@ -1274,6 +1852,453 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         state?: T;
         postalCode?: T;
         hours?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pipeline_select".
+ */
+export interface PipelineSelect<T extends boolean = true> {
+  heading?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        description?: T;
+      };
+  categories?:
+    | T
+    | {
+        categoryId?: T;
+        title?: T;
+        video?: T;
+        color?: T;
+        services?:
+          | T
+          | {
+              name?: T;
+              desc?: T;
+              tags?:
+                | T
+                | {
+                    tag?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "final-cta_select".
+ */
+export interface FinalCtaSelect<T extends boolean = true> {
+  eyebrow?: T;
+  headlineLine1?: T;
+  headlineLine2?: T;
+  description?: T;
+  buttonLabel?: T;
+  buttonHref?: T;
+  trustNote?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ready-to-talk_select".
+ */
+export interface ReadyToTalkSelect<T extends boolean = true> {
+  eyebrow?: T;
+  headline?: T;
+  description?: T;
+  badges?:
+    | T
+    | {
+        icon?: T;
+        label?: T;
+        id?: T;
+      };
+  prepItems?:
+    | T
+    | {
+        icon?: T;
+        label?: T;
+        desc?: T;
+        id?: T;
+      };
+  buttonLabel?: T;
+  buttonHref?: T;
+  note?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-page_select".
+ */
+export interface HomePageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        wordmarkPart1?: T;
+        wordmarkPart2?: T;
+        subtitle?: T;
+        ctaLabel?: T;
+        ctaHref?: T;
+        secondaryCtaLabel?: T;
+        secondaryCtaHref?: T;
+      };
+  mediaVoid?:
+    | T
+    | {
+        lines?:
+          | T
+          | {
+              text?: T;
+              color?: T;
+              id?: T;
+            };
+      };
+  industryStandards?:
+    | T
+    | {
+        phase1?:
+          | T
+          | {
+              eyebrow?: T;
+              headlineLine1?: T;
+              headlineLine2?: T;
+              description?: T;
+            };
+        phase2?:
+          | T
+          | {
+              eyebrow?: T;
+              headline?: T;
+              morphWords?:
+                | T
+                | {
+                    word?: T;
+                    id?: T;
+                  };
+              description?: T;
+            };
+        phase3?:
+          | T
+          | {
+              eyebrow?: T;
+              headline?: T;
+              description?: T;
+              ctaLabel?: T;
+              ctaHref?: T;
+            };
+      };
+  trustSection?:
+    | T
+    | {
+        eyebrow?: T;
+        ratingText?: T;
+        marqueeLabel?: T;
+        flagshipLogos?:
+          | T
+          | {
+              name?: T;
+              logo?: T;
+              id?: T;
+            };
+        marqueeClients?:
+          | T
+          | {
+              name?: T;
+              logo?: T;
+              id?: T;
+            };
+      };
+  results?:
+    | T
+    | {
+        viewsTarget?: T;
+        likesTarget?: T;
+        commentsTarget?: T;
+        reachPercent?: T;
+        description?: T;
+        ctaLabel?: T;
+        ctaHref?: T;
+      };
+  reviews?:
+    | T
+    | {
+        eyebrow?: T;
+        headlineLine1?: T;
+        headlineLine2?: T;
+        ratingText?: T;
+        videoTestimonialsLabel?: T;
+        googleReviewsLabel?: T;
+        testimonials?:
+          | T
+          | {
+              quote?: T;
+              name?: T;
+              role?: T;
+              company?: T;
+              rating?: T;
+              id?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "how-it-works-page_select".
+ */
+export interface HowItWorksPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        ctaLabel?: T;
+        ctaHref?: T;
+      };
+  processOverview?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        timelineSteps?:
+          | T
+          | {
+              title?: T;
+              color?: T;
+              line?: T;
+              id?: T;
+            };
+      };
+  behindTheScenes?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        subhead?: T;
+        stills?:
+          | T
+          | {
+              image?: T;
+              label?: T;
+              desc?: T;
+              span?: T;
+              id?: T;
+            };
+      };
+  processWalkthrough?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        subhead?: T;
+        phases?:
+          | T
+          | {
+              title?: T;
+              color?: T;
+              video?: T;
+              description?: T;
+              id?: T;
+            };
+      };
+  statsBand?:
+    | T
+    | {
+        value?: T;
+        suffix?: T;
+        label?: T;
+        id?: T;
+      };
+  guarantees?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        desc?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "portfolio-index-page_select".
+ */
+export interface PortfolioIndexPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        video?: T;
+        title?: T;
+        date?: T;
+        scrollToExpandLabel?: T;
+        description?: T;
+        ctaLabel?: T;
+        ctaHref?: T;
+      };
+  reelCarousel?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        subhead?: T;
+      };
+  industriesSection?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+      };
+  portfolioFilters?:
+    | T
+    | {
+        name?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-page_select".
+ */
+export interface ContactPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        titleLine1?: T;
+        titleLine2?: T;
+        subtitle?: T;
+      };
+  whatHappensNext?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        subhead?: T;
+        formPrompt?: T;
+        badges?:
+          | T
+          | {
+              icon?: T;
+              label?: T;
+              id?: T;
+            };
+        steps?:
+          | T
+          | {
+              icon?: T;
+              step?: T;
+              title?: T;
+              desc?: T;
+              id?: T;
+            };
+      };
+  stageRouter?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        subhead?: T;
+        stages?:
+          | T
+          | {
+              icon?: T;
+              step?: T;
+              title?: T;
+              desc?: T;
+              ctaLabel?: T;
+              href?: T;
+              accent?: T;
+              id?: T;
+            };
+      };
+  leadForm?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        description?: T;
+        badges?:
+          | T
+          | {
+              icon?: T;
+              label?: T;
+              id?: T;
+            };
+        submitLabel?: T;
+        successMessage?: T;
+      };
+  contactMethods?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        description?: T;
+        badges?:
+          | T
+          | {
+              icon?: T;
+              label?: T;
+              id?: T;
+            };
+      };
+  studioLocation?:
+    | T
+    | {
+        eyebrow?: T;
+        headlineLine1?: T;
+        headlineLine2?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "schedule-a-call-page_select".
+ */
+export interface ScheduleACallPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        titleLine1?: T;
+        titleLine2?: T;
+        subtitle?: T;
+      };
+  calendar?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        sessionLabel?: T;
+        durationLabel?: T;
+        monthLabel?: T;
+        selectDateLabel?: T;
+        selectTimeLabel?: T;
+        confirmLabel?: T;
+        confirmedLabel?: T;
       };
   updatedAt?: T;
   createdAt?: T;

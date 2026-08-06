@@ -9,13 +9,13 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
 import PageHero from '@/components/ui/PageHero'
-import { journalPosts } from '@/lib/journal'
+import type { JournalPostLocal } from '@/lib/normalize'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const JOURNAL_ACCENT = '#00AEEF'
 
-function JournalGrid() {
+function JournalGrid({ journalPosts }: { journalPosts: JournalPostLocal[] }) {
   const ref = useRef<HTMLElement>(null)
   const categories = ['All', ...Array.from(new Set(journalPosts.map((p) => p.category)))]
   const [filter, setFilter] = useState('All')
@@ -96,7 +96,7 @@ function JournalGrid() {
   )
 }
 
-export default function JournalPageContent() {
+export default function JournalPageContent({ posts }: { posts: JournalPostLocal[] }) {
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-[#00AEEF] selection:text-white">
       <AmbientBackdrop accent={JOURNAL_ACCENT} />
@@ -111,7 +111,7 @@ export default function JournalPageContent() {
           accent={JOURNAL_ACCENT}
         />
 
-        <JournalGrid />
+        <JournalGrid journalPosts={posts} />
 
         <Footer />
       </div>

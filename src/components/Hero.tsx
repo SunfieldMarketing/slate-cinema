@@ -6,12 +6,20 @@ import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { scrollState, toTimecode, scrollToY } from '@/lib/scroll'
+import type { HomePage } from '@/payload-types'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const FRAME_COUNT = 291
 
-export default function Hero() {
+export default function Hero({ data }: { data?: HomePage['hero'] }) {
+  const wordmarkPart1 = data?.wordmarkPart1 || 'SLATE'
+  const wordmarkPart2 = data?.wordmarkPart2 || 'CINEMA'
+  const subtitle = data?.subtitle || 'Video Marketing At Your Fingertips'
+  const ctaLabel = data?.ctaLabel || 'Get Started'
+  const ctaHref = data?.ctaHref || '/contact'
+  const secondaryCtaLabel = data?.secondaryCtaLabel || 'Watch Our Reel'
+  const secondaryCtaHref = data?.secondaryCtaHref || '#reel'
   const containerRef = useRef<HTMLElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const scrollHintRef = useRef<HTMLDivElement>(null)
@@ -255,8 +263,8 @@ export default function Hero() {
     return () => gsapCtx.revert()
   }, { scope: containerRef })
 
-  const slateLetters = 'SLATE'.split('')
-  const cinemaLetters = 'CINEMA'.split('')
+  const slateLetters = wordmarkPart1.split('')
+  const cinemaLetters = wordmarkPart2.split('')
 
   return (
     <section ref={containerRef} className="relative w-full h-screen bg-ink">
@@ -323,7 +331,7 @@ export default function Hero() {
 
             {/* Subtitle */}
             <p className="hero-subtitle text-xs md:text-sm font-mono tracking-[0.4em] text-white/50 uppercase mb-12">
-              Video Marketing At Your Fingertips
+              {subtitle}
             </p>
 
             {/* Cinematic top bar — REC indicator */}
@@ -359,18 +367,18 @@ export default function Hero() {
             {/* CTA Buttons — Get Started leads, Watch Our Reel is the one secondary option */}
             <div className="flex flex-wrap items-center gap-4 justify-center pointer-events-auto mt-12 z-40 relative">
               <a
-                href="/contact"
+                href={ctaHref}
                 className="hero-cta group relative px-7 py-3.5 rounded-full overflow-hidden bg-white"
               >
                 <div className="absolute inset-0 bg-[#00AEEF] scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
-                <span className="relative text-sm font-semibold text-black group-hover:text-white tracking-wide transition-colors">Get Started</span>
+                <span className="relative text-sm font-semibold text-black group-hover:text-white tracking-wide transition-colors">{ctaLabel}</span>
               </a>
               <a
-                href="#reel"
+                href={secondaryCtaHref}
                 className="hero-cta group relative px-6 py-3 rounded-full overflow-hidden border border-white/15 bg-white/[0.03]"
               >
                 <div className="absolute inset-0 bg-white/10 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
-                <span className="relative text-sm font-medium text-white/80 group-hover:text-white tracking-wide transition-colors">Watch Our Reel</span>
+                <span className="relative text-sm font-medium text-white/80 group-hover:text-white tracking-wide transition-colors">{secondaryCtaLabel}</span>
               </a>
             </div>
           </div>

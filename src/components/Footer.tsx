@@ -8,10 +8,12 @@ import { useGSAP } from '@gsap/react'
 import { Heart } from 'lucide-react'
 import { MODEL_CREDITS } from '@/components/storyboard/config'
 import posthog from 'posthog-js'
+import { useSiteData } from '@/lib/site-data-context'
 
 gsap.registerPlugin(ScrollTrigger)
 
 export default function Footer() {
+  const { footer } = useSiteData()
   const footerRef = useRef<HTMLElement>(null)
   const textRef = useRef<HTMLHeadingElement>(null)
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false)
@@ -69,10 +71,12 @@ export default function Footer() {
     gsap.to(e.currentTarget, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' })
   }
 
-  const marqueeItems = [
-    'Cinematic Storytelling', 'High-End Production', 'Global Distribution',
-    'Cinematic Storytelling', 'High-End Production', 'Global Distribution',
-  ]
+  const marqueeSource = (footer.marqueeItems ?? []).map((m) => m.text)
+  const marqueeItems = [...marqueeSource, ...marqueeSource]
+  const cta = footer.cta
+  const newsletter = footer.newsletter
+  const sitemap = footer.sitemapColumn
+  const bottomBar = footer.bottomBar
 
   return (
     <footer ref={footerRef} className="relative w-full bg-ink pt-14 pb-6 overflow-hidden" style={{ perspective: '1000px' }}>
@@ -111,24 +115,23 @@ export default function Footer() {
           {/* CTA + Newsletter */}
           <div className="w-full lg:max-w-md flex flex-col gap-6">
             <div>
-              <h3 className="text-xl font-bold text-white mb-3">Ready to create?</h3>
+              <h3 className="text-xl font-bold text-white mb-3">{cta?.heading || 'Ready to create?'}</h3>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
-                  href="/contact"
+                  href={cta?.buttonHref || '/contact'}
                   onMouseMove={handleMagneticMove}
                   onMouseLeave={handleMagneticLeave}
                   className="footer-btn px-6 py-2.5 bg-[#00AEEF] text-[#030305] font-bold rounded-full hover:bg-white transition-colors text-center text-sm"
                 >
-                  Get Started
+                  {cta?.buttonLabel || 'Get Started'}
                 </Link>
               </div>
             </div>
 
             <div>
-              <h4 className="text-sm font-semibold text-white mb-2">Subscribe to our Newsletter</h4>
+              <h4 className="text-sm font-semibold text-white mb-2">{newsletter?.heading || 'Subscribe to our Newsletter'}</h4>
               <p className="text-white/45 text-xs font-light leading-relaxed mb-3 max-w-md">
-                Want to stay up to date on the latest Ai trends, social media frenzy&rsquo;s and the latest in media
-                marketing tech? We share valuable tips straight into your inbox!
+                {newsletter?.sentence}
               </p>
               {newsletterSubmitted ? (
                 <p className="text-sm text-[#00AEEF]">Thanks — you&rsquo;re on the list.</p>
@@ -154,14 +157,14 @@ export default function Footer() {
                   <input
                     type="email"
                     name="footer-email"
-                    placeholder="Your email address"
+                    placeholder={newsletter?.placeholder || 'Your email address'}
                     className="flex-1 bg-white/5 border border-white/10 border-r-0 rounded-l-full px-5 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#00AEEF] transition-colors"
                   />
                   <button
                     type="submit"
                     className="bg-[#00AEEF] text-[#030305] font-bold px-6 py-2.5 text-sm rounded-r-full hover:bg-white transition-colors whitespace-nowrap"
                   >
-                    Sign Up
+                    {newsletter?.buttonLabel || 'Sign Up'}
                   </button>
                 </form>
               )}
@@ -171,12 +174,13 @@ export default function Footer() {
           {/* Sitemap — only real destinations */}
           <div className="w-full lg:w-auto flex flex-col sm:flex-row justify-between lg:justify-end gap-8 lg:gap-24 pt-2 lg:pt-0">
             <div className="flex flex-col">
-              <h4 className="text-white font-bold mb-3 uppercase tracking-wider text-sm">Studio</h4>
+              <h4 className="text-white font-bold mb-3 uppercase tracking-wider text-sm">{sitemap?.heading || 'Studio'}</h4>
               <div className="flex flex-col gap-2.5">
-                <Link href="/portfolio" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">Work</Link>
-                <Link href="/how-it-works" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">How It Works</Link>
-                <Link href="/journal" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">Journal</Link>
-                <Link href="/contact" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">Get Started</Link>
+                {(sitemap?.links ?? []).map((link) => (
+                  <Link key={link.label} href={link.href} className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">
+                    {link.label}
+                  </Link>
+                ))}
               </div>
             </div>
           </div>
@@ -186,13 +190,13 @@ export default function Footer() {
         <div className="w-full flex flex-col md:flex-row justify-between items-center mt-4 text-[10px] font-mono text-white/20 tracking-widest uppercase gap-4">
           <p>&copy; {new Date().getFullYear()} Slate Cinema</p>
           <div className="flex items-center gap-2">
-            Crafted with love by Slate Cinema
+            {bottomBar?.craftedWithLoveText || 'Crafted with love by Slate Cinema'}
             <Heart size={12} className="text-[#00AEEF]" />
           </div>
           <div className="flex gap-4">
-            <a href="#" className="hover:text-white transition-colors">Privacy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms</a>
-            <a href="#" className="hover:text-[#00AEEF] transition-colors">Client Portal</a>
+            <a href={bottomBar?.privacyHref || '#'} className="hover:text-white transition-colors">Privacy</a>
+            <a href={bottomBar?.termsHref || '#'} className="hover:text-white transition-colors">Terms</a>
+            <a href={bottomBar?.clientPortalHref || '#'} className="hover:text-[#00AEEF] transition-colors">Client Portal</a>
           </div>
         </div>
 

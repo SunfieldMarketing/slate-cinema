@@ -1,10 +1,11 @@
 import type { MetadataRoute } from 'next'
-import { industries } from '@/lib/industries'
-import { journalPosts } from '@/lib/journal'
+import { getNormalizedIndustries, getNormalizedJournalPosts } from '@/lib/normalize'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://slatecinema.com'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [industries, journalPosts] = await Promise.all([getNormalizedIndustries(), getNormalizedJournalPosts()])
+
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: BASE_URL, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
     { url: `${BASE_URL}/portfolio`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },

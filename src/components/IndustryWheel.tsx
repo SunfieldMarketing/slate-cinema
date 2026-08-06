@@ -11,7 +11,8 @@
 import { useId, useState } from 'react'
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
-import type { IndustryData } from '@/lib/industries'
+import type { IndustryData } from '@/lib/normalize'
+import { resolveIcon } from '@/lib/icon-map'
 
 function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
   const angleRad = ((angleDeg - 90) * Math.PI) / 180
@@ -53,6 +54,7 @@ export default function IndustryWheel({ industries, accent = '#00AEEF' }: { indu
   const rInner = 100
   const labelR = (rOuter + rInner) / 2
   const current = industries[active]
+  const CurrentIcon = resolveIcon(current.icon)
   const gradId = useId().replace(/[:]/g, '')
 
   return (
@@ -115,7 +117,7 @@ export default function IndustryWheel({ industries, accent = '#00AEEF' }: { indu
             className="absolute w-[52%] h-[52%] rounded-full -z-10"
             style={{ background: `radial-gradient(circle, ${accent}22 0%, transparent 70%)` }}
           />
-          <current.icon className="w-8 h-8 sm:w-9 sm:h-9 mb-2.5 transition-colors duration-300" style={{ color: accent }} />
+          <CurrentIcon className="w-8 h-8 sm:w-9 sm:h-9 mb-2.5 transition-colors duration-300" style={{ color: accent }} />
           <span className="font-mono text-[10px] sm:text-xs tracking-widest uppercase text-white/40">Select Industry</span>
           <span className="text-lg sm:text-xl font-bold text-white leading-tight mt-1.5">{current.label}</span>
         </div>

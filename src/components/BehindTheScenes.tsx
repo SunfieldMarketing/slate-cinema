@@ -4,18 +4,26 @@ import { useRef } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
+import type { HowItWorksPage } from '@/payload-types'
+import { mediaUrl } from '@/lib/media-url'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const stills = [
+const fallbackStills = [
   { url: '/images/portfolio-production.png', label: 'On Set', desc: "Whether it's in the universe or metaverse our team shows up.", span: 'tall' as const },
   { url: '/images/portfolio-brand.png', label: 'The Edit Bay', desc: 'Frame-by-frame assembly with an editor who thinks in story beats.' },
   { url: '/images/portfolio-social.png', label: 'Color Suite', desc: 'A signature grade that makes your brand recognizable in any feed.' },
   { url: '/images/portfolio-event.png', label: 'Sound Stage', desc: 'Mix, score, and sound design tuned for sound-on and sound-off.', span: 'wide' as const },
 ]
 
-export default function BehindTheScenes() {
+export default function BehindTheScenes({ data }: { data?: HowItWorksPage['behindTheScenes'] }) {
   const ref = useRef<HTMLElement>(null)
+  const eyebrow = data?.eyebrow || 'Behind The Scenes'
+  const headline = data?.headline || 'Where the work happens'
+  const subhead = data?.subhead || 'Every phase has a room, a rig, and a person who obsesses over it.'
+  const stills = data?.stills?.length
+    ? data.stills.map((s) => ({ url: mediaUrl(s.image) || '', label: s.label, desc: s.desc, span: (s.span as 'normal' | 'wide' | 'tall') || 'normal' }))
+    : fallbackStills
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -32,13 +40,13 @@ export default function BehindTheScenes() {
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
         <div className="bts-head text-center mb-12 md:mb-14 max-w-2xl mx-auto">
           <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase mb-4">
-            <span className="w-8 h-px bg-[#00AEEF]/40" /> Behind The Scenes
+            <span className="w-8 h-px bg-[#00AEEF]/40" /> {eyebrow}
           </span>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-[1.05] mb-4">
-            Where the work happens
+            {headline}
           </h2>
           <p className="text-white/55 text-sm sm:text-base font-light">
-            Every phase has a room, a rig, and a person who obsesses over it.
+            {subhead}
           </p>
         </div>
 

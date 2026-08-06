@@ -5,12 +5,41 @@ import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { ArrowRight, TrendingUp, Users, Activity } from 'lucide-react'
+import type { HomePage } from '@/payload-types'
 
 gsap.registerPlugin(ScrollTrigger)
 
-export default function IndustryStandards() {
+export default function IndustryStandards({ data }: { data?: HomePage['industryStandards'] }) {
   const containerRef = useRef<HTMLElement>(null)
   const morphTlRef = useRef<gsap.core.Timeline | null>(null)
+
+  const phase1 = {
+    eyebrow: data?.phase1?.eyebrow || '// The Standard',
+    headlineLine1: data?.phase1?.headlineLine1 || 'WE ENGINEER',
+    headlineLine2: data?.phase1?.headlineLine2 || 'ATTENTION',
+    description:
+      data?.phase1?.description ||
+      "In a crowded digital landscape, being 'good enough' means being invisible. We build content systems designed specifically to hijack feeds, halt thumbs, and demand viewer retention from the very first frame.",
+  }
+  const morphWords = data?.phase2?.morphWords?.length
+    ? data.phase2.morphWords.map((w) => w.word)
+    : ['Intentional.', 'Perfected.', 'Done Right.']
+  const phase2 = {
+    eyebrow: data?.phase2?.eyebrow || '// The Execution',
+    headline: data?.phase2?.headline || 'EVERY FRAME',
+    description:
+      data?.phase2?.description ||
+      "We don't just shoot video. We engineer visual experiences designed to capture and hold attention in a world that never stops scrolling.",
+  }
+  const phase3 = {
+    eyebrow: data?.phase3?.eyebrow || '// The Result',
+    headline: data?.phase3?.headline || 'DOMINATE YOUR MARKET',
+    description:
+      data?.phase3?.description ||
+      'The result is scalable, predictable growth. We turn passive viewers into active communities, and organic reach into tangible ROI.',
+    ctaLabel: data?.phase3?.ctaLabel || 'Get Started',
+    ctaHref: data?.phase3?.ctaHref || '/contact',
+  }
   
   useGSAP(() => {
     if (!containerRef.current) return
@@ -110,56 +139,56 @@ export default function IndustryStandards() {
         {/* Phase 1 */}
         <div className="phase-1 absolute flex flex-col items-center max-w-7xl">
           <span className="font-mono text-[10px] md:text-xs text-[#00AEEF] tracking-[0.5em] uppercase mb-8">
-            // The Standard
+            {phase1.eyebrow}
           </span>
           <h2 className="text-6xl md:text-[8rem] font-light leading-none tracking-tighter">
-            WE ENGINEER
+            {phase1.headlineLine1}
             <br />
             <span className="font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-white/50 drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]">
-              ATTENTION
+              {phase1.headlineLine2}
             </span>
           </h2>
           <p className="mt-8 text-white/60 max-w-2xl text-lg md:text-xl font-light leading-relaxed">
-            In a crowded digital landscape, being 'good enough' means being invisible. We build content systems designed specifically to hijack feeds, halt thumbs, and demand viewer retention from the very first frame.
+            {phase1.description}
           </p>
         </div>
 
         {/* Phase 2 */}
         <div className="phase-2 absolute flex flex-col items-center opacity-0 pointer-events-none w-full max-w-7xl">
           <span className="font-mono text-[10px] md:text-xs text-purple-400 tracking-[0.5em] uppercase mb-8">
-            // The Execution
+            {phase2.eyebrow}
           </span>
           <h2 className="text-5xl md:text-[6rem] font-black leading-[0.9] tracking-tighter text-white">
-            EVERY FRAME
+            {phase2.headline}
             <br />
             <span className="italic text-purple-400 font-serif font-light tracking-tight relative block h-[1.2em] w-full mt-2">
-              <span className="morph-word-1 absolute left-1/2 -translate-x-1/2 w-full">Intentional.</span>
-              <span className="morph-word-2 absolute left-1/2 -translate-x-1/2 w-full opacity-0">Perfected.</span>
-              <span className="morph-word-3 absolute left-1/2 -translate-x-1/2 w-full opacity-0">Done Right.</span>
+              <span className="morph-word-1 absolute left-1/2 -translate-x-1/2 w-full">{morphWords[0]}</span>
+              <span className="morph-word-2 absolute left-1/2 -translate-x-1/2 w-full opacity-0">{morphWords[1]}</span>
+              <span className="morph-word-3 absolute left-1/2 -translate-x-1/2 w-full opacity-0">{morphWords[2]}</span>
             </span>
           </h2>
           <p className="mt-8 text-white/60 max-w-xl text-lg font-light leading-relaxed">
-            We don't just shoot video. We engineer visual experiences designed to capture and hold attention in a world that never stops scrolling.
+            {phase2.description}
           </p>
         </div>
 
         {/* Phase 3 - DOMINATE YOUR MARKET */}
         <div className="phase-3 absolute flex flex-col items-center opacity-0 pointer-events-none w-[100vw]">
           <span className="font-mono text-[10px] md:text-xs text-emerald-400 tracking-[0.5em] uppercase mb-6 filter drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]">
-            // The Result
+            {phase3.eyebrow}
           </span>
-          
+
           {/* MASSIVE SINGLE LINE TEXT */}
           <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-[6vw] font-black leading-[1.05] md:leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70 drop-shadow-[0_0_60px_rgba(16,185,129,0.5)] mb-8 md:whitespace-nowrap overflow-visible px-4">
-            DOMINATE YOUR MARKET
+            {phase3.headline}
           </h2>
-          
+
           <p className="text-white/80 w-full max-w-4xl text-base sm:text-lg md:text-xl lg:text-2xl font-light leading-relaxed mb-12 px-4 shadow-black drop-shadow-md text-center">
-            The result is scalable, predictable growth. We turn passive viewers into active communities, and organic reach into tangible ROI.
+            {phase3.description}
           </p>
-          
-          <a href="/contact" className="group inline-flex items-center justify-center px-10 py-5 bg-emerald-500 text-black font-bold text-lg rounded-full hover:bg-emerald-400 hover:scale-105 transition-all duration-300 pointer-events-auto shadow-[0_0_40px_rgba(16,185,129,0.5)]">
-            Get Started
+
+          <a href={phase3.ctaHref} className="group inline-flex items-center justify-center px-10 py-5 bg-emerald-500 text-black font-bold text-lg rounded-full hover:bg-emerald-400 hover:scale-105 transition-all duration-300 pointer-events-auto shadow-[0_0_40px_rgba(16,185,129,0.5)]">
+            {phase3.ctaLabel}
             <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform" />
           </a>
         </div>

@@ -5,60 +5,17 @@ import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { ArrowRight, ArrowUpRight } from 'lucide-react'
+import { RichText } from '@payloadcms/richtext-lexical/react'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
-import { journalPosts, type JournalPost } from '@/lib/journal'
+import type { JournalPostLocal } from '@/lib/normalize'
 
 gsap.registerPlugin(ScrollTrigger)
 
-function ArticleBody({ post }: { post: JournalPost }) {
-  return (
-    <div className="jp-in">
-      {post.content.map((block, i) => {
-        if (block.type === 'h2') {
-          return (
-            <h2 key={i} className="text-2xl sm:text-3xl font-bold tracking-tight text-white mt-12 mb-5 first:mt-0">
-              {block.text}
-            </h2>
-          )
-        }
-        if (block.type === 'quote') {
-          return (
-            <blockquote
-              key={i}
-              className="my-10 pl-6 border-l-2 text-lg sm:text-xl font-light text-white/80 leading-relaxed italic"
-              style={{ borderColor: post.accent }}
-            >
-              {block.text}
-            </blockquote>
-          )
-        }
-        if (block.type === 'list') {
-          return (
-            <ul key={i} className="my-6 space-y-3">
-              {block.items?.map((item, j) => (
-                <li key={j} className="flex items-start gap-3 text-white/65 font-light leading-relaxed">
-                  <span className="mt-2.5 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: post.accent }} />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          )
-        }
-        return (
-          <p key={i} className="text-white/65 font-light leading-relaxed mb-6 text-base sm:text-lg">
-            {block.text}
-          </p>
-        )
-      })}
-    </div>
-  )
-}
-
-export default function JournalPostContent({ post }: { post: JournalPost }) {
+export default function JournalPostContent({ post, allPosts }: { post: JournalPostLocal; allPosts: JournalPostLocal[] }) {
   const ref = useRef<HTMLElement>(null)
-  const related = journalPosts.filter((p) => p.slug !== post.slug).slice(0, 3)
+  const related = allPosts.filter((p) => p.slug !== post.slug).slice(0, 3)
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -108,9 +65,22 @@ export default function JournalPostContent({ post }: { post: JournalPost }) {
           </div>
         </section>
 
-        {/* Article body */}
+        {/* Article body — rendered from Payload's Lexical rich-text field.
+            Styled via arbitrary-child selectors instead of custom JSX
+            converters, keyed to the post's own accent color for the
+            blockquote/list markers via a CSS variable. */}
         <section className="relative w-full max-w-2xl mx-auto px-5 sm:px-8 pb-20 md:pb-28">
-          <ArticleBody post={post} />
+          <div
+            className="jp-in [&_h2]:text-2xl [&_h2]:sm:text-3xl [&_h2]:font-bold [&_h2]:tracking-tight [&_h2]:text-white [&_h2]:mt-12 [&_h2]:mb-5 [&_h2:first-child]:mt-0
+                       [&_p]:text-white/65 [&_p]:font-light [&_p]:leading-relaxed [&_p]:mb-6 [&_p]:text-base [&_p]:sm:text-lg
+                       [&_blockquote]:my-10 [&_blockquote]:pl-6 [&_blockquote]:border-l-2 [&_blockquote]:text-lg [&_blockquote]:sm:text-xl [&_blockquote]:font-light [&_blockquote]:text-white/80 [&_blockquote]:leading-relaxed [&_blockquote]:italic [&_blockquote]:[border-color:var(--post-accent)]
+                       [&_ul]:my-6 [&_ul]:space-y-3 [&_ul]:list-none [&_ul]:pl-0
+                       [&_li]:text-white/65 [&_li]:font-light [&_li]:leading-relaxed [&_li]:pl-5 [&_li]:relative
+                       [&_li]:before:content-[''] [&_li]:before:absolute [&_li]:before:left-0 [&_li]:before:top-[0.6em] [&_li]:before:w-1.5 [&_li]:before:h-1.5 [&_li]:before:rounded-full [&_li]:before:[background:var(--post-accent)]"
+            style={{ ['--post-accent' as string]: post.accent }}
+          >
+            <RichText data={post.content} />
+          </div>
 
           <div className="mt-16 pt-10 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
             <div>

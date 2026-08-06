@@ -20,7 +20,8 @@ import IndustryVideoTestimonials from '@/components/IndustryVideoTestimonials'
 import TrustBanner from '@/components/TrustBanner'
 import MidCtaBand from '@/components/MidCtaBand'
 import StickyCta from '@/components/StickyCta'
-import { getIndustryBySlug, type IndustryData } from '@/lib/industries'
+import type { IndustryData, PortfolioProjectLocal } from '@/lib/normalize'
+import type { FinalCta } from '@/payload-types'
 import posthog from 'posthog-js'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -186,22 +187,21 @@ function WaveCareRedirect({ industry }: { industry: IndustryData }) {
   )
 }
 
-export default function IndustryPageContent({ slug }: { slug: string }) {
-  // Re-derived on the client from the slug — a Server Component can't pass
-  // the industry object directly since it carries lucide icon *components*
-  // (functions), which aren't serializable across the server/client boundary.
-  const industry = getIndustryBySlug(slug)
-
+export default function IndustryPageContent({
+  industry,
+  portfolioProjects,
+  finalCta,
+}: {
+  industry: IndustryData
+  portfolioProjects: PortfolioProjectLocal[]
+  finalCta: FinalCta | null
+}) {
   useEffect(() => {
-    const ind = getIndustryBySlug(slug)
-    if (ind) {
-      posthog.capture('portfolio_industry_viewed', { industry: ind.slug, industry_label: ind.label })
-    }
-  }, [slug])
+    posthog.capture('portfolio_industry_viewed', { industry: industry.slug, industry_label: industry.label })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [industry.slug])
 
   const heroRef = useRef<HTMLDivElement>(null)
-
-  if (!industry) return null
 
   if (industry.slug === 'healthcare') {
     return <WaveCareRedirect industry={industry} />
@@ -265,12 +265,12 @@ export default function IndustryPageContent({ slug }: { slug: string }) {
             view as the main Portfolio page. Carries the #gallery anchor the
             reel's "View project" link points at. */}
         <div id="gallery">
-          <Portfolio />
+          <Portfolio projects={portfolioProjects} />
         </div>
 
         {industry.faqs && <IndustryFaq faqs={industry.faqs} accent={industry.accent} />}
 
-        <FinalCTA />
+        <FinalCTA data={finalCta} />
 
         <Footer />
 

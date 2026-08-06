@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ArrowRight, X } from 'lucide-react'
-import type { PortfolioProject } from '@/lib/portfolio-projects'
+import type { PortfolioProjectLocal } from '@/lib/normalize'
 
 /*
   ProjectCardModal — the breakdown card opened by clicking a frame on the
@@ -21,7 +21,7 @@ export default function ProjectCardModal({
   accent,
   onClose,
 }: {
-  project: PortfolioProject | null
+  project: PortfolioProjectLocal | null
   accent: string
   onClose: () => void
 }) {

@@ -5,10 +5,11 @@ import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import posthog from 'posthog-js'
+import type { ScheduleACallPage } from '@/payload-types'
 
 gsap.registerPlugin(ScrollTrigger)
 
-export default function CustomCalendar() {
+export default function CustomCalendar({ copy }: { copy?: ScheduleACallPage['calendar'] }) {
   const containerRef = useRef<HTMLElement>(null)
   const [selectedDate, setSelectedDate] = useState<number | null>(null)
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
@@ -16,6 +17,16 @@ export default function CustomCalendar() {
 
   const dates = [14, 15, 16, 17, 18, 19, 20]
   const times = ['09:00 AM', '10:30 AM', '01:00 PM', '02:30 PM', '04:00 PM']
+
+  const eyebrow = copy?.eyebrow || '// Production Meeting'
+  const headline = copy?.headline || 'Lock In A Time'
+  const sessionLabel = copy?.sessionLabel || 'Strategy Session'
+  const durationLabel = copy?.durationLabel || '45 Min Video Call'
+  const monthLabel = copy?.monthLabel || 'OCTOBER 2026'
+  const selectDateLabel = copy?.selectDateLabel || 'Select Date'
+  const selectTimeLabel = copy?.selectTimeLabel || 'Select Time'
+  const confirmLabel = copy?.confirmLabel || 'Confirm Time'
+  const confirmedLabel = copy?.confirmedLabel || "You're Booked — We'll Be in Touch"
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -85,8 +96,8 @@ export default function CustomCalendar() {
       <div className="relative z-10 max-w-4xl mx-auto px-6">
         
         <div className="cal-title text-center mb-16" style={{ transformStyle: 'preserve-3d' }}>
-          <span className="font-mono text-[10px] text-[#00AEEF] tracking-[0.4em] uppercase block mb-4">// Production Meeting</span>
-          <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tight mb-4">Lock In A Time</h2>
+          <span className="font-mono text-[10px] text-[#00AEEF] tracking-[0.4em] uppercase block mb-4">{eyebrow}</span>
+          <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tight mb-4">{headline}</h2>
         </div>
 
         {/* The Calendar Board */}
@@ -104,17 +115,17 @@ export default function CustomCalendar() {
           {/* Header */}
           <div className="flex items-center justify-between mb-10 pb-6 border-b border-white/10" style={{ transform: 'translateZ(20px)' }}>
             <div>
-              <h3 className="text-xl font-bold text-white">Strategy Session</h3>
-              <p className="text-sm text-white/40 mt-1">45 Min Video Call</p>
+              <h3 className="text-xl font-bold text-white">{sessionLabel}</h3>
+              <p className="text-sm text-white/40 mt-1">{durationLabel}</p>
             </div>
-            <div className="font-mono text-sm text-[#00AEEF]">OCTOBER 2026</div>
+            <div className="font-mono text-sm text-[#00AEEF]">{monthLabel}</div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12" style={{ transform: 'translateZ(30px)' }}>
             
             {/* Dates */}
             <div>
-              <div className="font-mono text-[10px] text-white/30 tracking-widest mb-6 uppercase">Select Date</div>
+              <div className="font-mono text-[10px] text-white/30 tracking-widest mb-6 uppercase">{selectDateLabel}</div>
               <div className="grid grid-cols-7 gap-2">
                 {['M','T','W','T','F','S','S'].map((day, i) => (
                   <div key={i} className="text-center font-mono text-[10px] text-white/20 mb-2">{day}</div>
@@ -140,7 +151,7 @@ export default function CustomCalendar() {
 
             {/* Times */}
             <div>
-              <div className="font-mono text-[10px] text-white/30 tracking-widest mb-6 uppercase">Select Time</div>
+              <div className="font-mono text-[10px] text-white/30 tracking-widest mb-6 uppercase">{selectTimeLabel}</div>
               <div className="flex flex-col gap-2">
                 {times.map((time) => (
                   <button
@@ -189,7 +200,7 @@ export default function CustomCalendar() {
                       : 'bg-white/5 text-white/20 cursor-not-allowed'
                   }`}
                 >
-                  {confirmed ? "You're Booked — We'll Be in Touch" : 'Confirm Time'}
+                  {confirmed ? confirmedLabel : confirmLabel}
                 </button>
               </div>
             </div>

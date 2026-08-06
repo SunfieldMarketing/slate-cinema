@@ -5,7 +5,7 @@ import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { ArrowUpRight } from 'lucide-react'
-import { portfolioProjects } from '@/lib/portfolio-projects'
+import type { PortfolioProjectLocal } from '@/lib/normalize'
 import ThreeDPhotoCarousel from '@/components/ui/three-d-carousel'
 import ProjectCardModal from '@/components/ProjectCardModal'
 
@@ -18,7 +18,7 @@ gsap.registerPlugin(ScrollTrigger)
   breakdown modal used on the film reel, so both interactions feel like
   one system.
 */
-export default function PortfolioCarousel() {
+export default function PortfolioCarousel({ projects }: { projects: PortfolioProjectLocal[] }) {
   const sectionRef = useRef<HTMLElement>(null)
   const [openProject, setOpenProject] = useState<number | null>(null)
 
@@ -36,7 +36,7 @@ export default function PortfolioCarousel() {
     return () => ctx.revert()
   }, { scope: sectionRef })
 
-  const cards = portfolioProjects.map((p) => ({
+  const cards = projects.map((p) => ({
     image: p.url,
     title: p.title,
     subtitle: `${p.category} · ${p.company}`,
@@ -74,7 +74,7 @@ export default function PortfolioCarousel() {
       </div>
 
       <ProjectCardModal
-        project={openProject === null ? null : portfolioProjects[openProject]}
+        project={openProject === null ? null : projects[openProject]}
         accent="#00AEEF"
         onClose={() => setOpenProject(null)}
       />

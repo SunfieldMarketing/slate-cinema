@@ -16,6 +16,14 @@ import { JournalPosts } from './collections/JournalPosts'
 import { Navigation } from './globals/Navigation'
 import { Footer } from './globals/Footer'
 import { SiteSettings } from './globals/SiteSettings'
+import { Pipeline } from './globals/Pipeline'
+import { FinalCTA } from './globals/FinalCTA'
+import { ReadyToTalk } from './globals/ReadyToTalk'
+import { HomePage } from './globals/HomePage'
+import { HowItWorksPage } from './globals/HowItWorksPage'
+import { PortfolioIndexPage } from './globals/PortfolioIndexPage'
+import { ContactPage } from './globals/ContactPage'
+import { ScheduleACallPage } from './globals/ScheduleACallPage'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -63,7 +71,19 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, Industries, PortfolioProjects, JournalPosts],
-  globals: [Navigation, Footer, SiteSettings],
+  globals: [
+    Navigation,
+    Footer,
+    SiteSettings,
+    Pipeline,
+    FinalCTA,
+    ReadyToTalk,
+    HomePage,
+    HowItWorksPage,
+    PortfolioIndexPage,
+    ContactPage,
+    ScheduleACallPage,
+  ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

@@ -6,7 +6,9 @@ import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { Star, Quote, Play, Volume2 } from 'lucide-react'
 import { MagicCard } from '@/components/ui/magic-card'
-import { industries } from '@/lib/industries'
+import { useSiteData } from '@/lib/site-data-context'
+import type { HomePage } from '@/payload-types'
+import type { IndustryVideoTestimonial } from '@/lib/normalize'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -18,9 +20,9 @@ interface Testimonial {
   rating: number
 }
 
-// Three real Google reviews, curated per the client's own instruction —
-// no need for six, and every one of these is a genuine review.
-const testimonials: Testimonial[] = [
+// Fallback Google reviews (matches HomePage global's seeded defaults) —
+// used only if the CMS reviews field is somehow empty.
+const fallbackTestimonials: Testimonial[] = [
   {
     quote: "The attention to detail is better than anyone we've ever worked with! I would highly recommend using Slate for any and all media. We've been working hand-in-hand with Slate for 6+ years now — I would never go back to using anyone else!",
     name: 'Dan Jennings',
@@ -44,11 +46,6 @@ const testimonials: Testimonial[] = [
   },
 ]
 
-// Pull whichever industry currently has real video testimonials wired up
-// (only the flagship industry does today) rather than hardcoding a slug —
-// stays correct regardless of which industry that ends up being.
-const videoTestimonials = industries.find((i) => i.videoTestimonials?.length)?.videoTestimonials?.slice(0, 3) ?? []
-
 function initials(name: string) {
   return name.split(' ').map((p) => p[0]).join('').slice(0, 2).toUpperCase()
 }
@@ -66,7 +63,7 @@ function StarRow({ n }: { n: number }) {
 /* Portrait "phone" video testimonial — filmed vertically like a real
    selfie-style client testimonial, framed as a mobile screen so it reads
    immediately as video proof rather than another text card. */
-function PhoneVideoCard({ t }: { t: NonNullable<typeof videoTestimonials>[number] }) {
+function PhoneVideoCard({ t }: { t: IndustryVideoTestimonial }) {
   const [playing, setPlaying] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
   // The clip itself (several MB) is only fetched once someone actually
@@ -135,8 +132,24 @@ function PhoneVideoCard({ t }: { t: NonNullable<typeof videoTestimonials>[number
   )
 }
 
-export default function Reviews() {
+export default function Reviews({ data }: { data?: HomePage['reviews'] }) {
   const sectionRef = useRef<HTMLElement>(null)
+  const { industries } = useSiteData()
+
+  const eyebrow = data?.eyebrow || 'Client Feedback'
+  const headlineLine1 = data?.headlineLine1 || 'Trusted by leaders'
+  const headlineLine2 = data?.headlineLine2 || 'across industries'
+  const ratingText = data?.ratingText || '5.0/5 average · 44 Google reviews'
+  const videoTestimonialsLabel = data?.videoTestimonialsLabel || 'Hear it from them, not us'
+  const googleReviewsLabel = data?.googleReviewsLabel || 'From Google reviews'
+  const testimonials: Testimonial[] = data?.testimonials?.length
+    ? data.testimonials.map((t) => ({ quote: t.quote, name: t.name, role: t.role, company: t.company, rating: t.rating ?? 5 }))
+    : fallbackTestimonials
+
+  // Pull whichever industry currently has real video testimonials wired up
+  // (only the flagship industry does today) rather than hardcoding a slug —
+  // stays correct regardless of which industry that ends up being.
+  const videoTestimonials = industries.find((i) => i.videoTestimonials?.length)?.videoTestimonials?.slice(0, 3) ?? []
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -163,15 +176,15 @@ export default function Reviews() {
         {/* Header */}
         <div className="rv-head text-center mb-12 md:mb-14">
           <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase mb-5">
-            <span className="w-8 h-px bg-[#00AEEF]/40" /> Client Feedback <span className="w-8 h-px bg-[#00AEEF]/40" />
+            <span className="w-8 h-px bg-[#00AEEF]/40" /> {eyebrow} <span className="w-8 h-px bg-[#00AEEF]/40" />
           </span>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05]">
-            Trusted by leaders
-            <br className="hidden sm:block" /> across industries
+            {headlineLine1}
+            <br className="hidden sm:block" /> {headlineLine2}
           </h2>
           <div className="mt-6 inline-flex items-center gap-3 text-white/50 text-sm">
             <StarRow n={5} />
-            <span className="font-mono">5.0/5 average · 44 Google reviews</span>
+            <span className="font-mono">{ratingText}</span>
           </div>
         </div>
 
@@ -179,7 +192,7 @@ export default function Reviews() {
         {videoTestimonials.length > 0 && (
           <div className="mb-14 md:mb-16">
             <div className="text-center mb-6">
-              <span className="font-mono text-[10px] tracking-[0.25em] text-white/40 uppercase">Hear it from them, not us</span>
+              <span className="font-mono text-[10px] tracking-[0.25em] text-white/40 uppercase">{videoTestimonialsLabel}</span>
             </div>
             <div className="rv-video-row flex justify-start sm:justify-center gap-5 overflow-x-auto snap-x snap-mandatory px-5 sm:px-0 -mx-5 sm:mx-0 pb-2">
               {videoTestimonials.map((t) => (
@@ -191,7 +204,7 @@ export default function Reviews() {
 
         {/* Google reviews */}
         <div className="text-center mb-6">
-          <span className="font-mono text-[10px] tracking-[0.25em] text-white/40 uppercase">From Google reviews</span>
+          <span className="font-mono text-[10px] tracking-[0.25em] text-white/40 uppercase">{googleReviewsLabel}</span>
         </div>
         <div className="rv-grid grid grid-cols-1 md:grid-cols-3 gap-5">
           {testimonials.map((t, i) => (

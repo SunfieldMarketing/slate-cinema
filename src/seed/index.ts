@@ -17,6 +17,7 @@ import config from '../payload.config'
 import { industries } from '../lib/industries'
 import { portfolioProjects } from '../lib/portfolio-projects'
 import { journalPosts, type JournalBlock } from '../lib/journal'
+import { categories as pipelineCategories } from '../lib/pipeline-data'
 
 const PUBLIC_DIR = path.resolve(process.cwd(), 'public')
 // IDs must stay whatever type the DB adapter actually uses (a number for
@@ -379,6 +380,430 @@ async function main() {
     },
   })
   console.log('✓ seeded site settings global')
+
+  // 8. Pipeline global (shared Home + How It Works)
+  const pipelineCategoriesData = []
+  for (const cat of pipelineCategories) {
+    const video = await uploadMedia(payload, cat.video, `Pipeline — ${cat.title}`)
+    pipelineCategoriesData.push({
+      categoryId: cat.id,
+      title: cat.title,
+      video,
+      color: cat.color,
+      services: cat.services.map((s) => ({
+        name: s.name,
+        desc: s.desc,
+        tags: (s.tags ?? []).map((tag) => ({ tag })),
+      })),
+    })
+  }
+  await payload.updateGlobal({
+    slug: 'pipeline',
+    data: {
+      heading: {
+        eyebrow: 'How It Works',
+        title: 'The Production Pipeline',
+        description: "Four phases, each broken down into the exact services behind it. Open a phase to see what's included.",
+      },
+      categories: pipelineCategoriesData,
+    },
+  })
+  console.log('✓ seeded pipeline global')
+
+  // 9. FinalCTA global (shared Home / How It Works / Portfolio)
+  await payload.updateGlobal({
+    slug: 'final-cta',
+    data: {
+      eyebrow: '// Ready To Scale?',
+      headlineLine1: 'Your next era',
+      headlineLine2: 'starts here',
+      description:
+        "Don't let your brand fade into the background. Partner with Slate Cinema to engineer attention, drive engagement, and generate scalable ROI.",
+      buttonLabel: 'Get Started',
+      buttonHref: '/contact',
+      trustNote: 'Replies within one business day',
+    },
+  })
+  console.log('✓ seeded final-cta global')
+
+  // 10. ReadyToTalk global (shared Contact / Schedule a Call)
+  await payload.updateGlobal({
+    slug: 'ready-to-talk',
+    data: {
+      eyebrow: '// Ready to Talk',
+      headline: 'Book a time on our calendar',
+      description:
+        'Prefer to talk it through live? Grab a 20-minute slot with our team — no pitch deck, no sales script, just an honest read on scope, timeline, and budget so you know exactly where you stand.',
+      badges: [
+        { icon: 'Clock3', label: '20-Minute Call' },
+        { icon: 'Users', label: 'Talk to a Real Producer' },
+        { icon: 'ShieldCheck', label: 'No Pitch Deck' },
+      ],
+      prepItems: [
+        { icon: 'Target', label: 'Your goals', desc: 'What the video needs to do for your business.' },
+        { icon: 'Clock3', label: 'Your timeline', desc: 'When you need it shot, edited, and live.' },
+        { icon: 'Wallet', label: 'A budget ballpark', desc: 'Rough range is fine — it keeps the call efficient.' },
+        { icon: 'Sparkles', label: 'Any references', desc: 'Links or examples you like are a bonus, not required.' },
+      ],
+      buttonLabel: 'Schedule a Call',
+      buttonHref: '/schedule-a-call',
+      note: 'No commitment — reschedule or cancel anytime.',
+    },
+  })
+  console.log('✓ seeded ready-to-talk global')
+
+  // 11. HomePage global
+  const flagshipLogos = [
+    { name: 'Meta', src: '/images/clients/meta-logo.png' },
+    { name: 'Alo', src: '/images/clients/alo-logo.png' },
+    { name: 'B&H', src: '/images/clients/bh-logo.png' },
+  ]
+  const marqueeClients = [
+    { name: 'Dream', src: '/images/clients/dream-testimonials.webp' },
+    { name: 'Healing Partners', src: '/images/clients/healing-partners.webp' },
+    { name: 'Inhale', src: '/images/clients/inhale-testimonails.webp' },
+    { name: 'Lucida', src: '/images/clients/lucida-testimonials.webp' },
+    { name: 'Workplace Realty', src: '/images/clients/workplace-realty.webp' },
+  ]
+  await payload.updateGlobal({
+    slug: 'home-page',
+    data: {
+      hero: {
+        wordmarkPart1: 'SLATE',
+        wordmarkPart2: 'CINEMA',
+        subtitle: 'Video Marketing At Your Fingertips',
+        ctaLabel: 'Get Started',
+        ctaHref: '/contact',
+        secondaryCtaLabel: 'Watch Our Reel',
+        secondaryCtaHref: '#reel',
+      },
+      mediaVoid: {
+        lines: [
+          { text: 'The content we create', color: '#ffffff' },
+          { text: "isn't just eye-catching,", color: '#ffffff' },
+          { text: "it's content people", color: '#ffffff' },
+          { text: 'actually want to watch.', color: '#00AEEF' },
+        ],
+      },
+      industryStandards: {
+        phase1: {
+          eyebrow: '// The Standard',
+          headlineLine1: 'WE ENGINEER',
+          headlineLine2: 'ATTENTION',
+          description:
+            "In a crowded digital landscape, being 'good enough' means being invisible. We build content systems designed specifically to hijack feeds, halt thumbs, and demand viewer retention from the very first frame.",
+        },
+        phase2: {
+          eyebrow: '// The Execution',
+          headline: 'EVERY FRAME',
+          morphWords: [{ word: 'Intentional.' }, { word: 'Perfected.' }, { word: 'Done Right.' }],
+          description:
+            "We don't just shoot video. We engineer visual experiences designed to capture and hold attention in a world that never stops scrolling.",
+        },
+        phase3: {
+          eyebrow: '// The Result',
+          headline: 'DOMINATE YOUR MARKET',
+          description: 'The result is scalable, predictable growth. We turn passive viewers into active communities, and organic reach into tangible ROI.',
+          ctaLabel: 'Get Started',
+          ctaHref: '/contact',
+        },
+      },
+      trustSection: {
+        eyebrow: 'Join the leaders working with Slate Cinema',
+        ratingText: '5.0/5 · 44 Google reviews',
+        marqueeLabel: 'More collaborations & partnerships',
+        flagshipLogos: await Promise.all(
+          flagshipLogos.map(async (f) => ({ name: f.name, logo: await uploadMedia(payload, f.src, `${f.name} flagship logo`) }))
+        ),
+        marqueeClients: await Promise.all(
+          marqueeClients.map(async (c) => ({ name: c.name, logo: await uploadMedia(payload, c.src, `${c.name} client logo`) }))
+        ),
+      },
+      results: {
+        viewsTarget: 120000000,
+        likesTarget: 14352910,
+        commentsTarget: 1670823,
+        reachPercent: '98.2%',
+        description:
+          'Slate Cinema creates content built for the platforms where attention is won or lost in seconds. Every frame, hook, cut, and caption is meticulously shaped to make audiences stop scrolling.',
+        ctaLabel: 'See Case Studies',
+        ctaHref: '/portfolio',
+      },
+      reviews: {
+        eyebrow: 'Client Feedback',
+        headlineLine1: 'Trusted by leaders',
+        headlineLine2: 'across industries',
+        ratingText: '5.0/5 average · 44 Google reviews',
+        videoTestimonialsLabel: 'Hear it from them, not us',
+        googleReviewsLabel: 'From Google reviews',
+        testimonials: [
+          {
+            quote:
+              "The attention to detail is better than anyone we've ever worked with! I would highly recommend using Slate for any and all media. We've been working hand-in-hand with Slate for 6+ years now — I would never go back to using anyone else!",
+            name: 'Dan Jennings',
+            role: 'Local Guide',
+            company: 'Google Review',
+            rating: 5,
+          },
+          {
+            quote:
+              'Slate Cinema is hands-down one of the best video production companies in Brooklyn. They took our ideas and turned them into stunning, high-quality content that perfectly captured our brand. The team is creative, professional, and easy to work with from start to finish.',
+            name: 'Sara Greenberg',
+            role: 'Client',
+            company: 'Google Review',
+            rating: 5,
+          },
+          {
+            quote:
+              "Jake created an amazing promotional video for my organization and I couldn't be happier with the result. He was professional, creative, and really understood the message we wanted to share. The final product was polished, engaging, and better than I imagined.",
+            name: 'Chana W',
+            role: 'Local Guide',
+            company: 'Google Review',
+            rating: 5,
+          },
+        ],
+      },
+    },
+  })
+  console.log('✓ seeded home-page global')
+
+  // 12. HowItWorksPage global
+  const behindTheScenesStills = [
+    { src: '/images/portfolio-production.png', label: 'On Set', desc: "Whether it's in the universe or metaverse our team shows up.", span: 'tall' as const },
+    { src: '/images/portfolio-brand.png', label: 'The Edit Bay', desc: 'Frame-by-frame assembly with an editor who thinks in story beats.', span: 'normal' as const },
+    { src: '/images/portfolio-social.png', label: 'Color Suite', desc: 'A signature grade that makes your brand recognizable in any feed.', span: 'normal' as const },
+    { src: '/images/portfolio-event.png', label: 'Sound Stage', desc: 'Mix, score, and sound design tuned for sound-on and sound-off.', span: 'wide' as const },
+  ]
+  await payload.updateGlobal({
+    slug: 'how-it-works-page',
+    data: {
+      hero: {
+        eyebrow: 'The Process',
+        title: 'How It Works',
+        subtitle:
+          'A clear, structured process designed to take your project from idea to final delivery — seamlessly, efficiently, and cinematically.',
+        ctaLabel: 'Get Started',
+        ctaHref: '/contact',
+      },
+      processOverview: {
+        eyebrow: 'At A Glance',
+        headline: 'Four phases, start to finish',
+        timelineSteps: [
+          { title: 'Pre-Production', color: '#00AEEF', line: 'Scripts, boards, and a locked plan before anything rolls.' },
+          { title: 'Production', color: '#a855f7', line: 'Cameras roll — the shoot captures every frame on set.' },
+          { title: 'Post-Production', color: '#10b981', line: 'Edit, grade, and sound turn footage into a finished film.' },
+          { title: 'Distribution', color: '#f97316', line: 'Platform-native cuts get it in front of the right audience.' },
+        ],
+      },
+      behindTheScenes: {
+        eyebrow: 'Behind The Scenes',
+        headline: 'Where the work happens',
+        subhead: 'Every phase has a room, a rig, and a person who obsesses over it.',
+        stills: await Promise.all(
+          behindTheScenesStills.map(async (s) => ({
+            image: await uploadMedia(payload, s.src, `Behind the Scenes — ${s.label}`),
+            label: s.label,
+            desc: s.desc,
+            span: s.span,
+          }))
+        ),
+      },
+      processWalkthrough: {
+        eyebrow: 'Every Project Includes',
+        headline: 'Watch it move through every phase',
+        subhead: "A complete production — not just raw footage. Scroll through to see what's actually happening at each stage.",
+        phases: [
+          {
+            title: 'Pre-Production',
+            color: '#00AEEF',
+            video: await uploadMedia(payload, '/videos/pre-production.mp4', 'Process Walkthrough — Pre-Production'),
+            description:
+              'Every shoot starts on paper. Scripts, storyboards, shotlists, casting, locations, and a full production schedule — locked before a single camera rolls.',
+          },
+          {
+            title: 'Production',
+            color: '#a855f7',
+            video: await uploadMedia(payload, '/videos/production.mp4', 'Process Walkthrough — Production'),
+            description:
+              'Directors, camera crew, sound, talent, and set design come together on set. This is where the raw footage is captured, frame by frame.',
+          },
+          {
+            title: 'Post-Production',
+            color: '#10b981',
+            video: await uploadMedia(payload, '/videos/post-production.mp4', 'Process Walkthrough — Post-Production'),
+            description:
+              'Editing, color grading, sound design, motion graphics, and VFX turn raw footage into a finished film — the phase most of the craft lives in.',
+          },
+          {
+            title: 'Distribution',
+            color: '#f97316',
+            video: await uploadMedia(payload, '/videos/distribution.mp4', 'Process Walkthrough — Distribution'),
+            description:
+              'Platform-native cuts, ad management, and social strategy get the finished piece in front of the right audience, on every channel that matters.',
+          },
+        ],
+      },
+      statsBand: [
+        { value: 1, suffix: 'hr', label: 'Avg. Response Time' },
+        { value: 3, suffix: 'wk', label: 'Avg. Turnaround' },
+        { value: 90, suffix: '%', label: 'Client Retention' },
+        { value: 50, suffix: '+', label: 'Brands Served' },
+      ],
+      guarantees: [
+        { icon: 'Clock', title: '1-Day Response', desc: 'A custom execution plan within one business day of your scope form.' },
+        { icon: 'ShieldCheck', title: 'Fixed Pricing', desc: 'Locked proposal before we roll — no hourly surprises, ever.' },
+        { icon: 'RefreshCw', title: 'Revision Rounds', desc: 'Structured revision rounds built into every timeline until it lands.' },
+        { icon: 'Handshake', title: 'One Team, End-to-End', desc: 'The same team from first idea to final export — no handoffs, no drift.' },
+      ],
+    },
+  })
+  console.log('✓ seeded how-it-works-page global')
+
+  // 13. PortfolioIndexPage global
+  await payload.updateGlobal({
+    slug: 'portfolio-index-page',
+    data: {
+      hero: {
+        video: await uploadMedia(payload, '/videos/hero.mp4', 'Portfolio hero video'),
+        title: 'Our Work',
+        date: 'Selected Campaigns',
+        scrollToExpandLabel: 'Scroll To Explore',
+        description:
+          "Discover a world of captivating storytelling. From immersive brand journeys to campaigns that dominate the feed — this is Slate Cinema's showcase.",
+        ctaLabel: 'Get Started',
+        ctaHref: '/contact',
+      },
+      reelCarousel: {
+        eyebrow: 'The Reel',
+        headline: 'Spin through the work',
+        subhead: 'Drag to spin the reel · click a frame to open it',
+      },
+      industriesSection: {
+        eyebrow: 'Who We Work With',
+        headline: 'Cinematic work for every industry',
+      },
+      portfolioFilters: ['All', 'Commercial', 'Social', 'Documentary', 'Event', 'Action'].map((name) => ({ name })),
+    },
+  })
+  console.log('✓ seeded portfolio-index-page global')
+
+  // 14. ContactPage global
+  await payload.updateGlobal({
+    slug: 'contact-page',
+    data: {
+      hero: {
+        eyebrow: 'Get Started',
+        titleLine1: "Let's get",
+        titleLine2: 'you started',
+        subtitle: "Tell us where you're at and we'll point you to the right next step. We reply within one business day.",
+      },
+      whatHappensNext: {
+        eyebrow: '// After You Reach Out',
+        headline: 'What happens next',
+        subhead: "From hello until final delivery, here's the road map laid out.",
+        formPrompt: 'Fill out a form below',
+        badges: [
+          { icon: 'Receipt', label: 'Fixed-Price Proposals' },
+          { icon: 'Repeat', label: 'Revision Rounds Included' },
+          { icon: 'BadgeCheck', label: 'One Team End-to-End' },
+        ],
+        steps: [
+          { icon: 'FileText', step: '01', title: 'Share Your Scope', desc: 'Fill out a form above or reach out directly with your goals and timeline.' },
+          { icon: 'PhoneCall', step: '02', title: 'Discovery Call', desc: 'We hop on a call within one business day to align on vision and budget.' },
+          { icon: 'FileCheck2', step: '03', title: 'Custom Proposal', desc: 'You get a fixed-price execution plan tailored to your campaign.' },
+          { icon: 'Clapperboard', step: '04', title: 'We Roll Camera', desc: 'Approve and we move straight into pre-production. Lights, camera, launch.' },
+        ],
+      },
+      stageRouter: {
+        eyebrow: '// Get Started',
+        headline: 'What stage are you at?',
+        subhead: "No wrong answer here, pick whichever fits where you're at now.",
+        stages: [
+          {
+            icon: 'HelpCircle',
+            step: '01',
+            title: 'Not Sure Yet',
+            desc: "Not sure what you need? Leave your info and we'll reach out.",
+            ctaLabel: 'Send a Quick Note',
+            href: '#lead-form',
+            accent: '#00AEEF',
+          },
+          {
+            icon: 'ClipboardList',
+            step: '02',
+            title: 'Know What You Need',
+            desc: "Have a project in mind? Walk us through the details and we'll follow up with a plan.",
+            ctaLabel: 'Start the Intake Form',
+            href: '/contact/project',
+            accent: '#c084fc',
+          },
+          {
+            icon: 'CalendarClock',
+            step: '03',
+            title: 'Ready to Talk',
+            desc: 'Prefer to talk it through live? Grab a time on our calendar.',
+            ctaLabel: 'Schedule a Call',
+            href: '/schedule-a-call',
+            accent: '#34d399',
+          },
+        ],
+      },
+      leadForm: {
+        eyebrow: '// Not Sure Yet',
+        headline: 'Drop us a line',
+        description:
+          "Not sure exactly what you need yet? Totally fine — most people aren't at first. Leave your info and a real person on our team will reach out with the right next step, no matter how vague the ask.",
+        badges: [
+          { icon: 'Timer', label: '~10 Seconds' },
+          { icon: 'ShieldCheck', label: 'No Spam, Ever' },
+          { icon: 'Mail', label: 'Reply Within 1 Business Day' },
+        ],
+        submitLabel: 'Send Message',
+        successMessage: "We'll be in touch within one business day.",
+      },
+      contactMethods: {
+        eyebrow: 'Or Reach Us Directly',
+        headline: 'Real Humans. Real Work.',
+        description: "No forms, no queue — email, call, or stop by the studio directly. Whatever's easiest for you.",
+        badges: [
+          { icon: 'MessageCircleMore', label: 'We Reply Fast' },
+          { icon: 'Users', label: 'Handled With Care' },
+        ],
+      },
+      studioLocation: {
+        eyebrow: '// The Studio',
+        headlineLine1: 'Based in Brooklyn,',
+        headlineLine2: 'shooting everywhere.',
+      },
+    },
+  })
+  console.log('✓ seeded contact-page global')
+
+  // 15. ScheduleACallPage global
+  await payload.updateGlobal({
+    slug: 'schedule-a-call-page',
+    data: {
+      hero: {
+        eyebrow: 'Schedule a Call',
+        titleLine1: "Let's talk",
+        titleLine2: 'it through',
+        subtitle:
+          "Grab a time that works for you. We'll walk through your project, timeline, and budget — and outline exactly what happens next.",
+      },
+      calendar: {
+        eyebrow: '// Production Meeting',
+        headline: 'Lock In A Time',
+        sessionLabel: 'Strategy Session',
+        durationLabel: '45 Min Video Call',
+        monthLabel: 'OCTOBER 2026',
+        selectDateLabel: 'Select Date',
+        selectTimeLabel: 'Select Time',
+        confirmLabel: 'Confirm Time',
+        confirmedLabel: "You're Booked — We'll Be in Touch",
+      },
+    },
+  })
+  console.log('✓ seeded schedule-a-call-page global')
 
   console.log('\nSeed complete.')
   process.exit(0)

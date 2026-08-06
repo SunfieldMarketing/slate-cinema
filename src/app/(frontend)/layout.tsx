@@ -3,6 +3,10 @@ import { Inter, Bebas_Neue, Fraunces, Courier_Prime, Caveat } from "next/font/go
 import "./globals.css";
 import SmoothScrolling from "@/components/SmoothScrolling";
 import ScrollRestoration from "@/components/ScrollRestoration";
+import { SiteDataProvider } from "@/lib/site-data-context";
+import { getNavigation, getFooterGlobal, getSiteSettings, mediaUrl } from "@/lib/payload-data";
+import { getNormalizedIndustries } from "@/lib/normalize";
+import { preload } from 'react-dom';
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const bebas = Bebas_Neue({ subsets: ["latin"], weight: "400", variable: "--font-bebas" });
@@ -12,66 +16,81 @@ const caveat = Caveat({ subsets: ["latin"], weight: ["400", "600"], variable: "-
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://slatecinema.com'
 
-export const metadata: Metadata = {
-  metadataBase: new URL(BASE_URL),
-  title: {
-    default: "Slate Cinema | Video Marketing at Your Fingertips",
-    template: "%s | Slate Cinema",
-  },
-  description: "From concept to campaign, we create cinematic content built to capture attention, tell stories, and drive engagement. Brooklyn, NY.",
-  icons: {
-    icon: '/images/logo-mark.png',
-    apple: '/images/logo-mark.png',
-  },
-  openGraph: {
-    title: "Slate Cinema | Video Marketing at Your Fingertips",
-    description: "From concept to campaign, we create cinematic content built to capture attention, tell stories, and drive engagement. Brooklyn, NY.",
-    url: BASE_URL,
-    siteName: "Slate Cinema",
-    locale: "en_US",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Slate Cinema | Video Marketing at Your Fingertips",
-    description: "From concept to campaign, we create cinematic content built to capture attention, tell stories, and drive engagement. Brooklyn, NY.",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings()
+  const title = settings.seo?.defaultTitle || "Slate Cinema | Video Marketing at Your Fingertips"
+  const description =
+    settings.seo?.defaultDescription ||
+    "From concept to campaign, we create cinematic content built to capture attention, tell stories, and drive engagement. Brooklyn, NY."
+  const ogImage = mediaUrl(settings.seo?.ogImage)
 
-import { preload } from 'react-dom';
-
-// Organization/LocalBusiness structured data — every field here is sourced
-// straight from what's already live in the site's own copy (StudioLocation
-// in ContactPageContent.tsx), nothing invented, so it stays truthful if
-// that copy ever changes.
-const organizationSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'ProfessionalService',
-  name: 'Slate Cinema',
-  description: 'From concept to campaign, we create cinematic content built to capture attention, tell stories, and drive engagement.',
-  url: BASE_URL,
-  logo: `${BASE_URL}/images/logo-mark.png`,
-  image: `${BASE_URL}/images/logo-mark.png`,
-  email: 'info@slatecinema.com',
-  telephone: '+17329301934',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: '132 32nd St',
-    addressLocality: 'Brooklyn',
-    addressRegion: 'NY',
-    postalCode: '11232',
-    addressCountry: 'US',
-  },
-  areaServed: 'US',
-  priceRange: '$$',
+  return {
+    metadataBase: new URL(BASE_URL),
+    title: {
+      default: title,
+      template: settings.seo?.titleTemplate || "%s | Slate Cinema",
+    },
+    description,
+    icons: {
+      icon: '/images/logo-mark.png',
+      apple: '/images/logo-mark.png',
+    },
+    openGraph: {
+      title,
+      description,
+      url: BASE_URL,
+      siteName: "Slate Cinema",
+      locale: "en_US",
+      type: "website",
+      ...(ogImage ? { images: [{ url: ogImage }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  }
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   preload('/videos/hero.mp4', { as: 'video', fetchPriority: 'high' });
+
+  const [navigation, footer, industries, settings] = await Promise.all([
+    getNavigation(),
+    getFooterGlobal(),
+    getNormalizedIndustries(),
+    getSiteSettings(),
+  ])
+
+  // Organization/LocalBusiness structured data — sourced from Site
+  // Settings (contact info) rather than hardcoded, so it stays truthful
+  // if that copy ever changes through /admin.
+  const contact = settings.contact
+  const organizationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfessionalService',
+    name: 'Slate Cinema',
+    description: settings.seo?.defaultDescription,
+    url: BASE_URL,
+    logo: `${BASE_URL}/images/logo-mark.png`,
+    image: `${BASE_URL}/images/logo-mark.png`,
+    email: contact?.email,
+    telephone: contact?.phone,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: contact?.addressLine,
+      addressLocality: contact?.city,
+      addressRegion: contact?.state,
+      postalCode: contact?.postalCode,
+      addressCountry: 'US',
+    },
+    areaServed: 'US',
+    priceRange: '$$',
+  }
 
   return (
     <html lang="en" className={`dark ${inter.variable} ${bebas.variable} ${fraunces.variable} ${courier.variable} ${caveat.variable}`}>
@@ -81,9 +100,11 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
         <ScrollRestoration />
-        <SmoothScrolling>
-          {children}
-        </SmoothScrolling>
+        <SiteDataProvider value={{ navigation, footer, industries, settings }}>
+          <SmoothScrolling>
+            {children}
+          </SmoothScrolling>
+        </SiteDataProvider>
       </body>
     </html>
   );

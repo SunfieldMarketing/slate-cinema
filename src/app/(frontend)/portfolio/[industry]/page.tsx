@@ -1,14 +1,17 @@
 import { notFound } from 'next/navigation'
-import { industries, getIndustryBySlug } from '@/lib/industries'
+import { getNormalizedIndustries, getNormalizedPortfolioProjects } from '@/lib/normalize'
+import { getFinalCTA } from '@/lib/payload-data'
 import IndustryPageContent from '@/components/IndustryPageContent'
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const industries = await getNormalizedIndustries()
   return industries.map((i) => ({ industry: i.slug }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ industry: string }> }) {
   const { industry: slug } = await params
-  const industry = getIndustryBySlug(slug)
+  const industries = await getNormalizedIndustries()
+  const industry = industries.find((i) => i.slug === slug)
   if (!industry) return {}
   return {
     title: `${industry.label} Video Production | Slate Cinema`,
@@ -18,6 +21,12 @@ export async function generateMetadata({ params }: { params: Promise<{ industry:
 
 export default async function IndustryPage({ params }: { params: Promise<{ industry: string }> }) {
   const { industry: slug } = await params
-  if (!getIndustryBySlug(slug)) notFound()
-  return <IndustryPageContent slug={slug} />
+  const [industries, portfolioProjects, finalCta] = await Promise.all([
+    getNormalizedIndustries(),
+    getNormalizedPortfolioProjects(),
+    getFinalCTA(),
+  ])
+  const industry = industries.find((i) => i.slug === slug)
+  if (!industry) notFound()
+  return <IndustryPageContent industry={industry} portfolioProjects={portfolioProjects} finalCta={finalCta} />
 }

@@ -4,18 +4,20 @@ import { useRef } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
+import type { HomePage } from '@/payload-types'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const lines = [
+const fallbackLines = [
   { text: 'The content we create', color: '#ffffff' },
   { text: "isn't just eye-catching,", color: '#ffffff' },
   { text: "it's content people", color: '#ffffff' },
   { text: 'actually want to watch.', color: '#00AEEF' },
 ]
 
-export default function MediaVoid() {
+export default function MediaVoid({ data }: { data?: HomePage['mediaVoid'] }) {
   const containerRef = useRef<HTMLElement>(null)
+  const lines = data?.lines?.length ? data.lines : fallbackLines
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
