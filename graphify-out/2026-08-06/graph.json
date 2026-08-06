@@ -345,7 +345,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "eslint_config",
-      "community": 14,
+      "community": 56,
       "norm_label": "eslint.config.mjs"
     },
     {
@@ -355,7 +355,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "eslint_config_eslintconfig",
-      "community": 14,
+      "community": 56,
       "norm_label": "eslintconfig"
     },
     {
@@ -2905,7 +2905,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_e",
-      "community": 5,
+      "community": 18,
       "norm_label": "_e()"
     },
     {
@@ -2985,7 +2985,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_hf",
-      "community": 5,
+      "community": 18,
       "norm_label": "hf()"
     },
     {
@@ -3065,7 +3065,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_qf",
-      "community": 5,
+      "community": 18,
       "norm_label": "qf()"
     },
     {
@@ -3215,7 +3215,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_dg",
-      "community": 44,
+      "community": 45,
       "norm_label": "dg()"
     },
     {
@@ -3245,7 +3245,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_gg",
-      "community": 5,
+      "community": 18,
       "norm_label": "gg()"
     },
     {
@@ -3255,7 +3255,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_hg",
-      "community": 44,
+      "community": 45,
       "norm_label": "hg()"
     },
     {
@@ -3295,7 +3295,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_lg",
-      "community": 5,
+      "community": 18,
       "norm_label": "lg()"
     },
     {
@@ -3415,7 +3415,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_xg",
-      "community": 5,
+      "community": 18,
       "norm_label": "xg()"
     },
     {
@@ -3505,7 +3505,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_fh",
-      "community": 5,
+      "community": 18,
       "norm_label": "fh()"
     },
     {
@@ -3515,7 +3515,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_gh",
-      "community": 44,
+      "community": 45,
       "norm_label": "gh()"
     },
     {
@@ -3675,7 +3675,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_wh",
-      "community": 5,
+      "community": 18,
       "norm_label": "wh()"
     },
     {
@@ -3745,7 +3745,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_ci",
-      "community": 5,
+      "community": 18,
       "norm_label": "ci()"
     },
     {
@@ -3785,7 +3785,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_yc",
-      "community": 5,
+      "community": 18,
       "norm_label": "yc()"
     },
     {
@@ -3795,7 +3795,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_zc",
-      "community": 5,
+      "community": 18,
       "norm_label": "zc()"
     },
     {
@@ -3855,7 +3855,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_fc",
-      "community": 44,
+      "community": 45,
       "norm_label": "fc()"
     },
     {
@@ -3965,7 +3965,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_qc",
-      "community": 5,
+      "community": 18,
       "norm_label": "qc()"
     },
     {
@@ -3975,7 +3975,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_rc",
-      "community": 44,
+      "community": 45,
       "norm_label": "rc()"
     },
     {
@@ -4015,7 +4015,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_c",
-      "community": 5,
+      "community": 18,
       "norm_label": "_c()"
     },
     {
@@ -4025,7 +4025,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_ad",
-      "community": 5,
+      "community": 18,
       "norm_label": "ad()"
     },
     {
@@ -4035,7 +4035,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_bd",
-      "community": 5,
+      "community": 18,
       "norm_label": "bd()"
     },
     {
@@ -4045,7 +4045,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_cd",
-      "community": 5,
+      "community": 18,
       "norm_label": "cd()"
     },
     {
@@ -4055,7 +4055,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_dd",
-      "community": 5,
+      "community": 18,
       "norm_label": "dd()"
     },
     {
@@ -4065,7 +4065,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_ed",
-      "community": 5,
+      "community": 18,
       "norm_label": "ed()"
     },
     {
@@ -4075,7 +4075,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_fd",
-      "community": 5,
+      "community": 18,
       "norm_label": "fd()"
     },
     {
@@ -4085,7 +4085,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_gd",
-      "community": 5,
+      "community": 18,
       "norm_label": "gd()"
     },
     {
@@ -4095,7 +4095,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_hd",
-      "community": 5,
+      "community": 18,
       "norm_label": "hd()"
     },
     {
@@ -4105,7 +4105,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_id",
-      "community": 5,
+      "community": 18,
       "norm_label": "id()"
     },
     {
@@ -4115,7 +4115,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_jd",
-      "community": 5,
+      "community": 18,
       "norm_label": "jd()"
     },
     {
@@ -4135,7 +4135,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_ld",
-      "community": 5,
+      "community": 18,
       "norm_label": "ld()"
     },
     {
@@ -4155,7 +4155,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_nd",
-      "community": 5,
+      "community": 18,
       "norm_label": "nd()"
     },
     {
@@ -4225,7 +4225,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_ud",
-      "community": 5,
+      "community": 18,
       "norm_label": "ud()"
     },
     {
@@ -4275,7 +4275,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_zd",
-      "community": 5,
+      "community": 18,
       "norm_label": "zd()"
     },
     {
@@ -4455,7 +4455,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_pb",
-      "community": 5,
+      "community": 18,
       "norm_label": "pb()"
     },
     {
@@ -4475,7 +4475,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_rb",
-      "community": 5,
+      "community": 18,
       "norm_label": "rb()"
     },
     {
@@ -4695,7 +4695,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_pi",
-      "community": 5,
+      "community": 18,
       "norm_label": "pi()"
     },
     {
@@ -4775,7 +4775,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_xi",
-      "community": 5,
+      "community": 18,
       "norm_label": "xi()"
     },
     {
@@ -4805,7 +4805,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_i",
-      "community": 5,
+      "community": 18,
       "norm_label": "_i()"
     },
     {
@@ -4845,7 +4845,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_dj",
-      "community": 5,
+      "community": 18,
       "norm_label": "dj()"
     },
     {
@@ -4865,7 +4865,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_fj",
-      "community": 5,
+      "community": 18,
       "norm_label": "fj()"
     },
     {
@@ -5025,7 +5025,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_vj",
-      "community": 44,
+      "community": 45,
       "norm_label": "vj()"
     },
     {
@@ -5045,7 +5045,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_xj",
-      "community": 44,
+      "community": 45,
       "norm_label": "xj()"
     },
     {
@@ -5075,7 +5075,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_j",
-      "community": 5,
+      "community": 18,
       "norm_label": "_j()"
     },
     {
@@ -5095,7 +5095,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_bk",
-      "community": 44,
+      "community": 45,
       "norm_label": "bk()"
     },
     {
@@ -5145,7 +5145,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_gk",
-      "community": 44,
+      "community": 45,
       "norm_label": "gk()"
     },
     {
@@ -5275,7 +5275,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_tk",
-      "community": 5,
+      "community": 18,
       "norm_label": "tk()"
     },
     {
@@ -5335,7 +5335,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_zk",
-      "community": 5,
+      "community": 18,
       "norm_label": "zk()"
     },
     {
@@ -5465,7 +5465,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_ll",
-      "community": 44,
+      "community": 45,
       "norm_label": "ll()"
     },
     {
@@ -5485,7 +5485,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_nl",
-      "community": 5,
+      "community": 18,
       "norm_label": "nl()"
     },
     {
@@ -5605,7 +5605,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_zl",
-      "community": 44,
+      "community": 45,
       "norm_label": "zl()"
     },
     {
@@ -5835,7 +5835,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_vm",
-      "community": 5,
+      "community": 18,
       "norm_label": "vm()"
     },
     {
@@ -6105,7 +6105,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_wn",
-      "community": 5,
+      "community": 18,
       "norm_label": "wn()"
     },
     {
@@ -6115,7 +6115,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_xn",
-      "community": 5,
+      "community": 18,
       "norm_label": "xn()"
     },
     {
@@ -6365,7 +6365,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_vo",
-      "community": 5,
+      "community": 18,
       "norm_label": "vo()"
     },
     {
@@ -6715,7 +6715,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_bq",
-      "community": 5,
+      "community": 18,
       "norm_label": "bq()"
     },
     {
@@ -6745,7 +6745,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_eq",
-      "community": 44,
+      "community": 45,
       "norm_label": "eq()"
     },
     {
@@ -6795,7 +6795,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_jq",
-      "community": 5,
+      "community": 18,
       "norm_label": "jq()"
     },
     {
@@ -6845,7 +6845,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_oq",
-      "community": 5,
+      "community": 18,
       "norm_label": "oq()"
     },
     {
@@ -6875,7 +6875,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_rq",
-      "community": 44,
+      "community": 45,
       "norm_label": "rq()"
     },
     {
@@ -6885,7 +6885,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "public_draco_draco_encoder_sq",
-      "community": 44,
+      "community": 45,
       "norm_label": "sq()"
     },
     {
@@ -7545,7 +7545,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "public_draco_draco_wasm_wrapper_a",
-      "community": 45,
+      "community": 18,
       "norm_label": "a()"
     },
     {
@@ -7555,7 +7555,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "public_draco_draco_wasm_wrapper_a_set_type",
-      "community": 45,
+      "community": 18,
       "norm_label": ".set_type()"
     },
     {
@@ -7565,7 +7565,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "public_draco_draco_wasm_wrapper_a_get_type",
-      "community": 45,
+      "community": 18,
       "norm_label": ".get_type()"
     },
     {
@@ -7575,7 +7575,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "public_draco_draco_wasm_wrapper_a_set_destructor",
-      "community": 45,
+      "community": 18,
       "norm_label": ".set_destructor()"
     },
     {
@@ -7585,7 +7585,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "public_draco_draco_wasm_wrapper_a_get_destructor",
-      "community": 45,
+      "community": 18,
       "norm_label": ".get_destructor()"
     },
     {
@@ -7595,7 +7595,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "public_draco_draco_wasm_wrapper_a_set_refcount",
-      "community": 45,
+      "community": 18,
       "norm_label": ".set_refcount()"
     },
     {
@@ -7605,7 +7605,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "public_draco_draco_wasm_wrapper_a_set_caught",
-      "community": 45,
+      "community": 18,
       "norm_label": ".set_caught()"
     },
     {
@@ -7615,7 +7615,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "public_draco_draco_wasm_wrapper_a_get_caught",
-      "community": 45,
+      "community": 18,
       "norm_label": ".get_caught()"
     },
     {
@@ -7625,7 +7625,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "public_draco_draco_wasm_wrapper_a_set_rethrown",
-      "community": 45,
+      "community": 18,
       "norm_label": ".set_rethrown()"
     },
     {
@@ -7635,7 +7635,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "public_draco_draco_wasm_wrapper_a_get_rethrown",
-      "community": 45,
+      "community": 18,
       "norm_label": ".get_rethrown()"
     },
     {
@@ -7645,7 +7645,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "public_draco_draco_wasm_wrapper_a_init",
-      "community": 45,
+      "community": 18,
       "norm_label": ".init()"
     },
     {
@@ -7655,7 +7655,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "public_draco_draco_wasm_wrapper_a_add_ref",
-      "community": 45,
+      "community": 18,
       "norm_label": ".add_ref()"
     },
     {
@@ -7665,7 +7665,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "public_draco_draco_wasm_wrapper_a_release_ref",
-      "community": 45,
+      "community": 18,
       "norm_label": ".release_ref()"
     },
     {
@@ -7675,7 +7675,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "public_draco_draco_wasm_wrapper_a_set_adjusted_ptr",
-      "community": 45,
+      "community": 18,
       "norm_label": ".set_adjusted_ptr()"
     },
     {
@@ -7685,7 +7685,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "public_draco_draco_wasm_wrapper_a_get_adjusted_ptr",
-      "community": 45,
+      "community": 18,
       "norm_label": ".get_adjusted_ptr()"
     },
     {
@@ -7695,7 +7695,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "public_draco_draco_wasm_wrapper_a_get_exception_ptr",
-      "community": 45,
+      "community": 18,
       "norm_label": ".get_exception_ptr()"
     },
     {
@@ -7715,7 +7715,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "public_draco_draco_wasm_wrapper_b",
-      "community": 5,
+      "community": 18,
       "norm_label": "b()"
     },
     {
@@ -7765,7 +7765,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "public_draco_draco_wasm_wrapper_d",
-      "community": 5,
+      "community": 18,
       "norm_label": "d()"
     },
     {
@@ -7835,7 +7835,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "public_draco_draco_wasm_wrapper_j",
-      "community": 5,
+      "community": 18,
       "norm_label": "j()"
     },
     {
@@ -7895,7 +7895,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_contact_project_page",
-      "community": 19,
+      "community": 0,
       "norm_label": "page.tsx"
     },
     {
@@ -7905,7 +7905,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_app_contact_project_page_metadata",
-      "community": 19,
+      "community": 0,
       "norm_label": "metadata"
     },
     {
@@ -7915,7 +7915,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_app_contact_project_page_projectintakepage",
-      "community": 19,
+      "community": 0,
       "norm_label": "projectintakepage()"
     },
     {
@@ -8335,7 +8335,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_sitemap",
-      "community": 18,
+      "community": 0,
       "norm_label": "sitemap.ts"
     },
     {
@@ -8345,7 +8345,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_app_sitemap_sitemap",
-      "community": 18,
+      "community": 0,
       "norm_label": "sitemap()"
     },
     {
@@ -8625,7 +8625,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_footer",
-      "community": 0,
+      "community": 19,
       "norm_label": "footer.tsx"
     },
     {
@@ -8635,7 +8635,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_components_footer_footer",
-      "community": 0,
+      "community": 19,
       "norm_label": "footer()"
     },
     {
@@ -8775,7 +8775,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_industryprocess",
-      "community": 18,
+      "community": 2,
       "norm_label": "industryprocess.tsx"
     },
     {
@@ -8785,7 +8785,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_components_industryprocess_step_icons",
-      "community": 18,
+      "community": 2,
       "norm_label": "step_icons"
     },
     {
@@ -8795,7 +8795,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "src_components_industryprocess_industryprocess",
-      "community": 18,
+      "community": 2,
       "norm_label": "industryprocess()"
     },
     {
@@ -8805,7 +8805,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_industryservices",
-      "community": 18,
+      "community": 2,
       "norm_label": "industryservices.tsx"
     },
     {
@@ -8815,7 +8815,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_components_industryservices_industryservices",
-      "community": 18,
+      "community": 2,
       "norm_label": "industryservices()"
     },
     {
@@ -8845,7 +8845,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_industryvideotestimonials",
-      "community": 18,
+      "community": 2,
       "norm_label": "industryvideotestimonials.tsx"
     },
     {
@@ -8855,7 +8855,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_components_industryvideotestimonials_testimonialcard",
-      "community": 18,
+      "community": 2,
       "norm_label": "testimonialcard()"
     },
     {
@@ -8865,7 +8865,7 @@
       "source_location": "L102",
       "_origin": "ast",
       "id": "src_components_industryvideotestimonials_industryvideotestimonials",
-      "community": 18,
+      "community": 2,
       "norm_label": "industryvideotestimonials()"
     },
     {
@@ -8875,7 +8875,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_industrywheel",
-      "community": 18,
+      "community": 2,
       "norm_label": "industrywheel.tsx"
     },
     {
@@ -8885,7 +8885,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "src_components_industrywheel_polartocartesian",
-      "community": 18,
+      "community": 2,
       "norm_label": "polartocartesian()"
     },
     {
@@ -8895,7 +8895,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_components_industrywheel_round",
-      "community": 18,
+      "community": 2,
       "norm_label": "round()"
     },
     {
@@ -8905,7 +8905,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "src_components_industrywheel_segmentpath",
-      "community": 18,
+      "community": 2,
       "norm_label": "segmentpath()"
     },
     {
@@ -8915,7 +8915,7 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "src_components_industrywheel_industrywheel",
-      "community": 18,
+      "community": 2,
       "norm_label": "industrywheel()"
     },
     {
@@ -9055,7 +9055,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_nav",
-      "community": 19,
+      "community": 0,
       "norm_label": "nav.tsx"
     },
     {
@@ -9065,7 +9065,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_components_nav_navlinks",
-      "community": 19,
+      "community": 0,
       "norm_label": "navlinks"
     },
     {
@@ -9075,7 +9075,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_components_nav_nav",
-      "community": 19,
+      "community": 0,
       "norm_label": "nav()"
     },
     {
@@ -9525,7 +9525,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_storyboard_distributionscene",
-      "community": 87,
+      "community": 41,
       "norm_label": "distributionscene.tsx"
     },
     {
@@ -9535,7 +9535,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_components_storyboard_distributionscene_platforms",
-      "community": 87,
+      "community": 41,
       "norm_label": "platforms"
     },
     {
@@ -9545,7 +9545,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "src_components_storyboard_distributionscene_distributionscene",
-      "community": 87,
+      "community": 41,
       "norm_label": "distributionscene()"
     },
     {
@@ -9675,7 +9675,7 @@
       "source_location": "L524",
       "_origin": "ast",
       "id": "src_components_storyboard_herostage_stageerrorboundary",
-      "community": 56,
+      "community": 74,
       "norm_label": "stageerrorboundary"
     },
     {
@@ -9685,7 +9685,7 @@
       "source_location": "L526",
       "_origin": "ast",
       "id": "src_components_storyboard_herostage_stageerrorboundary_getderivedstatefromerror",
-      "community": 56,
+      "community": 74,
       "norm_label": ".getderivedstatefromerror()"
     },
     {
@@ -9695,7 +9695,7 @@
       "source_location": "L529",
       "_origin": "ast",
       "id": "src_components_storyboard_herostage_stageerrorboundary_render",
-      "community": 56,
+      "community": 74,
       "norm_label": ".render()"
     },
     {
@@ -9715,7 +9715,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_storyboard_postproductionscene",
-      "community": 41,
+      "community": 44,
       "norm_label": "postproductionscene.tsx"
     },
     {
@@ -9725,7 +9725,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "src_components_storyboard_postproductionscene_wave_points",
-      "community": 41,
+      "community": 44,
       "norm_label": "wave_points"
     },
     {
@@ -9735,7 +9735,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_components_storyboard_postproductionscene_wavepath",
-      "community": 41,
+      "community": 44,
       "norm_label": "wavepath()"
     },
     {
@@ -9745,7 +9745,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_components_storyboard_postproductionscene_ruler_marks",
-      "community": 41,
+      "community": 44,
       "norm_label": "ruler_marks"
     },
     {
@@ -9755,7 +9755,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "src_components_storyboard_postproductionscene_postproductionscene",
-      "community": 41,
+      "community": 44,
       "norm_label": "postproductionscene()"
     },
     {
@@ -9845,7 +9845,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_storyboard_config",
-      "community": 14,
+      "community": 56,
       "norm_label": "config.ts"
     },
     {
@@ -9855,7 +9855,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_components_storyboard_config_scene_enters",
-      "community": 14,
+      "community": 56,
       "norm_label": "scene_enters"
     },
     {
@@ -9865,7 +9865,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "src_components_storyboard_config_scene_exits",
-      "community": 14,
+      "community": 56,
       "norm_label": "scene_exits"
     },
     {
@@ -9875,7 +9875,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "src_components_storyboard_config_scene_classes",
-      "community": 14,
+      "community": 56,
       "norm_label": "scene_classes"
     },
     {
@@ -9895,7 +9895,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "src_components_storyboard_config_models",
-      "community": 14,
+      "community": 56,
       "norm_label": "models"
     },
     {
@@ -10665,7 +10665,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_industries",
-      "community": 18,
+      "community": 2,
       "norm_label": "industries.ts"
     },
     {
@@ -10675,7 +10675,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_lib_industries_industrystat",
-      "community": 18,
+      "community": 2,
       "norm_label": "industrystat"
     },
     {
@@ -10685,7 +10685,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_lib_industries_industryservicecard",
-      "community": 18,
+      "community": 2,
       "norm_label": "industryservicecard"
     },
     {
@@ -10695,7 +10695,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "src_lib_industries_industryvideotestimonial",
-      "community": 18,
+      "community": 2,
       "norm_label": "industryvideotestimonial"
     },
     {
@@ -10705,7 +10705,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "src_lib_industries_industryprocessstep",
-      "community": 18,
+      "community": 2,
       "norm_label": "industryprocessstep"
     },
     {
@@ -10715,7 +10715,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "src_lib_industries_industryfaq",
-      "community": 18,
+      "community": 2,
       "norm_label": "industryfaq"
     },
     {
@@ -10725,7 +10725,7 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "src_lib_industries_industrydata",
-      "community": 18,
+      "community": 2,
       "norm_label": "industrydata"
     },
     {
@@ -10735,7 +10735,7 @@
       "source_location": "L86",
       "_origin": "ast",
       "id": "src_lib_industries_industries",
-      "community": 18,
+      "community": 0,
       "norm_label": "industries"
     },
     {
@@ -38991,6 +38991,17 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/schedule-a-call/page.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_schedule_a_call_page",
+      "target": "src_components_ui_pagehero_pagehero",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/sitemap.ts",
@@ -39340,6 +39351,17 @@
       "weight": 1.0,
       "source": "src_components_contactpagecontent",
       "target": "src_components_ui_pagehero",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/ContactPageContent.tsx",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "src_components_contactpagecontent",
+      "target": "src_components_ui_pagehero_pagehero",
       "confidence_score": 1.0
     },
     {
@@ -39881,6 +39903,17 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/IndustryPageContent.tsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_components_industrypagecontent",
+      "target": "src_components_ui_pagehero_pagehero",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -40206,6 +40239,17 @@
       "weight": 1.0,
       "source": "src_components_journalpagecontent",
       "target": "src_components_ui_pagehero",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/JournalPageContent.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_components_journalpagecontent",
+      "target": "src_components_ui_pagehero_pagehero",
       "confidence_score": 1.0
     },
     {
@@ -43404,5 +43448,5 @@
       "source_file": "README.md"
     }
   ],
-  "built_at_commit": "f97bc722dd265d47ff340220a1ba394a849ccd81"
+  "built_at_commit": "6ef5e5d64963d73ac96841e60ad18a8fda01e331"
 }

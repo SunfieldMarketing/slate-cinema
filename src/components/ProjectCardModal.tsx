@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
+import gsap from 'gsap'
 import { ArrowRight, X } from 'lucide-react'
 import type { PortfolioProject } from '@/lib/portfolio-projects'
 
@@ -9,6 +10,11 @@ import type { PortfolioProject } from '@/lib/portfolio-projects'
   film reel: featured cut up top (poster image stands in wherever video
   can't render), then the project story and its metrics, closed by
   backdrop click, the X, or Escape.
+
+  Opens with a real 3D flip (rotateY from -90deg to 0, off a perspective
+  origin at the clicked card's edge) rather than a plain fade/scale — per
+  feedback that clicking a project should feel like it "flips out to
+  display more," not just pop up as a generic dialog.
 */
 export default function ProjectCardModal({
   project,
@@ -19,6 +25,9 @@ export default function ProjectCardModal({
   accent: string
   onClose: () => void
 }) {
+  const cardRef = useRef<HTMLDivElement>(null)
+  const backdropRef = useRef<HTMLButtonElement>(null)
+
   useEffect(() => {
     if (!project) return
     const onKey = (e: KeyboardEvent) => {
@@ -33,6 +42,24 @@ export default function ProjectCardModal({
     }
   }, [project, onClose])
 
+  // Flip-open entrance — runs fresh each time a project is selected.
+  useEffect(() => {
+    if (!project || !cardRef.current) return
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        backdropRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.35, ease: 'power2.out' }
+      )
+      gsap.fromTo(
+        cardRef.current,
+        { rotateY: -85, opacity: 0, scale: 0.94 },
+        { rotateY: 0, opacity: 1, scale: 1, duration: 0.6, ease: 'power3.out', transformOrigin: 'left center' }
+      )
+    })
+    return () => ctx.revert()
+  }, [project])
+
   if (!project) return null
 
   return (
@@ -41,15 +68,21 @@ export default function ProjectCardModal({
       role="dialog"
       aria-modal="true"
       aria-label={`${project.title} project details`}
+      style={{ perspective: '1800px' }}
     >
       <button
+        ref={backdropRef}
         type="button"
         aria-label="Close project details"
         onClick={onClose}
         className="absolute inset-0 bg-ink/85 backdrop-blur-md cursor-default"
       />
 
-      <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/12 bg-[#0a0f18] shadow-[0_40px_120px_rgba(0,0,0,0.7)]">
+      <div
+        ref={cardRef}
+        className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/12 bg-[#0a0f18] shadow-[0_40px_120px_rgba(0,0,0,0.7)]"
+        style={{ transformStyle: 'preserve-3d' }}
+      >
         <button
           type="button"
           onClick={onClose}

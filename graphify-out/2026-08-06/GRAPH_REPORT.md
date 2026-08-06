@@ -1,16 +1,16 @@
-# Graph Report - slate-cinema-github  (2026-08-05)
+# Graph Report - slate-cinema-github  (2026-08-06)
 
 ## Corpus Check
-- 98 files · ~2,675,839 words
+- 98 files · ~2,675,853 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1138 nodes · 2994 edges · 86 communities (58 shown, 28 thin omitted)
+- 1138 nodes · 2998 edges · 87 communities (57 shown, 30 thin omitted)
 - Extraction: 86% EXTRACTED · 14% INFERRED · 0% AMBIGUOUS · INFERRED: 409 edges (avg confidence: 0.78)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `f97bc722`
+- Built from commit: `6ef5e5d6`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -83,6 +83,7 @@
 - [[_COMMUNITY_mj|mj]]
 - [[_COMMUNITY_xd|xd]]
 - [[_COMMUNITY_to|to]]
+- [[_COMMUNITY_StageErrorBoundary|StageErrorBoundary]]
 - [[_COMMUNITY_tq|tq]]
 - [[_COMMUNITY_demangle|demangle]]
 - [[_COMMUNITY_iq|iq]]
@@ -127,27 +128,27 @@
 ## Hyperedges (group relationships)
 - **Next.js Documentation Navigation Pattern** — readme_nextjs_docs_link, readme_learn_nextjs, readme_nextjs_deployment_docs, agents_nextjs_docs [INFERRED 0.75]
 
-## Communities (86 total, 28 thin omitted)
+## Communities (87 total, 30 thin omitted)
 
 ### Community 0 - "Scroll Storytelling Sections"
-Cohesion: 0.13
-Nodes (9): metadata, generateMetadata(), JournalPostPage(), AmbientBackdrop(), Props, getJournalPostBySlug(), JournalBlock, JournalPost (+1 more)
+Cohesion: 0.10
+Nodes (12): metadata, metadata, generateMetadata(), JournalPostPage(), navLinks, AmbientBackdrop(), Props, industries (+4 more)
 
 ### Community 1 - "TypeScript Config"
 Cohesion: 0.10
 Nodes (19): compilerOptions, allowJs, esModuleInterop, incremental, isolatedModules, jsx, lib, module (+11 more)
 
 ### Community 2 - "Landing Page Sections"
-Cohesion: 0.12
-Nodes (10): generateMetadata(), IndustryPage(), IndustryHeroSequence(), Props, IndustryPageContent(), StickyCta(), Lens(), LensProps (+2 more)
+Cohesion: 0.07
+Nodes (19): generateMetadata(), IndustryPage(), IndustryHeroSequence(), Props, IndustryPageContent(), STEP_ICONS, polarToCartesian(), segmentPath() (+11 more)
 
 ### Community 3 - "Runtime Dependencies"
 Cohesion: 0.04
 Nodes (44): dependencies, animejs, @base-ui/react, class-variance-authority, clsx, framer-motion, gsap, @gsap/react (+36 more)
 
 ### Community 5 - "Dev Dependencies"
-Cohesion: 0.05
-Nodes (206): ha(), ab(), Ac(), ad(), Ae(), af(), ag(), ah() (+198 more)
+Cohesion: 0.07
+Nodes (158): ha(), ab(), Ac(), Ae(), af(), ag(), ah(), ai() (+150 more)
 
 ### Community 6 - "magic-card.tsx"
 Cohesion: 0.17
@@ -182,16 +183,12 @@ Cohesion: 0.09
 Nodes (22): aliases, components, hooks, lib, ui, utils, iconLibrary, menuAccent (+14 more)
 
 ### Community 14 - "ESLint Config"
-Cohesion: 0.16
-Nodes (11): eslintConfig, MODELS, SCENE_CLASSES, SCENE_ENTERS, SCENE_EXITS, SCENES, HeroStageHandle, RingHUD (+3 more)
+Cohesion: 0.24
+Nodes (6): SCENES, HeroStageHandle, RingHUD, RingHUDHandle, HeroStage, Props
 
 ### Community 18 - "Quote Calculator"
-Cohesion: 0.11
-Nodes (10): STEP_ICONS, polarToCartesian(), segmentPath(), industries, IndustryData, IndustryFaq, IndustryProcessStep, IndustryServiceCard (+2 more)
-
-### Community 19 - "Schedule Call Widget"
-Cohesion: 0.12
-Nodes (4): metadata, metadata, prepItems, navLinks
+Cohesion: 0.07
+Nodes (49): ad(), bd(), bq(), _c(), cd(), ci(), dd(), dj() (+41 more)
 
 ### Community 37 - "cn"
 Cohesion: 0.16
@@ -203,27 +200,27 @@ Nodes (7): metadata, bentoPlacement, filters, Carousel, CarouselCard, PortfolioP
 
 ### Community 39 - "layout.tsx"
 Cohesion: 0.11
-Nodes (11): guarantees, processPhases, processStats, timelineSteps, stills, NumberTicker(), NumberTickerProps, HeroStat (+3 more)
+Nodes (12): guarantees, processPhases, processStats, timelineSteps, stills, NumberTicker(), NumberTickerProps, HeroStat (+4 more)
 
 ### Community 40 - "shader-lens-blur.tsx"
 Cohesion: 0.40
 Nodes (3): configAtom, initialState, ShaderConfig
 
 ### Community 41 - "CinemaCamera.tsx"
-Cohesion: 0.18
-Nodes (7): PostProductionScene(), RULER_MARKS, WAVE_POINTS, wavePath(), categories, Category, Service
+Cohesion: 0.21
+Nodes (4): PLATFORMS, categories, Category, Service
 
 ### Community 43 - "draco_encoder.js"
 Cohesion: 0.02
 Nodes (19): $a(), fo(), gq(), ik(), li(), mh(), mk(), nh() (+11 more)
 
 ### Community 44 - "aq"
-Cohesion: 0.20
-Nodes (14): bk(), dg(), eq(), Fc(), gh(), gk(), hg(), ll() (+6 more)
+Cohesion: 0.50
+Nodes (4): PostProductionScene(), RULER_MARKS, WAVE_POINTS, wavePath()
 
 ### Community 45 - "A"
 Cohesion: 0.06
-Nodes (39): bg(), en(), fn(), ii(), kd(), kn(), lh(), mg() (+31 more)
+Nodes (52): bg(), bk(), dg(), en(), eq(), Fc(), fn(), gh() (+44 more)
 
 ### Community 46 - "draco_decoder.js"
 Cohesion: 0.07
@@ -262,8 +259,8 @@ Cohesion: 0.14
 Nodes (14): castObject(), destroy(), DracoInt8Array(), Encoder(), GeometryAttribute(), getCache(), Mesh(), MeshBuilder() (+6 more)
 
 ### Community 56 - "HeroStage.tsx"
-Cohesion: 0.13
-Nodes (6): HeroStage, OBJECTS, PartInfo, ScreenConfig, StageErrorBoundary, StageState
+Cohesion: 0.12
+Nodes (10): eslintConfig, MODELS, SCENE_CLASSES, SCENE_ENTERS, SCENE_EXITS, HeroStage, OBJECTS, PartInfo (+2 more)
 
 ### Community 57 - "layout.tsx"
 Cohesion: 0.20
@@ -334,28 +331,28 @@ Cohesion: 0.33
 Nodes (6): ao(), dp(), io(), ji(), lp(), op()
 
 ### Community 87 - "FinalCTA.tsx"
-Cohesion: 0.19
-Nodes (6): PLATFORMS, clients, clients, flagship, Marquee(), MarqueeProps
+Cohesion: 0.24
+Nodes (5): clients, clients, flagship, Marquee(), MarqueeProps
 
 ## Knowledge Gaps
 - **183 isolated node(s):** `@magicuidesign/mcp`, `$schema`, `style`, `rsc`, `tsx` (+178 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **28 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **30 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `ha()` connect `Dev Dependencies` to `marquee.tsx`, `rj`, `xd`, `draco_encoder.js`, `aq`, `A`, `draco_decoder.js`, `mi`, `mi`, `df`, `gh`, `fi`, `ve`?**
+- **Why does `ha()` connect `Dev Dependencies` to `marquee.tsx`, `rj`, `xd`, `draco_encoder.js`, `A`, `draco_decoder.js`, `mi`, `Quote Calculator`, `mi`, `df`, `gh`, `fi`, `ve`?**
   _High betweenness centrality (0.086) - this node is a cross-community bridge._
 - **Why does `ExceptionInfo()` connect `ExceptionInfo` to `draco_decoder.js`?**
   _High betweenness centrality (0.021) - this node is a cross-community bridge._
-- **Why does `A()` connect `A` to `mi`, `Dev Dependencies`?**
+- **Why does `A()` connect `Quote Calculator` to `mi`, `A`?**
   _High betweenness centrality (0.018) - this node is a cross-community bridge._
 - **Are the 153 inferred relationships involving `ha()` (e.g. with `Ac()` and `ad()`) actually correct?**
   _`ha()` has 153 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `@magicuidesign/mcp`, `$schema`, `style` to the rest of the system?**
   _184 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Scroll Storytelling Sections` be split into smaller, more focused modules?**
-  _Cohesion score 0.13438735177865613 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.09885057471264368 - nodes in this community are weakly interconnected._
 - **Should `TypeScript Config` be split into smaller, more focused modules?**
   _Cohesion score 0.1 - nodes in this community are weakly interconnected._

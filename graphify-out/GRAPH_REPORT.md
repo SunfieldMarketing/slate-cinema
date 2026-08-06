@@ -1,7 +1,7 @@
 # Graph Report - slate-cinema-github  (2026-08-06)
 
 ## Corpus Check
-- 98 files · ~2,675,853 words
+- 98 files · ~2,676,041 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6ef5e5d6`
+- Built from commit: `30097474`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
