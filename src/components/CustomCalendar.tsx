@@ -70,7 +70,7 @@ export default function CustomCalendar() {
   }
 
   return (
-    <section ref={containerRef} className="relative w-full py-32 overflow-hidden" style={{ perspective: '1500px' }}>
+    <section ref={containerRef} className="relative w-full pt-10 pb-20 md:pt-14 md:pb-24 overflow-hidden" style={{ perspective: '1500px' }}>
       
       {/* Target reticle decoration */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] pointer-events-none opacity-[0.03]">

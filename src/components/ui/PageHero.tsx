@@ -70,7 +70,9 @@ export default function PageHero({
   return (
     <section
       ref={ref}
-      className="relative w-full min-h-screen flex flex-col justify-between overflow-hidden"
+      className={`relative w-full flex flex-col justify-between overflow-hidden ${
+        stats && stats.length > 0 ? 'min-h-screen' : 'min-h-[62vh] md:min-h-[68vh]'
+      }`}
     >
       {/* ── Video / imagery backdrop ── */}
       {videoSrc && (
@@ -90,7 +92,7 @@ export default function PageHero({
       )}
 
       {/* ── Main content centred in the upper portion ── */}
-      <div className="relative z-10 flex-1 flex items-center justify-center w-full max-w-4xl mx-auto px-5 sm:px-8 text-center pt-28 pb-10">
+      <div className="relative z-10 flex-1 flex items-center justify-center w-full max-w-4xl mx-auto px-5 sm:px-8 text-center pt-24 pb-8">
         <div className="w-full">
           <span
             className="ph-fade inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.35em] uppercase mb-6"
