@@ -13,8 +13,7 @@ gsap.registerPlugin(ScrollTrigger)
 const navLinks: { label: string; href: string }[] = [
   { label: 'Home', href: '/' },
   { label: 'How It Works', href: '/how-it-works' },
-  { label: 'Journal', href: '/journal' },
-  { label: 'Get Started', href: '/contact' },
+  { label: 'Contact Us', href: '/contact#get-started' },
 ]
 
 export default function Nav() {
@@ -116,7 +115,11 @@ export default function Nav() {
                       All Work
                     </Link>
                     <div className="my-1.5 h-px bg-white/[0.06]" />
-                    <div className="max-h-72 overflow-y-auto">
+                    {/* data-lenis-prevent — without it, Lenis's global smooth-scroll
+                        intercepts wheel events over this inner scroll region and the
+                        page reads as "stuck" while hovering the dropdown instead of
+                        scrolling this list natively. */}
+                    <div className="max-h-72 overflow-y-auto" data-lenis-prevent>
                       {industries.map((ind) => (
                         <Link
                           key={ind.id}

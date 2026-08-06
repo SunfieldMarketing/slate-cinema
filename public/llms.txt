@@ -1,0 +1,24 @@
+# Slate Cinema
+
+> Slate Cinema is a Brooklyn, NY-based video production and marketing studio. From concept to campaign, we create cinematic content built to capture attention, tell stories, and drive engagement — for brands across AI, athletics, travel, real estate, healthcare, products, corporate, organizations, and education.
+
+Slate Cinema handles the full production pipeline in-house: pre-production (scripts, storyboards, casting, scheduling), production (on-set filming with full crew), post-production (editing, color, sound design, motion graphics, VFX, AI-assisted workflows), and distribution (platform-native cuts, ad management, social strategy).
+
+## Key Pages
+
+- [Home](https://slatecinema.com/): Overview, reel, results, and client trust signals.
+- [How It Works](https://slatecinema.com/how-it-works): The four-phase production pipeline explained — pre-production, production, post-production, distribution.
+- [Portfolio](https://slatecinema.com/portfolio): Case studies and work samples across all industries served.
+- [Contact / Get Started](https://slatecinema.com/contact): Start a project — quick lead form, full project intake, or schedule a call.
+- [Schedule a Call](https://slatecinema.com/schedule-a-call): Book a 20-minute call directly with the team.
+- [Journal](https://slatecinema.com/journal): Articles on video marketing, storytelling, and content strategy.
+
+## Industries Served
+
+AI, Athletics, Travel, Real Estate, Healthcare, Products, Corporate, Organizations, Education — each with a dedicated portfolio page at `/portfolio/{industry-slug}`.
+
+## Contact
+
+- Email: info@slatecinema.com
+- Phone: +1 732 930 1934
+- Studio: 132 32nd St, Brooklyn, NY 11232

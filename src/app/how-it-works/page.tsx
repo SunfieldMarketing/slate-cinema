@@ -4,7 +4,7 @@ import React, { useRef } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-import { ArrowRight, Clock, ShieldCheck, RefreshCw, Handshake } from 'lucide-react'
+import { Clock, ShieldCheck, RefreshCw, Handshake } from 'lucide-react'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import FinalCTA from '@/components/FinalCTA'
@@ -83,8 +83,13 @@ function ProcessOverview() {
           </h2>
         </div>
 
-        {/* Connector line + diamond nodes */}
-        <div className="po-fade relative h-1 bg-white/10 rounded-full mx-2 mb-5">
+        {/* Connector line + diamond nodes — the nodes are positioned along a
+            single 4-across line, which only lines up with the labels below
+            when those labels are also in one row. On narrow screens the
+            label grid wraps to 2x2 (below), so the nodes would drift out
+            of alignment with their labels; hidden until the label grid is
+            back to a single row at sm:. */}
+        <div className="po-fade relative hidden sm:block h-1 bg-white/10 rounded-full mx-2 mb-5">
           <div ref={fillRef} className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-white/40 to-brand-blue" style={{ width: '0%' }} />
           {timelineSteps.map((s, i) => (
             <div
@@ -108,51 +113,6 @@ function ProcessOverview() {
               <p className="text-white/50 text-xs font-light leading-snug">{s.line}</p>
             </div>
           ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ── Slim transitional CTA bar — same compact "have a project in mind"
-   language as MidCtaBand (used on industry pages), rebuilt here so the
-   copy and button text can follow this page's own context and the
-   site's "Get Started" CTA rule. ─────────────────────────────────────── */
-function NextStepBand() {
-  const ref = useRef<HTMLElement>(null)
-  useGSAP(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo('.nsb-in', { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', scrollTrigger: { trigger: ref.current, start: 'top 88%', once: true } })
-    }, ref)
-    return () => ctx.revert()
-  }, { scope: ref })
-
-  const accent = '#00AEEF'
-
-  return (
-    <section ref={ref} className="relative w-full py-6">
-      <div className="w-full max-w-6xl mx-auto px-5 sm:px-8">
-        <div
-          className="nsb-in relative overflow-hidden rounded-2xl border px-6 sm:px-10 py-6 sm:py-7 flex flex-col sm:flex-row items-center justify-between gap-5"
-          style={{ borderColor: `${accent}40`, background: `linear-gradient(100deg, ${accent}1f 0%, rgba(5,7,12,0.6) 55%, ${accent}14 100%)` }}
-        >
-          <div
-            className="absolute inset-0 opacity-30 pointer-events-none"
-            style={{ background: `radial-gradient(ellipse 40% 130% at 8% 50%, ${accent}44, transparent 65%)` }}
-          />
-          <div className="relative text-center sm:text-left">
-            <div className="text-lg sm:text-xl font-bold text-white leading-snug">Ready to get started?</div>
-            <div className="text-sm text-white/55 font-light mt-1">
-              Reach out and we&apos;ll walk your project through this exact process.
-            </div>
-          </div>
-          <a
-            href="/contact"
-            className="relative group inline-flex items-center gap-2.5 shrink-0 px-7 py-3.5 rounded-full text-sm font-semibold text-black transition-transform hover:scale-[1.04] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
-            style={{ background: accent, boxShadow: `0 0 32px ${accent}55` }}
-          >
-            Get Started <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
-          </a>
         </div>
       </div>
     </section>
@@ -253,7 +213,7 @@ function Guarantees() {
   }, { scope: ref })
 
   return (
-    <div ref={ref} className="relative z-10 w-full max-w-5xl mx-auto px-5 sm:px-8 -mt-8 md:-mt-10 pb-20 md:pb-24">
+    <div ref={ref} className="relative z-10 w-full max-w-5xl mx-auto px-5 sm:px-8 -mt-8 md:-mt-10 pb-8 md:pb-10">
       <div className="w-full h-px bg-white/[0.06] mb-10 md:mb-12" />
       {/* Compact badge strip — deliberately not another card grid */}
       <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 sm:gap-x-14">
@@ -305,10 +265,6 @@ export default function HowItWorksPage() {
         <StatsBand stats={processStats} />
 
         <Guarantees />
-
-        {/* How to actually start — a slim transitional bar, not a full
-            section of buttonless contact cards. */}
-        <NextStepBand />
 
         <FinalCTA />
 

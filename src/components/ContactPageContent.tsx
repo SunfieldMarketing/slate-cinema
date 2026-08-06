@@ -694,7 +694,7 @@ function ContactMethods() {
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <TrustBadge icon={MessageCircleMore} label="We Reply Fast" accent="#fbbf24" />
-            <TrustBadge icon={Users} label="No Bots, Ever" accent="#fbbf24" />
+            <TrustBadge icon={Users} label="Handled With Care" accent="#fbbf24" />
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

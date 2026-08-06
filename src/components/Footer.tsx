@@ -74,14 +74,14 @@ export default function Footer() {
   ]
 
   return (
-    <footer ref={footerRef} className="relative w-full bg-ink pt-32 pb-12 overflow-hidden" style={{ perspective: '1000px' }}>
+    <footer ref={footerRef} className="relative w-full bg-ink pt-14 pb-6 overflow-hidden" style={{ perspective: '1000px' }}>
 
       {/* Marquee */}
-      <div className="w-full border-y border-white/10 py-6 mb-16 overflow-hidden flex whitespace-nowrap bg-[#00AEEF]/5">
+      <div className="w-full border-y border-white/10 py-3 mb-8 overflow-hidden flex whitespace-nowrap bg-[#00AEEF]/5">
         <div className="marquee-content flex gap-12 px-6 items-center w-max">
           {marqueeItems.map((item, idx) => (
             <div key={idx} className="flex items-center gap-12">
-              <span className="text-2xl md:text-4xl font-bold text-white tracking-wider">{item}</span>
+              <span className="text-lg md:text-2xl font-bold text-white tracking-wider">{item}</span>
               <span className="text-[#00AEEF] text-2xl">
                 <svg className="inline w-4 h-4" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0l2.5 5.5L16 8l-5.5 2.5L8 16l-2.5-5.5L0 8l5.5-2.5z"/></svg>
               </span>
@@ -90,31 +90,33 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Massive Wordmark ABOVE Footer Info */}
-      <div className="footer-wordmark w-full flex items-center justify-center py-8 mb-12 overflow-visible">
+      {/* Wordmark ABOVE Footer Info — kept as a subtle watermark, sized
+          down so it reads as texture rather than dominating the footer's
+          height. */}
+      <div className="footer-wordmark w-full flex items-center justify-center py-3 mb-5 overflow-visible">
         <h1
           ref={textRef}
-          className="text-[14vw] md:text-[16vw] font-bold text-white/[0.07] font-mono leading-none tracking-tighter whitespace-nowrap select-none"
+          className="text-[9vw] md:text-[9vw] font-bold text-white/[0.07] font-mono leading-none tracking-tighter whitespace-nowrap select-none"
         >
           SLATE CINEMA
         </h1>
       </div>
 
       {/* Footer Content Grid - layered OVER the wordmark via negative margin */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 -mt-32 lg:-mt-40">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 -mt-16 lg:-mt-20">
 
-        <div className="w-full flex flex-col lg:flex-row justify-between items-start border-b border-white/10 pb-16 mb-16 gap-12 lg:gap-8">
+        <div className="w-full flex flex-col lg:flex-row justify-between items-start border-b border-white/10 pb-8 mb-8 gap-8 lg:gap-8">
 
           {/* CTA + Newsletter */}
-          <div className="w-full lg:max-w-md flex flex-col gap-12">
+          <div className="w-full lg:max-w-md flex flex-col gap-6">
             <div>
-              <h3 className="text-3xl font-bold text-white mb-6">Ready to create?</h3>
+              <h3 className="text-xl font-bold text-white mb-3">Ready to create?</h3>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
                   href="/contact"
                   onMouseMove={handleMagneticMove}
                   onMouseLeave={handleMagneticLeave}
-                  className="footer-btn px-8 py-4 bg-[#00AEEF] text-[#030305] font-bold rounded-full hover:bg-white transition-colors text-center"
+                  className="footer-btn px-6 py-2.5 bg-[#00AEEF] text-[#030305] font-bold rounded-full hover:bg-white transition-colors text-center text-sm"
                 >
                   Get Started
                 </Link>
@@ -122,7 +124,11 @@ export default function Footer() {
             </div>
 
             <div>
-              <h4 className="text-lg font-semibold text-white mb-4">Subscribe to our Newsletter</h4>
+              <h4 className="text-sm font-semibold text-white mb-2">Subscribe to our Newsletter</h4>
+              <p className="text-white/45 text-xs font-light leading-relaxed mb-3 max-w-md">
+                Want to stay up to date on the latest Ai trends, social media frenzy&rsquo;s and the latest in media
+                marketing tech? We share valuable tips straight into your inbox!
+              </p>
               <form
                 className="flex w-full max-w-md"
                 onSubmit={(e) => {
@@ -135,11 +141,11 @@ export default function Footer() {
                   type="email"
                   name="footer-email"
                   placeholder="Your email address"
-                  className="flex-1 bg-white/5 border border-white/10 border-r-0 rounded-l-full px-6 py-4 text-white placeholder:text-white/30 focus:outline-none focus:border-[#00AEEF] transition-colors"
+                  className="flex-1 bg-white/5 border border-white/10 border-r-0 rounded-l-full px-5 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#00AEEF] transition-colors"
                 />
                 <button
                   type="submit"
-                  className="bg-[#00AEEF] text-[#030305] font-bold px-8 py-4 rounded-r-full hover:bg-white transition-colors whitespace-nowrap"
+                  className="bg-[#00AEEF] text-[#030305] font-bold px-6 py-2.5 text-sm rounded-r-full hover:bg-white transition-colors whitespace-nowrap"
                 >
                   Sign Up
                 </button>
@@ -148,10 +154,10 @@ export default function Footer() {
           </div>
 
           {/* Sitemap — only real destinations */}
-          <div className="w-full lg:w-auto flex flex-col sm:flex-row justify-between lg:justify-end gap-12 lg:gap-24 pt-4 lg:pt-0">
+          <div className="w-full lg:w-auto flex flex-col sm:flex-row justify-between lg:justify-end gap-8 lg:gap-24 pt-2 lg:pt-0">
             <div className="flex flex-col">
-              <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Studio</h4>
-              <div className="flex flex-col gap-4">
+              <h4 className="text-white font-bold mb-3 uppercase tracking-wider text-sm">Studio</h4>
+              <div className="flex flex-col gap-2.5">
                 <Link href="/portfolio" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">Work</Link>
                 <Link href="/how-it-works" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">How It Works</Link>
                 <Link href="/journal" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">Journal</Link>
@@ -162,7 +168,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="w-full flex flex-col md:flex-row justify-between items-center mt-12 text-[10px] font-mono text-white/20 tracking-widest uppercase gap-4">
+        <div className="w-full flex flex-col md:flex-row justify-between items-center mt-4 text-[10px] font-mono text-white/20 tracking-widest uppercase gap-4">
           <p>&copy; {new Date().getFullYear()} Slate Cinema</p>
           <div className="flex items-center gap-2">
             Crafted with love by Slate Cinema

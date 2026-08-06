@@ -40,6 +40,32 @@ export const metadata: Metadata = {
 
 import { preload } from 'react-dom';
 
+// Organization/LocalBusiness structured data — every field here is sourced
+// straight from what's already live in the site's own copy (StudioLocation
+// in ContactPageContent.tsx), nothing invented, so it stays truthful if
+// that copy ever changes.
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: 'Slate Cinema',
+  description: 'From concept to campaign, we create cinematic content built to capture attention, tell stories, and drive engagement.',
+  url: BASE_URL,
+  logo: `${BASE_URL}/images/logo-mark.png`,
+  image: `${BASE_URL}/images/logo-mark.png`,
+  email: 'info@slatecinema.com',
+  telephone: '+17329301934',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '132 32nd St',
+    addressLocality: 'Brooklyn',
+    addressRegion: 'NY',
+    postalCode: '11232',
+    addressCountry: 'US',
+  },
+  areaServed: 'US',
+  priceRange: '$$',
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -50,6 +76,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`dark ${inter.variable} ${bebas.variable} ${fraunces.variable} ${courier.variable} ${caveat.variable}`}>
       <body className="font-sans antialiased bg-ink text-foreground overflow-x-hidden">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
         <ScrollRestoration />
         <SmoothScrolling>
           {children}

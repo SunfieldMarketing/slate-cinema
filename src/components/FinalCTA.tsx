@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useRef } from 'react'
-import Link from 'next/link'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -60,7 +59,7 @@ export default function FinalCTA() {
   }
 
   return (
-    <section ref={sectionRef} className="relative w-full py-32 px-6 flex items-center justify-center overflow-hidden" style={{ perspective: '1200px' }}>
+    <section ref={sectionRef} className="relative w-full pt-16 pb-28 md:pt-20 md:pb-32 px-6 flex items-center justify-center overflow-hidden" style={{ perspective: '1200px' }}>
       {/* Background Grid Pattern (matches calendar vibe) */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
 
@@ -103,13 +102,6 @@ export default function FinalCTA() {
                 <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </span>
             </a>
-            <Link
-              href="/schedule-a-call"
-              onClick={() => posthog.capture('see_more_work_clicked', { source: 'final_cta' })}
-              className="px-6 py-5 text-sm font-semibold text-white/60 hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
-            >
-              Schedule a call
-            </Link>
           </div>
 
           <p className="cta-fade mt-8 font-mono text-[10px] tracking-[0.22em] uppercase text-white/55">

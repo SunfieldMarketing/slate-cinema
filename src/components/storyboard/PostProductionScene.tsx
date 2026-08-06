@@ -86,7 +86,7 @@ export default function PostProductionScene() {
                     background: `linear-gradient(180deg, ${post.color}${i % 2 ? '30' : '20'} 0%, ${post.color}10 100%)`,
                   }}
                 >
-                  <span className="font-mono text-[6px] md:text-[8.5px] text-white/80 truncate">{s.name}</span>
+                  <span className="hidden md:block font-mono text-[8.5px] text-white/80 truncate">{s.name}</span>
                 </div>
               ))}
             </div>

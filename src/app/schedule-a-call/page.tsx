@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Target, Clock3, Wallet } from 'lucide-react'
+import { Target, Clock3, Wallet, Sparkles, CalendarClock, Users, ShieldCheck } from 'lucide-react'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import PageHero from '@/components/ui/PageHero'
@@ -17,17 +17,44 @@ const prepItems = [
   { icon: Target, label: 'Your goals', desc: 'What the video needs to do for your business.' },
   { icon: Clock3, label: 'Your timeline', desc: 'When you need it shot, edited, and live.' },
   { icon: Wallet, label: 'A budget ballpark', desc: 'Rough range is fine — it keeps the call efficient.' },
+  { icon: Sparkles, label: 'Any references', desc: 'Links or examples you like are a bonus, not required.' },
 ]
 
+/* Trust badge — matches the pill used on the Contact page's "Ready to
+   Talk" section so this page's framing carries the same visual language. */
+function TrustBadge({ icon: Icon, label }: { icon: typeof Target; label: string }) {
+  return (
+    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-400/30 bg-white/[0.06] backdrop-blur-sm text-white/70 text-[11px] font-mono tracking-wide uppercase shadow-[0_4px_16px_rgba(0,0,0,0.25)]">
+      <Icon className="w-3.5 h-3.5 text-emerald-400" />
+      {label}
+    </span>
+  )
+}
+
+/* ── "Book a time on our calendar" framing — the same Ready to Talk
+   module that lives on the Contact page, brought over here so this page
+   stands on its own instead of assuming you arrived from Contact. ───── */
 function CallFraming() {
   return (
     <section className="relative w-full overflow-hidden pt-16 pb-4 md:pt-20">
       <div className="relative z-10 w-full max-w-3xl mx-auto px-5 sm:px-8 text-center">
+        <div className="inline-flex items-center gap-4 mb-6">
+          <div className="w-12 h-12 shrink-0 rounded-full border border-emerald-400/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.25)]">
+            <CalendarClock className="w-5 h-5 text-emerald-400" />
+          </div>
+          <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-emerald-400 uppercase">{'// Ready to Talk'}</span>
+        </div>
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1] mb-5">Book a time on our calendar</h2>
         <p className="text-white/60 font-light text-base sm:text-lg leading-relaxed">
-          It’s a quick 20-minute call — no pitch deck, just an honest read on scope. To make the most of it, have a
-          rough sense of the following ready.
+          It’s a quick 20-minute call — no pitch deck, just an honest read on scope, timeline, and budget so you know
+          exactly where you stand. To make the most of it, have a rough sense of the following ready.
         </p>
-        <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <TrustBadge icon={Clock3} label="20-Minute Call" />
+          <TrustBadge icon={Users} label="Talk to a Real Producer" />
+          <TrustBadge icon={ShieldCheck} label="No Pitch Deck" />
+        </div>
+        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {prepItems.map((p) => (
             <div key={p.label} className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-6">
               <div className="w-10 h-10 mx-auto rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(0,174,239,0.2)]">

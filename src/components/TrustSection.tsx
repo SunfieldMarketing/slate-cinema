@@ -48,19 +48,19 @@ export default function TrustSection() {
   }, { scope: sectionRef })
 
   return (
-    <section ref={sectionRef} className="relative w-full py-14 md:py-16 overflow-hidden">
+    <section ref={sectionRef} className="relative w-full py-16 md:py-20 overflow-hidden">
       <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-8 text-center">
-        <span className="font-mono text-[10px] tracking-[0.35em] text-white/40 uppercase">
+        <span className="font-mono text-sm sm:text-base tracking-[0.2em] text-white/50 uppercase">
           Join the leaders working with Slate Cinema
         </span>
 
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-14 gap-y-6 sm:gap-x-20">
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-x-16 gap-y-8 sm:gap-x-24">
           {flagship.map((f) => (
             <img
               key={f.name}
               src={f.src}
               alt={f.name}
-              className="fc-mark h-8 sm:h-10 w-auto opacity-70 hover:opacity-100 transition-opacity duration-500 [filter:brightness(0)_invert(1)]"
+              className="fc-mark h-16 sm:h-20 w-auto opacity-70 hover:opacity-100 transition-opacity duration-500 [filter:brightness(0)_invert(1)]"
             />
           ))}
         </div>
