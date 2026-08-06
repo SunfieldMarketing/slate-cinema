@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import Link from 'next/link'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
@@ -14,6 +14,7 @@ gsap.registerPlugin(ScrollTrigger)
 export default function Footer() {
   const footerRef = useRef<HTMLElement>(null)
   const textRef = useRef<HTMLHeadingElement>(null)
+  const [newsletterSubmitted, setNewsletterSubmitted] = useState(false)
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -129,27 +130,41 @@ export default function Footer() {
                 Want to stay up to date on the latest Ai trends, social media frenzy&rsquo;s and the latest in media
                 marketing tech? We share valuable tips straight into your inbox!
               </p>
-              <form
-                className="flex w-full max-w-md"
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  const input = (e.currentTarget.elements.namedItem('footer-email') as HTMLInputElement)?.value
-                  if (input) posthog.capture('newsletter_signed_up', { source: 'footer' })
-                }}
-              >
-                <input
-                  type="email"
-                  name="footer-email"
-                  placeholder="Your email address"
-                  className="flex-1 bg-white/5 border border-white/10 border-r-0 rounded-l-full px-5 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#00AEEF] transition-colors"
-                />
-                <button
-                  type="submit"
-                  className="bg-[#00AEEF] text-[#030305] font-bold px-6 py-2.5 text-sm rounded-r-full hover:bg-white transition-colors whitespace-nowrap"
+              {newsletterSubmitted ? (
+                <p className="text-sm text-[#00AEEF]">Thanks — you&rsquo;re on the list.</p>
+              ) : (
+                <form
+                  className="flex w-full max-w-md"
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    const input = (e.currentTarget.elements.namedItem('footer-email') as HTMLInputElement)?.value
+                    if (!input) return
+                    posthog.capture('newsletter_signed_up', { source: 'footer' })
+                    // Real destination (Payload form-submissions, visible in
+                    // /admin) — fire-and-forget so a hiccup here can never
+                    // block the confirmation state below.
+                    fetch('/api/newsletter', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ email: input }),
+                    }).catch(() => {})
+                    setNewsletterSubmitted(true)
+                  }}
                 >
-                  Sign Up
-                </button>
-              </form>
+                  <input
+                    type="email"
+                    name="footer-email"
+                    placeholder="Your email address"
+                    className="flex-1 bg-white/5 border border-white/10 border-r-0 rounded-l-full px-5 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#00AEEF] transition-colors"
+                  />
+                  <button
+                    type="submit"
+                    className="bg-[#00AEEF] text-[#030305] font-bold px-6 py-2.5 text-sm rounded-r-full hover:bg-white transition-colors whitespace-nowrap"
+                  >
+                    Sign Up
+                  </button>
+                </form>
+              )}
             </div>
           </div>
 

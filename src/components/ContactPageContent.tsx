@@ -389,6 +389,14 @@ function LeadForm() {
     e.preventDefault()
     if (!data.name || !data.email || !data.phone) return
     posthog.capture('lead_form_submitted', { has_company: !!data.company })
+    // Real submission destination (Payload form-submissions, visible in
+    // /admin) — fire-and-forget so a CMS/network hiccup can never block
+    // the success state the visitor already expects.
+    fetch('/api/lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    }).catch(() => {})
     setSubmitted(true)
   }
 

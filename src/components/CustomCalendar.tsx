@@ -12,6 +12,7 @@ export default function CustomCalendar() {
   const containerRef = useRef<HTMLElement>(null)
   const [selectedDate, setSelectedDate] = useState<number | null>(null)
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
+  const [confirmed, setConfirmed] = useState(false)
 
   const dates = [14, 15, 16, 17, 18, 19, 20]
   const times = ['09:00 AM', '10:30 AM', '01:00 PM', '02:30 PM', '04:00 PM']
@@ -165,19 +166,30 @@ export default function CustomCalendar() {
               {/* Confirm Button */}
               <div className="mt-8">
                 <button
-                  disabled={!selectedDate || !selectedTime}
+                  disabled={!selectedDate || !selectedTime || confirmed}
                   onClick={() => {
                     if (selectedDate && selectedTime) {
                       posthog.capture('call_booking_confirmed', { date: selectedDate, time: selectedTime })
+                      // Real destination (Payload form-submissions, visible in
+                      // /admin) — fire-and-forget so a hiccup here can never
+                      // block the confirmation state below.
+                      fetch('/api/booking', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ date: `October ${selectedDate}, 2026`, time: `${selectedTime} EST` }),
+                      }).catch(() => {})
+                      setConfirmed(true)
                     }
                   }}
                   className={`w-full py-4 rounded-lg font-bold tracking-wide uppercase transition-all duration-500 ${
-                    selectedDate && selectedTime 
+                    confirmed
+                      ? 'bg-[#00AEEF]/20 border border-[#00AEEF]/50 text-[#00AEEF] cursor-default'
+                      : selectedDate && selectedTime
                       ? 'bg-white text-[#030305] hover:bg-[#00AEEF] hover:text-white shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(0,174,239,0.4)]'
                       : 'bg-white/5 text-white/20 cursor-not-allowed'
                   }`}
                 >
-                  Confirm Time
+                  {confirmed ? "You're Booked — We'll Be in Touch" : 'Confirm Time'}
                 </button>
               </div>
             </div>

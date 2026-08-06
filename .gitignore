@@ -40,3 +40,20 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .env.local
+
+# payload cms — local sqlite db file + local-disk upload fallback are
+# runtime data, correctly ignored. src/app/(payload)/admin/importMap.js
+# and src/payload-types.ts are NOT ignored (deliberately) -- importMap.js
+# is imported directly by layout.tsx/admin page.tsx at build time; a
+# gitignored copy works in local dev (file exists on disk, just
+# untracked) but fails every CI/Vercel build with
+# "Module not found: Can't resolve '../importMap.js'" since it never
+# gets committed. See CMS_MIGRATION_PHASE0_INVENTORY.md pitfalls.
+*.sqlite
+*.sqlite3
+slate-cinema.db
+# Media collection's local-disk upload fallback (staticDir: 'media' in
+# src/collections/Media.ts) -- resolves relative to the project root,
+# not /public. Production uses Vercel Blob once BLOB_READ_WRITE_TOKEN
+# is set; without it, local dev writes here.
+/media
