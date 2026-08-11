@@ -17,7 +17,15 @@ export const SiteSettings: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'titleTemplate', type: 'text', defaultValue: '%s | Slate Cinema' },
-        { name: 'defaultTitle', type: 'text', defaultValue: 'Slate Cinema | Video Marketing at Your Fingertips' },
+        {
+          name: 'defaultTitle',
+          type: 'text',
+          defaultValue: 'Slate Cinema',
+          admin: {
+            description:
+              'TikTok Content Posting API requirement: the homepage tab title must be literally "Slate Cinema" -- no tagline, no template suffix.',
+          },
+        },
         {
           name: 'defaultDescription',
           type: 'textarea',

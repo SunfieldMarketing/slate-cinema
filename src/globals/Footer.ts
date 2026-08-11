@@ -57,8 +57,8 @@ export const Footer: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'craftedWithLoveText', type: 'text', defaultValue: 'Crafted with love by Slate Cinema' },
-        { name: 'privacyHref', type: 'text', defaultValue: '#', admin: { description: 'Placeholder — no real privacy page exists yet' } },
-        { name: 'termsHref', type: 'text', defaultValue: '#', admin: { description: 'Placeholder — no real terms page exists yet' } },
+        { name: 'privacyHref', type: 'text', defaultValue: '/privacy-policy' },
+        { name: 'termsHref', type: 'text', defaultValue: '/terms-of-service' },
         { name: 'clientPortalHref', type: 'text', defaultValue: '#' },
       ],
     },

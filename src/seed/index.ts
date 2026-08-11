@@ -312,6 +312,7 @@ async function main() {
     slug: 'navigation',
     data: {
       links: [
+        { label: 'Social Media', href: '/social-media-management' },
         { label: 'How It Works', href: '/how-it-works' },
         { label: 'Contact Us', href: '/contact#get-started' },
       ],
@@ -349,8 +350,8 @@ async function main() {
       },
       bottomBar: {
         craftedWithLoveText: 'Crafted with love by Slate Cinema',
-        privacyHref: '#',
-        termsHref: '#',
+        privacyHref: '/privacy-policy',
+        termsHref: '/terms-of-service',
         clientPortalHref: '#',
       },
     },
@@ -363,7 +364,13 @@ async function main() {
     data: {
       seo: {
         titleTemplate: '%s | Slate Cinema',
-        defaultTitle: 'Slate Cinema | Video Marketing at Your Fingertips',
+        // TikTok Content Posting API approval requirement: the homepage
+        // (and both legal pages) <title> must be literally "Slate
+        // Cinema" -- no template suffix, no tagline. Sub-pages that set
+        // their own string title still get the "%s | Slate Cinema"
+        // template above; this only changes what untitled pages (Home,
+        // the legal pages) fall back to.
+        defaultTitle: 'Slate Cinema',
         defaultDescription:
           'From concept to campaign, we create cinematic content built to capture attention, tell stories, and drive engagement. Brooklyn, NY.',
       },
