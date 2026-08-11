@@ -4,7 +4,7 @@ import { getNormalizedIndustries, getNormalizedPortfolioProjects } from '@/lib/n
 import { getPortfolioIndexPageGlobal, getFinalCTA } from '@/lib/payload-data'
 
 export const metadata: Metadata = {
-  title: 'Our Work | Slate Cinema',
+  title: 'Our Work',
   description: 'Browse Slate Cinema video production work by industry, and explore the full reel of selected campaigns.',
 }
 

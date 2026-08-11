@@ -3,7 +3,7 @@ import JournalPageContent from '@/components/JournalPageContent'
 import { getNormalizedJournalPosts } from '@/lib/normalize'
 
 export const metadata: Metadata = {
-  title: 'The Slate Journal | Slate Cinema',
+  title: 'The Slate Journal',
   description:
     'Notes on video production, storytelling, and brand — practical writing from Slate Cinema on what actually earns attention and what makes people watch to the end.',
 }

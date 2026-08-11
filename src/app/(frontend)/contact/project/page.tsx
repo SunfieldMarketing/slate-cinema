@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Nav from '@/components/Nav'
 
 export const metadata: Metadata = {
-  title: 'Project Intake | Slate Cinema',
+  title: 'Project Intake',
   description:
     'Tell us about your project — goals, timeline, and budget — and we’ll follow up with a fixed-price proposal within one business day.',
 }

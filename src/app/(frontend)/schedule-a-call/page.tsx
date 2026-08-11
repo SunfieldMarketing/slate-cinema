@@ -11,7 +11,7 @@ import { getScheduleACallPageGlobal, getReadyToTalk } from '@/lib/payload-data'
 import type { ReadyToTalk as ReadyToTalkGlobal } from '@/payload-types'
 
 export const metadata: Metadata = {
-  title: 'Schedule a Call | Slate Cinema',
+  title: 'Schedule a Call',
   description:
     'Book a 20-minute call with our team to talk through your project, timeline, and budget — no pitch deck, just an honest read on scope.',
 }

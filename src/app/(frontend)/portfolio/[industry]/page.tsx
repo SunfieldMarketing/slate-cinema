@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ industry:
   const industry = industries.find((i) => i.slug === slug)
   if (!industry) return {}
   return {
-    title: `${industry.label} Video Production | Slate Cinema`,
+    title: `${industry.label} Video Production`,
     description: industry.description,
   }
 }
