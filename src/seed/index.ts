@@ -7,7 +7,7 @@
 
   Run with: npx tsx src/seed/index.ts
   Requires ADMIN_USERNAME + ADMIN_INITIAL_PASSWORD in the environment to
-  create the first admin user (16+ chars — enforced in
+  create the first admin user (8+ chars — enforced in
   src/collections/Users.ts too, not just here).
 */
 import fs from 'fs'

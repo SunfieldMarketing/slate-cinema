@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-const MIN_PASSWORD_LENGTH = 16
+const MIN_PASSWORD_LENGTH = 8
 
 /*
   Admin users — username-based login (not email), per the migration
@@ -9,10 +9,12 @@ const MIN_PASSWORD_LENGTH = 16
   vars, not through Payload's public "create first user" screen, so
   that screen never has to be exposed.
 
-  The 16-char minimum lives in this collection's own beforeChange hook,
-  not only in the seed script -- a lesson from the WaveCare migration,
-  where the same check living solely in the seed script meant a later
-  password update via a direct API call silently skipped it.
+  The minimum lives in this collection's own beforeChange hook, not only
+  in the seed script -- a lesson from the WaveCare migration, where the
+  same check living solely in the seed script meant a later password
+  update via a direct API call silently skipped it. Lowered from 16 to 8
+  at the client's explicit request (2026-08-11) to allow a specific
+  shorter admin password; still a real floor, not removed entirely.
 */
 export const Users: CollectionConfig = {
   slug: 'users',
