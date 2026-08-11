@@ -1155,13 +1155,7 @@ export interface Footer {
   };
   bottomBar?: {
     craftedWithLoveText?: string | null;
-    /**
-     * Placeholder — no real privacy page exists yet
-     */
     privacyHref?: string | null;
-    /**
-     * Placeholder — no real terms page exists yet
-     */
     termsHref?: string | null;
     clientPortalHref?: string | null;
   };
@@ -1176,6 +1170,9 @@ export interface SiteSetting {
   id: number;
   seo?: {
     titleTemplate?: string | null;
+    /**
+     * TikTok Content Posting API requirement: the homepage tab title must be literally "Slate Cinema" -- no tagline, no template suffix.
+     */
     defaultTitle?: string | null;
     defaultDescription?: string | null;
     ogImage?: (number | null) | Media;
