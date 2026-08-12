@@ -199,8 +199,9 @@ that webhook is still the intended destination before relying on it.
    asked in. Needed: webhook URL(s) or API key + location ID for the Lead
    Form and the Schedule-a-Call calendar; a call on custom-UI-plus-webhook
    vs. GHL's own embedded widgets.
-2. **Video hosting** — keep Vercel Blob. No re-platforming. WebP conversion
-   proceeds independently (see task below).
+2. **Video hosting** — CONFIRMED (2026-08-12, after being reopened when the
+   call transcript surfaced a more specific AWS + thumbnail-first plan):
+   keep Vercel Blob as-is. No re-platforming, no AWS migration. Final.
 3. **"Ad management page"** — confirmed: Social Media Management page.
    Already fixed (change #11 above).
 4. **Project Intake form** (`/contact/project`, `public/intake.html`) —
