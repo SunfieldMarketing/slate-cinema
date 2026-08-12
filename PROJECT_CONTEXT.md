@@ -141,6 +141,31 @@ Cinema instead.
 - Hero video is a hand-wired frame sequence, not swappable via the admin —
   see "Hero scroll video swap" above.
 
+## Mobile audit (2026-08-12)
+
+Swept every route at 375px width (home, portfolio + all 9 industries,
+contact, contact/project including the intake iframe's own document,
+schedule-a-call, how-it-works, journal + a post, privacy-policy,
+terms-of-service, social-media-management) checking for horizontal
+overflow / off-viewport content via a scripted DOM check, not just
+visual inspection. All clean except one real fix: CustomCalendar's
+date-picker buttons were rendering ~30x22px (aspect-square sized purely
+by a 7-column grid track) -- added `min-h-9 min-w-9` so they hold a
+real tap-target floor regardless of track width.
+
+Also chased down what looked like a severe finding -- the homepage
+hero's CTA buttons and headline letters appearing permanently stuck at
+their GSAP entrance-animation "from" state (invisible / off-screen) on
+mobile -- and traced it to the test browser's tab not being focused
+(`document.visibilityState:"hidden"`), which throttles
+`requestAnimationFrame` site-wide; reproduced identically at desktop
+width, which rules out anything mobile-specific. Not a real bug.
+**Caveat for future sessions**: this harness's automated Browser pane
+cannot reliably test rAF/GSAP-driven entrance animations for this
+reason -- structural checks (overflow, computed sizing) remain valid,
+but don't trust an animation-dependent finding without also reproducing
+it at a different viewport width to rule out the focus/rAF artifact.
+
 ## Deploy status (2026-08-12, end of session)
 
 Production (`slate-cinema.vercel.app`, commit `73d1cf5`) is **4 commits
