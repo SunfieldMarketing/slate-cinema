@@ -9,7 +9,7 @@ export function AdminLogo() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
       <img
-        src="/images/logo-mark.png"
+        src="/images/logo-mark.webp"
         alt="Slate Cinema"
         style={{ width: '2rem', height: '2rem', objectFit: 'contain' }}
       />

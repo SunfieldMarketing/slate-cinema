@@ -483,9 +483,9 @@ async function main() {
 
   // 11. HomePage global
   const flagshipLogos = [
-    { name: 'Meta', src: '/images/clients/meta-logo.png' },
-    { name: 'Alo', src: '/images/clients/alo-logo.png' },
-    { name: 'B&H', src: '/images/clients/bh-logo.png' },
+    { name: 'Meta', src: '/images/clients/meta-logo.webp' },
+    { name: 'Alo', src: '/images/clients/alo-logo.webp' },
+    { name: 'B&H', src: '/images/clients/bh-logo.webp' },
   ]
   const marqueeClients = [
     { name: 'Dream', src: '/images/clients/dream-testimonials.webp' },
@@ -598,10 +598,10 @@ async function main() {
 
   // 12. HowItWorksPage global
   const behindTheScenesStills = [
-    { src: '/images/portfolio-production.png', label: 'On Set', desc: "Whether it's in the universe or metaverse our team shows up.", span: 'tall' as const },
-    { src: '/images/portfolio-brand.png', label: 'The Edit Bay', desc: 'Frame-by-frame assembly with an editor who thinks in story beats.', span: 'normal' as const },
-    { src: '/images/portfolio-social.png', label: 'Color Suite', desc: 'A signature grade that makes your brand recognizable in any feed.', span: 'normal' as const },
-    { src: '/images/portfolio-event.png', label: 'Sound Stage', desc: 'Mix, score, and sound design tuned for sound-on and sound-off.', span: 'wide' as const },
+    { src: '/images/portfolio-production.webp', label: 'On Set', desc: "Whether it's in the universe or metaverse our team shows up.", span: 'tall' as const },
+    { src: '/images/portfolio-brand.webp', label: 'The Edit Bay', desc: 'Frame-by-frame assembly with an editor who thinks in story beats.', span: 'normal' as const },
+    { src: '/images/portfolio-social.webp', label: 'Color Suite', desc: 'A signature grade that makes your brand recognizable in any feed.', span: 'normal' as const },
+    { src: '/images/portfolio-event.webp', label: 'Sound Stage', desc: 'Mix, score, and sound design tuned for sound-on and sound-off.', span: 'wide' as const },
   ]
   await payload.updateGlobal({
     slug: 'how-it-works-page',

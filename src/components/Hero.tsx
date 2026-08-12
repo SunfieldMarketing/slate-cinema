@@ -74,7 +74,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
     const loadFrame = async (i: number) => {
       if (cancelled || bitmapsRef.current[i]) return
       try {
-        const resp = await fetch(`/videos/frames/frame_${i.toString().padStart(4, '0')}.jpg`)
+        const resp = await fetch(`/videos/frames/frame_${i.toString().padStart(4, '0')}.webp`)
         if (cancelled) return
         const blob = await resp.blob()
         if (cancelled) return

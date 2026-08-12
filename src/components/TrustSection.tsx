@@ -23,9 +23,9 @@ gsap.registerPlugin(ScrollTrigger)
   below rather than clashing brand colors against each other.
 */
 const fallbackFlagship = [
-  { name: 'Meta', src: '/images/clients/meta-logo.png' },
-  { name: 'Alo', src: '/images/clients/alo-logo.png' },
-  { name: 'B&H', src: '/images/clients/bh-logo.png' },
+  { name: 'Meta', src: '/images/clients/meta-logo.webp' },
+  { name: 'Alo', src: '/images/clients/alo-logo.webp' },
+  { name: 'B&H', src: '/images/clients/bh-logo.webp' },
 ]
 
 const fallbackClients = [

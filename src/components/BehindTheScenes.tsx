@@ -10,10 +10,10 @@ import { mediaUrl } from '@/lib/media-url'
 gsap.registerPlugin(ScrollTrigger)
 
 const fallbackStills = [
-  { url: '/images/portfolio-production.png', label: 'On Set', desc: "Whether it's in the universe or metaverse our team shows up.", span: 'tall' as const },
-  { url: '/images/portfolio-brand.png', label: 'The Edit Bay', desc: 'Frame-by-frame assembly with an editor who thinks in story beats.' },
-  { url: '/images/portfolio-social.png', label: 'Color Suite', desc: 'A signature grade that makes your brand recognizable in any feed.' },
-  { url: '/images/portfolio-event.png', label: 'Sound Stage', desc: 'Mix, score, and sound design tuned for sound-on and sound-off.', span: 'wide' as const },
+  { url: '/images/portfolio-production.webp', label: 'On Set', desc: "Whether it's in the universe or metaverse our team shows up.", span: 'tall' as const },
+  { url: '/images/portfolio-brand.webp', label: 'The Edit Bay', desc: 'Frame-by-frame assembly with an editor who thinks in story beats.' },
+  { url: '/images/portfolio-social.webp', label: 'Color Suite', desc: 'A signature grade that makes your brand recognizable in any feed.' },
+  { url: '/images/portfolio-event.webp', label: 'Sound Stage', desc: 'Mix, score, and sound design tuned for sound-on and sound-off.', span: 'wide' as const },
 ]
 
 export default function BehindTheScenes({ data }: { data?: HowItWorksPage['behindTheScenes'] }) {

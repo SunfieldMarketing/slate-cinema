@@ -32,8 +32,8 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description,
     icons: {
-      icon: '/images/logo-mark.png',
-      apple: '/images/logo-mark.png',
+      icon: '/images/logo-mark.webp',
+      apple: '/images/logo-mark.webp',
     },
     openGraph: {
       title,
@@ -76,8 +76,8 @@ export default async function RootLayout({
     name: 'Slate Cinema',
     description: settings.seo?.defaultDescription,
     url: BASE_URL,
-    logo: `${BASE_URL}/images/logo-mark.png`,
-    image: `${BASE_URL}/images/logo-mark.png`,
+    logo: `${BASE_URL}/images/logo-mark.webp`,
+    image: `${BASE_URL}/images/logo-mark.webp`,
     email: contact?.email,
     telephone: contact?.phone,
     address: {

@@ -86,10 +86,10 @@ const MAX_SCROLL = 3000;
 // Use local portfolio images
 const IMAGES = Array.from({ length: TOTAL_IMAGES }, (_, i) => {
     const assets = [
-        '/images/portfolio-production.png',
-        '/images/portfolio-brand.png',
-        '/images/portfolio-social.png',
-        '/images/portfolio-event.png'
+        '/images/portfolio-production.webp',
+        '/images/portfolio-brand.webp',
+        '/images/portfolio-social.webp',
+        '/images/portfolio-event.webp'
     ];
     return assets[i % assets.length];
 });

@@ -119,7 +119,7 @@ export default function SocialMediaManagementPage() {
       <div className="smm-page">
         <header className="site">
           <div className="navbar">
-            <a className="brand" href="/"><img src="/images/logo-mark.png" alt="Slate Cinema" /><span>SLATE CINEMA</span></a>
+            <a className="brand" href="/"><img src="/images/logo-mark.webp" alt="Slate Cinema" /><span>SLATE CINEMA</span></a>
             <nav className="main">
               <a href="/">Home</a><a href="/portfolio">Portfolio</a>
               <a className="on" href="/social-media-management">Social Media</a>

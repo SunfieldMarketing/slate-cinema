@@ -61,7 +61,7 @@ export default function PrivacyPolicyPage() {
       <div className="legal-page">
         <header className="site">
           <div className="navbar">
-            <a className="brand" href="/"><img src="/images/logo-mark.png" alt="Slate Cinema" /><span>SLATE CINEMA</span></a>
+            <a className="brand" href="/"><img src="/images/logo-mark.webp" alt="Slate Cinema" /><span>SLATE CINEMA</span></a>
             <nav className="main">
               <a href="/">Home</a><a href="/portfolio">Portfolio</a>
               <a href="/social-media-management">Social Media</a>
@@ -72,7 +72,7 @@ export default function PrivacyPolicyPage() {
         </header>
 
         <div className="wrap doc">
-          <div className="docmark"><img src="/images/logo-mark.png" alt="Slate Cinema app icon" /><span>SLATE CINEMA</span></div>
+          <div className="docmark"><img src="/images/logo-mark.webp" alt="Slate Cinema app icon" /><span>SLATE CINEMA</span></div>
           <h1>Privacy Policy</h1>
           <p className="dateline">Last updated · 6 August 2026</p>
 

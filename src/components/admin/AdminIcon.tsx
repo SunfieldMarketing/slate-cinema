@@ -4,7 +4,7 @@ import React from 'react'
 export function AdminIcon() {
   return (
     <img
-      src="/images/logo-mark.png"
+      src="/images/logo-mark.webp"
       alt="Slate Cinema"
       style={{ width: '1.75rem', height: '1.75rem', objectFit: 'contain' }}
     />

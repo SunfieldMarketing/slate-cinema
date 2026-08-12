@@ -93,12 +93,12 @@ export const industries: IndustryData[] = [
     blurb: 'AI-accelerated brand stories, explainers, and stylized 2D/3D pieces that make complex ideas feel effortless.',
     description: 'From explainer videos to fully stylized 2D/3D brand worlds, our AI-assisted animation pipeline turns dense or abstract ideas into something an audience actually wants to watch. Every project starts as a storyboard, moves through rapid AI-assisted style exploration, then gets hand-finished by real animators and ships platform-native — because a great AI-accelerated idea still needs to land in six seconds on a phone screen.',
     stat: 'AI · 2D · 3D',
-    heroImage: '/images/ai_hero_anim.png',
+    heroImage: '/images/ai_hero_anim.webp',
     heroVideo: '/videos/post-production.mp4',
     gallery: [
-      '/images/ai_anim_gal_1.png',
-      '/images/ai_anim_gal_2.png',
-      '/images/ai_anim_gal_3.png',
+      '/images/ai_anim_gal_1.webp',
+      '/images/ai_anim_gal_2.webp',
+      '/images/ai_anim_gal_3.webp',
     ],
     stats: [
       { value: 40, suffix: '+', label: 'AI-Assisted Pieces' },
@@ -115,7 +115,7 @@ export const industries: IndustryData[] = [
         outcome: '+3.1x demo requests',
         deliverables: ['Script & storyboard', 'AI-assisted style frames', 'Full motion + sound design', 'Every aspect ratio'],
         meta: '60–120s · 4–6 wks',
-        image: '/images/ai_anim_svc_explainer.png',
+        image: '/images/ai_anim_svc_explainer.webp',
         featured: true,
       },
       {
@@ -124,7 +124,7 @@ export const industries: IndustryData[] = [
         outcome: '+212% PDP conversion',
         deliverables: ['Macro product renders', 'Physics simulation', 'Studio lighting'],
         meta: '30–60s · 5–7 wks',
-        image: '/images/ai_anim_svc_cgi.png',
+        image: '/images/ai_anim_svc_cgi.webp',
       },
       {
         title: 'Motion Branding',
@@ -132,7 +132,7 @@ export const industries: IndustryData[] = [
         outcome: 'One system, 9 teams',
         deliverables: ['Animated logo suite', 'Motion spec doc', 'Broadcast package'],
         meta: 'System · 3–5 wks',
-        image: '/images/ai_anim_svc_branding.png',
+        image: '/images/ai_anim_svc_branding.webp',
       },
       {
         title: 'Character Work',
@@ -140,7 +140,7 @@ export const industries: IndustryData[] = [
         outcome: '+61% brand recall',
         deliverables: ['Character design + rig', 'Season of spots', 'Platform cutdowns'],
         meta: 'Season · 6–8 wks',
-        image: '/images/ai_anim_svc_character.png',
+        image: '/images/ai_anim_svc_character.webp',
       },
       {
         title: 'Social Loops',
@@ -148,7 +148,7 @@ export const industries: IndustryData[] = [
         outcome: '2.1M views in week 1',
         deliverables: ['6–15s seamless loops', 'Sound-off captions', 'Feed-native ratios'],
         meta: '6–15s × N · 2–4 wks',
-        image: '/images/ai_anim_svc_social.png',
+        image: '/images/ai_anim_svc_social.webp',
       },
     ],
     videoTestimonials: [
@@ -159,7 +159,7 @@ export const industries: IndustryData[] = [
         company: 'Nimbus Systems',
         outcome: '+3.1x demo requests',
         video: '/videos/pre-production.mp4',
-        poster: '/images/ai_anim_test_1.png',
+        poster: '/images/ai_anim_test_1.webp',
         logo: '/images/clients/lucida-testimonials.webp',
       },
       {
@@ -169,7 +169,7 @@ export const industries: IndustryData[] = [
         company: 'Voltbrew',
         outcome: '+212% PDP conversion',
         video: '/videos/production.mp4',
-        poster: '/images/ai_anim_test_2.png',
+        poster: '/images/ai_anim_test_2.webp',
         logo: '/images/clients/dream-testimonials.webp',
       },
       {
@@ -179,7 +179,7 @@ export const industries: IndustryData[] = [
         company: 'Nordform',
         outcome: '-34% support tickets',
         video: '/videos/distribution.mp4',
-        poster: '/images/ai_anim_test_3.png',
+        poster: '/images/ai_anim_test_3.webp',
         logo: '/images/clients/inhale-testimonails.webp',
       },
     ],
@@ -208,12 +208,12 @@ export const industries: IndustryData[] = [
     blurb: 'High-energy sports and fitness content built for retention — hype reels, launches, and athlete features.',
     description: "Sports content lives or dies in the first second. We build hype reels, athlete features, and launch films engineered around retention — fast cuts, real training footage, and a sound design that hits as hard as the content does. This is content built for people who scroll fast and stop for even faster.",
     stat: '12.1M reach',
-    heroImage: '/images/ind_ath_hero.png',
+    heroImage: '/images/ind_ath_hero.webp',
     heroVideo: '/videos/production.mp4',
     gallery: [
-      '/images/ind_ath_gal1.png',
-      '/images/ind_ath_gal2.png',
-      '/images/ind_ath_gal3.png',
+      '/images/ind_ath_gal1.webp',
+      '/images/ind_ath_gal2.webp',
+      '/images/ind_ath_gal3.webp',
     ],
     stats: [
       { value: 12, suffix: 'M+', label: 'Total Reach' },
@@ -230,7 +230,7 @@ export const industries: IndustryData[] = [
         outcome: 'Retention-first cuts',
         deliverables: ['On-site multi-cam capture', 'Beat-synced fast edit', 'Sound design pass', 'Feed-native ratios'],
         meta: '15–60s · 2–4 wks',
-        image: '/images/ind_ath_gal1.png',
+        image: '/images/ind_ath_gal1.webp',
         featured: true,
       },
       {
@@ -239,7 +239,7 @@ export const industries: IndustryData[] = [
         outcome: 'Sponsor-ready long-form',
         deliverables: ['Interview + b-roll shoot', 'Story-driven edit', 'Broadcast + social cutdowns'],
         meta: '2–4 min · 4–6 wks',
-        image: '/images/ind_ath_gal2.png',
+        image: '/images/ind_ath_gal2.webp',
       },
       {
         title: 'Product Launch Content',
@@ -247,7 +247,7 @@ export const industries: IndustryData[] = [
         outcome: 'Launch-day ready',
         deliverables: ['Studio + on-field shoot', 'Launch film', 'Ad cutdowns'],
         meta: '30–90s · 3–5 wks',
-        image: '/images/ind_ath_gal3.png',
+        image: '/images/ind_ath_gal3.webp',
       },
       {
         title: 'Live Event Capture',
@@ -255,7 +255,7 @@ export const industries: IndustryData[] = [
         outcome: 'Same-week delivery',
         deliverables: ['Multi-cam crew on-site', 'Same-week edit turnaround', 'Recap + social clips'],
         meta: 'Event day · 1–2 wk turnaround',
-        image: '/images/ind_ath_hero.png',
+        image: '/images/ind_ath_hero.webp',
       },
     ],
     process: [
@@ -282,12 +282,12 @@ export const industries: IndustryData[] = [
     blurb: 'Aspirational destination films and property showcases that sell the feeling of being there.',
     description: "Travel and hospitality content has one job: make someone feel like they're already there. We shoot destination films and property showcases with cinema drones, golden-hour scheduling, and a color grade built to make a place feel like a memory before the viewer has even booked.",
     stat: 'Cinematic drone',
-    heroImage: '/images/ind_travel_hero.png',
+    heroImage: '/images/ind_travel_hero.webp',
     heroVideo: '/videos/hero-camera.mp4',
     gallery: [
-      '/images/ind_travel_gal1.png',
-      '/images/ind_travel_gal2.png',
-      '/images/ind_travel_gal3.png',
+      '/images/ind_travel_gal1.webp',
+      '/images/ind_travel_gal2.webp',
+      '/images/ind_travel_gal3.webp',
     ],
     stats: [
       { value: 22, suffix: '', label: 'Destinations Shot' },
@@ -304,7 +304,7 @@ export const industries: IndustryData[] = [
         outcome: 'Booking-intent content',
         deliverables: ['Location scouting', 'Golden-hour shoot schedule', 'Cinema drone footage', 'Full grade'],
         meta: '60–120s · 5–7 wks',
-        image: '/images/ind_travel_gal1.png',
+        image: '/images/ind_travel_gal1.webp',
         featured: true,
       },
       {
@@ -313,7 +313,7 @@ export const industries: IndustryData[] = [
         outcome: 'Cinema-grade aerials',
         deliverables: ['Cinema drone operator', '4K aerial passes', 'Stabilized + graded footage'],
         meta: '1–2 shoot days · 2–3 wks',
-        image: '/images/ind_travel_gal2.png',
+        image: '/images/ind_travel_gal2.webp',
       },
       {
         title: 'Property Showcases',
@@ -321,7 +321,7 @@ export const industries: IndustryData[] = [
         outcome: 'Booking-page ready',
         deliverables: ['Interior + exterior shoot', 'Property walkthrough edit', 'Web + social cutdowns'],
         meta: '30–90s · 3–5 wks',
-        image: '/images/ind_travel_gal3.png',
+        image: '/images/ind_travel_gal3.webp',
       },
       {
         title: 'Hospitality Brand Content',
@@ -329,7 +329,7 @@ export const industries: IndustryData[] = [
         outcome: 'Always-on content',
         deliverables: ['Content shoot day', 'Batch social cutdowns', 'Brand-consistent grade'],
         meta: 'Batch · 4–6 wks',
-        image: '/images/ind_travel_hero.png',
+        image: '/images/ind_travel_hero.webp',
       },
     ],
     process: [
@@ -356,12 +356,12 @@ export const industries: IndustryData[] = [
     blurb: 'Property tours, development timelapses, and aerial cinematography that move listings faster.',
     description: "A listing with a cinematic walkthrough moves faster than one with photos alone. We shoot property tours, development timelapses, and aerial cinematography built to make a space feel real before a buyer ever steps inside — the difference between a listing and a landmark.",
     stat: '98% watch time',
-    heroImage: '/images/ind_realestate_hero.png',
+    heroImage: '/images/ind_realestate_hero.webp',
     heroVideo: '/videos/distribution.mp4',
     gallery: [
-      '/images/ind_realestate_gal1.png',
-      '/images/ind_realestate_gal2.png',
-      '/images/ind_realestate_gal3.png',
+      '/images/ind_realestate_gal1.webp',
+      '/images/ind_realestate_gal2.webp',
+      '/images/ind_realestate_gal3.webp',
     ],
     stats: [
       { value: 9, suffix: '', label: 'Listings Moved Faster' },
@@ -378,7 +378,7 @@ export const industries: IndustryData[] = [
         outcome: 'Faster time-on-market',
         deliverables: ['Interior + exterior shoot', 'Full walkthrough edit', 'MLS + social cutdowns'],
         meta: '60–90s · 2–3 wks',
-        image: '/images/ind_realestate_gal1.png',
+        image: '/images/ind_realestate_gal1.webp',
         featured: true,
       },
       {
@@ -387,7 +387,7 @@ export const industries: IndustryData[] = [
         outcome: 'Milestone-ready footage',
         deliverables: ['Fixed-rig or scheduled capture', 'Progress edits', 'Final compilation film'],
         meta: 'Multi-month · scheduled visits',
-        image: '/images/ind_realestate_gal2.png',
+        image: '/images/ind_realestate_gal2.webp',
       },
       {
         title: 'Aerial Drone Cinematography',
@@ -395,7 +395,7 @@ export const industries: IndustryData[] = [
         outcome: 'Standout listing media',
         deliverables: ['Licensed drone operator', '4K aerial passes', 'Graded aerial footage'],
         meta: '1 shoot day · 1–2 wks',
-        image: '/images/ind_realestate_gal3.png',
+        image: '/images/ind_realestate_gal3.webp',
       },
       {
         title: 'Agent & Brokerage Brand Films',
@@ -403,7 +403,7 @@ export const industries: IndustryData[] = [
         outcome: 'Trust-building brand asset',
         deliverables: ['Interview + lifestyle shoot', 'Brand film edit', 'Social cutdowns'],
         meta: '60–90s · 3–4 wks',
-        image: '/images/ind_realestate_hero.png',
+        image: '/images/ind_realestate_hero.webp',
       },
     ],
     process: [
@@ -430,12 +430,12 @@ export const industries: IndustryData[] = [
     blurb: 'Trust-building patient stories, facility films, and clear explainer content for regulated industries.',
     description: "Healthcare content has to earn trust before it earns attention. We build patient stories, facility films, and explainer content that stay clear, compliant, and human — content built for an audience that needs to trust you before they'll listen to you.",
     stat: 'Impact films',
-    heroImage: '/images/ind_health_hero.png',
+    heroImage: '/images/ind_health_hero.webp',
     heroVideo: '/videos/pre-production.mp4',
     gallery: [
-      '/images/ind_health_gal1.png',
-      '/images/ind_health_gal2.png',
-      '/images/ind_health_gal3.png',
+      '/images/ind_health_gal1.webp',
+      '/images/ind_health_gal2.webp',
+      '/images/ind_health_gal3.webp',
     ],
     stats: [
       { value: 3, suffix: '', label: 'Awards Won' },
@@ -455,12 +455,12 @@ export const industries: IndustryData[] = [
     blurb: 'Scroll-stopping product spotlights and e-commerce ads engineered for conversion and ROAS.',
     description: "Product content only works if it converts. We shoot macro-lit spotlights and e-commerce ads with a signature color grade and cuts built to sell in six seconds or less — engineered for ROAS first, aesthetics second, though we rarely have to choose between the two.",
     stat: '4.2x ROAS',
-    heroImage: '/images/ind_products_hero.png',
+    heroImage: '/images/ind_products_hero.webp',
     heroVideo: '/videos/production.mp4',
     gallery: [
-      '/images/ind_products_gal1.png',
+      '/images/ind_products_gal1.webp',
       'https://images.unsplash.com/photo-1603219225728-0c9e319d2373?q=80&w=1200',
-      '/images/portfolio-social.png',
+      '/images/portfolio-social.webp',
     ],
     stats: [
       { value: 4.2, suffix: 'x', label: 'Avg. ROAS' },
@@ -477,7 +477,7 @@ export const industries: IndustryData[] = [
         outcome: 'Thumb-stopping opens',
         deliverables: ['Macro lighting setup', 'Hero shot sequence', 'Multi-angle coverage', 'Signature grade'],
         meta: '15–30s · 2–3 wks',
-        image: '/images/ind_products_hero.png',
+        image: '/images/ind_products_hero.webp',
         featured: true,
       },
       {
@@ -486,7 +486,7 @@ export const industries: IndustryData[] = [
         outcome: 'Built to test',
         deliverables: ['Hook-first edit', 'A/B variant cuts', 'Platform-native ratios'],
         meta: '6–15s × N · 2 wks',
-        image: '/images/ind_products_gal1.png',
+        image: '/images/ind_products_gal1.webp',
       },
       {
         title: 'Signature Color Grading',
@@ -494,7 +494,7 @@ export const industries: IndustryData[] = [
         outcome: 'Catalog-wide consistency',
         deliverables: ['Custom LUT development', 'Full-catalog grade pass', 'Delivery specs per platform'],
         meta: 'Batch · 1–2 wks',
-        image: '/images/portfolio-social.png',
+        image: '/images/portfolio-social.webp',
       },
       {
         title: 'Platform-Native Spotlights',
@@ -529,10 +529,10 @@ export const industries: IndustryData[] = [
     blurb: 'Brand films, culture reels, and executive communications that make companies feel human.',
     description: "Corporate content is where most brands get boring. We build brand films, culture reels, and executive communications engineered to make a company feel like the people inside it — because the companies that feel human are the ones people actually want to work with.",
     stat: 'Brand lift +45%',
-    heroImage: '/images/ind_corporate_hero.png',
+    heroImage: '/images/ind_corporate_hero.webp',
     heroVideo: '/videos/performance.mp4',
     gallery: [
-      '/images/portfolio-production.png',
+      '/images/portfolio-production.webp',
       'https://images.unsplash.com/photo-1611149974482-764b0c2a211a?q=80&w=1200',
       'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200',
     ],
@@ -551,7 +551,7 @@ export const industries: IndustryData[] = [
         outcome: 'Human-first brand asset',
         deliverables: ['Interview + b-roll shoot', 'Story-driven edit', 'Web + social cutdowns'],
         meta: '2–3 min · 4–6 wks',
-        image: '/images/ind_corporate_hero.png',
+        image: '/images/ind_corporate_hero.webp',
         featured: true,
       },
       {
@@ -560,7 +560,7 @@ export const industries: IndustryData[] = [
         outcome: 'On-message, on-camera',
         deliverables: ['Studio or on-site shoot', 'Teleprompter direction', 'Multi-cam edit'],
         meta: '2–5 min · 2–3 wks',
-        image: '/images/portfolio-production.png',
+        image: '/images/portfolio-production.webp',
       },
       {
         title: 'Internal Comms Video',
@@ -603,12 +603,12 @@ export const industries: IndustryData[] = [
     blurb: 'Mission-driven storytelling for nonprofits and institutions that moves audiences to act.',
     description: "Mission-driven work needs to move people to actually do something — donate, volunteer, show up. We build storytelling for nonprofits and institutions engineered around a single call to action, shot with the same craft as any commercial campaign because your mission deserves it.",
     stat: 'Award-winning',
-    heroImage: '/images/ind_orgs_hero.png',
+    heroImage: '/images/ind_orgs_hero.webp',
     heroVideo: '/videos/pre-production.mp4',
     gallery: [
       'https://images.unsplash.com/photo-1461532257246-777de18cd58b?q=80&w=1200',
       'https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?q=80&w=1200',
-      '/images/ind_health_gal3.png',
+      '/images/ind_health_gal3.webp',
     ],
     stats: [
       { value: 3, suffix: '', label: 'Festival Selections' },
@@ -642,7 +642,7 @@ export const industries: IndustryData[] = [
         outcome: 'Recruitment-focused cut',
         deliverables: ['On-location shoot', 'Volunteer interview capture', 'Recruitment-focused edit'],
         meta: '60–90s · 2–3 wks',
-        image: '/images/ind_health_gal3.png',
+        image: '/images/ind_health_gal3.webp',
       },
       {
         title: 'Annual Report Video',
@@ -650,7 +650,7 @@ export const industries: IndustryData[] = [
         outcome: 'Board & donor-ready',
         deliverables: ['Data-forward edit', 'Leadership interview cutdowns', 'Web-ready master'],
         meta: '2–3 min · 4–5 wks',
-        image: '/images/ind_orgs_hero.png',
+        image: '/images/ind_orgs_hero.webp',
       },
     ],
     process: [
@@ -677,12 +677,12 @@ export const industries: IndustryData[] = [
     blurb: 'Course trailers, campus tours, and faculty spotlights that help schools and universities put their real story in front of prospective students.',
     description: "Prospective students decide whether they can see themselves on a campus in the first few seconds of a video. We build course and program trailers, campus tour films, faculty and student spotlights, and e-learning content engineered for enrollment marketing — the same pre-production, production, post-production and distribution discipline we bring to every industry we work in, applied to schools, universities and educational brands.",
     stat: 'Campus to classroom',
-    heroImage: '/images/ind_corporate_hero.png',
+    heroImage: '/images/ind_corporate_hero.webp',
     heroVideo: '/videos/production.mp4',
     gallery: [
-      '/images/mediavoid_creative_bright.png',
-      '/images/portfolio-social.png',
-      '/images/mediavoid_tech_bright.png',
+      '/images/mediavoid_creative_bright.webp',
+      '/images/portfolio-social.webp',
+      '/images/mediavoid_tech_bright.webp',
     ],
     stats: [
       { value: 5, suffix: '', label: 'Video Formats Covered' },
@@ -704,7 +704,7 @@ export const industries: IndustryData[] = [
         outcome: 'Enrollment-ready first impression',
         deliverables: ['Faculty & student interviews', 'Campus + classroom b-roll', 'Story-driven edit', 'Every platform ratio'],
         meta: '30–90s · 4–6 wks',
-        image: '/images/mediavoid_creative_bright.png',
+        image: '/images/mediavoid_creative_bright.webp',
         featured: true,
       },
       {
@@ -713,7 +713,7 @@ export const industries: IndustryData[] = [
         outcome: 'Virtual-visit ready',
         deliverables: ['Campus location shoot', 'Guided-tour style edit', 'Web + admissions cutdowns'],
         meta: '2–4 min · 4–6 wks',
-        image: '/images/ind_corporate_hero.png',
+        image: '/images/ind_corporate_hero.webp',
       },
       {
         title: 'Faculty & Student Spotlights',
@@ -721,7 +721,7 @@ export const industries: IndustryData[] = [
         outcome: 'Authentic, story-led proof',
         deliverables: ['Interview shoot', 'Story-driven edit', 'Social cutdowns'],
         meta: '60–120s · 3–4 wks',
-        image: '/images/portfolio-social.png',
+        image: '/images/portfolio-social.webp',
       },
       {
         title: 'E-Learning & Course Content',
@@ -729,7 +729,7 @@ export const industries: IndustryData[] = [
         outcome: 'Built to hold attention',
         deliverables: ['Lecture or module capture', 'Chaptered edit', 'Captioning-ready master'],
         meta: 'Per module · 2–3 wks',
-        image: '/images/mediavoid_tech_bright.png',
+        image: '/images/mediavoid_tech_bright.webp',
       },
     ],
     process: [
