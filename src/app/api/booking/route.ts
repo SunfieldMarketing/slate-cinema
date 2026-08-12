@@ -13,15 +13,32 @@ import { forwardToGHL } from '@/lib/ghl'
   person can actually follow up, in addition to whatever real calendar
   integration (Calendly, Cal.com, etc.) eventually replaces the static
   grid.
+
+  CustomCalendar now also collects name/email/phone before confirming
+  (previously date+time only, with no way to know who booked) -- both
+  the CMS mirror and the GHL forward include them.
 */
 const FORM_TITLE = 'Schedule a Call'
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null)
-  if (!body || typeof body.date !== 'string' || typeof body.time !== 'string') {
-    return NextResponse.json({ error: 'date and time are required' }, { status: 400 })
+  if (
+    !body ||
+    typeof body.date !== 'string' ||
+    typeof body.time !== 'string' ||
+    typeof body.name !== 'string' ||
+    typeof body.email !== 'string' ||
+    typeof body.phone !== 'string'
+  ) {
+    return NextResponse.json({ error: 'date, time, name, email, and phone are required' }, { status: 400 })
   }
-  const { date, time } = body as { date: string; time: string }
+  const { date, time, name, email, phone } = body as {
+    date: string
+    time: string
+    name: string
+    email: string
+    phone: string
+  }
 
   try {
     const payload = await getPayload({ config })
@@ -40,6 +57,9 @@ export async function POST(req: Request) {
               data: {
                 title: FORM_TITLE,
                 fields: [
+                  { blockType: 'text', name: 'name', label: 'Name', required: true },
+                  { blockType: 'email', name: 'email', label: 'Email', required: true },
+                  { blockType: 'text', name: 'phone', label: 'Phone', required: true },
                   { blockType: 'text', name: 'date', label: 'Date', required: true },
                   { blockType: 'text', name: 'time', label: 'Time', required: true },
                 ],
@@ -55,13 +75,16 @@ export async function POST(req: Request) {
       data: {
         form: formId,
         submissionData: [
+          { field: 'name', value: name },
+          { field: 'email', value: email },
+          { field: 'phone', value: phone },
           { field: 'date', value: date },
           { field: 'time', value: time },
         ],
       },
     })
 
-    forwardToGHL('GHL_BOOKING_WEBHOOK_URL', { date, time }).catch(() => {})
+    forwardToGHL('GHL_BOOKING_WEBHOOK_URL', { name, email, phone, date, time }).catch(() => {})
 
     return NextResponse.json({ ok: true })
   } catch (err) {

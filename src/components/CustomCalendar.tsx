@@ -14,6 +14,9 @@ export default function CustomCalendar({ copy }: { copy?: ScheduleACallPage['cal
   const [selectedDate, setSelectedDate] = useState<number | null>(null)
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
   const [confirmed, setConfirmed] = useState(false)
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
 
   const dates = [14, 15, 16, 17, 18, 19, 20]
   const times = ['09:00 AM', '10:30 AM', '01:00 PM', '02:30 PM', '04:00 PM']
@@ -27,6 +30,12 @@ export default function CustomCalendar({ copy }: { copy?: ScheduleACallPage['cal
   const selectTimeLabel = copy?.selectTimeLabel || 'Select Time'
   const confirmLabel = copy?.confirmLabel || 'Confirm Time'
   const confirmedLabel = copy?.confirmedLabel || "You're Booked — We'll Be in Touch"
+
+  // Contact fields only appear once a date+time is picked -- reads as a
+  // sequential step (pick a slot, then say who you are) instead of dumping
+  // every field on screen before there's anything to book.
+  const slotPicked = Boolean(selectedDate && selectedTime)
+  const contactValid = name.trim().length > 0 && /\S+@\S+\.\S+/.test(email) && phone.trim().length > 0
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -174,12 +183,40 @@ export default function CustomCalendar({ copy }: { copy?: ScheduleACallPage['cal
                 ))}
               </div>
 
+              {/* Contact info — only asked for once a slot is actually picked */}
+              {slotPicked && !confirmed && (
+                <div className="mt-8 flex flex-col gap-2.5">
+                  <div className="font-mono text-[10px] text-white/30 tracking-widest mb-1 uppercase">Your Details</div>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Full name"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#00AEEF] transition-colors"
+                  />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Email address"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#00AEEF] transition-colors"
+                  />
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="Phone number"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#00AEEF] transition-colors"
+                  />
+                </div>
+              )}
+
               {/* Confirm Button */}
               <div className="mt-8">
                 <button
-                  disabled={!selectedDate || !selectedTime || confirmed}
+                  disabled={!slotPicked || !contactValid || confirmed}
                   onClick={() => {
-                    if (selectedDate && selectedTime) {
+                    if (selectedDate && selectedTime && contactValid) {
                       posthog.capture('call_booking_confirmed', { date: selectedDate, time: selectedTime })
                       // Real destination (Payload form-submissions, visible in
                       // /admin) — fire-and-forget so a hiccup here can never
@@ -187,7 +224,13 @@ export default function CustomCalendar({ copy }: { copy?: ScheduleACallPage['cal
                       fetch('/api/booking', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ date: `October ${selectedDate}, 2026`, time: `${selectedTime} EST` }),
+                        body: JSON.stringify({
+                          date: `October ${selectedDate}, 2026`,
+                          time: `${selectedTime} EST`,
+                          name: name.trim(),
+                          email: email.trim(),
+                          phone: phone.trim(),
+                        }),
                       }).catch(() => {})
                       setConfirmed(true)
                     }
@@ -195,7 +238,7 @@ export default function CustomCalendar({ copy }: { copy?: ScheduleACallPage['cal
                   className={`w-full py-4 rounded-lg font-bold tracking-wide uppercase transition-all duration-500 ${
                     confirmed
                       ? 'bg-[#00AEEF]/20 border border-[#00AEEF]/50 text-[#00AEEF] cursor-default'
-                      : selectedDate && selectedTime
+                      : slotPicked && contactValid
                       ? 'bg-white text-[#030305] hover:bg-[#00AEEF] hover:text-white shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(0,174,239,0.4)]'
                       : 'bg-white/5 text-white/20 cursor-not-allowed'
                   }`}
