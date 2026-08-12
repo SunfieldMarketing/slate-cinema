@@ -200,6 +200,63 @@ step to collect name/email/phone before the booking confirms. Done --
 see commit 578789e. `/api/booking` now requires and mirrors all 5
 fields, and forwards them to `GHL_BOOKING_WEBHOOK_URL`.
 
+## Content-integrity audit (2026-08-12, via shared Google Doc "Slate/Wave web edits 27")
+
+A client-shared audit doc revealed the site's testimonials, portfolio
+case studies, and several stats are **fabricated demo content** left
+over from the original template build, not real Slate Cinema work.
+Fixed what's safe (see commit ed276b1): removed fabricated named
+testimonials (Priya Sharma/Nimbus Systems, Marcus Webb/Voltbrew, Elena
+Ruiz/Nordform, etc. -- real Google review testimonials in Reviews.tsx
+are unaffected), swapped unsourced stats for sourced ones, fixed
+NumberTicker rendering "0" server-side (no-JS/SEO bug), added 9 of 10
+missing 301 redirects, WaveCare->Wavecare spelling, and several copy
+fixes. Synced the equivalent live-DB content (Pipeline global's
+post-production category, HowItWorksPage statsBand, Footer newsletter
+sentence) directly via the admin API so it took effect immediately.
+
+**NOT done, explicitly flagged rather than guessed at:**
+- **The entire portfolio grid is also fabricated** (8 template case
+  studies -- Neon Nights/HyperDrive Motors, Velocity/Apex Athletics,
+  etc. -- with invented metrics, repeated across Home/Portfolio/all 9
+  industry pages). Did not remove it: no real replacement media is
+  available, and pulling it with nothing to replace it would make
+  every page look broken rather than fixed. Needs real client work
+  (videos/photos/case studies) before this can be swapped in.
+- **Full industry-page rebuilds** per the doc's section-by-section
+  plans (Education, Organizations, Real Estate, Hospitality,
+  Animation, AI, new Podcasts page) -- large scope, real Vimeo
+  links/client names given for several, but building 6+ new page
+  structures needs real media and client sign-off, not attempted
+  blind in one pass.
+- **Schedule-a-call: direct conflict.** The audit doc says replace the
+  custom calendar with GHL's embedded booking widget
+  (`api.leadconnectorhq.com/widget/booking/nwrti66org5yO4mGWzb3`).
+  This directly contradicts this session's own earlier instruction
+  ("use the current calendar custom design system") which was already
+  implemented (contact-info collection step, commit 578789e). Left
+  the custom calendar as-is pending a decision on which one wins.
+- **Meta/Alo/B&H logo wall** -- doc says "verify before keeping,"
+  never confirmed either way.
+- **TNR (The Next Ride) page** -- 404 on the new site, was the
+  template for every other industry page's build plan, and the
+  underlying business relationship ended in a collections dispute.
+  Doc explicitly frames this as "decision needed" from Jake (keep TNR
+  as flagship once cleared, or promote CVM Construction instead).
+- **Real Talk podcast page** -- doc proposes a new /portfolio/podcasts
+  page built around a real in-house show, but flags needing Jake's OK
+  before publishing guest names + exact channel URLs.
+- **/thank-you page + dataLayer event** for Google Ads conversion
+  tracking after form submits -- doc flags this as pending from
+  Kauan's 8/7 call, not built yet.
+- Response-time messaging: audit says standardize to one promise
+  site-wide. Aligned the "Avg. Response Time" stat framing, but left
+  "1-Day Response" (custom execution plan) and "Discovery Call...
+  within one business day" alone -- those describe a materially
+  larger deliverable than an acknowledgment reply, and promising a
+  full custom plan "within minutes" would be a real over-promise.
+  Flagging the nuance rather than silently picking one.
+
 ## Client decisions (2026-08-12)
 
 1. **GHL** — client wants a needs-list first, hasn't sent credentials yet.
