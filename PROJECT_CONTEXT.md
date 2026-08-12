@@ -141,6 +141,32 @@ Cinema instead.
 - Hero video is a hand-wired frame sequence, not swappable via the admin —
   see "Hero scroll video swap" above.
 
+## Deploy status (2026-08-12, end of session)
+
+Production (`slate-cinema.vercel.app`, commit `73d1cf5`) is **4 commits
+behind** everything in this doc's "What changed" table. All of it is
+pushed to `cms-migration-phase0` and builds clean as a preview, but
+nothing here is visible to real visitors or Kauan until promoted.
+Deployment protection blocks direct browsing of preview URLs (Vercel
+SSO wall) -- verification for this batch was done via local build +
+local dev server network checks instead (see each commit message for
+specifics), plus confirming zero new entries in Vercel's runtime error
+log for the preview environment.
+
+**Major finding this pass**: `public/intake.html` already has a real,
+working GHL webhook wired into its bundled app code (`sendToGHL` /
+`WEBHOOK_URL` in the file's `__bundler/manifest`-packed JS, pointing at
+`services.leadconnectorhq.com`) -- missed on an earlier pass because
+that pass grepped the file's raw packed text instead of unpacking its
+custom bundler format first. Left it completely untouched; added a
+same-origin fetch-interception mirror (`IntakeFrame.tsx` + `/api/intake`)
+so submissions also land in Payload, without altering the original GHL
+delivery at all. Have NOT test-fired the real webhook (a `curl` test was
+blocked by the sandbox for exactly this reason -- it's a live third-party
+automation endpoint, and test data could trigger real side effects on
+Kauan's GHL account without his knowledge). Confirm with Kauan whether
+that webhook is still the intended destination before relying on it.
+
 ## Client decisions (2026-08-12)
 
 1. **GHL** — client wants a needs-list first, hasn't sent credentials yet.
