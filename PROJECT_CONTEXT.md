@@ -141,15 +141,38 @@ Cinema instead.
 - Hero video is a hand-wired frame sequence, not swappable via the admin —
   see "Hero scroll video swap" above.
 
-## Open questions for the client (asked 2026-08-12, awaiting answers)
+## Client decisions (2026-08-12)
 
-1. GHL credentials/setup — see table above.
-2. Video hosting strategy — keep Vercel Blob vs. move to AWS S3/Vimeo.
-3. "Ad management page" — confirm the Social Media Management page was the
-   intended target (done), or if something WaveCare-specific was meant.
-4. `intake.html` — patch blind, rebuild natively, or leave for now.
-5. Meta Pixel ID.
-6. Any Slate-vs-WaveCare mixups in the transcript items above.
+1. **GHL** — client wants a needs-list first, hasn't sent credentials yet.
+   Still blocked; see the requirements list in the chat response this was
+   asked in. Needed: webhook URL(s) or API key + location ID for the Lead
+   Form and the Schedule-a-Call calendar; a call on custom-UI-plus-webhook
+   vs. GHL's own embedded widgets.
+2. **Video hosting** — keep Vercel Blob. No re-platforming. WebP conversion
+   proceeds independently (see task below).
+3. **"Ad management page"** — confirmed: Social Media Management page.
+   Already fixed (change #11 above).
+4. **Project Intake form** (`/contact/project`, `public/intake.html`) —
+   client wants its backend connected to both the CMS and GHL. Since the
+   file has zero submission mechanism and is a 1.8MB bundle too risky to
+   patch blind, plan is to **rebuild it natively in React**, matching the
+   current visual design, with a new `/api/intake` route mirroring the
+   lead/booking/newsletter pattern (Payload `form-submissions` +
+   `confirmationMessage` fix already proven there) plus a GHL-forward hook
+   ready to activate once credentials arrive. Not started yet — sizable,
+   scoped as its own task.
+5. Meta Pixel ID — still needed, not yet provided.
+6. Any Slate-vs-WaveCare mixups in the transcript items — none flagged yet.
+
+## Images / WebP (2026-08-12 scoping)
+
+537 JPG/PNG files under `public/` (~75MB total), only 5 already WebP.
+Recommended approach over bulk static conversion + rewriting every `<img
+src>`: migrate raw `<img>` tags to `next/image`, which negotiates
+WebP/AVIF automatically per-browser and adds lazy loading + priority
+hints for free — lower risk than hand-converting 537 files and safer than
+a blanket format swap. Keep hero/above-fold media eager/`priority` so nothing
+above the fold regresses on "loads instantly." Not started yet.
 
 ## Client changelog (plain-English, for sending to Kauan)
 
