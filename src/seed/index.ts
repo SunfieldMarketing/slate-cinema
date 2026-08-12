@@ -357,7 +357,7 @@ async function main() {
       newsletter: {
         heading: 'Subscribe to our Newsletter',
         sentence:
-          "Want to stay up to date on the latest Ai trends, social media frenzy's and the latest in media marketing tech? We share valuable tips straight into your inbox!",
+          "Want to stay up to date on the latest AI trends, social media frenzies and the latest in media marketing tech? We share valuable tips straight into your inbox!",
         placeholder: 'Your email address',
         buttonLabel: 'Sign Up',
       },
@@ -673,10 +673,10 @@ async function main() {
         ],
       },
       statsBand: [
-        { value: 1, suffix: 'hr', label: 'Avg. Response Time' },
+        { value: 174, suffix: '+', label: 'Projects Since 2023' },
         { value: 3, suffix: 'wk', label: 'Avg. Turnaround' },
-        { value: 90, suffix: '%', label: 'Client Retention' },
-        { value: 50, suffix: '+', label: 'Brands Served' },
+        { value: 5, suffix: '.0★ / 44 Reviews', label: 'Google Rating' },
+        { value: 124, suffix: '+', label: 'Projects On Frame.io' },
       ],
       guarantees: [
         { icon: 'Clock', title: '1-Day Response', desc: 'A custom execution plan within one business day of your scope form.' },

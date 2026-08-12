@@ -244,11 +244,13 @@ function Guarantees({ items }: { items?: HowItWorksPage['guarantees'] }) {
   )
 }
 
+// Real, sourced numbers only (client audit 2026-08-12 flagged the
+// previous 90%/50+ figures as unsourced placeholder stats).
 const fallbackStats = [
-  { value: 1, suffix: 'hr', label: 'Avg. Response Time' },
+  { value: 174, suffix: '+', label: 'Projects Since 2023' },
   { value: 3, suffix: 'wk', label: 'Avg. Turnaround' },
-  { value: 90, suffix: '%', label: 'Client Retention' },
-  { value: 50, suffix: '+', label: 'Brands Served' },
+  { value: 5, suffix: '.0★ / 44 Reviews', label: 'Google Rating' },
+  { value: 124, suffix: '+', label: 'Projects On Frame.io' },
 ]
 
 export default function HowItWorksPageContent({

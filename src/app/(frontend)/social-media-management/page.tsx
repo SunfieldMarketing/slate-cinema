@@ -23,7 +23,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   description:
-    "We run social media for businesses that would rather be running their business. Slate Cinema plans, produces, schedules and publishes social content for client businesses across Instagram, Facebook, TikTok, YouTube and X — from one calendar, with one approval step, on the client's own accounts.",
+    "We run social media for businesses that need to focus on operations. Slate Cinema plans, produces, schedules and publishes social content for client businesses across Instagram, Facebook, TikTok, YouTube and X — from one calendar, with one approval step, on the client's own accounts.",
 }
 
 export default function SocialMediaManagementPage() {
@@ -133,7 +133,7 @@ export default function SocialMediaManagementPage() {
           <div className="sprockets" aria-hidden="true" />
           <div className="wrap">
             <div className="eyebrow">Distribution&nbsp;·&nbsp;Always&nbsp;On</div>
-            <h1>We run social media for businesses that would rather be <em>running their business.</em></h1>
+            <h1>We run social media for businesses that need to <em>focus on operations.</em></h1>
             <p className="lede">Slate Cinema plans, produces, schedules and publishes social content for client
             businesses across Instagram, Facebook, TikTok, YouTube and X — from one calendar, with one
             approval step, <strong>on the client&apos;s own accounts</strong>. The same crew that shoots your

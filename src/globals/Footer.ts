@@ -31,7 +31,7 @@ export const Footer: GlobalConfig = {
           type: 'textarea',
           required: true,
           defaultValue:
-            "Want to stay up to date on the latest Ai trends, social media frenzy's and the latest in media marketing tech? We share valuable tips straight into your inbox!",
+            "Want to stay up to date on the latest AI trends, social media frenzies and the latest in media marketing tech? We share valuable tips straight into your inbox!",
         },
         { name: 'placeholder', type: 'text', defaultValue: 'Your email address' },
         { name: 'buttonLabel', type: 'text', defaultValue: 'Sign Up' },

@@ -68,7 +68,16 @@ export function NumberTicker({
       )}
       {...props}
     >
-      {startValue}
+      {/* Server-rendered content is the real final value, not startValue --
+          search engines and no-JS clients need to see the actual number
+          (this was previously always "0" until JS ran the count-up spring,
+          per client audit 2026-08-12: "counters render 0 without JS").
+          Once mounted and scrolled into view, the effects above overwrite
+          this textContent and drive the animated count-up as before. */}
+      {Intl.NumberFormat("en-US", {
+        minimumFractionDigits: decimalPlaces,
+        maximumFractionDigits: decimalPlaces,
+      }).format(value)}
     </span>
   )
 }

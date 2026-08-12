@@ -112,6 +112,17 @@ export default function FinalCTA({ data }: { data?: FinalCta | null }) {
                 <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </span>
             </a>
+            <a
+              href="/portfolio"
+              onMouseMove={handleMagneticMove}
+              onMouseLeave={handleMagneticLeave}
+              className="group relative px-10 py-5 rounded-full border border-white/20 bg-white/5 backdrop-blur-md overflow-hidden transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
+            >
+              <div className="absolute inset-0 bg-white scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
+              <span className="relative z-10 flex items-center text-white group-hover:text-black font-semibold transition-colors">
+                View Full Portfolio
+              </span>
+            </a>
           </div>
 
           <p className="cta-fade mt-8 font-mono text-[10px] tracking-[0.22em] uppercase text-white/55">

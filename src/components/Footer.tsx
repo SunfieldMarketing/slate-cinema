@@ -49,11 +49,15 @@ export default function Footer() {
         0.2
       )
 
-      // Marquee
+      // Marquee — duration must scale with content width, not stay fixed:
+      // xPercent:-50 always travels exactly one full copy's width, so when
+      // the phrase list grew from 3 to 20 items the on-screen speed
+      // quietly multiplied ~7x for the same 20s duration (client-reported
+      // "too fast"). Scaled up to keep a comfortable per-phrase pace.
       gsap.to('.marquee-content', {
         xPercent: -50,
         ease: 'none',
-        duration: 20,
+        duration: 55,
         repeat: -1
       })
 
@@ -171,7 +175,10 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Sitemap — only real destinations */}
+          {/* Sitemap — only real destinations. Legal + support links live
+              here too now (previously only in the small bottom bar), so
+              the studio column doesn't read as a single short list floating
+              in an oversized gap next to the CTA column. */}
           <div className="w-full lg:w-auto flex flex-col sm:flex-row justify-between lg:justify-end gap-8 lg:gap-24 pt-2 lg:pt-0">
             <div className="flex flex-col">
               <h4 className="text-white font-bold mb-3 uppercase tracking-wider text-sm">{sitemap?.heading || 'Studio'}</h4>
@@ -181,6 +188,15 @@ export default function Footer() {
                     {link.label}
                   </Link>
                 ))}
+                <a href="/contact#get-started" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">
+                  Support
+                </a>
+                <a href={bottomBar?.privacyHref || '/privacy-policy'} className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">
+                  Privacy Policy
+                </a>
+                <a href={bottomBar?.termsHref || '/terms-of-service'} className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">
+                  Terms of Service
+                </a>
               </div>
             </div>
           </div>

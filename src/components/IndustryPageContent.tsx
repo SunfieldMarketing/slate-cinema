@@ -4,7 +4,7 @@ import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-import { Star, ExternalLink } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import FinalCTA from '@/components/FinalCTA'
@@ -15,8 +15,6 @@ import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
 import { Lens } from '@/components/ui/lens'
 import IndustryServices from '@/components/IndustryServices'
 import IndustryProcess from '@/components/IndustryProcess'
-import IndustryFaq from '@/components/IndustryFaq'
-import IndustryVideoTestimonials from '@/components/IndustryVideoTestimonials'
 import TrustBanner from '@/components/TrustBanner'
 import MidCtaBand from '@/components/MidCtaBand'
 import StickyCta from '@/components/StickyCta'
@@ -99,30 +97,6 @@ function GallerySection({ industry }: { industry: IndustryData }) {
   )
 }
 
-function TestimonialSection({ industry }: { industry: IndustryData }) {
-  const ref = useRef<HTMLElement>(null)
-  useGSAP(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo('.tm-fade', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: ref.current, start: 'top 80%', once: true } })
-    }, ref)
-    return () => ctx.revert()
-  }, { scope: ref })
-
-  return (
-    <section ref={ref} className="relative w-full overflow-hidden py-16 md:py-20">
-      <div className="tm-fade relative z-10 w-full max-w-3xl mx-auto px-5 sm:px-8 text-center">
-        <div className="flex items-center justify-center gap-1 mb-6">
-          {Array.from({ length: 5 }).map((_, i) => <Star key={i} className="w-4 h-4" fill={industry.accent} stroke={industry.accent} />)}
-        </div>
-        <p className="text-xl sm:text-2xl font-medium text-white/90 leading-relaxed mb-6">&ldquo;{industry.testimonial.quote}&rdquo;</p>
-        <div className="text-sm text-white/50">
-          <span className="text-white font-semibold">{industry.testimonial.name}</span> · {industry.testimonial.role}, {industry.testimonial.company}
-        </div>
-      </div>
-    </section>
-  )
-}
-
 /*
   Healthcare doesn't get Slate Cinema's own industry template — it routes
   visitors to WaveCare, our sister brand that handles healthcare marketing.
@@ -167,7 +141,7 @@ function WaveCareRedirect({ industry }: { industry: IndustryData }) {
               Want to see what our healthcare marketing does?
             </h2>
             <p className="text-white/60 font-light leading-relaxed mb-10 text-lg">
-              We operate under WaveCare, our sister brand.
+              We operate under Wavecare, our sister brand.
             </p>
             <a
               href="https://wavecare.io"
@@ -175,7 +149,7 @@ function WaveCareRedirect({ industry }: { industry: IndustryData }) {
               rel="noopener noreferrer"
               className="group inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-sm text-black bg-white hover:text-white transition-colors duration-300 shadow-[0_0_30px_rgba(255,255,255,0.15)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
             >
-              Visit WaveCare
+              Visit Wavecare
               <ExternalLink className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </a>
           </div>
@@ -238,21 +212,16 @@ export default function IndustryPageContent({
             walked through proof, not after. */}
         {industry.serviceCards && <IndustryServices services={industry.serviceCards} accent={industry.accent} />}
 
-        {/* Proof cluster: client stories (case study + testimonial merged
-            into one card: outcome stat, video, quote), capped by a single
-            re-ask. Industries without story cards show their plain image
-            gallery instead. The film-strip reel used to lead this cluster
-            but the client didn't like the look on individual industry
-            pages — that drag-to-spin format now lives on the general
-            /portfolio page instead. */}
-        {industry.videoTestimonials ? (
-          <IndustryVideoTestimonials testimonials={industry.videoTestimonials} accent={industry.accent} />
-        ) : (
-          <>
-            <GallerySection industry={industry} />
-            <TestimonialSection industry={industry} />
-          </>
-        )}
+        {/* Proof cluster: was a case-study/testimonial card (outcome stat,
+            video, quote) per industry, but every one of those quotes was
+            fabricated placeholder data (invented names, invented
+            companies) from the original template build -- confirmed via
+            client audit 2026-08-12, never real Slate Cinema clients.
+            Pulled the testimonial claims entirely rather than keep
+            publishing them; real gallery images stay since those aren't
+            attributed to a fabricated person. Re-add a testimonial/case-
+            study section once real client quotes exist to put here. */}
+        <GallerySection industry={industry} />
 
         <MidCtaBand accent={industry.accent} />
 
@@ -266,8 +235,6 @@ export default function IndustryPageContent({
         <div id="gallery">
           <Portfolio projects={portfolioProjects} />
         </div>
-
-        {industry.faqs && <IndustryFaq faqs={industry.faqs} accent={industry.accent} />}
 
         <FinalCTA data={finalCta} />
 
