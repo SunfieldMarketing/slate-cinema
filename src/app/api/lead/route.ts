@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { simpleRichText } from '@/lib/simple-richtext'
+import { forwardToGHL } from '@/lib/ghl'
 
 /*
   Real destination for the Contact page's "Drop us a line" lead form,
@@ -9,8 +10,8 @@ import { simpleRichText } from '@/lib/simple-richtext'
   fired a PostHog event and showed a success message -- nothing was
   actually captured anywhere (see CMS_MIGRATION_PHASE0_INVENTORY.md).
   Submissions land in Payload's form-submissions collection, visible at
-  /admin, in addition to whatever future CRM/email integration gets
-  added later.
+  /admin, and also forward to GHL_LEAD_WEBHOOK_URL the moment that env
+  var is set (no-ops until then -- see src/lib/ghl.ts).
 */
 const FORM_TITLE = 'Lead Form (Drop us a line)'
 
@@ -70,6 +71,11 @@ export async function POST(req: Request) {
         ],
       },
     })
+
+    // Best-effort, never blocks the response above from having already
+    // succeeded -- a GHL hiccup (or it simply not being configured yet)
+    // must never turn into a broken-looking form for the visitor.
+    forwardToGHL('GHL_LEAD_WEBHOOK_URL', { name, email, phone, company: company ?? '', message: message ?? '' }).catch(() => {})
 
     return NextResponse.json({ ok: true })
   } catch (err) {
