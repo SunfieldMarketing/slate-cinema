@@ -375,9 +375,9 @@ function LeadForm({ copy }: { copy?: ContactPage['leadForm'] }) {
   const description =
     copy?.description ||
     "Not sure exactly what you need yet? Totally fine — most people aren't at first. Leave your info and a real person on our team will reach out with the right next step, no matter how vague the ask."
-  const badges: Badge[] = copy?.badges?.length ? copy.badges : [{ icon: 'Timer', label: '~10 Seconds' }, { icon: 'ShieldCheck', label: 'No Spam, Ever' }, { icon: 'Mail', label: 'Reply Within 1 Business Day' }]
+  const badges: Badge[] = copy?.badges?.length ? copy.badges : [{ icon: 'Timer', label: '~10 Seconds' }, { icon: 'ShieldCheck', label: 'No Spam, Ever' }, { icon: 'Mail', label: 'Replies Within Minutes' }]
   const submitLabel = copy?.submitLabel || 'Send Message'
-  const successMessage = copy?.successMessage || "We'll be in touch within one business day."
+  const successMessage = copy?.successMessage || "We'll be in touch within minutes."
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -797,7 +797,7 @@ export default function ContactPageContent({ page, readyToTalk }: { page: Contac
           <PageHero
             eyebrow={hero?.eyebrow || 'Get Started'}
             title={[hero?.titleLine1 || "Let's get", hero?.titleLine2 || 'you started']}
-            subtitle={hero?.subtitle || "Tell us where you're at and we'll point you to the right next step. We reply within one business day."}
+            subtitle={hero?.subtitle || "Tell us where you're at and we'll point you to the right next step. We reply within minutes."}
             accent="#00AEEF"
           />
 

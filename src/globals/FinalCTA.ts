@@ -23,6 +23,6 @@ export const FinalCTA: GlobalConfig = {
     },
     { name: 'buttonLabel', type: 'text', required: true, defaultValue: 'Get Started' },
     { name: 'buttonHref', type: 'text', required: true, defaultValue: '/contact' },
-    { name: 'trustNote', type: 'text', defaultValue: 'Replies within one business day' },
+    { name: 'trustNote', type: 'text', defaultValue: 'Replies within minutes' },
   ],
 }

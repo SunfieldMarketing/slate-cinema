@@ -165,8 +165,10 @@ export default function PortfolioPageContent({
         {/* Who we serve — the main routing interaction on this page */}
         <Industries industries={industries} copy={page?.industriesSection} />
 
-        {/* The full, filterable project archive. */}
-        <Portfolio projects={projects} filters={page?.portfolioFilters?.map((f) => f.name)} />
+        {/* The full project archive -- no category filter chips, per the
+            client's call: with only a handful of projects per category,
+            filtering makes the grid look sparse rather than deep. */}
+        <Portfolio projects={projects} />
 
         <FinalCTA data={finalCta} />
 

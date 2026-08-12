@@ -21,7 +21,7 @@ export default function FinalCTA({ data }: { data?: FinalCta | null }) {
     "Don't let your brand fade into the background. Partner with Slate Cinema to engineer attention, drive engagement, and generate scalable ROI."
   const buttonLabel = data?.buttonLabel || 'Get Started'
   const buttonHref = data?.buttonHref || '/contact'
-  const trustNote = data?.trustNote || 'Replies within one business day'
+  const trustNote = data?.trustNote || 'Replies within minutes'
 
   useGSAP(() => {
     const ctx = gsap.context(() => {

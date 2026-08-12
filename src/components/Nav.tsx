@@ -16,7 +16,7 @@ export default function Nav() {
   const navLinks = [{ label: 'Home', href: '/' }, ...(navigation.links ?? [])]
   const ctaLabel = navigation.ctaButton?.label || 'Schedule Call'
   const ctaHref = navigation.ctaButton?.href || '/schedule-a-call'
-  const clientPortalHref = navigation.clientPortalHref || '#'
+  const clientPortalHref = navigation.clientPortalHref || 'https://my.slatecinema.com/'
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [mobilePortfolioOpen, setMobilePortfolioOpen] = useState(false)
@@ -116,11 +116,9 @@ export default function Nav() {
                       All Work
                     </Link>
                     <div className="my-1.5 h-px bg-white/[0.06]" />
-                    {/* data-lenis-prevent — without it, Lenis's global smooth-scroll
-                        intercepts wheel events over this inner scroll region and the
-                        page reads as "stuck" while hovering the dropdown instead of
-                        scrolling this list natively. */}
-                    <div className="max-h-72 overflow-y-auto" data-lenis-prevent>
+                    {/* No inner scroll region on purpose -- the client wants every
+                        industry visible on open, not a scrollbar inside the dropdown. */}
+                    <div>
                       {industries.map((ind) => {
                         const Icon = resolveIcon(ind.icon)
                         return (
@@ -156,7 +154,7 @@ export default function Nav() {
 
           {/* CTA + Portal */}
           <div className="hidden md:flex items-center gap-4">
-            <a href={clientPortalHref} className="text-xs font-mono text-white/25 hover:text-white/50 transition-colors tracking-widest uppercase">Client Portal</a>
+            <a href={clientPortalHref} target="_blank" rel="noopener noreferrer" className="text-xs font-mono text-white/25 hover:text-white/50 transition-colors tracking-widest uppercase">Client Portal</a>
             <Link href={ctaHref} className="relative px-5 py-2.5 rounded-full text-sm font-semibold text-[#030305] bg-white overflow-hidden group">
               <div className="absolute inset-0 bg-[#00AEEF] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
               <span className="relative group-hover:text-white transition-colors">{ctaLabel}</span>

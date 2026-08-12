@@ -1114,7 +1114,7 @@ export interface Navigation {
     href: string;
   };
   /**
-   * Currently a placeholder link — set to the real portal URL once one exists
+   * Where the "Client Portal" nav link sends visitors.
    */
   clientPortalHref?: string | null;
   updatedAt?: string | null;
@@ -1516,7 +1516,7 @@ export interface PortfolioIndexPage {
     headline?: string | null;
   };
   /**
-   * Category filter pills on the project grid (must include "All" plus every category used across PortfolioProjects)
+   * Unused -- filter chips were removed from the portfolio grid per client request.
    */
   portfolioFilters?:
     | {

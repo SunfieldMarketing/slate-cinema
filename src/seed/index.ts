@@ -317,7 +317,7 @@ async function main() {
         { label: 'Contact Us', href: '/contact#get-started' },
       ],
       ctaButton: { label: 'Schedule Call', href: '/schedule-a-call' },
-      clientPortalHref: '#',
+      clientPortalHref: 'https://my.slatecinema.com/',
     },
   })
   console.log('✓ seeded navigation global')
@@ -326,10 +326,32 @@ async function main() {
   await payload.updateGlobal({
     slug: 'footer',
     data: {
+      // 20 phrases -- with only the original 3, the 2x-duplicated marquee
+      // content was narrower than the viewport on most desktop screens, so
+      // the loop visibly ran out of content and "dropped off" (a blank gap)
+      // right before snapping back. This keeps the same xPercent:-50 / 2x
+      // duplication mechanism in Footer.tsx working seamlessly at any width.
       marqueeItems: [
         { text: 'Cinematic Storytelling' },
         { text: 'High-End Production' },
         { text: 'Global Distribution' },
+        { text: 'Social Media Management' },
+        { text: 'Brand Films' },
+        { text: 'Commercial Production' },
+        { text: 'Aerial Cinematography' },
+        { text: 'Post-Production Mastery' },
+        { text: 'Color Grading' },
+        { text: 'Motion Graphics' },
+        { text: 'Content Strategy' },
+        { text: 'Documentary Style' },
+        { text: 'Event Coverage' },
+        { text: 'Corporate Video' },
+        { text: 'Product Launches' },
+        { text: 'Real Estate Media' },
+        { text: 'Travel Films' },
+        { text: 'Athlete Features' },
+        { text: 'Education Campaigns' },
+        { text: 'Award-Winning Work' },
       ],
       cta: { heading: 'Ready to create?', buttonLabel: 'Get Started', buttonHref: '/contact' },
       newsletter: {
@@ -352,7 +374,7 @@ async function main() {
         craftedWithLoveText: 'Crafted with love by Slate Cinema',
         privacyHref: '/privacy-policy',
         termsHref: '/terms-of-service',
-        clientPortalHref: '#',
+        clientPortalHref: 'https://my.slatecinema.com/',
       },
     },
   })
@@ -428,7 +450,7 @@ async function main() {
         "Don't let your brand fade into the background. Partner with Slate Cinema to engineer attention, drive engagement, and generate scalable ROI.",
       buttonLabel: 'Get Started',
       buttonHref: '/contact',
-      trustNote: 'Replies within one business day',
+      trustNote: 'Replies within minutes',
     },
   })
   console.log('✓ seeded final-cta global')
@@ -702,7 +724,7 @@ async function main() {
         eyebrow: 'Get Started',
         titleLine1: "Let's get",
         titleLine2: 'you started',
-        subtitle: "Tell us where you're at and we'll point you to the right next step. We reply within one business day.",
+        subtitle: "Tell us where you're at and we'll point you to the right next step. We reply within minutes.",
       },
       whatHappensNext: {
         eyebrow: '// After You Reach Out',
@@ -763,10 +785,10 @@ async function main() {
         badges: [
           { icon: 'Timer', label: '~10 Seconds' },
           { icon: 'ShieldCheck', label: 'No Spam, Ever' },
-          { icon: 'Mail', label: 'Reply Within 1 Business Day' },
+          { icon: 'Mail', label: 'Replies Within Minutes' },
         ],
         submitLabel: 'Send Message',
-        successMessage: "We'll be in touch within one business day.",
+        successMessage: "We'll be in touch within minutes.",
       },
       contactMethods: {
         eyebrow: 'Or Reach Us Directly',

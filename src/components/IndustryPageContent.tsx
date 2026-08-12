@@ -223,8 +223,7 @@ export default function IndustryPageContent({
             accent={industry.accent}
             stats={industry.stats}
             cta={{ label: 'Get Started', href: '/contact' }}
-            secondaryCta={{ label: 'Watch the work', href: '/portfolio' }}
-            trustNote="40+ projects shipped · Replies within one business day"
+            trustNote="40+ projects shipped · Replies within minutes"
           />
         </div>
 

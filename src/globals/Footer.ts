@@ -59,7 +59,7 @@ export const Footer: GlobalConfig = {
         { name: 'craftedWithLoveText', type: 'text', defaultValue: 'Crafted with love by Slate Cinema' },
         { name: 'privacyHref', type: 'text', defaultValue: '/privacy-policy' },
         { name: 'termsHref', type: 'text', defaultValue: '/terms-of-service' },
-        { name: 'clientPortalHref', type: 'text', defaultValue: '#' },
+        { name: 'clientPortalHref', type: 'text', defaultValue: 'https://my.slatecinema.com/' },
       ],
     },
   ],

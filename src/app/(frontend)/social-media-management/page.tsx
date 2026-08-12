@@ -30,7 +30,7 @@ export default function SocialMediaManagementPage() {
   return (
     <>
       <style>{`
-  .smm-page :root {
+  .smm-page {
     --ink:#0b0c0e; --panel:#101216; --line:#22262d;
     --text:#f4f5f7; --muted:#9aa1ab;
     --blue:#00AEEF; --orange:#f97316; --orange-soft:rgba(249,115,22,.12);
@@ -61,7 +61,7 @@ export default function SocialMediaManagementPage() {
   .smm-page .eyebrow { font-family:'Courier Prime',monospace; color:var(--orange); font-size:13px;
              letter-spacing:.5em; text-transform:uppercase; margin-bottom:22px; }
   .smm-page h1 { font-family:'Bebas Neue',sans-serif; font-weight:400; letter-spacing:.015em;
-       font-size:clamp(46px,7.5vw,88px); line-height:.98; margin:0 0 24px; max-width:16ch; }
+       font-size:clamp(46px,7.5vw,88px); line-height:.98; margin:0 0 24px; }
   .smm-page h1 em { font-style:normal; color:var(--blue); }
   .smm-page .lede { font-family:'Fraunces',Georgia,serif; font-size:clamp(17px,2.1vw,21px);
           color:var(--muted); max-width:62ch; margin:0; }
@@ -123,7 +123,7 @@ export default function SocialMediaManagementPage() {
             <nav className="main">
               <a href="/">Home</a><a href="/portfolio">Portfolio</a>
               <a className="on" href="/social-media-management">Social Media</a>
-              <a href="/how-it-works">How It Works</a><a href="/journal">Journal</a>
+              <a href="/how-it-works">How It Works</a>
             </nav>
             <a className="pill" href="/schedule-a-call">Schedule Call</a>
           </div>

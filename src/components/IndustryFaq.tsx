@@ -75,7 +75,7 @@ export default function IndustryFaq({ faqs, accent }: { faqs: IndustryFaqItem[];
               Book a call <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
             </a>
             <p className="mt-4 text-center font-mono text-[9px] tracking-[0.18em] uppercase text-white/55">
-              Replies within one business day
+              Replies within minutes
             </p>
           </div>
         </aside>

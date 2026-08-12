@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
+import { simpleRichText } from '@/lib/simple-richtext'
 
 /*
   Real destination for /schedule-a-call's "Confirm Time" button. It
@@ -43,6 +44,7 @@ export async function POST(req: Request) {
                 ],
                 submitButtonLabel: 'Confirm Time',
                 confirmationType: 'message',
+                confirmationMessage: simpleRichText("Thanks — your requested time is booked in."),
               },
             })
           ).id

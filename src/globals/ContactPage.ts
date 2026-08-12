@@ -28,7 +28,7 @@ export const ContactPage: GlobalConfig = {
         {
           name: 'subtitle',
           type: 'textarea',
-          defaultValue: "Tell us where you're at and we'll point you to the right next step. We reply within one business day.",
+          defaultValue: "Tell us where you're at and we'll point you to the right next step. We reply within minutes.",
         },
       ],
     },
@@ -105,7 +105,7 @@ export const ContactPage: GlobalConfig = {
           ],
         },
         { name: 'submitLabel', type: 'text', defaultValue: 'Send Message' },
-        { name: 'successMessage', type: 'text', defaultValue: "We'll be in touch within one business day." },
+        { name: 'successMessage', type: 'text', defaultValue: "We'll be in touch within minutes." },
       ],
     },
     {

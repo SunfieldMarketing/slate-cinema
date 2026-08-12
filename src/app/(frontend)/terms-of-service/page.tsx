@@ -20,7 +20,7 @@ export default function TermsOfServicePage() {
   return (
     <>
       <style>{`
-  .legal-page :root { --ink:#0b0c0e; --panel:#101216; --line:#22262d; --text:#f4f5f7; --muted:#9aa1ab;
+  .legal-page { --ink:#0b0c0e; --panel:#101216; --line:#22262d; --text:#f4f5f7; --muted:#9aa1ab;
           --blue:#00AEEF; --orange:#f97316; }
   .legal-page * { box-sizing:border-box; }
   .legal-page { background:var(--ink); color:var(--text);
@@ -64,7 +64,7 @@ export default function TermsOfServicePage() {
             <nav className="main">
               <a href="/">Home</a><a href="/portfolio">Portfolio</a>
               <a href="/social-media-management">Social Media</a>
-              <a href="/how-it-works">How It Works</a><a href="/journal">Journal</a>
+              <a href="/how-it-works">How It Works</a>
             </nav>
             <a className="pill" href="/schedule-a-call">Schedule Call</a>
           </div>

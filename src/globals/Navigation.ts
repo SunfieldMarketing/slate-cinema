@@ -33,8 +33,8 @@ export const Navigation: GlobalConfig = {
     {
       name: 'clientPortalHref',
       type: 'text',
-      admin: { description: 'Currently a placeholder link — set to the real portal URL once one exists' },
-      defaultValue: '#',
+      admin: { description: 'Where the "Client Portal" nav link sends visitors.' },
+      defaultValue: 'https://my.slatecinema.com/',
     },
   ],
 }

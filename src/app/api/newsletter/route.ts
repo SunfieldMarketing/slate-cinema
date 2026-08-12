@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
+import { simpleRichText } from '@/lib/simple-richtext'
 
 /*
   Real destination for the footer newsletter signup -- previously
@@ -34,6 +35,7 @@ export async function POST(req: Request) {
                 fields: [{ blockType: 'email', name: 'email', label: 'Email', required: true }],
                 submitButtonLabel: 'Sign Up',
                 confirmationType: 'message',
+                confirmationMessage: simpleRichText("You're on the list."),
               },
             })
           ).id

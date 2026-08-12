@@ -43,9 +43,15 @@ export const PortfolioIndexPage: GlobalConfig = {
       ],
     },
     {
+      // Field kept (not deleted) to avoid a DB schema migration on the
+      // fragile Windows/tsx `payload generate:types` pipeline -- see
+      // CMS_MIGRATION_PHASE0_INVENTORY.md. The client asked (Aug 2026 call)
+      // to remove category filter chips from the portfolio grid entirely;
+      // Portfolio.tsx no longer reads this field. Hidden from admin so it
+      // can't be edited to no effect.
       name: 'portfolioFilters',
       type: 'array',
-      admin: { description: 'Category filter pills on the project grid (must include "All" plus every category used across PortfolioProjects)' },
+      admin: { hidden: true, description: 'Unused -- filter chips were removed from the portfolio grid per client request.' },
       fields: [{ name: 'name', type: 'text', required: true }],
     },
   ],

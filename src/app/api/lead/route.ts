@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
+import { simpleRichText } from '@/lib/simple-richtext'
 
 /*
   Real destination for the Contact page's "Drop us a line" lead form,
@@ -51,6 +52,7 @@ export async function POST(req: Request) {
                 ],
                 submitButtonLabel: 'Send Message',
                 confirmationType: 'message',
+                confirmationMessage: simpleRichText("Thanks — we'll be in touch shortly."),
               },
             })
           ).id
