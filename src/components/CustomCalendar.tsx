@@ -137,7 +137,7 @@ export default function CustomCalendar({ copy }: { copy?: ScheduleACallPage['cal
                       setSelectedDate(date)
                       posthog.capture('calendar_date_selected', { date })
                     }}
-                    className={`cal-date aspect-square rounded-full flex items-center justify-center text-sm transition-all duration-300 ${
+                    className={`cal-date aspect-square min-h-9 min-w-9 rounded-full flex items-center justify-center text-sm transition-all duration-300 ${
                       selectedDate === date 
                         ? 'bg-[#00AEEF] text-white shadow-[0_0_15px_rgba(0,174,239,0.5)] scale-110' 
                         : 'bg-white/[0.03] text-white/60 hover:bg-white/10 hover:text-white'
