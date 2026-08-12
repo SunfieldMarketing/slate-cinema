@@ -192,6 +192,14 @@ automation endpoint, and test data could trigger real side effects on
 Kauan's GHL account without his knowledge). Confirm with Kauan whether
 that webhook is still the intended destination before relying on it.
 
+## Schedule a Call: now collects contact info (2026-08-12)
+
+CustomCalendar previously only captured date + time. Client decision:
+keep the current custom design (don't switch to a GHL embed) but add a
+step to collect name/email/phone before the booking confirms. Done --
+see commit 578789e. `/api/booking` now requires and mirrors all 5
+fields, and forwards them to `GHL_BOOKING_WEBHOOK_URL`.
+
 ## Client decisions (2026-08-12)
 
 1. **GHL** — client wants a needs-list first, hasn't sent credentials yet.
