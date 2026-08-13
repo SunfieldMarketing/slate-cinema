@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Nav from '@/components/Nav'
+import Footer from '@/components/Footer'
 
 /*
   Ported verbatim (design + copy) from the finished HTML Jake sent
@@ -27,7 +28,11 @@ export default function PrivacyPolicyPage() {
   .legal-page { background:var(--ink); color:var(--text);
          font:16.5px/1.75 -apple-system,'Segoe UI',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
   .legal-page .wrap { max-width:780px; margin:0 auto; padding:0 28px; }
-  .legal-page a { color:var(--blue); }
+  /* Scoped to .wrap, not the bare page -- a bare ".legal-page a" rule was
+     leaking into the real <Nav />'s own links (also nested inside
+     .legal-page), turning them blue instead of their normal white/50
+     styling. That was the "its blue" bug Kauan flagged. */
+  .legal-page .wrap a { color:var(--blue); }
 
   /* TikTok requirement: app icon + wordmark in the page header, above the
      H1. Top margin cleared for the fixed shared Nav (see header comment). */
@@ -44,11 +49,6 @@ export default function PrivacyPolicyPage() {
   .legal-page p strong, .legal-page li strong { color:var(--text); font-weight:600; }
   .legal-page ul { padding-left:22px; } .legal-page li { margin-bottom:10px; }
   .legal-page .doc { padding-bottom:40px; }
-  .legal-page footer.site { border-top:1px solid var(--line); padding:34px 0 54px; color:var(--muted); font-size:14px; margin-top:40px; }
-  .legal-page footer.site .row { max-width:1100px; margin:0 auto; padding:0 28px; display:flex; flex-wrap:wrap; gap:20px; }
-  .legal-page footer.site .grow { flex:1; }
-  .legal-page footer.site a { color:var(--muted); text-decoration:none; }
-  .legal-page footer.site a:hover { color:var(--text); }
       `}</style>
 
       <div className="legal-page">
@@ -142,14 +142,7 @@ export default function PrivacyPolicyPage() {
           Web: <a href="https://slatecinema.com">slatecinema.com</a></p>
         </div>
 
-        <footer className="site">
-          <div className="row">
-            <span>© 2026 Slate Cinema Inc.</span>
-            <span className="grow" />
-            <a href="/privacy-policy">Privacy Policy</a>
-            <a href="/terms-of-service">Terms of Service</a>
-          </div>
-        </footer>
+        <Footer />
       </div>
     </>
   )

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Nav from '@/components/Nav'
+import Footer from '@/components/Footer'
 
 /*
   Ported verbatim (design + copy) from the finished HTML Jake sent
@@ -47,7 +48,11 @@ export default function SocialMediaManagementPage() {
          font:16.5px/1.7 -apple-system,'Segoe UI',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
   .smm-page .mono { font-family:'Courier Prime',Courier,monospace; }
   .smm-page .wrap { max-width:1100px; margin:0 auto; padding:0 28px; }
-  .smm-page a { color:var(--blue); }
+  /* Scoped to .wrap (body copy), not the bare page -- a bare ".smm-page a"
+     rule was leaking into the real <Nav />'s own links (also nested
+     inside .smm-page), turning them blue instead of their normal
+     white/50 styling. That was the "its blue" bug Kauan flagged. */
+  .smm-page .wrap a { color:var(--blue); }
 
   /* hero -- padding-top cleared for the fixed shared Nav (see header comment) */
   .smm-page .hero { padding:168px 0 64px; border-bottom:1px solid var(--line); position:relative; overflow:hidden; }
@@ -95,12 +100,6 @@ export default function SocialMediaManagementPage() {
   .smm-page .cta a.go { display:inline-block; border-radius:30px; background:var(--orange); color:#0b0c0e;
               font-weight:700; padding:13px 26px; text-decoration:none; }
   .smm-page .cta .alt { display:block; margin-top:14px; font-size:14.5px; }
-
-  .smm-page footer.site { border-top:1px solid var(--line); padding:34px 0 54px; color:var(--muted); font-size:14px; }
-  .smm-page footer.site .row { display:flex; flex-wrap:wrap; gap:20px; align-items:center; }
-  .smm-page footer.site .grow { flex:1; }
-  .smm-page footer.site a { color:var(--muted); text-decoration:none; }
-  .smm-page footer.site a:hover { color:var(--text); }
 
   @media (max-width:860px) {
     .smm-page .twocol { grid-template-columns:1fr; gap:38px; }
@@ -176,14 +175,7 @@ export default function SocialMediaManagementPage() {
           </div>
         </section>
 
-        <footer className="site">
-          <div className="wrap row">
-            <span>© 2026 Slate Cinema Inc.</span>
-            <span className="grow" />
-            <a href="/privacy-policy">Privacy Policy</a>
-            <a href="/terms-of-service">Terms of Service</a>
-          </div>
-        </footer>
+        <Footer />
       </div>
     </>
   )
