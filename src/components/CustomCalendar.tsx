@@ -5,6 +5,7 @@ import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import posthog from 'posthog-js'
+import { pushConversion } from '@/lib/analytics'
 import type { ScheduleACallPage } from '@/payload-types'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -218,6 +219,7 @@ export default function CustomCalendar({ copy }: { copy?: ScheduleACallPage['cal
                   onClick={() => {
                     if (selectedDate && selectedTime && contactValid) {
                       posthog.capture('call_booking_confirmed', { date: selectedDate, time: selectedTime })
+                      pushConversion('call_booked')
                       // Real destination (Payload form-submissions, visible in
                       // /admin) — fire-and-forget so a hiccup here can never
                       // block the confirmation state below.

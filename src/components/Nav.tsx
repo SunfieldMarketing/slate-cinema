@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import Link from 'next/link'
-import { Menu, X, ChevronDown } from 'lucide-react'
+import { Menu, X, ChevronDown, Mic } from 'lucide-react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -115,6 +115,13 @@ export default function Nav() {
                     >
                       All Work
                     </Link>
+                    <Link
+                      href="/podcasts"
+                      className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-white hover:bg-white/[0.06] transition-colors"
+                    >
+                      <Mic className="w-3.5 h-3.5 shrink-0 text-[#00AEEF]" />
+                      Podcasts
+                    </Link>
                     <div className="my-1.5 h-px bg-white/[0.06]" />
                     {/* No inner scroll region on purpose -- the client wants every
                         industry visible on open, not a scrollbar inside the dropdown. */}
@@ -189,6 +196,9 @@ export default function Nav() {
               <div className="flex flex-col items-center gap-4 mt-5">
                 <Link href="/portfolio" onClick={() => setMobileMenuOpen(false)} className="text-sm font-semibold text-white/80 hover:text-[#00AEEF] transition-colors">
                   All Work
+                </Link>
+                <Link href="/podcasts" onClick={() => setMobileMenuOpen(false)} className="text-sm font-semibold text-white/80 hover:text-[#00AEEF] transition-colors">
+                  Podcasts
                 </Link>
                 {industries.map((ind) => (
                   <Link key={ind.id} href={`/portfolio/${ind.slug}`} onClick={() => setMobileMenuOpen(false)} className="text-sm text-white/50 hover:text-[#00AEEF] transition-colors">

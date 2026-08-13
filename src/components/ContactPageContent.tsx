@@ -18,6 +18,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import posthog from 'posthog-js'
+import { pushConversion } from '@/lib/analytics'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import PageHero from '@/components/ui/PageHero'
@@ -393,6 +394,7 @@ function LeadForm({ copy }: { copy?: ContactPage['leadForm'] }) {
     e.preventDefault()
     if (!data.name || !data.email || !data.phone) return
     posthog.capture('lead_form_submitted', { has_company: !!data.company })
+    pushConversion('lead_form_submitted')
     // Real submission destination (Payload form-submissions, visible in
     // /admin) — fire-and-forget so a CMS/network hiccup can never block
     // the success state the visitor already expects.

@@ -3,6 +3,8 @@ import { Inter, Bebas_Neue, Fraunces, Courier_Prime, Caveat } from "next/font/go
 import "./globals.css";
 import SmoothScrolling from "@/components/SmoothScrolling";
 import ScrollRestoration from "@/components/ScrollRestoration";
+import PostHogInit from "@/components/PostHogInit";
+import GoogleAdsTag from "@/components/GoogleAdsTag";
 import { SiteDataProvider } from "@/lib/site-data-context";
 import { getNavigation, getFooterGlobal, getSiteSettings, mediaUrl } from "@/lib/payload-data";
 import { getNormalizedIndustries } from "@/lib/normalize";
@@ -100,6 +102,8 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
         <ScrollRestoration />
+        <PostHogInit />
+        <GoogleAdsTag />
         <SiteDataProvider value={{ navigation, footer, industries, settings }}>
           <SmoothScrolling>
             {children}

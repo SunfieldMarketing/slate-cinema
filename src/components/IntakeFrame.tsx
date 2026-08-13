@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { pushConversion } from '@/lib/analytics'
 
 /*
   Wraps the embedded /intake.html iframe (a self-contained bundled app --
@@ -45,6 +46,7 @@ export default function IntakeFrame() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
               }).catch(() => {})
+              pushConversion('intake_submitted')
             }
           } catch {
             // Mirror is best-effort only -- never let it break the real submit.
