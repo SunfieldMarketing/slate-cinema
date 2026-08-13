@@ -161,11 +161,16 @@ export default function Nav() {
 
           {/* CTA + Portal */}
           <div className="hidden md:flex items-center gap-4">
-            {/* Text color: gray -> white per Jake's Aug 12 call note. Kept
-                small/mono/uppercase so it stays a "you know it if you're a
-                client" link structurally, even though the color itself is
-                now a clear white rather than easy to miss entirely. */}
-            <a href={clientPortalHref} target="_blank" rel="noopener noreferrer" className="text-xs font-mono text-white/80 hover:text-white transition-colors tracking-widest uppercase">Client Portal</a>
+            {/* Landed here 2026-08-13 after 3 rounds: Jake's Aug 12 call said
+                "make it white"; Kauan then said "bring it back to grey";
+                separately, Jake also posted a screenshot of this exact
+                element to #web-development the same day (Aug 12, 13:03)
+                saying "I like that it's not white but it should be about
+                20% more visible" -- referring to the original text-white/25.
+                Split the difference on that explicit, quantified feedback
+                rather than picking one instruction over the other: a grey
+                that's meaningfully brighter than /25, nowhere near white/80. */}
+            <a href={clientPortalHref} target="_blank" rel="noopener noreferrer" className="text-xs font-mono text-white/35 hover:text-white/55 transition-colors tracking-widest uppercase">Client Portal</a>
             <Link href={ctaHref} className="relative px-5 py-2.5 rounded-full text-sm font-semibold text-[#030305] bg-white overflow-hidden group">
               <div className="absolute inset-0 bg-[#00AEEF] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
               <span className="relative group-hover:text-white transition-colors">{ctaLabel}</span>

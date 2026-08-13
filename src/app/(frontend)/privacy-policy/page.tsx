@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import SMMMobileNav from '@/components/SMMMobileNav'
+import Nav from '@/components/Nav'
 
 /*
   Ported verbatim (design + copy) from the finished HTML Jake sent
@@ -7,7 +7,9 @@ import SMMMobileNav from '@/components/SMMMobileNav'
   Copy is legally reviewed to ship as-is. See social-media-management/
   page.tsx's header comment for why the external font <link> and
   page-level favicon <link> from the raw file were dropped -- both are
-  already global via next/font and the root layout's metadata.
+  already global via next/font and the root layout's metadata, and for
+  why the header now uses the real, shared <Nav /> instead of a
+  hand-rolled one (2026-08-13, Kauan flagged the visual mismatch).
 */
 
 export const metadata: Metadata = {
@@ -26,19 +28,10 @@ export default function PrivacyPolicyPage() {
          font:16.5px/1.75 -apple-system,'Segoe UI',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
   .legal-page .wrap { max-width:780px; margin:0 auto; padding:0 28px; }
   .legal-page a { color:var(--blue); }
-  .legal-page header.site { border-bottom:1px solid var(--line); }
-  .legal-page .navbar { max-width:1100px; margin:0 auto; padding:18px 28px; display:flex; align-items:center; gap:34px; }
-  .legal-page .brand { display:flex; align-items:center; gap:12px; text-decoration:none; color:var(--text); }
-  .legal-page .brand img { width:34px; height:34px; }
-  .legal-page .brand span { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:.14em; }
-  .legal-page nav.main { display:flex; gap:26px; margin-left:auto; }
-  .legal-page nav.main a { color:var(--muted); text-decoration:none; font-size:14.5px; }
-  .legal-page nav.main a:hover { color:var(--text); }
-  .legal-page .pill { border-radius:30px; background:#fff; color:#0b0c0e; font-weight:600;
-          padding:11px 22px; text-decoration:none; font-size:14.5px; white-space:nowrap; }
 
-  /* TikTok requirement: app icon + wordmark in the page header, above the H1 */
-  .legal-page .docmark { display:flex; align-items:center; gap:12px; margin:64px 0 26px; }
+  /* TikTok requirement: app icon + wordmark in the page header, above the
+     H1. Top margin cleared for the fixed shared Nav (see header comment). */
+  .legal-page .docmark { display:flex; align-items:center; gap:12px; margin:144px 0 26px; }
   .legal-page .docmark img { width:44px; height:44px; }
   .legal-page .docmark span { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:.14em; }
   .legal-page h1 { font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:clamp(38px,6vw,58px);
@@ -56,31 +49,10 @@ export default function PrivacyPolicyPage() {
   .legal-page footer.site .grow { flex:1; }
   .legal-page footer.site a { color:var(--muted); text-decoration:none; }
   .legal-page footer.site a:hover { color:var(--text); }
-  .smm-burger { display:none; flex-direction:column; justify-content:center;
-    gap:5px; width:38px; height:38px; background:transparent; border:0; cursor:pointer; padding:0; }
-  .smm-burger span { display:block; width:22px; height:2px; background:var(--text); border-radius:2px; }
-  .smm-mobile-menu { position:fixed; inset:0; top:71px; z-index:40;
-    background:rgba(11,12,14,.98); backdrop-filter:blur(12px);
-    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:26px; }
-  .smm-mobile-menu a { color:var(--muted); text-decoration:none; font-size:19px; font-weight:600; }
-  .smm-mobile-menu a.on { color:var(--orange); }
-  .smm-mobile-menu a.pill { color:#0b0c0e; background:#fff; border-radius:30px; padding:13px 30px; font-size:15px; }
-  @media (max-width:860px) { .legal-page nav.main { display:none; } .smm-burger { display:flex; } }
       `}</style>
 
       <div className="legal-page">
-        <header className="site">
-          <div className="navbar">
-            <a className="brand" href="/"><img src="/images/logo-mark.webp" alt="Slate Cinema" /><span>SLATE CINEMA</span></a>
-            <nav className="main">
-              <a href="/">Home</a><a href="/portfolio">Portfolio</a>
-              <a href="/social-media-management">Social Media</a>
-              <a href="/how-it-works">How It Works</a>
-            </nav>
-            <a className="pill" href="/schedule-a-call">Schedule Call</a>
-            <SMMMobileNav />
-          </div>
-        </header>
+        <Nav />
 
         <div className="wrap doc">
           <div className="docmark"><img src="/images/logo-mark.webp" alt="Slate Cinema app icon" /><span>SLATE CINEMA</span></div>

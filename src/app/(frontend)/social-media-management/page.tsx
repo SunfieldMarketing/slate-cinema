@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import SMMMobileNav from '@/components/SMMMobileNav'
+import Nav from '@/components/Nav'
 
 /*
   Ported verbatim (design + copy) from the finished HTML Jake sent
@@ -8,8 +8,6 @@ import SMMMobileNav from '@/components/SMMMobileNav'
   homepage/top nav is itself a platform-approval requirement, and the
   copy is legally reviewed to ship as-is, not paraphrased.
 
-  Kept as its own self-contained header/footer (not the site's dynamic
-  Nav/Footer) per "keep the page design exactly how it is in the html".
   Two things intentionally dropped from the raw file since they're
   already handled globally by the app rather than needing to be
   redeclared per page: the external Google Fonts <link> (Bebas Neue /
@@ -20,6 +18,14 @@ import SMMMobileNav from '@/components/SMMMobileNav'
   instrumentation-client.ts and the root layout respectively -- nothing
   extra to add for those either, just by virtue of this being a real
   route inside the (frontend) app.
+
+  Header switched to the real, shared <Nav /> 2026-08-13 -- the
+  hand-rolled header (kept per "keep the page design exactly how it is
+  in the html") had drifted into a visibly different navbar/mobile-menu
+  than the rest of the site, which Kauan flagged directly. Nav is
+  `position:fixed`, so the first section below carries extra top
+  padding to clear it (see the .hero rule's padding-top). Only the
+  header changed; the legally-reviewed copy below it is untouched.
 */
 
 export const metadata: Metadata = {
@@ -43,22 +49,8 @@ export default function SocialMediaManagementPage() {
   .smm-page .wrap { max-width:1100px; margin:0 auto; padding:0 28px; }
   .smm-page a { color:var(--blue); }
 
-  /* nav — mirrors the live site */
-  .smm-page header.site { border-bottom:1px solid var(--line); }
-  .smm-page .navbar { max-width:1100px; margin:0 auto; padding:18px 28px;
-            display:flex; align-items:center; gap:34px; }
-  .smm-page .brand { display:flex; align-items:center; gap:12px; text-decoration:none; color:var(--text); }
-  .smm-page .brand img { width:34px; height:34px; }
-  .smm-page .brand span { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:.14em; }
-  .smm-page nav.main { display:flex; gap:26px; margin-left:auto; }
-  .smm-page nav.main a { color:var(--muted); text-decoration:none; font-size:14.5px; }
-  .smm-page nav.main a:hover, .smm-page nav.main a.on { color:var(--text); }
-  .smm-page nav.main a.on { color:var(--orange); }
-  .smm-page .pill { border-radius:30px; background:#fff; color:#0b0c0e; font-weight:600;
-          padding:11px 22px; text-decoration:none; font-size:14.5px; white-space:nowrap; }
-
-  /* hero */
-  .smm-page .hero { padding:88px 0 64px; border-bottom:1px solid var(--line); position:relative; overflow:hidden; }
+  /* hero -- padding-top cleared for the fixed shared Nav (see header comment) */
+  .smm-page .hero { padding:168px 0 64px; border-bottom:1px solid var(--line); position:relative; overflow:hidden; }
   .smm-page .eyebrow { font-family:'Courier Prime',monospace; color:var(--orange); font-size:13px;
              letter-spacing:.5em; text-transform:uppercase; margin-bottom:22px; }
   .smm-page h1 { font-family:'Bebas Neue',sans-serif; font-weight:400; letter-spacing:.015em;
@@ -110,41 +102,14 @@ export default function SocialMediaManagementPage() {
   .smm-page footer.site a { color:var(--muted); text-decoration:none; }
   .smm-page footer.site a:hover { color:var(--text); }
 
-  /* Mobile hamburger + dropdown -- mirrors the main site's Nav.tsx
-     treatment (three lines -> full-width panel) so this page's mobile
-     nav actually matches the rest of the site instead of just vanishing. */
-  .smm-burger { display:none; flex-direction:column; justify-content:center;
-    gap:5px; width:38px; height:38px; background:transparent; border:0; cursor:pointer; padding:0; }
-  .smm-burger span { display:block; width:22px; height:2px; background:var(--text);
-    border-radius:2px; transition:transform .25s ease, opacity .25s ease; }
-  .smm-mobile-menu { position:fixed; inset:0; top:71px; z-index:40;
-    background:rgba(11,12,14,.98); backdrop-filter:blur(12px);
-    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:26px; }
-  .smm-mobile-menu a { color:var(--muted); text-decoration:none; font-size:19px; font-weight:600; }
-  .smm-mobile-menu a.on { color:var(--orange); }
-  .smm-mobile-menu a.pill { color:#0b0c0e; background:#fff; border-radius:30px; padding:13px 30px; font-size:15px; }
-
   @media (max-width:860px) {
-    .smm-page nav.main { display:none; }
-    .smm-burger { display:flex; }
     .smm-page .twocol { grid-template-columns:1fr; gap:38px; }
     .smm-page .step { grid-template-columns:56px 1fr; }
   }
       `}</style>
 
       <div className="smm-page">
-        <header className="site">
-          <div className="navbar">
-            <a className="brand" href="/"><img src="/images/logo-mark.webp" alt="Slate Cinema" /><span>SLATE CINEMA</span></a>
-            <nav className="main">
-              <a href="/">Home</a><a href="/portfolio">Portfolio</a>
-              <a className="on" href="/social-media-management">Social Media</a>
-              <a href="/how-it-works">How It Works</a>
-            </nav>
-            <a className="pill" href="/schedule-a-call">Schedule Call</a>
-            <SMMMobileNav activeHref="/social-media-management" />
-          </div>
-        </header>
+        <Nav />
 
         <div className="hero">
           <div className="sprockets" aria-hidden="true" />
