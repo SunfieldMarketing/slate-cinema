@@ -354,6 +354,72 @@ while doing it:
   twice, ~20s apart). Once it shows READY, promote it, then do the
   industries testimonial-clear PATCH above.
 
+## Scrape + Podcasts + industry pages + thank-you/Ads (2026-08-13, commits e4dda78, 5ebc6f5)
+
+Per Kauan: "scrape the old site and vimeo for media / podcast page do /
+dont make tnr but get idea of it / do the industry pazges / and do the
+thank you page and google ads and eveything."
+
+- **Scrape findings**: `vimeo.com/user58842347` (Jake's account, confirmed
+  linked to slatecinema.com via its own schema.org data) has 283 videos.
+  Exact-title search found real matches for Park Smiles NYC (video IDs
+  949325387 walkthrough, 949324576 ad — the ad ID matches the doc's own
+  citation) and Gateways ("Gateways 2026 POV commercial", id 1174431950).
+  Most other new portfolio client names (CVM, TruBlue, EKGx, Smash House,
+  Real Talk) returned 0 title matches — likely filed under different
+  internal names. The old Wix site (novelcanvas.wixstudio.com/slate2)
+  gave a full real "All Projects" list (24 real client project pages,
+  slugs recorded) with real per-project description copy, but its media
+  renders through Wix's proprietary video-player widgets, not plain
+  `<img>`/`<video>`/`<iframe src>` tags — DOM scraping got real names,
+  years, service lists, and description copy, but not downloadable
+  image/video files. That's a hard limit of what automated scraping can
+  get here, not a skipped step.
+- **TNR**: did not build a page. Confirmed via both the old site
+  (`thenextride-old` slug, page title literally "The Next Ride | Slate
+  OLD") and the doc: TNR = The Next Ride, a cycling program under The
+  Next Step, a nonprofit doing prosthetic care + community support for
+  amputees. Real, but the client relationship ended in a collections
+  dispute per Jake — used only to correctly apply the doc's own "if TNR
+  doesn't come back" fallback (Athletics anchored on Gotham Rugby + Kids
+  of Courage + Camp Slapshots instead, no Same-Day Turnaround claim).
+- **Podcasts**: new page at `/podcasts`, linked from the Portfolio nav
+  dropdown. Real Talk (15 episodes, 31 clips from one episode, ~1TB
+  footage/shoot) + World Within case studies, Weekly Engine release
+  ladder, What's Included. Did NOT include specific Real Talk channel
+  URLs or a claim that hosts Miriam/Chaya signed off — doc flags both
+  "VERIFY WITH JAKE BEFORE PUBLISH."
+- **Industry pages**: real content pass across all 9 (see commit
+  5ebc6f5 for the full breakdown) — real client-name anchors, dropped
+  every fabricated stat that exact-matched the doc's own "unsourced
+  stats" list (4.2x ROAS, 62% donation/engagement lift, 12.1M reach).
+  Real Estate renamed "Construction & Real Estate." **Not done**: the
+  doc's larger ask of giving each industry its own distinct named
+  sections (Institution Storytelling, Campaign & Initiative Coverage,
+  Lifestyle & Location Storytelling, etc.) — that's a real new-component
+  design/build project on top of IndustryPageContent's current bento-
+  grid/gallery/process shape, not a content fix. Scoped out of this pass
+  deliberately rather than attempted half-depth; flagging for a
+  dedicated follow-up rather than guessing at a smaller version of it.
+- **Thank-you + Google Ads**: new `/thank-you` page (noindexed), all 3
+  existing forms (lead, booking, intake) now fire a `dataLayer.push`
+  conversion event inline at their existing success moment — no UX
+  change, per the doc's own either/or framing. `GoogleAdsTag.tsx` reads
+  `NEXT_PUBLIC_GOOGLE_ADS_ID`, renders nothing until it's set (same
+  no-op pattern as the GHL webhook vars). Also fixed a real bug found
+  while wiring this: PostHog was never `init()`'d anywhere, so every
+  `posthog.capture()` call sitewide was a silent no-op.
+- **Also removed**: the Homepage's "Results" section (fake 120,000,000
+  views / 98.2% reach animated counter) — explicitly flagged in the doc.
+  Not re-numbered with real (much smaller) figures, since the
+  views/reach/likes/comments shape has no honest real equivalent and
+  would still misrepresent scale even with true numbers substituted.
+- Build (`npm run build`) clean after all of the above. Pushed as
+  commits `e4dda78` and `5ebc6f5` on `cms-migration-phase0`. **Needs a
+  Promote to Production** once Vercel finishes building — the Vercel
+  MCP connection dropped mid-session (33 tools disconnected), so status
+  couldn't be checked from here this time; check the Vercel dashboard.
+
 ## Client changelog (plain-English, for sending to Kauan)
 
 See the chat response this doc was written alongside for the current
