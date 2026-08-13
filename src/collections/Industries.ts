@@ -60,13 +60,19 @@ export const Industries: CollectionConfig = {
       fields: [{ name: 'name', type: 'text', required: true }],
     },
     {
+      // Made fully optional 2026-08-12 — every existing value here was a
+      // fabricated client quote (invented name/role/company), confirmed
+      // via client audit and stripped from src/lib/industries.ts and its
+      // render path. Subfields left not-required so the group itself can
+      // be omitted entirely rather than forcing a partial/fake value.
       name: 'testimonial',
       type: 'group',
+      admin: { description: 'Optional — real client quote only, leave blank if none' },
       fields: [
-        { name: 'quote', type: 'textarea', required: true },
-        { name: 'name', type: 'text', required: true },
-        { name: 'role', type: 'text', required: true },
-        { name: 'company', type: 'text', required: true },
+        { name: 'quote', type: 'textarea' },
+        { name: 'name', type: 'text' },
+        { name: 'role', type: 'text' },
+        { name: 'company', type: 'text' },
       ],
     },
     {

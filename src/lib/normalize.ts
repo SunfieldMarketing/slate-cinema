@@ -82,7 +82,7 @@ export interface IndustryData {
   gallery: string[]
   stats: IndustryStat[]
   services: string[]
-  testimonial: { quote: string; name: string; role: string; company: string }
+  testimonial?: { quote: string; name: string; role: string; company: string }
   serviceCards?: IndustryServiceCard[]
   videoTestimonials?: IndustryVideoTestimonial[]
   process?: IndustryProcessStep[]
@@ -104,7 +104,18 @@ export function normalizeIndustry(doc: Industry): IndustryData {
     gallery: (doc.gallery ?? []).map((g) => mediaUrl(g.image) || '').filter(Boolean),
     stats: (doc.stats ?? []).map((s) => ({ value: s.value, suffix: s.suffix || '', label: s.label })),
     services: (doc.services ?? []).map((s) => s.name),
-    testimonial: doc.testimonial,
+    // Only surface a testimonial when every field is actually filled in —
+    // the group is now fully optional in Payload (2026-08-12, fabricated
+    // placeholder quotes removed), so a doc can have an empty/partial group.
+    testimonial:
+      doc.testimonial?.quote && doc.testimonial.name && doc.testimonial.role && doc.testimonial.company
+        ? {
+            quote: doc.testimonial.quote,
+            name: doc.testimonial.name,
+            role: doc.testimonial.role,
+            company: doc.testimonial.company,
+          }
+        : undefined,
     serviceCards: (doc.serviceCards ?? []).map((sc) => ({
       title: sc.title,
       description: sc.description,

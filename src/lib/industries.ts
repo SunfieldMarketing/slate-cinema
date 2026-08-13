@@ -68,7 +68,15 @@ export interface IndustryData {
   gallery: string[]
   stats: IndustryStat[]
   services: string[]
-  testimonial: { quote: string; name: string; role: string; company: string }
+  /**
+   * Fabricated per-industry client quotes (invented names, roles, and
+   * companies) lived here and in `videoTestimonials` until the 2026-08-12
+   * client audit confirmed none were real Slate Cinema clients — the
+   * render call for both was removed from IndustryPageContent.tsx and the
+   * fake literal data below was deleted. Field kept optional so a real
+   * testimonial can be added per-industry once the client supplies one.
+   */
+  testimonial?: { quote: string; name: string; role: string; company: string }
   /**
    * Extended industry-page sections (service cards, client story cards,
    * process timeline, FAQ). Optional and currently only populated for Animation —
@@ -107,7 +115,6 @@ export const industries: IndustryData[] = [
       { value: 12, suffix: '', label: 'Style Systems Built' },
     ],
     services: ['AI-accelerated explainers', 'Motion brand identity', '2D & 3D character work', 'AI-assisted style exploration'],
-    testimonial: { quote: 'They turned an eight-page technical deck into a 45-second video our sales team actually uses.', name: 'Priya Sharma', role: 'Head of Product Marketing', company: 'Nimbus Systems' },
     serviceCards: [
       {
         title: 'AI-Accelerated Explainers',
@@ -151,38 +158,9 @@ export const industries: IndustryData[] = [
         image: '/images/ai_anim_svc_social.webp',
       },
     ],
-    videoTestimonials: [
-      {
-        quote: 'They turned an eight-page technical deck into a 45-second video our sales team actually uses.',
-        name: 'Priya Sharma',
-        role: 'Head of Product Marketing',
-        company: 'Nimbus Systems',
-        outcome: '+3.1x demo requests',
-        video: '/videos/pre-production.mp4',
-        poster: '/images/ai_anim_test_1.webp',
-        logo: '/images/clients/lucida-testimonials.webp',
-      },
-      {
-        quote: 'The launch film paid for itself in the first week. We reallocated our whole Q3 photo budget to animation.',
-        name: 'Marcus Webb',
-        role: 'VP of Growth',
-        company: 'Voltbrew',
-        outcome: '+212% PDP conversion',
-        video: '/videos/production.mp4',
-        poster: '/images/ai_anim_test_2.webp',
-        logo: '/images/clients/dream-testimonials.webp',
-      },
-      {
-        quote: "Fastest studio we've worked with, and the first that made revisions painless — boards first, no surprises.",
-        name: 'Elena Ruiz',
-        role: 'Brand Director',
-        company: 'Nordform',
-        outcome: '-34% support tickets',
-        video: '/videos/distribution.mp4',
-        poster: '/images/ai_anim_test_3.webp',
-        logo: '/images/clients/inhale-testimonails.webp',
-      },
-    ],
+    // videoTestimonials removed 2026-08-12 — the 3 entries here (Nimbus
+    // Systems, Voltbrew, Nordform) were invented companies/names, never
+    // real Slate Cinema clients. See IndustryData.testimonial comment.
     process: [
       { week: 'Wk 1', title: 'Discover', body: 'Goals, audience and references — then a one-page brief.' },
       { week: 'Wk 1–2', title: 'Script & boards', body: 'Story signed off as boards and a timed animatic.' },
@@ -222,7 +200,6 @@ export const industries: IndustryData[] = [
       { value: 30, suffix: '+', label: 'Athlete Features' },
     ],
     services: ['Hype reels', 'Athlete feature films', 'Product launch content', 'Live event capture'],
-    testimonial: { quote: 'Cinematic quality with a social-first brain. Rare combination, huge results.', name: 'David Chen', role: 'Founder', company: 'Apex Athletics' },
     serviceCards: [
       {
         title: 'Hype Reels',
@@ -296,7 +273,6 @@ export const industries: IndustryData[] = [
       { value: 15, suffix: '+', label: 'Resort Partners' },
     ],
     services: ['Destination films', 'Aerial cinematography', 'Property showcases', 'Hospitality brand content'],
-    testimonial: { quote: 'Booking inquiries jumped the week the film went live. It sells the feeling, not just the room.', name: 'Marcus Rivera', role: 'Director of Marketing', company: 'Coastal Collection Resorts' },
     serviceCards: [
       {
         title: 'Destination Films',
@@ -370,7 +346,6 @@ export const industries: IndustryData[] = [
       { value: 6, suffix: '', label: 'Developments Covered' },
     ],
     services: ['Cinematic property tours', 'Development timelapses', 'Aerial drone cinematography', 'Agent brand films'],
-    testimonial: { quote: 'The aerial reveal alone got more inquiries than our previous three listings combined.', name: 'Isabella Rossi', role: 'Principal Broker', company: 'Vista Real Estate' },
     serviceCards: [
       {
         title: 'Cinematic Property Tours',
@@ -444,7 +419,6 @@ export const industries: IndustryData[] = [
       { value: 100, suffix: '%', label: 'Compliance-Reviewed' },
     ],
     services: ['Patient story films', 'Facility & capability films', 'Explainer content', 'Regulated-industry compliant edits'],
-    testimonial: { quote: 'Mission-driven storytelling that moved our board and our donors in the same week.', name: 'Fatima Al-Jamil', role: 'CFO', company: 'Global Health Org' },
   },
   {
     id: 'products',
@@ -469,7 +443,6 @@ export const industries: IndustryData[] = [
       { value: 50, suffix: '+', label: 'Product Spotlights' },
     ],
     services: ['Macro product photography', 'E-commerce ad cuts', 'Signature color grading', 'Platform-native spotlights'],
-    testimonial: { quote: 'Scroll-stopping product spotlights engineered for conversion — and it shows in the numbers.', name: 'Kenji Tanaka', role: 'Brand Director', company: 'Lumiere Beauty' },
     serviceCards: [
       {
         title: 'Macro Product Spotlights',
@@ -543,7 +516,6 @@ export const industries: IndustryData[] = [
       { value: 20, suffix: '+', label: 'Executive Films' },
     ],
     services: ['Brand & culture films', 'Executive communications', 'Internal comms video', 'Investor & recruiting content'],
-    testimonial: { quote: 'Brand films, culture reels, and executive communications that make companies feel human — exactly what we needed.', name: 'Priya Sharma', role: 'VP Marketing', company: 'Nexus Architecture' },
     serviceCards: [
       {
         title: 'Brand & Culture Films',
@@ -617,7 +589,6 @@ export const industries: IndustryData[] = [
       { value: 10, suffix: '+', label: 'Institutions Served' },
     ],
     services: ['Mission & impact films', 'Donor & fundraising content', 'Volunteer recruitment films', 'Annual report video'],
-    testimonial: { quote: 'Mission-driven storytelling built to move an audience to act — and our donation numbers proved it did.', name: 'Fatima Al-Jamil', role: 'Executive Director', company: 'Global Health Org' },
     serviceCards: [
       {
         title: 'Mission & Impact Films',
@@ -691,12 +662,6 @@ export const industries: IndustryData[] = [
       { value: 4, suffix: '+', label: 'Weeks Avg. Turnaround' },
     ],
     services: ['Course & program trailers', 'Campus tour films', 'Faculty & student spotlights', 'Enrollment marketing content'],
-    testimonial: {
-      quote: "Prospective students decide whether they can see themselves on your campus in the first few seconds of a video. That's the moment we build every education project around.",
-      name: 'The Slate Cinema Team',
-      role: 'Education Practice',
-      company: 'Slate Cinema',
-    },
     serviceCards: [
       {
         title: 'Course & Program Trailers',

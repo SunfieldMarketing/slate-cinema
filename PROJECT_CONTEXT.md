@@ -200,6 +200,19 @@ step to collect name/email/phone before the booking confirms. Done --
 see commit 578789e. `/api/booking` now requires and mirrors all 5
 fields, and forwards them to `GHL_BOOKING_WEBHOOK_URL`.
 
+## Decisions resolved (2026-08-12, follow-up)
+
+- **Calendar**: confirmed — keep the custom design as the frontend
+  (already done, commit 578789e), GHL is backend-only via
+  `GHL_BOOKING_WEBHOOK_URL`. The audit doc's "replace with GHL's
+  embedded widget" suggestion does NOT apply; no change needed.
+- **Meta / Alo / B&H logos**: confirmed real, already correctly on
+  the site. No action needed.
+- Still open: TNR keep-or-retire, Podcasts page guest names/channel
+  URLs sign-off. Proceeding with the portfolio/industry-page content
+  rebuild using the doc's real client data; TNR-dependent sections use
+  the doc's own "if TNR doesn't come back" fallback anchors.
+
 ## Content-integrity audit (2026-08-12, via shared Google Doc "Slate/Wave web edits 27")
 
 A client-shared audit doc revealed the site's testimonials, portfolio

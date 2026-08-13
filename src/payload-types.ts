@@ -274,11 +274,14 @@ export interface Industry {
         id?: string | null;
       }[]
     | null;
-  testimonial: {
-    quote: string;
-    name: string;
-    role: string;
-    company: string;
+  /**
+   * Optional — real client quote only, leave blank if none
+   */
+  testimonial?: {
+    quote?: string | null;
+    name?: string | null;
+    role?: string | null;
+    company?: string | null;
   };
   /**
    * Optional — rich bento cards for the individual industry page
