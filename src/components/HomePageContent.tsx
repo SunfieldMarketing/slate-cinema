@@ -4,7 +4,6 @@ import React from 'react'
 import Nav from '@/components/Nav'
 import Hero from '@/components/Hero'
 import TrustSection from '@/components/TrustSection'
-import Results from '@/components/Results'
 import Pipeline from '@/components/Pipeline'
 import MediaVoid from '@/components/MediaVoid'
 import IndustryStandards from '@/components/IndustryStandards'
@@ -45,7 +44,15 @@ export default function HomePageContent({
         <div data-scroll-section="trust"><TrustSection data={homePage?.trustSection} /></div>
         <div id="how" data-scroll-section="pipeline"><Pipeline categories={pipelineCategories} heading={pipelineHeading} /></div>
         <div data-scroll-section="mediavoid"><MediaVoid data={homePage?.mediaVoid} /></div>
-        <div data-scroll-section="results"><Results data={homePage?.results} /></div>
+        {/* "Results" (fake 120M-views / 98.2%-reach counter) removed
+            2026-08-13 per the audit doc's explicit instruction -- no real
+            aggregate view/reach/like/comment numbers exist to back it, and
+            substituting real (much smaller) project/review counts into a
+            component built to dramatize millions of views would still be
+            misleading in framing even with technically-true numbers. The
+            site's real stats live honestly on How It Works and each
+            industry page instead. Component file kept, unused, in case a
+            real aggregate-performance case study is added later. */}
         <div data-scroll-section="standards"><IndustryStandards data={homePage?.industryStandards} /></div>
         <div data-scroll-section="reviews"><Reviews data={homePage?.reviews} /></div>
         <div id="reel" data-scroll-section="portfolio"><PortfolioCarousel projects={portfolioProjects} /></div>
