@@ -304,6 +304,56 @@ hints for free — lower risk than hand-converting 537 files and safer than
 a blanket format swap. Keep hero/above-fold media eager/`priority` so nothing
 above the fold regresses on "loads instantly." Not started yet.
 
+## Portfolio + industry testimonials — real data (2026-08-12, commit 2301d92)
+
+Per "DO everything" — item #1 from the decisions list above (fake
+8-project portfolio) is now done, plus a related cleanup that surfaced
+while doing it:
+
+- `portfolio-projects.ts`: all 8 fake projects (HyperDrive Motors, Apex
+  Athletics, Nexus Architecture, Summit Conf., Velocity Co, Lumiere
+  Beauty, Vista Real Estate, Global Health Org — all invented, with
+  invented view-count/ROAS/reach numbers) replaced with 8 real clients
+  from the Google Doc's homepage list: CVM Construction, Real Talk,
+  TruBlue of NW Brooklyn, EKGx, Smash House Burgers, Park Smiles NYC,
+  Sleepy Hollow Hotel, Gateways. Metrics are now real sourced figures
+  (150+ permits, 15 episodes/31 clips, etc.), not invented percentages.
+  **Imagery/video are still the same generic placeholder assets** — no
+  real photo/video files for these specific projects were available to
+  drop in. That's a separate, still-open gap (need actual footage).
+- Synced the 8 new titles/companies/copy/metrics directly to the live
+  `portfolio-projects` DB via the admin API — but **this collection
+  renders on statically-generated pages** (`/`, `/portfolio` are both
+  prerendered at build time), unlike the Footer/HowItWorks globals from
+  earlier in the session. The DB write alone does nothing live; it only
+  shows once the build containing this commit is promoted.
+- Also found and removed a second, previously-missed instance of the
+  same fabrication problem: `industries.ts` still had a fake `testimonial`
+  quote on all 9 industries, plus a fake `videoTestimonials` array of 3
+  (Nimbus Systems/Voltbrew/Nordform) on the AI/Animation industry. These
+  were never re-checked after the FAQ/testimonial render call was
+  deleted from `IndustryPageContent.tsx` earlier — the render site was
+  gone but the fabricated source data and live DB rows were still there.
+  Removed the literal data, made `testimonial` optional end-to-end
+  (`industries.ts`, `normalize.ts`, the `Industries` Payload collection,
+  hand-patched `payload-types.ts` since `generate:types` can't run here —
+  same Node 24 / tsx `T.registerHooks` incompatibility as `generate:importmap`
+  hit earlier).
+  - **Not yet cleared live**: PATCHing the 9 live `industries` DB rows'
+    `testimonial` to empty failed with `400 required` — the *currently
+    deployed* code still has the old `required: true` schema, so the
+    live API rejects the empty value until the new deploy (which relaxes
+    that requirement) is promoted. Once promoted, re-run the same PATCH
+    pattern used for portfolio-projects, targeting `/api/industries/{1..9}`
+    with `{ testimonial: { quote: '', name: '', role: '', company: '' } }`
+    (and `{ videoTestimonials: [] }` for id 1).
+- Build (`npm run build`) and `tsc --noEmit` both clean after all of the
+  above. Pushed as commit `2301d92` on `cms-migration-phase0`.
+- **Still needs a Promote to Production** — as of this write-up, Vercel
+  hadn't started building `2301d92` yet in the deployments list (checked
+  twice, ~20s apart). Once it shows READY, promote it, then do the
+  industries testimonial-clear PATCH above.
+
 ## Client changelog (plain-English, for sending to Kauan)
 
 See the chat response this doc was written alongside for the current
