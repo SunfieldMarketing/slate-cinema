@@ -62,40 +62,6 @@ function IntroSection({ industry }: { industry: IndustryData }) {
   )
 }
 
-/*
-  Simple image gallery for industries that don't yet have client story
-  cards — the built-out pages carry their work proof inside the merged
-  Client Stories section instead.
-*/
-function GallerySection({ industry }: { industry: IndustryData }) {
-  const ref = useRef<HTMLElement>(null)
-  useGSAP(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo('.gal-tile', { y: 50, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 0.7, ease: 'power3.out', scrollTrigger: { trigger: '.gal-grid', start: 'top 85%', once: true } })
-    }, ref)
-    return () => ctx.revert()
-  }, { scope: ref })
-
-  return (
-    <section ref={ref} className="relative w-full overflow-hidden py-20 md:py-24">
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
-        <div className="text-center mb-12 max-w-2xl mx-auto">
-          <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase block mb-4" style={{ color: industry.accent }}>The Work</span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.05]">A closer look</h2>
-        </div>
-
-        <div className="gal-grid grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {industry.gallery.map((src, i) => (
-            <div key={i} className="gal-tile relative rounded-2xl overflow-hidden border border-white/10 aspect-[4/5]">
-              <img src={src} alt={`${industry.label} shot ${i + 1}`} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out hover:scale-110" />
-              <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent" />
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
 
 /*
   Healthcare doesn't get Slate Cinema's own industry template — it routes
@@ -212,16 +178,14 @@ export default function IndustryPageContent({
             walked through proof, not after. */}
         {industry.serviceCards && <IndustryServices services={industry.serviceCards} accent={industry.accent} />}
 
-        {/* Proof cluster: was a case-study/testimonial card (outcome stat,
-            video, quote) per industry, but every one of those quotes was
-            fabricated placeholder data (invented names, invented
-            companies) from the original template build -- confirmed via
-            client audit 2026-08-12, never real Slate Cinema clients.
-            Pulled the testimonial claims entirely rather than keep
-            publishing them; real gallery images stay since those aren't
-            attributed to a fabricated person. Re-add a testimonial/case-
-            study section once real client quotes exist to put here. */}
-        <GallerySection industry={industry} />
+        {/* GallerySection ("The Work" / "A closer look" 3-image teaser)
+            removed 2026-08-13 at Kauan's request -- the page already has
+            the full filterable Portfolio grid further down (#gallery), so
+            this was a redundant, thinner second gallery. This section of
+            the page is being rebuilt properly as part of the broader
+            industry-page overhaul (real client story cards, real Vimeo
+            embeds, premium components) rather than left as a gap --
+            see the per-industry rebuild work landing alongside this. */}
 
         <MidCtaBand accent={industry.accent} />
 

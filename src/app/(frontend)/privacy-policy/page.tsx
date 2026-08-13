@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import SMMMobileNav from '@/components/SMMMobileNav'
 
 /*
   Ported verbatim (design + copy) from the finished HTML Jake sent
@@ -55,7 +56,16 @@ export default function PrivacyPolicyPage() {
   .legal-page footer.site .grow { flex:1; }
   .legal-page footer.site a { color:var(--muted); text-decoration:none; }
   .legal-page footer.site a:hover { color:var(--text); }
-  @media (max-width:860px) { .legal-page nav.main { display:none; } }
+  .smm-burger { display:none; flex-direction:column; justify-content:center;
+    gap:5px; width:38px; height:38px; background:transparent; border:0; cursor:pointer; padding:0; }
+  .smm-burger span { display:block; width:22px; height:2px; background:var(--text); border-radius:2px; }
+  .smm-mobile-menu { position:fixed; inset:0; top:71px; z-index:40;
+    background:rgba(11,12,14,.98); backdrop-filter:blur(12px);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:26px; }
+  .smm-mobile-menu a { color:var(--muted); text-decoration:none; font-size:19px; font-weight:600; }
+  .smm-mobile-menu a.on { color:var(--orange); }
+  .smm-mobile-menu a.pill { color:#0b0c0e; background:#fff; border-radius:30px; padding:13px 30px; font-size:15px; }
+  @media (max-width:860px) { .legal-page nav.main { display:none; } .smm-burger { display:flex; } }
       `}</style>
 
       <div className="legal-page">
@@ -68,6 +78,7 @@ export default function PrivacyPolicyPage() {
               <a href="/how-it-works">How It Works</a>
             </nav>
             <a className="pill" href="/schedule-a-call">Schedule Call</a>
+            <SMMMobileNav />
           </div>
         </header>
 

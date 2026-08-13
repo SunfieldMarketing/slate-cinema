@@ -161,7 +161,11 @@ export default function Nav() {
 
           {/* CTA + Portal */}
           <div className="hidden md:flex items-center gap-4">
-            <a href={clientPortalHref} target="_blank" rel="noopener noreferrer" className="text-xs font-mono text-white/25 hover:text-white/50 transition-colors tracking-widest uppercase">Client Portal</a>
+            {/* Text color: gray -> white per Jake's Aug 12 call note. Kept
+                small/mono/uppercase so it stays a "you know it if you're a
+                client" link structurally, even though the color itself is
+                now a clear white rather than easy to miss entirely. */}
+            <a href={clientPortalHref} target="_blank" rel="noopener noreferrer" className="text-xs font-mono text-white/80 hover:text-white transition-colors tracking-widest uppercase">Client Portal</a>
             <Link href={ctaHref} className="relative px-5 py-2.5 rounded-full text-sm font-semibold text-[#030305] bg-white overflow-hidden group">
               <div className="absolute inset-0 bg-[#00AEEF] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
               <span className="relative group-hover:text-white transition-colors">{ctaLabel}</span>

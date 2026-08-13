@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import SMMMobileNav from '@/components/SMMMobileNav'
 
 /*
   Ported verbatim (design + copy) from the finished HTML Jake sent
@@ -109,8 +110,23 @@ export default function SocialMediaManagementPage() {
   .smm-page footer.site a { color:var(--muted); text-decoration:none; }
   .smm-page footer.site a:hover { color:var(--text); }
 
+  /* Mobile hamburger + dropdown -- mirrors the main site's Nav.tsx
+     treatment (three lines -> full-width panel) so this page's mobile
+     nav actually matches the rest of the site instead of just vanishing. */
+  .smm-burger { display:none; flex-direction:column; justify-content:center;
+    gap:5px; width:38px; height:38px; background:transparent; border:0; cursor:pointer; padding:0; }
+  .smm-burger span { display:block; width:22px; height:2px; background:var(--text);
+    border-radius:2px; transition:transform .25s ease, opacity .25s ease; }
+  .smm-mobile-menu { position:fixed; inset:0; top:71px; z-index:40;
+    background:rgba(11,12,14,.98); backdrop-filter:blur(12px);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:26px; }
+  .smm-mobile-menu a { color:var(--muted); text-decoration:none; font-size:19px; font-weight:600; }
+  .smm-mobile-menu a.on { color:var(--orange); }
+  .smm-mobile-menu a.pill { color:#0b0c0e; background:#fff; border-radius:30px; padding:13px 30px; font-size:15px; }
+
   @media (max-width:860px) {
     .smm-page nav.main { display:none; }
+    .smm-burger { display:flex; }
     .smm-page .twocol { grid-template-columns:1fr; gap:38px; }
     .smm-page .step { grid-template-columns:56px 1fr; }
   }
@@ -126,6 +142,7 @@ export default function SocialMediaManagementPage() {
               <a href="/how-it-works">How It Works</a>
             </nav>
             <a className="pill" href="/schedule-a-call">Schedule Call</a>
+            <SMMMobileNav activeHref="/social-media-management" />
           </div>
         </header>
 
