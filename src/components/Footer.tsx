@@ -101,11 +101,18 @@ export default function Footer() {
 
       {/* Wordmark ABOVE Footer Info — kept as a subtle watermark, sized
           down so it reads as texture rather than dominating the footer's
-          height. */}
+          height. Font switched font-mono -> font-display 2026-08-13 per
+          Kauan ("bring back the original footer font slate cinema
+          style") -- font-mono (Courier, the design system's screenplay/
+          slate-data typeface) doesn't match this brand wordmark; every
+          other "SLATE CINEMA" brand-mark treatment sitewide (Nav, page
+          headers) uses the condensed marquee display face (Bebas Neue,
+          --font-display), which is what a brand watermark like this one
+          should read in too. */}
       <div className="footer-wordmark w-full flex items-center justify-center py-3 mb-5 overflow-visible">
         <h1
           ref={textRef}
-          className="text-[9vw] md:text-[9vw] font-bold text-white/[0.07] font-mono leading-none tracking-tighter whitespace-nowrap select-none"
+          className="text-[9vw] md:text-[9vw] font-bold text-white/[0.07] font-display leading-none tracking-tighter whitespace-nowrap select-none"
         >
           SLATE CINEMA
         </h1>

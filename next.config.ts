@@ -27,6 +27,11 @@ const nextConfig: NextConfig = {
       { source: "/hospitality", destination: "/portfolio/travel", permanent: true },
       // No Music industry page yet -- general portfolio rather than 404.
       { source: "/music", destination: "/portfolio", permanent: true },
+      // Podcasts moved from its own standalone page to a normal industry
+      // entry 2026-08-13 ("make the podcasts page just an industry page
+      // same format and everything") -- redirect the old URL rather than
+      // 404 anyone who bookmarked or shared it.
+      { source: "/podcasts", destination: "/portfolio/podcasts", permanent: true },
     ];
   },
   async rewrites() {

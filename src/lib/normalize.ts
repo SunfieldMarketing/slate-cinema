@@ -21,6 +21,12 @@ import {
   getJournalPostsCollection,
 } from '@/lib/payload-data'
 import type { Category as PipelineCategory } from '@/lib/pipeline-data'
+import {
+  industries as staticIndustries,
+  type IndustryData as StaticIndustryData,
+  type IndustryClient as StaticIndustryClient,
+  type IndustryCinematicStatement as StaticIndustryCinematicStatement,
+} from '@/lib/industries'
 
 /*
   IMPORTANT: `icon` stays a plain string key (e.g. "Film"), never
@@ -87,6 +93,8 @@ export interface IndustryData {
   videoTestimonials?: IndustryVideoTestimonial[]
   process?: IndustryProcessStep[]
   faqs?: IndustryFaqItem[]
+  clientShowcase?: StaticIndustryClient[]
+  cinematicStatement?: StaticIndustryCinematicStatement
 }
 
 export function normalizeIndustry(doc: Industry): IndustryData {
@@ -138,6 +146,13 @@ export function normalizeIndustry(doc: Industry): IndustryData {
     })),
     process: (doc.process ?? []).map((p) => ({ week: p.week, title: p.title, body: p.body })),
     faqs: (doc.faqs ?? []).map((f) => ({ question: f.question, answer: f.answer })),
+    // clientShowcase / cinematicStatement ("the Athletics format") stay
+    // code-only -- overlaid from src/lib/industries.ts by slug rather than
+    // round-tripped through Payload, same reasoning as the comment on
+    // IndustryData.clientShowcase. Not in the Industry doc type at all,
+    // so there's nothing to read off `doc` here; see getNormalizedIndustries.
+    clientShowcase: staticIndustries.find((i) => i.slug === doc.slug)?.clientShowcase,
+    cinematicStatement: staticIndustries.find((i) => i.slug === doc.slug)?.cinematicStatement,
   }
 }
 
@@ -209,11 +224,35 @@ export function normalizePipeline(doc: PayloadPipeline | null): PipelineCategory
   }))
 }
 
+/*
+  Converts a src/lib/industries.ts entry (the pre-CMS static shape,
+  `icon` as an actual LucideIcon component) into this file's IndustryData
+  shape (`icon` as a plain string key) -- the same "component -> string
+  key" convention Payload's `icon` select field already uses site-wide
+  (see ICON_OPTIONS in src/collections/Industries.ts), so resolveIcon()
+  on the frontend works identically regardless of which source the
+  industry came from. Relies on lucide-react setting `.displayName` to
+  the exported icon name (e.g. `Mic.displayName === 'Mic'`), which every
+  lucide-react icon component does.
+*/
+function staticToNormalized(industry: StaticIndustryData): IndustryData {
+  const iconName = (industry.icon as unknown as { displayName?: string }).displayName || 'Film'
+  return { ...industry, icon: iconName }
+}
+
 /* Convenience wrappers — fetch + normalize in one call, for the common
    case of a Server Component that just wants the plain shape. */
 export async function getNormalizedIndustries(): Promise<IndustryData[]> {
   const docs = await getIndustriesCollection()
-  return docs.map(normalizeIndustry)
+  const fromDb = docs.map(normalizeIndustry)
+  // Any industry that only exists in the static file (e.g. "podcasts",
+  // added 2026-08-13 per "make the podcasts page just an industry page
+  // same format and everything") has no DB doc yet -- append it as-is
+  // rather than requiring a CMS entry before it can appear anywhere
+  // (nav dropdown, /portfolio wheel, /portfolio/[slug]).
+  const dbSlugs = new Set(fromDb.map((i) => i.slug))
+  const staticOnly = staticIndustries.filter((i) => !dbSlugs.has(i.slug)).map(staticToNormalized)
+  return [...fromDb, ...staticOnly]
 }
 
 export async function getNormalizedPortfolioProjects(): Promise<PortfolioProjectLocal[]> {

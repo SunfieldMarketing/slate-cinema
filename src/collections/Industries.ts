@@ -124,5 +124,11 @@ export const Industries: CollectionConfig = {
         { name: 'answer', type: 'textarea', required: true },
       ],
     },
+    // clientShowcase / cinematicStatement ("the Athletics format",
+    // 2026-08-13) deliberately NOT added here -- see the comment on
+    // IndustryData.clientShowcase in src/lib/industries.ts for why
+    // these two fields stay code-only (merged in normalize.ts) instead
+    // of round-tripping through Payload + real media uploads, same as
+    // how Athletics' own showcase was built before this generalization.
   ],
 }

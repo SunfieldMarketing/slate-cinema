@@ -3,17 +3,16 @@ import { getNormalizedIndustries, getNormalizedPortfolioProjects } from '@/lib/n
 import { getFinalCTA } from '@/lib/payload-data'
 import IndustryPageContent from '@/components/IndustryPageContent'
 
-// 'athletics' excluded -- it has its own dedicated static route
-// (portfolio/athletics/page.tsx) with a genuinely different page design,
-// per Jake's Aug 12 call note that Athletics + Animation are different
-// designs from the rest. A literal static route always wins over a
-// dynamic [industry] match for the same path in Next.js, but leaving
-// 'athletics' in generateStaticParams here would still try to
-// prerender a second, conflicting page at the same URL and fail the
-// build -- excluded explicitly instead of relying on routing alone.
+// Athletics' dedicated static route (portfolio/athletics/page.tsx) was
+// retired 2026-08-13 -- its client-showcase + cinematic-statement
+// format was generalized into IndustryPageContent for every industry
+// (see IndustryData.clientShowcase in src/lib/industries.ts), so
+// Athletics goes through this same dynamic route again like everyone
+// else. 'podcasts' also flows through here now (added as a normal,
+// code-only industry entry -- see getNormalizedIndustries).
 export async function generateStaticParams() {
   const industries = await getNormalizedIndustries()
-  return industries.filter((i) => i.slug !== 'athletics').map((i) => ({ industry: i.slug }))
+  return industries.map((i) => ({ industry: i.slug }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ industry: string }> }) {
