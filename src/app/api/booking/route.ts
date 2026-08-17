@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { simpleRichText } from '@/lib/simple-richtext'
-import { forwardToGHL } from '@/lib/ghl'
+import { forwardToGHL, splitName } from '@/lib/ghl'
 
 /*
   Real destination for /schedule-a-call's "Confirm Time" button. It
@@ -84,7 +84,16 @@ export async function POST(req: Request) {
       },
     })
 
-    forwardToGHL('GHL_BOOKING_WEBHOOK_URL', { name, email, phone, date, time }).catch(() => {})
+    const { firstName, lastName } = splitName(name)
+    forwardToGHL('GHL_BOOKING_WEBHOOK_URL', {
+      name,
+      first_name: firstName,
+      last_name: lastName,
+      email,
+      phone,
+      date,
+      time,
+    }).catch(() => {})
 
     return NextResponse.json({ ok: true })
   } catch (err) {

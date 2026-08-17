@@ -10,6 +10,30 @@
  * side, but here we're server-side so we can actually read the response
  * status and log real failures instead of firing blind.
  */
+/**
+ * Splits a single "Full Name" field into { firstName, lastName }.
+ *
+ * Added 2026-08-17 per Levi's real-world finding: the lead form sent one
+ * combined `name` field, but the GHL workflow expected `first_name` /
+ * `last_name` -- those didn't exist, so every lead landed with a blank
+ * name. He fixed it that time by remapping the CRM workflow to read
+ * `name` directly, but flagged that the calendar booking form would hit
+ * the identical issue the moment it got wired up (same combined-name
+ * pattern). Rather than rely on a CRM-side remap per form -- which only
+ * fixes the one workflow it's applied to, and has to be redone for every
+ * new form that gets added later -- every GHL forward now sends both
+ * shapes: `name` (already working, keeps Levi's existing remap intact)
+ * and `first_name` / `last_name` (matching what a GHL workflow expects
+ * out of the box, so nothing needs remapping going forward).
+ */
+export function splitName(fullName: string): { firstName: string; lastName: string } {
+  const parts = fullName.trim().split(/\s+/).filter(Boolean)
+  return {
+    firstName: parts[0] ?? '',
+    lastName: parts.slice(1).join(' '),
+  }
+}
+
 export async function forwardToGHL(envVar: string, data: Record<string, unknown>) {
   const url = process.env[envVar]
   if (!url) return { sent: false, reason: 'not configured' as const }

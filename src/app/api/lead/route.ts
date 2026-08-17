@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { simpleRichText } from '@/lib/simple-richtext'
-import { forwardToGHL } from '@/lib/ghl'
+import { forwardToGHL, splitName } from '@/lib/ghl'
 
 /*
   Real destination for the Contact page's "Drop us a line" lead form,
@@ -75,7 +75,16 @@ export async function POST(req: Request) {
     // Best-effort, never blocks the response above from having already
     // succeeded -- a GHL hiccup (or it simply not being configured yet)
     // must never turn into a broken-looking form for the visitor.
-    forwardToGHL('GHL_LEAD_WEBHOOK_URL', { name, email, phone, company: company ?? '', message: message ?? '' }).catch(() => {})
+    const { firstName, lastName } = splitName(name)
+    forwardToGHL('GHL_LEAD_WEBHOOK_URL', {
+      name,
+      first_name: firstName,
+      last_name: lastName,
+      email,
+      phone,
+      company: company ?? '',
+      message: message ?? '',
+    }).catch(() => {})
 
     return NextResponse.json({ ok: true })
   } catch (err) {
