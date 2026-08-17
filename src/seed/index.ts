@@ -565,28 +565,32 @@ async function main() {
         ratingText: '5.0/5 average · 44 Google reviews',
         videoTestimonialsLabel: 'Hear it from them, not us',
         googleReviewsLabel: 'From Google reviews',
+        // Real Google reviews (pulled straight off the Slate Cinema Google
+        // Business listing 2026-08-17, replacing 3 fabricated placeholder
+        // reviews that were never real people). Dates intentionally
+        // omitted per Kauan's instruction -- only role reflects the
+        // reviewer's Google "N reviews" / Local Guide badge.
         testimonials: [
           {
             quote:
-              "The attention to detail is better than anyone we've ever worked with! I would highly recommend using Slate for any and all media. We've been working hand-in-hand with Slate for 6+ years now — I would never go back to using anyone else!",
-            name: 'Dan Jennings',
-            role: 'Local Guide',
+              'Extremely creative agency with strong experience to back up their ideas. Takes the time to really understand client needs and puts in the effort to bring them to life.',
+            name: 'Good Baklava',
+            role: '8 reviews',
             company: 'Google Review',
             rating: 5,
           },
           {
             quote:
-              'Slate Cinema is hands-down one of the best video production companies in Brooklyn. They took our ideas and turned them into stunning, high-quality content that perfectly captured our brand. The team is creative, professional, and easy to work with from start to finish.',
-            name: 'Sara Greenberg',
-            role: 'Client',
+              "We've worked with Slate Cinema to create a professional video. Amazing experience! Their willingness and understanding to schedule around our availability to ensure that we're able to complete the project while still running a full operation was amazing. Having someone that understands what we're trying to capture and seamlessly works it all into the shoot was such a great feeling. Just 5 star experience all around.",
+            name: 'Ben Kaller',
+            role: 'Local Guide · 27 reviews',
             company: 'Google Review',
             rating: 5,
           },
           {
-            quote:
-              "Jake created an amazing promotional video for my organization and I couldn't be happier with the result. He was professional, creative, and really understood the message we wanted to share. The final product was polished, engaging, and better than I imagined.",
-            name: 'Chana W',
-            role: 'Local Guide',
+            quote: 'Amazingly talented. Professional. And artistic. Exactly what we needed for the job.',
+            name: 'Lia Jay',
+            role: 'Local Guide · 12 reviews',
             company: 'Google Review',
             rating: 5,
           },
