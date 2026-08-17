@@ -39,6 +39,28 @@ const dirname = path.dirname(filename)
 const databaseURI = process.env.DATABASE_URI || 'file:./slate-cinema.db'
 const isPostgres = databaseURI.startsWith('postgres://') || databaseURI.startsWith('postgresql://')
 
+/*
+  CORS/CSRF allow-list. This site is legitimately reachable on multiple
+  origins at once (bare + www custom domain, the .vercel.app fallback
+  domain, plus every git-branch preview alias) -- a single NEXT_PUBLIC_
+  SERVER_URL value can only ever match ONE of those exactly. Discovered
+  2026-08-17: admin saves were silently rejected ("You are not allowed to
+  perform this action", a generic-looking 403 that's actually Payload's
+  CSRF origin check) whenever the browser's actual origin -- in this case
+  https://www.slatecinema.com, which the bare domain redirects to --
+  wasn't the one exact string configured. Listing every known-valid
+  origin explicitly fixes this regardless of which one visitors land on,
+  instead of requiring the env var to be kept in permanent lockstep with
+  however Vercel/DNS happens to canonicalize the domain that day.
+*/
+const allowedOrigins = [
+  process.env.NEXT_PUBLIC_SERVER_URL,
+  'https://slatecinema.com',
+  'https://www.slatecinema.com',
+  'https://slate-cinema.vercel.app',
+  'http://localhost:3000',
+].filter((origin, i, arr): origin is string => Boolean(origin) && arr.indexOf(origin) === i)
+
 const db = isPostgres
   ? postgresAdapter({
       pool: {
@@ -91,8 +113,8 @@ export default buildConfig({
   },
   db,
   sharp,
-  cors: [process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'].filter(Boolean),
-  csrf: [process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'].filter(Boolean),
+  cors: allowedOrigins,
+  csrf: allowedOrigins,
   plugins: [
     formBuilderPlugin({
       // Copy (labels, placeholders, button text, success message) is
