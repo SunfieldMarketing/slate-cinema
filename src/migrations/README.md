@@ -62,6 +62,30 @@ login for every write. Verified locally end-to-end (round-tripped
 `enableAPIKey`/`apiKey` through the Local API, including the
 encrypt/decrypt hooks) before this ever touched production.
 
+## The other prompt: "you've run Payload in dev mode"
+
+`payload migrate` also has its own interactive confirmation, separate from
+the tsx trap above, that fires whenever the `payload_migrations` table
+already contains a `batch: -1` "dev" marker row (written automatically by
+dev-mode push). **Production's real database has one** -- this project's
+Turso DB was originally created and seeded by running `npm run seed`
+locally at some point before this migration setup existed, which pushed
+against it in dev mode. Confirmed by watching the first real production
+build with this migrations folder: it printed the prompt, got no stdin (a
+Vercel build has none), and Payload's own `onCancel` handler called
+`process.exit(0)` -- a *success* code -- so `npm run build`'s `&&` happily
+continued into `next build` having silently skipped the migration
+entirely. Caught by reading the build log at the exact right moment, not
+by anything failing loudly.
+
+Confirming "yes" here doesn't delete anything -- it only excludes that
+marker row from the batch-number calculation (see `@payloadcms/drizzle`'s
+`migrate.js`) so the two real migrations above still run. Since that's
+genuinely fine for a no-op baseline + pure-additive columns, `migrate` and
+`migrate:local` pipe `echo y` into the command. The marker row itself
+isn't deleted by confirming, so this prompt -- and the auto-`y` -- fires
+on every future build forever; that's expected, not a bug to fix later.
+
 ## Going forward
 
 `npm run build` now runs `payload migrate` before `next build`, so any
