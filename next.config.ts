@@ -56,9 +56,25 @@ const nextConfig: NextConfig = {
   // linux-x64 binary (libvips-cpp.so) then can't be found at runtime on
   // Vercel. Found 2026-08-19: every single /api/media/file/* request was
   // 500ing sitewide ("Could not load the 'sharp' module using the
-  // linux-x64 runtime, ERR_DLOPEN_FAILED") -- this is the documented fix
-  // for exactly that error.
+  // linux-x64 runtime, ERR_DLOPEN_FAILED").
   serverExternalPackages: ["sharp"],
+  // serverExternalPackages alone wasn't enough -- confirmed by redeploying
+  // and checking Vercel's runtime error logs directly, same error. The
+  // JS import resolves fine (that's what serverExternalPackages fixes),
+  // but Next's file tracer still wasn't physically including sharp's
+  // native binary packages in the deployed function bundle, so the
+  // *file* genuinely wasn't there at runtime. This exact pattern --
+  // "node_modules/sharp/**/*" -- is Next's own documented fix for native/
+  // runtime assets (node_modules/next/dist/docs/.../output.md). Added the
+  // two @img sub-packages explicitly too since they're sharp's actual
+  // native binaries and live outside node_modules/sharp/ itself.
+  outputFileTracingIncludes: {
+    "/*": [
+      "node_modules/sharp/**/*",
+      "node_modules/@img/sharp-linux-x64/**/*",
+      "node_modules/@img/sharp-libvips-linux-x64/**/*",
+    ],
+  },
 };
 
 export default withPayload(nextConfig, { devBundleServerPackages: false });
