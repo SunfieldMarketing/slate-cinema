@@ -240,7 +240,7 @@ export default function Reviews({ data }: { data?: HomePage['reviews'] }) {
           {testimonials.map((t, i) => (
             <MagicCard
               key={i}
-              className="rv-card rounded-2xl transition-transform duration-500 hover:-translate-y-1"
+              className="rv-card rounded-2xl transition-transform duration-500 hover:-translate-y-1 h-full"
               gradientFrom="#00AEEF"
               gradientTo="#0369A1"
               gradientColor="#00AEEF"
