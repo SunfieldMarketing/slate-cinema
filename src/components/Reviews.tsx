@@ -211,8 +211,15 @@ export default function Reviews({ data }: { data?: HomePage['reviews'] }) {
           </div>
         </div>
 
-        {/* Video testimonials — real face, real name, filmed vertically */}
-        {videoTestimonials.length > 0 && (
+        {/* Video testimonials — DISABLED 2026-08-19 per Kauan ("for now
+            remove the mobile phone video testimonial reviews on
+            homepage"). The underlying data is also the fabricated trio
+            flagged in the media audit (Priya Sharma/Marcus Webb/Elena
+            Ruiz — invented people, still sitting in the "ai" industry's
+            DB record; no DB write access this session to clear it at
+            the source). Re-enable once real client video testimonials
+            replace it: delete the `false &&` below. */}
+        {false && videoTestimonials.length > 0 && (
           <div className="mb-14 md:mb-16">
             <div className="text-center mb-6">
               <span className="font-mono text-[10px] tracking-[0.25em] text-white/40 uppercase">{videoTestimonialsLabel}</span>
