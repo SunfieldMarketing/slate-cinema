@@ -371,6 +371,10 @@ export interface PortfolioProject {
    * Featured cut shown in the project card modal
    */
   video?: (number | null) | Media;
+  /**
+   * Paste a Vimeo URL or ID -- takes priority over the uploaded file when set
+   */
+  videoVimeoUrl?: string | null;
   metrics?:
     | {
         label: string;
@@ -884,6 +888,7 @@ export interface PortfolioProjectsSelect<T extends boolean = true> {
   poster?: T;
   copy?: T;
   video?: T;
+  videoVimeoUrl?: T;
   metrics?:
     | T
     | {

@@ -191,8 +191,9 @@ export function normalizePortfolioProject(doc: PayloadPortfolioProject): Portfol
     copy: doc.copy,
     metrics: (doc.metrics ?? []).map((m) => ({ label: m.label, value: m.value })),
     video: mediaUrl(doc.video),
-    // videoVimeoUrl intentionally NOT read from `doc` -- see the matching
-    // comment on IndustryData.heroVideoVimeoUrl above.
+    // Re-enabled 2026-08-19 -- videoVimeoUrl is a real column now (see
+    // src/migrations/), unlike when this was first disabled.
+    videoVimeoUrl: doc.videoVimeoUrl ?? undefined,
   }
 }
 

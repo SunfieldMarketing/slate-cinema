@@ -7,6 +7,15 @@ import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { scrollState, toTimecode, scrollToY } from '@/lib/scroll'
 import type { HomePage } from '@/payload-types'
+import SmartVideo from '@/components/ui/SmartVideo'
+
+// Real master reel, per the "CLAUDE INPUT 8/12 -- HOMEPAGE" doc note:
+// "HERO: keep 'Video Marketing At Your Fingertips'. Visual: ... from the
+// master reel vimeo.com/937380835." This is the low-opacity background
+// depth layer behind the hero text, not the pinned canvas frame-sequence
+// scrubber above it -- that's a separate, custom-built interaction this
+// note isn't asking to touch.
+const HERO_MASTER_REEL_VIMEO_ID = '937380835'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -282,14 +291,14 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
         {/* 2. HTML UI layer (fades out on scroll, no scale change) */}
         <div className="hero-html-content absolute inset-0 z-20">
 
-          {/* Background video at low opacity for visual depth */}
+          {/* Background video at low opacity for visual depth -- real
+              master reel, falls back to the local file if the Vimeo ID
+              is ever cleared */}
           <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden mix-blend-screen opacity-40">
-            <video
+            <SmartVideo
               src="/videos/hero.mp4"
-              autoPlay
-              loop
-              muted
-              playsInline
+              vimeo={HERO_MASTER_REEL_VIMEO_ID}
+              variant="background"
               className="absolute top-1/2 left-1/2 w-full h-full object-cover min-w-full min-h-full -translate-x-1/2 -translate-y-1/2"
             />
           </div>

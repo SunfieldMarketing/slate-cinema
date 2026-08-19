@@ -27,6 +27,11 @@ export const PortfolioProjects: CollectionConfig = {
     { name: 'copy', type: 'textarea', required: true },
     { name: 'video', type: 'upload', relationTo: 'media', admin: { description: 'Featured cut shown in the project card modal' } },
     {
+      name: 'videoVimeoUrl',
+      type: 'text',
+      admin: { description: 'Paste a Vimeo URL or ID -- takes priority over the uploaded file when set' },
+    },
+    {
       name: 'metrics',
       type: 'array',
       minRows: 1,
