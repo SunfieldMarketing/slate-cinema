@@ -122,7 +122,11 @@ export const industries: IndustryData[] = [
   {
     id: 'ai',
     slug: 'ai',
-    label: 'AI',
+    // Label only -- per Jake's Slack request (2026-08-18, screenshot
+    // F0BQUM3G79R): "can we rename this to '3D and AI'?" Left id/slug as
+    // 'ai' so /portfolio/ai and every existing link keeps working; only
+    // the visible tile/nav text changes.
+    label: '3D and AI',
     icon: Film,
     accent: '#00AEEF',
     blurb: 'AI-accelerated brand stories, explainers, and stylized 2D/3D pieces that make complex ideas feel effortless.',
