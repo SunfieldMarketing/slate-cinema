@@ -27,6 +27,15 @@ export const Users: CollectionConfig = {
       requireUsername: true,
       requireEmail: false,
     },
+    // Lets an admin user generate a long-lived API key from their own user
+    // document in /admin (Edit screen -> "Enable API Key" toggle), for
+    // programmatic REST/GraphQL access via `Authorization: users API-Key
+    // <key>` -- an alternative to a session-cookie login for
+    // machine/integration use. Added 2026-08-19 alongside the
+    // src/migrations/ baseline so the new apiKey/enableAPIKey/apiKeyIndex
+    // columns this adds to `users` actually exist in production (SQLite
+    // doesn't auto-migrate -- see the migrations README).
+    useAPIKey: true,
   },
   hooks: {
     beforeChange: [

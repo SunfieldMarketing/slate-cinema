@@ -8,7 +8,10 @@
     "seed": "cross-env NODE_OPTIONS=--no-deprecation tsx --env-file=.env.local src/seed/index.ts",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation tsx --env-file=.env.local ./node_modules/payload/bin.js generate:importmap",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation tsx --env-file=.env.local ./node_modules/payload/bin.js generate:types",
-    "build": "next build",
+    "migrate": "cross-env NODE_OPTIONS=--no-deprecation node ./node_modules/payload/bin.js migrate",
+    "migrate:local": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env.local ./node_modules/payload/bin.js migrate",
+    "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env.local ./node_modules/payload/bin.js migrate:create",
+    "build": "npm run migrate && next build",
     "start": "next start",
     "lint": "eslint"
   },

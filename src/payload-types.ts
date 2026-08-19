@@ -158,6 +158,9 @@ export interface User {
   roles?: ('admin' | 'editor')[] | null;
   updatedAt: string;
   createdAt: string;
+  enableAPIKey?: boolean | null;
+  apiKey?: string | null;
+  apiKeyIndex?: string | null;
   email?: string | null;
   username: string;
   resetPasswordToken?: string | null;
@@ -708,6 +711,9 @@ export interface UsersSelect<T extends boolean = true> {
   roles?: T;
   updatedAt?: T;
   createdAt?: T;
+  enableAPIKey?: T;
+  apiKey?: T;
+  apiKeyIndex?: T;
   email?: T;
   username?: T;
   resetPasswordToken?: T;
