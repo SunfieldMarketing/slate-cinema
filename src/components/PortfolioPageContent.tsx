@@ -22,7 +22,6 @@ import ProjectCardModal from '@/components/ProjectCardModal'
 import type { IndustryData, PortfolioProjectLocal } from '@/lib/normalize'
 import type { FinalCta, PortfolioIndexPage } from '@/payload-types'
 import { mediaUrl } from '@/lib/media-url'
-import { extractVimeoId, vimeoEmbedUrl } from '@/lib/vimeo'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -133,12 +132,13 @@ export default function PortfolioPageContent({
 }) {
   const hero = page?.hero
   // Was hardcoded to the placeholder file below regardless of what was
-  // actually set in /admin -- ScrollExpandMedia already has Vimeo-URL
-  // detection built in (see its own comment), it just never received one.
-  // Wired through 2026-08-19 per "make sure every piece of media... has
-  // ability to be replaced with vimeo video iframe".
-  const heroVimeoId = extractVimeoId(hero?.videoVimeoUrl)
-  const heroMediaSrc = heroVimeoId ? vimeoEmbedUrl(heroVimeoId, 'background') : mediaUrl(hero?.video) || '/videos/hero.mp4'
+  // actually set in /admin. Wired through to the real uploaded file
+  // 2026-08-19 -- the Vimeo-URL half of this fix (a heroVideoVimeoUrl
+  // field) had to be reverted: Payload+SQLite doesn't auto-migrate
+  // schema, and there's no DB column for it in production, only in the
+  // (reverted) schema file. ScrollExpandMedia already has Vimeo-URL
+  // detection built in for whenever that field can actually be added.
+  const heroMediaSrc = mediaUrl(hero?.video) || '/videos/hero.mp4'
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-brand-blue selection:text-white">
       <AmbientBackdrop accent={PORTFOLIO_ACCENT} />

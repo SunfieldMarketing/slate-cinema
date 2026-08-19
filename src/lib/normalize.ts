@@ -115,7 +115,14 @@ export function normalizeIndustry(doc: Industry): IndustryData {
     stat: doc.stat,
     heroImage: mediaUrl(doc.heroImage) || '',
     heroVideo: mediaUrl(doc.heroVideo) || '',
-    heroVideoVimeoUrl: doc.heroVideoVimeoUrl || undefined,
+    // heroVideoVimeoUrl intentionally NOT read from `doc` -- there is no
+    // such DB column (see the SmartVideo commit's follow-up revert:
+    // Payload+SQLite doesn't auto-migrate schema changes, and this
+    // session has no way to run a real migration against production).
+    // The field stays in IndustryData below so every consuming component
+    // can keep using SmartVideo unconditionally; it's just always
+    // undefined for CMS-backed industries until a real migration adds
+    // the column and this line comes back.
     gallery: (doc.gallery ?? []).map((g) => mediaUrl(g.image) || '').filter(Boolean),
     stats: (doc.stats ?? []).map((s) => ({ value: s.value, suffix: s.suffix || '', label: s.label })),
     services: (doc.services ?? []).map((s) => s.name),
@@ -139,7 +146,6 @@ export function normalizeIndustry(doc: Industry): IndustryData {
       meta: sc.meta || '',
       image: mediaUrl(sc.image) || '',
       video: mediaUrl(sc.video),
-      videoVimeoUrl: sc.videoVimeoUrl || undefined,
       featured: sc.featured ?? false,
     })),
     videoTestimonials: (doc.videoTestimonials ?? []).map((vt) => ({
@@ -148,7 +154,6 @@ export function normalizeIndustry(doc: Industry): IndustryData {
       role: vt.role,
       company: vt.company,
       video: mediaUrl(vt.video) || '',
-      videoVimeoUrl: vt.videoVimeoUrl || undefined,
       outcome: vt.outcome,
       poster: mediaUrl(vt.poster),
       logo: mediaUrl(vt.logo),
@@ -186,7 +191,8 @@ export function normalizePortfolioProject(doc: PayloadPortfolioProject): Portfol
     copy: doc.copy,
     metrics: (doc.metrics ?? []).map((m) => ({ label: m.label, value: m.value })),
     video: mediaUrl(doc.video),
-    videoVimeoUrl: doc.videoVimeoUrl || undefined,
+    // videoVimeoUrl intentionally NOT read from `doc` -- see the matching
+    // comment on IndustryData.heroVideoVimeoUrl above.
   }
 }
 
@@ -227,7 +233,8 @@ export function normalizePipeline(doc: PayloadPipeline | null): PipelineCategory
     id: c.categoryId,
     title: c.title,
     video: mediaUrl(c.video) || '',
-    videoVimeoUrl: c.videoVimeoUrl || undefined,
+    // videoVimeoUrl intentionally NOT read from `doc` -- see the matching
+    // comment on IndustryData.heroVideoVimeoUrl above.
     color: c.color,
     services: (c.services ?? []).map((s) => ({
       name: s.name,
