@@ -51,6 +51,14 @@ const nextConfig: NextConfig = {
     ];
   },
   skipTrailingSlashRedirect: true,
+  // Without this, Turbopack bundles sharp's native addon instead of
+  // leaving it as a real node_modules dependency -- the prebuilt
+  // linux-x64 binary (libvips-cpp.so) then can't be found at runtime on
+  // Vercel. Found 2026-08-19: every single /api/media/file/* request was
+  // 500ing sitewide ("Could not load the 'sharp' module using the
+  // linux-x64 runtime, ERR_DLOPEN_FAILED") -- this is the documented fix
+  // for exactly that error.
+  serverExternalPackages: ["sharp"],
 };
 
 export default withPayload(nextConfig, { devBundleServerPackages: false });
