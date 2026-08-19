@@ -6,6 +6,7 @@ import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { ChevronDown, Play } from 'lucide-react'
 import type { Category } from '@/lib/pipeline-data'
+import SmartVideo from '@/components/ui/SmartVideo'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -139,14 +140,11 @@ export default function Pipeline({
                           the hero's frame sequence for bandwidth. */}
                       <div className="relative rounded-xl overflow-hidden border border-white/10 aspect-video md:aspect-auto md:h-full min-h-[160px]">
                         {isOpen && videosEnabled && (
-                          <video
+                          <SmartVideo
                             key={cat.video}
                             src={cat.video}
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                            preload="auto"
+                            vimeo={cat.videoVimeoUrl}
+                            variant="background"
                             className="absolute inset-0 w-full h-full object-cover"
                           />
                         )}

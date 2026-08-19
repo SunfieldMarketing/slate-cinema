@@ -15,6 +15,7 @@ import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
 import { StickyScroll } from '@/components/ui/sticky-scroll-reveal'
 import { resolveIcon } from '@/lib/icon-map'
 import { mediaUrl } from '@/lib/media-url'
+import SmartVideo from '@/components/ui/SmartVideo'
 import type { HowItWorksPage, FinalCta } from '@/payload-types'
 import type { Category } from '@/lib/pipeline-data'
 
@@ -127,24 +128,28 @@ const fallbackProcessPhases = [
     title: 'Pre-Production',
     color: '#00AEEF',
     video: '/videos/pre-production.mp4',
+    videoVimeoUrl: undefined as string | undefined,
     description: 'Every shoot starts on paper. Scripts, storyboards, shotlists, casting, locations, and a full production schedule — locked before a single camera rolls.',
   },
   {
     title: 'Production',
     color: '#a855f7',
     video: '/videos/production.mp4',
+    videoVimeoUrl: undefined as string | undefined,
     description: 'Directors, camera crew, sound, talent, and set design come together on set. This is where the raw footage is captured, frame by frame.',
   },
   {
     title: 'Post-Production',
     color: '#10b981',
     video: '/videos/post-production.mp4',
+    videoVimeoUrl: undefined as string | undefined,
     description: 'Editing, color grading, sound design, motion graphics, and VFX turn raw footage into a finished film — the phase most of the craft lives in.',
   },
   {
     title: 'Distribution',
     color: '#f97316',
     video: '/videos/distribution.mp4',
+    videoVimeoUrl: undefined as string | undefined,
     description: 'Platform-native cuts, ad management, and social strategy get the finished piece in front of the right audience, on every channel that matters.',
   },
 ]
@@ -155,7 +160,13 @@ function ProcessWalkthrough({ copy }: { copy?: HowItWorksPage['processWalkthroug
   const headline = copy?.headline || 'Watch it move through every phase'
   const subhead = copy?.subhead || "A complete production — not just raw footage. Scroll through to see what's actually happening at each stage."
   const processPhases = copy?.phases?.length
-    ? copy.phases.map((p) => ({ title: p.title, color: p.color, video: mediaUrl(p.video) || '', description: p.description }))
+    ? copy.phases.map((p) => ({
+        title: p.title,
+        color: p.color,
+        video: mediaUrl(p.video) || '',
+        videoVimeoUrl: p.videoVimeoUrl || undefined,
+        description: p.description,
+      }))
     : fallbackProcessPhases
 
   useGSAP(() => {
@@ -180,14 +191,11 @@ function ProcessWalkthrough({ copy }: { copy?: HowItWorksPage['processWalkthroug
             description: p.description,
             color: p.color,
             content: (
-              <video
+              <SmartVideo
                 key={p.video}
                 src={p.video}
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="auto"
+                vimeo={p.videoVimeoUrl}
+                variant="background"
                 className="w-full h-full object-cover"
               />
             ),

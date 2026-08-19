@@ -254,6 +254,10 @@ export interface Industry {
   stat: string;
   heroImage?: (number | null) | Media;
   heroVideo?: (number | null) | Media;
+  /**
+   * Paste a Vimeo URL or ID to use an embedded Vimeo video instead of an uploaded file (takes priority when set).
+   */
+  heroVideoVimeoUrl?: string | null;
   gallery?:
     | {
         image: number | Media;
@@ -306,6 +310,10 @@ export interface Industry {
         meta?: string | null;
         image?: (number | null) | Media;
         video?: (number | null) | Media;
+        /**
+         * Paste a Vimeo URL or ID to use an embedded Vimeo video instead of an uploaded file (takes priority when set).
+         */
+        videoVimeoUrl?: string | null;
         featured?: boolean | null;
         id?: string | null;
       }[]
@@ -319,7 +327,11 @@ export interface Industry {
         name: string;
         role: string;
         company: string;
-        video: number | Media;
+        video?: (number | null) | Media;
+        /**
+         * Paste a Vimeo URL or ID to use an embedded Vimeo video instead of an uploaded file (takes priority when set).
+         */
+        videoVimeoUrl?: string | null;
         outcome: string;
         poster?: (number | null) | Media;
         logo?: (number | null) | Media;
@@ -368,6 +380,10 @@ export interface PortfolioProject {
    * Featured cut shown in the project card modal
    */
   video?: (number | null) | Media;
+  /**
+   * Paste a Vimeo URL or ID to use an embedded Vimeo video instead of an uploaded file (takes priority when set).
+   */
+  videoVimeoUrl?: string | null;
   metrics?:
     | {
         label: string;
@@ -1214,7 +1230,11 @@ export interface Pipeline {
          */
         categoryId: string;
         title: string;
-        video: number | Media;
+        video?: (number | null) | Media;
+        /**
+         * Paste a Vimeo URL or ID to use an embedded Vimeo video instead of an uploaded file (takes priority when set).
+         */
+        videoVimeoUrl?: string | null;
         /**
          * Hex color
          */
@@ -1466,7 +1486,11 @@ export interface HowItWorksPage {
       | {
           title: string;
           color: string;
-          video: number | Media;
+          video?: (number | null) | Media;
+          /**
+           * Paste a Vimeo URL or ID to use an embedded Vimeo video instead of an uploaded file (takes priority when set).
+           */
+          videoVimeoUrl?: string | null;
           description: string;
           id?: string | null;
         }[]
@@ -1502,6 +1526,10 @@ export interface PortfolioIndexPage {
   id: number;
   hero?: {
     video?: (number | null) | Media;
+    /**
+     * Paste a Vimeo URL or ID to use an embedded Vimeo video instead of an uploaded file (takes priority when set).
+     */
+    videoVimeoUrl?: string | null;
     title?: string | null;
     date?: string | null;
     scrollToExpandLabel?: string | null;

@@ -19,6 +19,8 @@ export interface IndustryServiceCard {
   image: string
   /** Optional looping video background — used by the featured card. */
   video?: string
+  /** Vimeo URL or bare ID -- takes priority over `video` when set. See SmartVideo. */
+  videoVimeoUrl?: string
   /** The one card rendered large in the bento grid. */
   featured?: boolean
 }
@@ -34,6 +36,8 @@ export interface IndustryVideoTestimonial {
   role: string
   company: string
   video: string
+  /** Vimeo URL or bare ID -- takes priority over `video` when set. See SmartVideo. */
+  videoVimeoUrl?: string
   /** Headline result for this engagement (e.g. "+212% PDP conversion"). */
   outcome: string
   /** Poster frame shown before playback (and wherever video can't render). */
@@ -148,7 +152,9 @@ export const industries: IndustryData[] = [
     services: ['AI-accelerated explainers', 'Motion brand identity', '2D & 3D character work', 'AI-assisted style exploration'],
     clientShowcase: [
       { name: 'Tremco CPG', year: '2026', body: "AI-augmented 3D explainer series built from the client's own DWG drawings — a national NYC building-code-change story, in production.", video: '/videos/post-production.mp4' },
-      { name: 'Anochi', year: '2024', body: 'A VFX Eye video, part of a 5-part workshop series covering journey, accountability, breathwork and coaching.', video: '/videos/pre-production.mp4' },
+      // Real Vimeo ID confirmed 2026-08-19 via the media tracker
+      // (Anochi Workshops - VFX Commercial, vimeo.com/963219647).
+      { name: 'Anochi', year: '2024', body: 'A VFX Eye video, part of a 5-part workshop series covering journey, accountability, breathwork and coaching.', video: '963219647' },
       { name: 'CVM Waste', year: '2025', body: 'An animated logo and brand sting for a second brand launched from scratch alongside the CVM Construction rebuild.', video: '/videos/distribution.mp4' },
       { name: 'Smash House Burgers', year: '2025', body: 'Recurring animation stitches — the Trolley Problem series — built into a multi-location weekly social engine.', video: '/videos/production.mp4' },
     ],
@@ -259,9 +265,10 @@ export const industries: IndustryData[] = [
     // APEX NYC is a named real client with no further project detail on
     // file yet, kept brief rather than invented.
     clientShowcase: [
-      { name: 'Gotham Rugby', year: '2022', body: "Match-day coverage at Randall's Island, NYC — storytelling built from the thrill of live competition, not a highlight reel cut after the fact.", video: '/videos/production.mp4' },
+      // Real Vimeo IDs confirmed 2026-08-19 via the media tracker.
+      { name: 'Gotham Rugby', year: '2022', body: "Match-day coverage at Randall's Island, NYC — storytelling built from the thrill of live competition, not a highlight reel cut after the fact.", video: '862067416' },
       { name: 'Kids of Courage', year: '2018–2021', body: 'Marathons filmed across the country — capturing the strength and joy of children with disabilities as they defy limits, nationwide.', video: '/videos/pre-production.mp4' },
-      { name: 'Camp Slapshots', year: '2023', body: 'The thrill of sports paired with visual effects — an unforgettable experience built for a young, high-energy audience.', video: '/videos/post-production.mp4' },
+      { name: 'Camp Slapshots', year: '2023', body: 'The thrill of sports paired with visual effects — an unforgettable experience built for a young, high-energy audience.', video: '863822136' },
       { name: 'APEX NYC', year: '', body: 'A named Slate Athletics client — full project detail on file, not yet published here.', video: '/videos/distribution.mp4' },
     ],
     cinematicStatement: {
@@ -345,8 +352,9 @@ export const industries: IndustryData[] = [
     services: ['Destination films', 'Aerial cinematography', 'Property showcases', 'Hospitality brand content'],
     clientShowcase: [
       { name: 'Sleepy Hollow Hotel', year: '2024', body: "Video and drone coverage of a landmark hotel property — AI virtual staging filled in wherever a space wasn't furniture-ready on shoot day.", video: '/videos/hero.mp4' },
-      { name: 'Envision Festival', year: '2024', body: 'Multi-day festival recap coverage in Costa Rica, turned around fast enough to still ride the post-event wave.', video: '/videos/hero-camera.mp4' },
-      { name: 'Gateways', year: '5 yrs running', body: 'Seasonal Passover program coverage for a nonprofit serving thousands of families, plus year-round event and brochure work.', video: '/videos/distribution.mp4' },
+      // Real Vimeo IDs confirmed 2026-08-19 via the media tracker.
+      { name: 'Envision Festival', year: '2024', body: 'Multi-day festival recap coverage in Costa Rica, turned around fast enough to still ride the post-event wave.', video: '932028681' },
+      { name: 'Gateways', year: '5 yrs running', body: 'Seasonal Passover program coverage for a nonprofit serving thousands of families, plus year-round event and brochure work.', video: '1174431950' },
       { name: 'Smash House Burgers', year: '2025', body: 'A recurring social content engine across every location — comedy reels, menu drops, launches, every week.', video: '/videos/production.mp4' },
     ],
     cinematicStatement: {
@@ -546,8 +554,10 @@ export const industries: IndustryData[] = [
     ],
     services: ['Macro product photography', 'E-commerce ad cuts', 'Signature color grading', 'Platform-native spotlights'],
     clientShowcase: [
-      { name: 'EIR NYC', year: '2024', body: 'A full jewelry & skincare catalog — Cream, Earrings, Necklaces, Socks — shot and cut end to end as one coordinated product series.', video: '/videos/production.mp4' },
-      { name: 'Alo Moves', year: '2023', body: "A vertical commercial cut built for the fitness platform's own product launch.", video: '/videos/hero-camera.mp4' },
+      // Real Vimeo IDs confirmed 2026-08-19 via the media tracker
+      // (EIR NYC "Cream" is one of 4 real cuts — 929671839/91/39/88).
+      { name: 'EIR NYC', year: '2024', body: 'A full jewelry & skincare catalog — Cream, Earrings, Necklaces, Socks — shot and cut end to end as one coordinated product series.', video: '929671839' },
+      { name: 'Alo Moves', year: '2023', body: "A vertical commercial cut built for the fitness platform's own product launch.", video: '862075818' },
     ],
     cinematicStatement: {
       eyebrow: 'Built To Convert',
@@ -629,7 +639,9 @@ export const industries: IndustryData[] = [
     ],
     services: ['Brand & culture films', 'Executive communications', 'Internal comms video', 'Investor & recruiting content'],
     clientShowcase: [
-      { name: 'MPower', year: '2024', body: 'A recruiter video plus event recap, built to attract talent, not just document an event.', video: '/videos/performance.mp4' },
+      // Real Vimeo ID confirmed 2026-08-19 via the media tracker
+      // (MPower Recruiter Video, vimeo.com/936451661).
+      { name: 'MPower', year: '2024', body: 'A recruiter video plus event recap, built to attract talent, not just document an event.', video: '936451661' },
       { name: 'QotaPro', year: '2025', body: 'Brand film work for a contractor-focused platform.', video: '/videos/production.mp4' },
       { name: 'Skyline Capital', year: '2025', body: 'Executive-facing brand communications for a capital firm.', video: '/videos/pre-production.mp4' },
     ],
@@ -713,7 +725,8 @@ export const industries: IndustryData[] = [
     ],
     services: ['Mission & impact films', 'Donor & fundraising content', 'Volunteer recruitment films', 'Annual report video'],
     clientShowcase: [
-      { name: 'Gateways', year: '5 yrs running', body: 'Seasonal Passover program coverage for a nonprofit serving thousands of families, plus year-round event and brochure work.', video: '/videos/distribution.mp4' },
+      // Real Vimeo ID confirmed 2026-08-19 via the media tracker.
+      { name: 'Gateways', year: '5 yrs running', body: 'Seasonal Passover program coverage for a nonprofit serving thousands of families, plus year-round event and brochure work.', video: '1174431950' },
       { name: 'Chai Lifeline', year: '2025', body: 'Mission-driven storytelling for a nonprofit serving families in crisis.', video: '/videos/pre-production.mp4' },
       { name: 'HASC', year: '2025', body: 'Program and community coverage for a nonprofit serving people with disabilities.', video: '/videos/production.mp4' },
       { name: 'NCSY', year: '2025', body: 'Event and community-impact coverage for a national youth movement.', video: '/videos/post-production.mp4' },
@@ -805,8 +818,12 @@ export const industries: IndustryData[] = [
     ],
     services: ['Course & program trailers', 'Campus tour films', 'Faculty & student spotlights', 'Enrollment marketing content'],
     clientShowcase: [
-      { name: 'Gateways', year: '5 yrs running', body: 'Seasonal Passover program coverage for a nonprofit school community, running five years without a break.', video: '/videos/distribution.mp4' },
-      { name: 'HANC', year: '2023–2024', body: 'Graduation, open house, acceptance, and color war coverage — real school-life storytelling, not stock footage.', video: '/videos/production.mp4' },
+      // Real Vimeo IDs confirmed 2026-08-19 via the media tracker
+      // (HANC "Color War 2023 Highlight" -- there's also a separate
+      // "Acceptance 2024" cut at 1198896524 if a second HANC video is
+      // ever wanted here).
+      { name: 'Gateways', year: '5 yrs running', body: 'Seasonal Passover program coverage for a nonprofit school community, running five years without a break.', video: '1174431950' },
+      { name: 'HANC', year: '2023–2024', body: 'Graduation, open house, acceptance, and color war coverage — real school-life storytelling, not stock footage.', video: '1198897231' },
       { name: 'Camp Mesorah', year: '2025', body: 'Weekly video coverage built into an ongoing camp content engine.', video: '/videos/pre-production.mp4' },
     ],
     cinematicStatement: {

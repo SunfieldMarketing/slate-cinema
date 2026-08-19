@@ -6,6 +6,7 @@ import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { Play, Star } from 'lucide-react'
 import type { IndustryVideoTestimonial } from '@/lib/industries'
+import { extractVimeoId } from '@/lib/vimeo'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -15,8 +16,17 @@ function TestimonialCard({ t, accent }: { t: IndustryVideoTestimonial; accent: s
   // Fetch the clip only once someone presses play, not while it's just
   // sitting on screen as a poster.
   const loadedRef = useRef(false)
+  // A Vimeo iframe can't be imperatively .play()'d the way a <video> ref
+  // can -- once `playing` is true for a Vimeo card, swap the poster for
+  // an iframe that's already autoplay=1&muted=0 from the moment it
+  // mounts, instead of trying to control an already-mounted iframe.
+  const vimeoId = extractVimeoId(t.videoVimeoUrl)
 
   const toggle = () => {
+    if (vimeoId) {
+      setPlaying((p) => !p)
+      return
+    }
     const v = videoRef.current
     if (!v) return
     if (playing) {
@@ -44,15 +54,28 @@ function TestimonialCard({ t, accent }: { t: IndustryVideoTestimonial; accent: s
         {t.poster && (
           <img src={t.poster} alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover" />
         )}
-        <video
-          ref={videoRef}
-          poster={t.poster}
-          muted
-          playsInline
-          preload="none"
-          onEnded={() => setPlaying(false)}
-          className={`absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105 ${playing ? '' : 'opacity-0'}`}
-        />
+        {vimeoId ? (
+          playing && (
+            <iframe
+              src={`https://player.vimeo.com/video/${vimeoId}?autoplay=1&muted=0&title=0&byline=0&portrait=0`}
+              className="absolute inset-0 w-full h-full"
+              style={{ border: 0 }}
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowFullScreen
+              title={`Testimonial from ${t.name}`}
+            />
+          )
+        ) : (
+          <video
+            ref={videoRef}
+            poster={t.poster}
+            muted
+            playsInline
+            preload="none"
+            onEnded={() => setPlaying(false)}
+            className={`absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105 ${playing ? '' : 'opacity-0'}`}
+          />
+        )}
         <div className={`absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent transition-opacity duration-500 ${playing ? 'opacity-0' : 'opacity-100'}`} />
         {!playing && (
           <span className="absolute inset-0 flex items-center justify-center">

@@ -53,6 +53,8 @@ export interface IndustryServiceCard {
   meta: string
   image: string
   video?: string
+  /** Vimeo URL/ID -- takes priority over `video` when set. See SmartVideo. */
+  videoVimeoUrl?: string
   featured?: boolean
 }
 export interface IndustryVideoTestimonial {
@@ -61,6 +63,8 @@ export interface IndustryVideoTestimonial {
   role: string
   company: string
   video: string
+  /** Vimeo URL/ID -- takes priority over `video` when set. See SmartVideo. */
+  videoVimeoUrl?: string
   outcome: string
   poster?: string
   logo?: string
@@ -85,6 +89,8 @@ export interface IndustryData {
   stat: string
   heroImage: string
   heroVideo: string
+  /** Vimeo URL/ID -- takes priority over `heroVideo` when set. See SmartVideo. */
+  heroVideoVimeoUrl?: string
   gallery: string[]
   stats: IndustryStat[]
   services: string[]
@@ -109,6 +115,7 @@ export function normalizeIndustry(doc: Industry): IndustryData {
     stat: doc.stat,
     heroImage: mediaUrl(doc.heroImage) || '',
     heroVideo: mediaUrl(doc.heroVideo) || '',
+    heroVideoVimeoUrl: doc.heroVideoVimeoUrl || undefined,
     gallery: (doc.gallery ?? []).map((g) => mediaUrl(g.image) || '').filter(Boolean),
     stats: (doc.stats ?? []).map((s) => ({ value: s.value, suffix: s.suffix || '', label: s.label })),
     services: (doc.services ?? []).map((s) => s.name),
@@ -132,6 +139,7 @@ export function normalizeIndustry(doc: Industry): IndustryData {
       meta: sc.meta || '',
       image: mediaUrl(sc.image) || '',
       video: mediaUrl(sc.video),
+      videoVimeoUrl: sc.videoVimeoUrl || undefined,
       featured: sc.featured ?? false,
     })),
     videoTestimonials: (doc.videoTestimonials ?? []).map((vt) => ({
@@ -140,6 +148,7 @@ export function normalizeIndustry(doc: Industry): IndustryData {
       role: vt.role,
       company: vt.company,
       video: mediaUrl(vt.video) || '',
+      videoVimeoUrl: vt.videoVimeoUrl || undefined,
       outcome: vt.outcome,
       poster: mediaUrl(vt.poster),
       logo: mediaUrl(vt.logo),
@@ -164,6 +173,8 @@ export interface PortfolioProjectLocal {
   copy: string
   metrics: { label: string; value: string }[]
   video?: string
+  /** Vimeo URL/ID -- takes priority over `video` when set. See SmartVideo. */
+  videoVimeoUrl?: string
 }
 
 export function normalizePortfolioProject(doc: PayloadPortfolioProject): PortfolioProjectLocal {
@@ -175,6 +186,7 @@ export function normalizePortfolioProject(doc: PayloadPortfolioProject): Portfol
     copy: doc.copy,
     metrics: (doc.metrics ?? []).map((m) => ({ label: m.label, value: m.value })),
     video: mediaUrl(doc.video),
+    videoVimeoUrl: doc.videoVimeoUrl || undefined,
   }
 }
 
@@ -215,6 +227,7 @@ export function normalizePipeline(doc: PayloadPipeline | null): PipelineCategory
     id: c.categoryId,
     title: c.title,
     video: mediaUrl(c.video) || '',
+    videoVimeoUrl: c.videoVimeoUrl || undefined,
     color: c.color,
     services: (c.services ?? []).map((s) => ({
       name: s.name,

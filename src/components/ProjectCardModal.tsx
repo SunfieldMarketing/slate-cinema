@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ArrowRight, X } from 'lucide-react'
 import type { PortfolioProjectLocal } from '@/lib/normalize'
+import SmartVideo from '@/components/ui/SmartVideo'
 
 /*
   ProjectCardModal — the breakdown card opened by clicking a frame on the
@@ -95,15 +96,12 @@ export default function ProjectCardModal({
         {/* Featured cut */}
         <div className="relative aspect-video w-full overflow-hidden rounded-t-3xl bg-black">
           <img src={project.url} alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover" />
-          {project.video && (
-            <video
+          {(project.video || project.videoVimeoUrl) && (
+            <SmartVideo
               src={project.video}
+              vimeo={project.videoVimeoUrl}
               poster={project.url}
-              autoPlay
-              muted
-              loop
-              playsInline
-              controls
+              variant="player"
               className="absolute inset-0 w-full h-full object-cover"
             />
           )}

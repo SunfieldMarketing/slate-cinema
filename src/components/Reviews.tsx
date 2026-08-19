@@ -9,6 +9,7 @@ import { MagicCard } from '@/components/ui/magic-card'
 import { useSiteData } from '@/lib/site-data-context'
 import type { HomePage } from '@/payload-types'
 import type { IndustryVideoTestimonial } from '@/lib/normalize'
+import { extractVimeoId } from '@/lib/vimeo'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -71,8 +72,16 @@ function PhoneVideoCard({ t }: { t: IndustryVideoTestimonial }) {
   // presses play — no `src` in the JSX below means nothing loads while
   // this card just sits on screen showing its poster.
   const loadedRef = useRef(false)
+  // See the matching comment in IndustryVideoTestimonials.tsx -- a Vimeo
+  // iframe can't be driven by a <video> ref, so it gets its own
+  // autoplay-on-mount branch below instead.
+  const vimeoId = extractVimeoId(t.videoVimeoUrl)
 
   const toggle = () => {
+    if (vimeoId) {
+      setPlaying((p) => !p)
+      return
+    }
     const v = videoRef.current
     if (!v) return
     if (playing) {
@@ -98,15 +107,28 @@ function PhoneVideoCard({ t }: { t: IndustryVideoTestimonial }) {
     >
       <div className="relative aspect-[9/16] w-full">
         {t.poster && <img src={t.poster} alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover" />}
-        <video
-          ref={videoRef}
-          poster={t.poster}
-          muted
-          playsInline
-          preload="none"
-          onEnded={() => setPlaying(false)}
-          className={`absolute inset-0 w-full h-full object-cover ${playing ? '' : 'opacity-0'}`}
-        />
+        {vimeoId ? (
+          playing && (
+            <iframe
+              src={`https://player.vimeo.com/video/${vimeoId}?autoplay=1&muted=0&title=0&byline=0&portrait=0`}
+              className="absolute inset-0 w-full h-full"
+              style={{ border: 0 }}
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowFullScreen
+              title={`Testimonial from ${t.name}`}
+            />
+          )
+        ) : (
+          <video
+            ref={videoRef}
+            poster={t.poster}
+            muted
+            playsInline
+            preload="none"
+            onEnded={() => setPlaying(false)}
+            className={`absolute inset-0 w-full h-full object-cover ${playing ? '' : 'opacity-0'}`}
+          />
+        )}
         {/* phone notch */}
         <div className="absolute top-2 left-1/2 -translate-x-1/2 w-16 h-4 rounded-full bg-black/70 z-10" />
         <div className={`absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/10 to-black/30 transition-opacity duration-500 ${playing ? 'opacity-40' : 'opacity-100'}`} />

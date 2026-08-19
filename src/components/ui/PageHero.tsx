@@ -5,6 +5,8 @@ import { preload } from 'react-dom'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { NumberTicker } from '@/components/ui/number-ticker'
+import SmartVideo from '@/components/ui/SmartVideo'
+import { extractVimeoId } from '@/lib/vimeo'
 
 /*
   Shared cinematic hero for interior pages. A full-viewport video/gradient
@@ -24,6 +26,8 @@ interface Props {
   title: React.ReactNode
   subtitle?: string
   videoSrc?: string
+  /** Vimeo URL or bare ID -- takes priority over videoSrc when set. */
+  videoVimeoUrl?: string
   accent?: string
   cta?: { label: string; href: string }
   /** Optional low-commitment secondary action (e.g. "Watch the reel"). */
@@ -41,6 +45,7 @@ export default function PageHero({
   title,
   subtitle,
   videoSrc,
+  videoVimeoUrl,
   posterSrc,
   accent = '#00AEEF',
   cta,
@@ -54,7 +59,8 @@ export default function PageHero({
   if (posterSrc) {
     preload(posterSrc, { as: 'image', fetchPriority: 'high' })
   }
-  if (videoSrc) {
+  const heroVimeoId = extractVimeoId(videoVimeoUrl)
+  if (videoSrc && !heroVimeoId) {
     preload(videoSrc, { as: 'video', fetchPriority: 'high' })
   }
 
@@ -75,16 +81,13 @@ export default function PageHero({
       }`}
     >
       {/* ── Video / imagery backdrop ── */}
-      {videoSrc && (
+      {(videoSrc || heroVimeoId) && (
         <div className="absolute inset-0 z-0">
-          <video
+          <SmartVideo
             src={videoSrc}
+            vimeo={videoVimeoUrl}
             poster={posterSrc}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
+            variant="background"
             className="w-full h-full object-cover opacity-40"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/40 to-ink" />

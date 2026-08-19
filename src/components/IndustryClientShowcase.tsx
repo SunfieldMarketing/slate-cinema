@@ -7,6 +7,7 @@ import { useGSAP } from '@gsap/react'
 import { MagicCard } from '@/components/ui/magic-card'
 import { BorderBeam } from '@/components/ui/border-beam'
 import type { IndustryClient } from '@/lib/industries'
+import SmartVideo from '@/components/ui/SmartVideo'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -62,7 +63,9 @@ export default function IndustryClientShowcase({
             >
               <div className="relative aspect-video">
                 <BorderBeam size={100} duration={6} colorFrom={accent} colorTo={accent} />
-                <video src={c.video} className="w-full h-full object-cover" muted loop autoPlay playsInline />
+                {/* c.video doubles as the Vimeo source too -- see the matching
+                    comment in CinematicStatement.tsx for why that's safe. */}
+                <SmartVideo src={c.video} vimeo={c.video} variant="background" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
               </div>
               <div className="p-6">

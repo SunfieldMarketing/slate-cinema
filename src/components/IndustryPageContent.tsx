@@ -51,6 +51,7 @@ function WaveCareRedirect({ industry }: { industry: IndustryData }) {
           title={[industry.label]}
           subtitle={industry.blurb}
           videoSrc={industry.heroVideo}
+          videoVimeoUrl={industry.heroVideoVimeoUrl}
           posterSrc={industry.heroImage}
           accent={industry.accent}
         />
@@ -126,6 +127,7 @@ export default function IndustryPageContent({
           title={[industry.label]}
           subtitle={industry.blurb}
           videoSrc={industry.heroVideo}
+          videoVimeoUrl={industry.heroVideoVimeoUrl}
           accent={industry.accent}
           stats={industry.stats}
           cta={{ label: 'Get Started', href: '/contact' }}

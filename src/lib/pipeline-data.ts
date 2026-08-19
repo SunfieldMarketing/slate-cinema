@@ -8,6 +8,8 @@ export interface Category {
   id: string
   title: string
   video: string
+  /** Vimeo URL/ID -- takes priority over `video` when set. See SmartVideo. */
+  videoVimeoUrl?: string
   color: string
   services: Service[]
 }

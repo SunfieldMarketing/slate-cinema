@@ -4,6 +4,7 @@ import React, { useRef } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
+import SmartVideo from '@/components/ui/SmartVideo'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -47,9 +48,15 @@ export default function CinematicStatement({ eyebrow, lines, body, videoSrc, acc
     <section ref={ref} className="relative w-full min-h-[85vh] flex items-center justify-center overflow-hidden bg-ink py-28">
       {/* Video backdrop, dimmed and graded dark so text stays crisp */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        <video
+        {/* videoSrc doubles as the Vimeo source too -- IndustryCinematicStatement.videoSrc
+            is a plain string in src/lib/industries.ts, so a Vimeo URL/ID pasted directly
+            into that same field works with zero interface change (extractVimeoId returns
+            null for an ordinary local path like "/videos/hero.mp4" and this falls through
+            to the file-based video exactly as before). */}
+        <SmartVideo
           src={videoSrc}
-          autoPlay loop muted playsInline
+          vimeo={videoSrc}
+          variant="background"
           className="cs-media absolute inset-0 w-full h-full object-cover scale-110 opacity-35"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/60 to-ink/90" />

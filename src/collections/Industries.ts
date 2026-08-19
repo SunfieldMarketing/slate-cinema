@@ -41,6 +41,11 @@ export const Industries: CollectionConfig = {
     { name: 'heroImage', type: 'upload', relationTo: 'media' },
     { name: 'heroVideo', type: 'upload', relationTo: 'media' },
     {
+      name: 'heroVideoVimeoUrl',
+      type: 'text',
+      admin: { description: 'Paste a Vimeo URL or ID to use an embedded Vimeo video instead of an uploaded file (takes priority when set).' },
+    },
+    {
       name: 'gallery',
       type: 'array',
       fields: [{ name: 'image', type: 'upload', relationTo: 'media', required: true }],
@@ -87,6 +92,11 @@ export const Industries: CollectionConfig = {
         { name: 'meta', type: 'text', admin: { description: 'e.g. "60–120s · 4–6 wks"' } },
         { name: 'image', type: 'upload', relationTo: 'media' },
         { name: 'video', type: 'upload', relationTo: 'media' },
+        {
+          name: 'videoVimeoUrl',
+          type: 'text',
+          admin: { description: 'Paste a Vimeo URL or ID to use an embedded Vimeo video instead of an uploaded file (takes priority when set).' },
+        },
         { name: 'featured', type: 'checkbox', defaultValue: false },
       ],
     },
@@ -99,7 +109,16 @@ export const Industries: CollectionConfig = {
         { name: 'name', type: 'text', required: true },
         { name: 'role', type: 'text', required: true },
         { name: 'company', type: 'text', required: true },
-        { name: 'video', type: 'upload', relationTo: 'media', required: true },
+        // No longer hard-required 2026-08-19 -- a videoVimeoUrl now
+        // satisfies this slot too (see SmartVideo). A doc must still set
+        // one or the other; that's enforced in code (the frontend has
+        // nothing to render otherwise), not by Payload's schema.
+        { name: 'video', type: 'upload', relationTo: 'media' },
+        {
+          name: 'videoVimeoUrl',
+          type: 'text',
+          admin: { description: 'Paste a Vimeo URL or ID to use an embedded Vimeo video instead of an uploaded file (takes priority when set).' },
+        },
         { name: 'outcome', type: 'text', required: true },
         { name: 'poster', type: 'upload', relationTo: 'media' },
         { name: 'logo', type: 'upload', relationTo: 'media' },

@@ -95,7 +95,14 @@ export const HowItWorksPage: GlobalConfig = {
           fields: [
             { name: 'title', type: 'text', required: true },
             { name: 'color', type: 'text', required: true },
-            { name: 'video', type: 'upload', relationTo: 'media', required: true },
+            // No longer hard-required 2026-08-19 -- videoVimeoUrl now
+            // satisfies this slot too (see SmartVideo).
+            { name: 'video', type: 'upload', relationTo: 'media' },
+            {
+              name: 'videoVimeoUrl',
+              type: 'text',
+              admin: { description: 'Paste a Vimeo URL or ID to use an embedded Vimeo video instead of an uploaded file (takes priority when set).' },
+            },
             { name: 'description', type: 'textarea', required: true },
           ],
         },
