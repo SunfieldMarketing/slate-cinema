@@ -1,7 +1,6 @@
 'use client'
 
 import { useRef } from 'react'
-import Image from 'next/image'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -95,7 +94,12 @@ export default function TrustSection({ data }: { data?: HomePage['trustSection']
       <div className="mt-8 [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
         <Marquee pauseOnHover className="[--duration:38s] [--gap:4rem]">
           {clients.map((c) => (
-            <Image
+            // eslint-disable-next-line @next/next/no-img-element -- plain
+            // <img>, matching every other image on the site (see
+            // TrustBanner.tsx for the matching fix + why: next/image's
+            // /_next/image optimizer route was missing its handler file
+            // in the deployed Vercel function, 2026-08-20).
+            <img
               key={c.src}
               src={c.src}
               alt={c.alt}

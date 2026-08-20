@@ -295,11 +295,21 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
               master reel, falls back to the local file if the Vimeo ID
               is ever cleared */}
           <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden mix-blend-screen opacity-40">
+            {/* object-cover alone doesn't do anything on the Vimeo iframe
+                path -- object-fit only affects replaced elements like
+                <video>/<img>, not iframe content, so the video was
+                letterboxing inside its box instead of filling it. Fixed
+                with the standard vw/vh "oversize" cover technique (safe
+                for the <video> fallback too -- object-cover still crops
+                it correctly regardless of the box's exact size). Assumes
+                a 16:9 source, the standard ratio for this kind of reel;
+                this section is h-screen so vw/vh here really does match
+                the container, not just the viewport coincidentally. */}
             <SmartVideo
               src="/videos/hero.mp4"
               vimeo={HERO_MASTER_REEL_VIMEO_ID}
               variant="background"
-              className="absolute top-1/2 left-1/2 w-full h-full object-cover min-w-full min-h-full -translate-x-1/2 -translate-y-1/2"
+              className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-w-[177.78vh] min-h-[100vh] object-cover -translate-x-1/2 -translate-y-1/2"
             />
           </div>
           <div className="absolute inset-0 z-0 bg-gradient-to-b from-ink/80 via-transparent to-ink/80 pointer-events-none" />
