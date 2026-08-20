@@ -36,7 +36,10 @@ export function splitName(fullName: string): { firstName: string; lastName: stri
 
 export async function forwardToGHL(envVar: string, data: Record<string, unknown>) {
   const url = process.env[envVar]
-  if (!url) return { sent: false, reason: 'not configured' as const }
+  if (!url) {
+    console.info(`GHL forward (${envVar}) skipped -- env var not set`)
+    return { sent: false, reason: 'not configured' as const }
+  }
 
   try {
     const form = new URLSearchParams()
@@ -47,8 +50,19 @@ export async function forwardToGHL(envVar: string, data: Record<string, unknown>
       headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
       body: form.toString(),
     })
+    // Added 2026-08-20 -- this used to only log on failure, which made a
+    // real bug report ("nothing reached GHL") undiagnosable: a silent
+    // codepath and a silent success look identical in the logs. Logging
+    // the body on success too matters specifically because some webhook
+    // receivers return 200 for "request received" regardless of whether
+    // the workflow behind it is active/valid -- a 200 here doesn't
+    // guarantee GHL actually did anything with it, so the response body
+    // is the only place that distinction could show up.
+    const bodyText = await res.text().catch(() => '<unreadable body>')
     if (!res.ok) {
-      console.error(`GHL forward (${envVar}) responded ${res.status}`)
+      console.error(`GHL forward (${envVar}) responded ${res.status}: ${bodyText}`)
+    } else {
+      console.info(`GHL forward (${envVar}) succeeded ${res.status}: ${bodyText}`)
     }
     return { sent: res.ok, status: res.status }
   } catch (err) {
