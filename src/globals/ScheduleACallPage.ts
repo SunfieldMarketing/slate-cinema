@@ -31,7 +31,10 @@ export const ScheduleACallPage: GlobalConfig = {
     {
       name: 'calendar',
       type: 'group',
-      admin: { description: 'CustomCalendar labels -- the date/time grid itself is still a static mock, not a live booking integration (see Phase 0 inventory)' },
+      admin: {
+        description:
+          'Section header shown above the GHL booking widget on /schedule-a-call. Only eyebrow/sessionLabel/durationLabel/headline are used since 2026-08-20 -- the widget itself (real availability, real appointments) replaced the old static date/time grid, so the rest of these fields describe UI that no longer exists. Left in place rather than removed since deleting fields needs a real migration; just harmless unused data now.',
+      },
       fields: [
         { name: 'eyebrow', type: 'text', defaultValue: '// Production Meeting' },
         { name: 'headline', type: 'text', defaultValue: 'Lock In A Time' },

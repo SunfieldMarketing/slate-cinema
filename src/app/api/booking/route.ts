@@ -5,18 +5,26 @@ import { simpleRichText } from '@/lib/simple-richtext'
 import { forwardToGHL, splitName } from '@/lib/ghl'
 
 /*
-  Real destination for /schedule-a-call's "Confirm Time" button. It
-  previously only fired a PostHog event -- no real calendar/booking
-  backend exists (the date/time grid is static, see
-  CMS_MIGRATION_PHASE0_INVENTORY.md). This makes the confirmed
-  date/time visible in Payload's admin form-submissions view so a real
-  person can actually follow up, in addition to whatever real calendar
-  integration (Calendly, Cal.com, etc.) eventually replaces the static
-  grid.
+  ORPHANED as of 2026-08-20 -- nothing on the frontend calls this
+  anymore. /schedule-a-call now embeds GHL's own booking widget
+  (GHLBookingWidget.tsx) directly, per the client's fix request: this
+  route's webhook forward only ever created a GHL contact + sent a
+  notification email, it could never check real availability or create
+  a real appointment, so no booking made through it ever actually
+  landed on a calendar. GHL's widget talks straight to GHL, with no
+  involvement from this backend at all.
 
-  CustomCalendar now also collects name/email/phone before confirming
-  (previously date+time only, with no way to know who booked) -- both
-  the CMS mirror and the GHL forward include them.
+  Kept (not deleted) purely as the historical record of every booking
+  attempt made through the old static date/time grid -- see the
+  `form-submissions` collection where `form` refers to the "Schedule a
+  Call" form (title lookup, not a fixed ID). Only 2 rows exist there as
+  of this writing, both internal test submissions from 2026-08-17
+  ("Test Cal Check" / "Test Calendar Check", webhook-test-cal+... email
+  addresses) -- no real customer bookings found. This mirror-to-Payload
+  behavior only existed from 2026-08-12 onward (before that: PostHog
+  event only, no captured name/email/date/time at all), which is
+  approximately when the new site went live on the real domain, so
+  coverage is very likely complete.
 */
 const FORM_TITLE = 'Schedule a Call'
 

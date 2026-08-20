@@ -4,7 +4,7 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import PageHero from '@/components/ui/PageHero'
 import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
-import CustomCalendar from '@/components/CustomCalendar'
+import GHLBookingWidget from '@/components/GHLBookingWidget'
 import IntakeCTABand from '@/components/IntakeCTABand'
 import { resolveIcon } from '@/lib/icon-map'
 import { getScheduleACallPageGlobal, getReadyToTalk } from '@/lib/payload-data'
@@ -105,7 +105,7 @@ export default async function ScheduleACallPage() {
 
         <CallFraming copy={readyToTalk} />
 
-        <CustomCalendar copy={page?.calendar} />
+        <GHLBookingWidget copy={page?.calendar} />
 
         <IntakeCTABand />
 

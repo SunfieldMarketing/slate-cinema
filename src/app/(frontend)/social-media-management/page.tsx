@@ -60,7 +60,11 @@ export default function SocialMediaManagementPage() {
              letter-spacing:.5em; text-transform:uppercase; margin-bottom:22px; }
   .smm-page h1 { font-family:'Bebas Neue',sans-serif; font-weight:400; letter-spacing:.015em;
        font-size:clamp(46px,7.5vw,88px); line-height:.98; margin:0 0 24px; }
-  .smm-page h1 em { font-style:normal; color:var(--blue); }
+  /* white-space:nowrap keeps "focus on operations." from breaking mid-
+     phrase across lines -- it now wraps as one unit or not at all,
+     instead of "focus on" landing on one line and "operations." on
+     the next. */
+  .smm-page h1 em { font-style:normal; color:var(--blue); white-space:nowrap; }
   .smm-page .lede { font-family:'Fraunces',Georgia,serif; font-size:clamp(17px,2.1vw,21px);
           color:var(--muted); max-width:62ch; margin:0; }
   .smm-page .lede strong { color:var(--text); font-weight:500; }

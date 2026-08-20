@@ -1750,7 +1750,7 @@ export interface ScheduleACallPage {
     subtitle?: string | null;
   };
   /**
-   * CustomCalendar labels -- the date/time grid itself is still a static mock, not a live booking integration (see Phase 0 inventory)
+   * Section header shown above the GHL booking widget on /schedule-a-call. Only eyebrow/sessionLabel/durationLabel/headline are used since 2026-08-20 -- the widget itself (real availability, real appointments) replaced the old static date/time grid, so the rest of these fields describe UI that no longer exists. Left in place rather than removed since deleting fields needs a real migration; just harmless unused data now.
    */
   calendar?: {
     eyebrow?: string | null;
