@@ -20,8 +20,25 @@ import type { ScheduleACallPage } from '@/payload-types'
   confirmedLabel) described UI that no longer exists -- the widget
   handles its own date/time selection and confirmation state internally,
   inside the iframe.
+
+  Height is pinned, per follow-up request 2026-08-20: GHL's own
+  form_embed.js watches the iframe content for postMessage height
+  updates and rewrites the iframe's inline style.height on every step
+  (date grid -> time list -> contact form -> confirmation), which made
+  the page jump on every click. A plain CSS rule can't out-priority
+  that -- it's JS setting an inline style *after* our render, so it
+  wins over any normal stylesheet rule regardless of specificity. The
+  one thing that still beats an inline style is `!important` in a real
+  stylesheet rule, so that's what actually locks it: form_embed.js
+  keeps "succeeding" (the inline value does get set), it's just visibly
+  overridden. Height is a fixed value, not a min-height -- picked
+  generously tall (1080px) to comfortably fit the tallest step
+  (contact-details form) without clipping shorter steps, which just
+  leave a little empty space instead. scrolling="no" stays off since
+  there should never be a need to scroll within a box this size.
 */
 const CALENDAR_ID = 'nwrti66org5yO4mGWzb3'
+const WIDGET_HEIGHT_PX = 1080
 
 export default function GHLBookingWidget({ copy }: { copy?: ScheduleACallPage['calendar'] }) {
   const eyebrow = copy?.eyebrow || '// Production Meeting'
@@ -40,13 +57,13 @@ export default function GHLBookingWidget({ copy }: { copy?: ScheduleACallPage['c
           </p>
         </div>
 
-        {/* GHL's widget manages its own height via form_embed.js
-            (postMessage-driven resize) -- the inline height here is
-            just a sane starting point before that first resize fires. */}
+        {/* !important beats form_embed.js's inline style.height rewrites
+            -- see the header comment above for why a normal rule can't. */}
+        <style>{`#${CALENDAR_ID} { height: ${WIDGET_HEIGHT_PX}px !important; }`}</style>
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-md p-2 sm:p-4">
           <iframe
             src={`https://api.leadconnectorhq.com/widget/booking/${CALENDAR_ID}`}
-            style={{ width: '100%', border: 'none', overflow: 'hidden', minHeight: 900 }}
+            style={{ width: '100%', border: 'none', overflow: 'hidden' }}
             scrolling="no"
             id={CALENDAR_ID}
             title="Book a call"
