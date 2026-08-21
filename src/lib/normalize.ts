@@ -230,18 +230,26 @@ export function normalizeJournalPost(doc: PayloadJournalPost): JournalPostLocal 
    objects and `id` as `categoryId`; unwrap back to the plain shape
    Pipeline.tsx already expects (src/lib/pipeline-data.ts's Category). */
 export function normalizePipeline(doc: PayloadPipeline | null): PipelineCategory[] {
-  return (doc?.categories ?? []).map((c) => ({
+  // Filter(Boolean) before mapping, both here and on the nested services
+  // array -- guards against a sparse/malformed array (a hole, or a row
+  // Payload returns as null/undefined) crashing the whole page render with
+  // "Cannot read properties of undefined (reading 'name')" instead of just
+  // dropping the one bad entry. Seen for real 2026-08-20 during the
+  // drafts/versions migration rollout on a live category's services list.
+  return (doc?.categories ?? []).filter(Boolean).map((c) => ({
     id: c.categoryId,
     title: c.title,
     video: mediaUrl(c.video) || '',
     // videoVimeoUrl intentionally NOT read from `doc` -- see the matching
     // comment on IndustryData.heroVideoVimeoUrl above.
     color: c.color,
-    services: (c.services ?? []).map((s) => ({
-      name: s.name,
-      desc: s.desc || undefined,
-      tags: s.tags?.length ? s.tags.map((t) => t.tag) : undefined,
-    })),
+    services: (c.services ?? [])
+      .filter(Boolean)
+      .map((s) => ({
+        name: s.name,
+        desc: s.desc || undefined,
+        tags: s.tags?.length ? s.tags.map((t) => t.tag) : undefined,
+      })),
   }))
 }
 
