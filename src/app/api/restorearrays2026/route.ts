@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server'
 import { getPayload, type Payload } from 'payload'
-import fs from 'fs'
-import path from 'path'
 import config from '@/payload.config'
 import { industries } from '@/lib/industries'
 import { portfolioProjects } from '@/lib/portfolio-projects'
@@ -45,12 +43,18 @@ import { categories as pipelineCategories } from '@/lib/pipeline-data'
 */
 const RESTORE_TOKEN = 'y8h4k-slate-restore-2026-08-21-mn3wq7'
 
-const PUBLIC_DIR = path.resolve(process.cwd(), 'public')
 const mediaCache = new Map<string, number>()
-const MIME_BY_EXT: Record<string, string> = {
-  png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp', gif: 'image/gif', mp4: 'video/mp4',
-}
+const missingMedia: string[] = []
 
+// No filesystem fallback here on purpose -- reading from disk with a
+// dynamic path (as the original seed script's uploadMedia() does) made
+// Next.js's file tracer bundle the ENTIRE public/ directory into this
+// route's serverless function, blowing past Vercel's 250MB uncompressed
+// function size limit (hit this for real: 275.52mb, deploy rejected).
+// Not needed anyway -- the cascade-delete bug wiped array ROWS, never
+// the Media docs those rows referenced, so every alt-text lookup below
+// should already hit an existing doc. If one doesn't, it's logged in
+// `missingMedia` rather than silently uploading a fresh copy blind.
 async function uploadMedia(payload: Payload, relativePath: string | undefined, alt: string): Promise<number | undefined> {
   if (!relativePath) return undefined
   const cached = mediaCache.get(relativePath)
@@ -61,18 +65,8 @@ async function uploadMedia(payload: Payload, relativePath: string | undefined, a
     mediaCache.set(relativePath, id)
     return id
   }
-  const absPath = path.join(PUBLIC_DIR, relativePath.replace(/^\//, ''))
-  if (!fs.existsSync(absPath)) return undefined
-  const data = fs.readFileSync(absPath)
-  const filename = path.basename(absPath)
-  const ext = path.extname(filename).slice(1).toLowerCase()
-  const doc = await payload.create({
-    collection: 'media',
-    data: { alt },
-    file: { data, mimetype: MIME_BY_EXT[ext] || 'application/octet-stream', name: filename, size: data.length },
-  })
-  mediaCache.set(relativePath, doc.id as number)
-  return doc.id as number
+  missingMedia.push(alt)
+  return undefined
 }
 
 export async function GET(req: Request) {
@@ -431,7 +425,7 @@ export async function GET(req: Request) {
     })
     log.push('contact-page restored')
 
-    return NextResponse.json({ log, industriesResults, portfolioResults })
+    return NextResponse.json({ log, industriesResults, portfolioResults, missingMedia })
   } catch (e) {
     return NextResponse.json(
       { log, error: e instanceof Error ? e.message : String(e), stack: e instanceof Error ? e.stack : undefined },
