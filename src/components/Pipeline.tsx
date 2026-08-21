@@ -177,28 +177,35 @@ export default function Pipeline({
                           })}
                         </div>
 
-                        {/* Detail panel for the highlighted service */}
-                        <div
-                          className="rounded-xl border p-5 sm:p-6 transition-colors duration-300 flex-1"
-                          style={{ borderColor: `${cat.color}30`, background: `${cat.color}0A` }}
-                        >
-                          <h3 className="font-semibold text-white text-base mb-3">{active.name}</h3>
-                          {active.tags ? (
-                            <div className="flex flex-wrap gap-2">
-                              {active.tags.map((t) => (
-                                <span
-                                  key={t}
-                                  className="text-xs font-mono px-3 py-1.5 rounded-full border text-white/75"
-                                  style={{ borderColor: `${cat.color}40`, background: `${cat.color}12` }}
-                                >
-                                  {t}
-                                </span>
-                              ))}
-                            </div>
-                          ) : (
-                            <p className="text-white/60 text-sm font-light leading-relaxed">{active.desc}</p>
-                          )}
-                        </div>
+                        {/* Detail panel for the highlighted service -- `active`
+                            is undefined when this category has zero
+                            services, since both `services[activeService]`
+                            and `services[0]` fall through to nothing.
+                            Guard the whole panel rather than assume there's
+                            always at least one service to show. */}
+                        {active && (
+                          <div
+                            className="rounded-xl border p-5 sm:p-6 transition-colors duration-300 flex-1"
+                            style={{ borderColor: `${cat.color}30`, background: `${cat.color}0A` }}
+                          >
+                            <h3 className="font-semibold text-white text-base mb-3">{active.name}</h3>
+                            {active.tags ? (
+                              <div className="flex flex-wrap gap-2">
+                                {active.tags.map((t) => (
+                                  <span
+                                    key={t}
+                                    className="text-xs font-mono px-3 py-1.5 rounded-full border text-white/75"
+                                    style={{ borderColor: `${cat.color}40`, background: `${cat.color}12` }}
+                                  >
+                                    {t}
+                                  </span>
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="text-white/60 text-sm font-light leading-relaxed">{active.desc}</p>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
