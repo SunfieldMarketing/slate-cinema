@@ -241,6 +241,13 @@ export default buildConfig({
                 accessKeyId: process.env.S3_ACCESS_KEY_ID,
                 secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
               },
+              // Without this, the plugin's own generateURL() (which builds
+              // `${endpoint}/${bucket}/${key}` directly, unlike the AWS SDK's
+              // upload/API calls which resolve the endpoint internally on
+              // their own) renders every media URL with a literal
+              // "undefined" as the host. Per Jake's handoff -- a real bug
+              // from the Wavecare migration, not a hypothetical.
+              endpoint: `https://s3.${process.env.S3_REGION}.amazonaws.com`,
             },
           }),
         ]
