@@ -11,7 +11,7 @@
     "migrate": "echo y | cross-env NODE_OPTIONS=--no-deprecation node ./node_modules/payload/bin.js migrate",
     "migrate:local": "echo y | cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env.local ./node_modules/payload/bin.js migrate",
     "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env.local ./node_modules/payload/bin.js migrate:create",
-    "build": "npm run migrate && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
