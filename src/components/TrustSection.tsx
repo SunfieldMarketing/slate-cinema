@@ -1,12 +1,13 @@
 'use client'
 
 import { useRef } from 'react'
-import Image from 'next/image'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { Star } from 'lucide-react'
 import { Marquee } from '@/components/ui/marquee'
+import type { HomePage } from '@/payload-types'
+import { mediaUrl } from '@/lib/media-url'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -20,13 +21,13 @@ gsap.registerPlugin(ScrollTrigger)
   visually consistent with the white/light client marks in the marquee
   below rather than clashing brand colors against each other.
 */
-const flagship = [
-  { name: 'Meta', src: '/images/clients/meta-logo.png' },
-  { name: 'Alo', src: '/images/clients/alo-logo.png' },
-  { name: 'B&H', src: '/images/clients/bh-logo.png' },
+const fallbackFlagship = [
+  { name: 'Meta', src: '/images/clients/meta-logo.webp' },
+  { name: 'Alo', src: '/images/clients/alo-logo.webp' },
+  { name: 'B&H', src: '/images/clients/bh-logo.webp' },
 ]
 
-const clients = [
+const fallbackClients = [
   { src: '/images/clients/dream-testimonials.webp', alt: 'Dream', width: 2000, height: 118 },
   { src: '/images/clients/healing-partners.webp', alt: 'Healing Partners', width: 1965, height: 104 },
   { src: '/images/clients/inhale-testimonails.webp', alt: 'Inhale', width: 1991, height: 104 },
@@ -34,8 +35,17 @@ const clients = [
   { src: '/images/clients/workplace-realty.webp', alt: 'Workplace Realty', width: 1953, height: 114 },
 ]
 
-export default function TrustSection() {
+export default function TrustSection({ data }: { data?: HomePage['trustSection'] }) {
   const sectionRef = useRef<HTMLElement>(null)
+  const eyebrow = data?.eyebrow || 'Join the leaders that worked with Slate Cinema'
+  const ratingText = data?.ratingText || '5.0/5 · 44 Google reviews'
+  const marqueeLabel = data?.marqueeLabel || 'More collaborations & partnerships'
+  const flagship = data?.flagshipLogos?.length
+    ? data.flagshipLogos.map((f) => ({ name: f.name, src: mediaUrl(f.logo) || '' }))
+    : fallbackFlagship
+  const clients = data?.marqueeClients?.length
+    ? data.marqueeClients.map((c) => ({ src: mediaUrl(c.logo) || '', alt: c.name, width: 2000, height: 118 }))
+    : fallbackClients
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -51,7 +61,7 @@ export default function TrustSection() {
     <section ref={sectionRef} className="relative w-full py-16 md:py-20 overflow-hidden">
       <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-8 text-center">
         <span className="font-mono text-sm sm:text-base tracking-[0.2em] text-white/50 uppercase">
-          Join the leaders working with Slate Cinema
+          {eyebrow}
         </span>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-x-16 gap-y-8 sm:gap-x-24">
@@ -72,10 +82,10 @@ export default function TrustSection() {
                 <Star key={i} className="w-3.5 h-3.5" fill="#00AEEF" stroke="#00AEEF" />
               ))}
             </div>
-            <span className="font-mono text-[11px] text-white/50 tracking-wide">5.0/5 · 44 Google reviews</span>
+            <span className="font-mono text-[11px] text-white/50 tracking-wide">{ratingText}</span>
           </div>
           <div className="hidden sm:block w-px h-4 bg-white/15" />
-          <span className="font-mono text-[10px] tracking-[0.3em] text-white/35 uppercase">More collaborations &amp; partnerships</span>
+          <span className="font-mono text-[10px] tracking-[0.3em] text-white/35 uppercase">{marqueeLabel}</span>
         </div>
       </div>
 
@@ -84,7 +94,12 @@ export default function TrustSection() {
       <div className="mt-8 [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
         <Marquee pauseOnHover className="[--duration:38s] [--gap:4rem]">
           {clients.map((c) => (
-            <Image
+            // eslint-disable-next-line @next/next/no-img-element -- plain
+            // <img>, matching every other image on the site (see
+            // TrustBanner.tsx for the matching fix + why: next/image's
+            // /_next/image optimizer route was missing its handler file
+            // in the deployed Vercel function, 2026-08-20).
+            <img
               key={c.src}
               src={c.src}
               alt={c.alt}

@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import { Star } from 'lucide-react'
 import { Marquee } from '@/components/ui/marquee'
 
@@ -39,7 +38,12 @@ export default function TrustBanner() {
       <div className="[mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
         <Marquee pauseOnHover className="[--duration:38s] [--gap:4rem]">
           {clients.map((c) => (
-            <Image
+            // eslint-disable-next-line @next/next/no-img-element -- plain
+            // <img>, matching every other image on the site -- see
+            // TrustSection.tsx for why (next/image's /_next/image
+            // optimizer route was missing its handler file in the
+            // deployed Vercel function, 2026-08-20).
+            <img
               key={c.src}
               src={c.src}
               alt={c.alt}

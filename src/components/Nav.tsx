@@ -6,17 +6,18 @@ import { Menu, X, ChevronDown } from 'lucide-react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-import { industries } from '@/lib/industries'
+import { useSiteData } from '@/lib/site-data-context'
+import { resolveIcon } from '@/lib/icon-map'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const navLinks: { label: string; href: string }[] = [
-  { label: 'Home', href: '/' },
-  { label: 'How It Works', href: '/how-it-works' },
-  { label: 'Contact Us', href: '/contact#get-started' },
-]
-
 export default function Nav() {
+  const { navigation, industries } = useSiteData()
+  const navLinks = [{ label: 'Home', href: '/' }, ...(navigation.links ?? [])]
+  const ctaLabel = navigation.ctaButton?.label || 'Schedule Call'
+  const ctaHref = navigation.ctaButton?.href || '/schedule-a-call'
+  const clientPortalHref = navigation.clientPortalHref || 'https://my.slatecinema.com/'
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [mobilePortfolioOpen, setMobilePortfolioOpen] = useState(false)
   const [portfolioDropdownOpen, setPortfolioDropdownOpen] = useState(false)
@@ -71,7 +72,7 @@ export default function Nav() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group" style={{ perspective: '500px' }}>
             <div className="relative w-8 h-8 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-              <img src="/images/logo-mark.png" alt="Slate Cinema" className="w-full h-full object-contain" />
+              <img src="/images/logo-mark.webp" alt="Slate Cinema" className="w-full h-full object-contain" />
             </div>
             <span className="font-bold tracking-[0.15em] text-sm text-white hidden sm:block">SLATE CINEMA</span>
           </Link>
@@ -114,22 +115,27 @@ export default function Nav() {
                     >
                       All Work
                     </Link>
+                    {/* A dedicated "Podcasts" link used to live here --
+                        removed 2026-08-13 now that podcasts is a normal
+                        industry entry (src/lib/industries.ts) and shows up
+                        in the industries.map() list below automatically. */}
                     <div className="my-1.5 h-px bg-white/[0.06]" />
-                    {/* data-lenis-prevent — without it, Lenis's global smooth-scroll
-                        intercepts wheel events over this inner scroll region and the
-                        page reads as "stuck" while hovering the dropdown instead of
-                        scrolling this list natively. */}
-                    <div className="max-h-72 overflow-y-auto" data-lenis-prevent>
-                      {industries.map((ind) => (
-                        <Link
-                          key={ind.id}
-                          href={`/portfolio/${ind.slug}`}
-                          className="flex items-center gap-2.5 px-4 py-2 rounded-xl text-sm text-white/60 hover:text-white hover:bg-white/[0.06] transition-colors"
-                        >
-                          <ind.icon className="w-3.5 h-3.5 shrink-0" style={{ color: ind.accent }} />
-                          {ind.label}
-                        </Link>
-                      ))}
+                    {/* No inner scroll region on purpose -- the client wants every
+                        industry visible on open, not a scrollbar inside the dropdown. */}
+                    <div>
+                      {industries.map((ind) => {
+                        const Icon = resolveIcon(ind.icon)
+                        return (
+                          <Link
+                            key={ind.id}
+                            href={`/portfolio/${ind.slug}`}
+                            className="flex items-center gap-2.5 px-4 py-2 rounded-xl text-sm text-white/60 hover:text-white hover:bg-white/[0.06] transition-colors"
+                          >
+                            <Icon className="w-3.5 h-3.5 shrink-0" style={{ color: ind.accent }} />
+                            {ind.label}
+                          </Link>
+                        )
+                      })}
                     </div>
                   </div>
                 </div>
@@ -152,10 +158,19 @@ export default function Nav() {
 
           {/* CTA + Portal */}
           <div className="hidden md:flex items-center gap-4">
-            <a href="#" className="text-xs font-mono text-white/25 hover:text-white/50 transition-colors tracking-widest uppercase">Client Portal</a>
-            <Link href="/schedule-a-call" className="relative px-5 py-2.5 rounded-full text-sm font-semibold text-[#030305] bg-white overflow-hidden group">
+            {/* Landed here 2026-08-13 after 3 rounds: Jake's Aug 12 call said
+                "make it white"; Kauan then said "bring it back to grey";
+                separately, Jake also posted a screenshot of this exact
+                element to #web-development the same day (Aug 12, 13:03)
+                saying "I like that it's not white but it should be about
+                20% more visible" -- referring to the original text-white/25.
+                Split the difference on that explicit, quantified feedback
+                rather than picking one instruction over the other: a grey
+                that's meaningfully brighter than /25, nowhere near white/80. */}
+            <a href={clientPortalHref} target="_blank" rel="noopener noreferrer" className="text-xs font-mono text-white/35 hover:text-white/55 transition-colors tracking-widest uppercase">Client Portal</a>
+            <Link href={ctaHref} className="relative px-5 py-2.5 rounded-full text-sm font-semibold text-[#030305] bg-white overflow-hidden group">
               <div className="absolute inset-0 bg-[#00AEEF] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-              <span className="relative group-hover:text-white transition-colors">Schedule Call</span>
+              <span className="relative group-hover:text-white transition-colors">{ctaLabel}</span>
             </Link>
           </div>
 
@@ -204,8 +219,8 @@ export default function Nav() {
               {link.label}
             </Link>
           ))}
-          <Link href="/schedule-a-call" onClick={() => setMobileMenuOpen(false)} className="bg-[#00AEEF] text-white px-8 py-4 rounded-full text-lg font-semibold mt-4 shadow-[0_0_20px_rgba(0,174,239,0.3)]">
-            Schedule Call
+          <Link href={ctaHref} onClick={() => setMobileMenuOpen(false)} className="bg-[#00AEEF] text-white px-8 py-4 rounded-full text-lg font-semibold mt-4 shadow-[0_0_20px_rgba(0,174,239,0.3)]">
+            {ctaLabel}
           </Link>
         </div>
       )}

@@ -5,11 +5,21 @@ import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { ArrowRight, Eye, ThumbsUp, MessageSquare } from 'lucide-react'
+import type { HomePage } from '@/payload-types'
 
 gsap.registerPlugin(ScrollTrigger)
 
-export default function Results() {
+export default function Results({ data }: { data?: HomePage['results'] }) {
   const containerRef = useRef<HTMLElement>(null)
+  const viewsTarget = data?.viewsTarget ?? 120000
+  const likesTarget = data?.likesTarget ?? 14352
+  const commentsTarget = data?.commentsTarget ?? 1670
+  const reachPercent = data?.reachPercent || '98.2%'
+  const description =
+    data?.description ||
+    'Slate Cinema creates content built for the platforms where attention is won or lost in seconds. Every frame, hook, cut, and caption is meticulously shaped to make audiences stop scrolling.'
+  const ctaLabel = data?.ctaLabel || 'See Case Studies'
+  const ctaHref = data?.ctaHref || '/portfolio'
   const buttonRef = useRef<HTMLAnchorElement>(null)
   const textRef = useRef<HTMLSpanElement>(null)
   const [views, setViews] = useState(0)
@@ -54,21 +64,21 @@ export default function Results() {
       const commentCounter = { val: 0 }
 
       tl.to(viewCounter, {
-        val: 120000000,
+        val: viewsTarget,
         ease: 'none',
         duration: 0.6,
         onUpdate: () => setViews(Math.floor(viewCounter.val))
       }, 0)
 
       tl.to(likeCounter, {
-        val: 14352910,
+        val: likesTarget,
         ease: 'none',
         duration: 0.6,
         onUpdate: () => setLikes(Math.floor(likeCounter.val))
       }, 0)
 
       tl.to(commentCounter, {
-        val: 1670823,
+        val: commentsTarget,
         ease: 'none',
         duration: 0.6,
         onUpdate: () => setComments(Math.floor(commentCounter.val))
@@ -162,6 +172,9 @@ export default function Results() {
         <div className="metrics-block flex flex-col items-center max-w-4xl w-full" style={{ transformStyle: 'preserve-3d' }}>
 
           {/* Views Counter */}
+          <span className="font-mono text-sm sm:text-base tracking-[0.2em] text-white/50 uppercase mb-4">
+            Our Clients This Month
+          </span>
           <div className="flex items-baseline gap-4 md:gap-8 justify-center flex-wrap">
             <div className="text-[5rem] md:text-[8rem] lg:text-[11rem] font-bold text-white tracking-tighter leading-none" style={{ textShadow: '0 0 100px rgba(0,174,239,0.25), 0 10px 40px rgba(0,0,0,0.5)' }}>
               {views.toLocaleString()}
@@ -180,7 +193,7 @@ export default function Results() {
           <div className="flex gap-12 md:gap-20 items-center text-white/90 text-xl md:text-3xl font-bold mb-10">
             <div className="flex items-center gap-3">
               <Eye className="w-6 h-6 md:w-10 md:h-10 text-[#00AEEF]" />
-              <span>{views > 0 ? '98.2%' : '0%'}</span>
+              <span>{views > 0 ? reachPercent : '0%'}</span>
               <span className="text-xs text-white/40 font-normal ml-1">Reach</span>
             </div>
             <div className="flex items-center gap-3">
@@ -195,18 +208,18 @@ export default function Results() {
 
           {/* Description */}
           <p className="text-white/50 text-base md:text-lg max-w-2xl text-center leading-relaxed font-light">
-            Slate Cinema creates content built for the platforms where attention is won or lost in seconds. Every frame, hook, cut, and caption is meticulously shaped to make audiences stop scrolling.
+            {description}
           </p>
 
           {/* CTA */}
           <div className="results-cta mt-12" style={{ transform: 'translateZ(40px)' }}>
             <a
               ref={buttonRef}
-              href="/portfolio"
+              href={ctaHref}
               className="relative px-12 py-5 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full text-white font-medium text-lg overflow-hidden group cursor-pointer transition-all hover:bg-white hover:text-black hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] inline-flex"
             >
               <span ref={textRef} className="relative z-10 flex items-center gap-4 pointer-events-none">
-                See Case Studies <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
+                {ctaLabel} <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
               </span>
             </a>
           </div>

@@ -1,0 +1,34 @@
+/*
+  Slate Cinema admin brand retint — Phase 5 of the migration playbook.
+  Remaps Payload's own --color-success-* (accent) and the darkest
+  --color-base-* (elevation) stops to the site's brand blue (#00AEEF)
+  and near-black ink (#0B0C0E / #131417), rather than patching
+  individual component selectors one at a time — every place Payload
+  already uses "success" as its primary accent (buttons, active states,
+  links) and its darkest elevation level picks this up automatically,
+  in both light and dark admin themes.
+*/
+:root {
+  --color-success-50: rgb(230, 247, 255);
+  --color-success-100: rgb(204, 238, 255);
+  --color-success-150: rgb(163, 224, 255);
+  --color-success-200: rgb(122, 210, 255);
+  --color-success-250: rgb(87, 198, 253);
+  --color-success-300: rgb(51, 186, 250);
+  --color-success-350: rgb(26, 180, 247);
+  --color-success-400: rgb(8, 177, 243);
+  --color-success-450: rgb(0, 174, 239);
+  --color-success-500: rgb(0, 174, 239);
+  --color-success-550: rgb(0, 156, 215);
+  --color-success-600: rgb(0, 139, 191);
+  --color-success-650: rgb(3, 122, 168);
+  --color-success-700: rgb(8, 106, 146);
+  --color-success-750: rgb(11, 91, 125);
+  --color-success-800: rgb(13, 76, 104);
+  --color-success-850: rgb(14, 61, 84);
+  --color-success-900: rgb(14, 47, 64);
+  --color-success-950: rgb(13, 33, 45);
+
+  --color-base-900: rgb(19, 20, 23);
+  --color-base-950: rgb(11, 12, 14);
+}

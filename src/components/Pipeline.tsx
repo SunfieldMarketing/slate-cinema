@@ -5,12 +5,23 @@ import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { ChevronDown, Play } from 'lucide-react'
-import { categories } from '@/lib/pipeline-data'
+import type { Category } from '@/lib/pipeline-data'
+import SmartVideo from '@/components/ui/SmartVideo'
 
 gsap.registerPlugin(ScrollTrigger)
 
-export default function Pipeline() {
+export default function Pipeline({
+  categories,
+  heading,
+}: {
+  categories: Category[]
+  heading?: { eyebrow?: string | null; title?: string | null; description?: string | null }
+}) {
   const sectionRef = useRef<HTMLElement>(null)
+  const eyebrow = heading?.eyebrow || 'How It Works'
+  const title = heading?.title || 'The Production Pipeline'
+  const description =
+    heading?.description || "Four phases, each broken down into the exact services behind it. Open a phase to see what's included."
   const [open, setOpen] = useState(0)
   const [activeService, setActiveService] = useState(0)
   // Hold off loading any category video until this section is actually
@@ -55,13 +66,13 @@ export default function Pipeline() {
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
         <div className="pipe-fade text-center mb-12 md:mb-16">
           <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase mb-5">
-            <span className="w-8 h-px bg-brand-blue/40" /> How It Works
+            <span className="w-8 h-px bg-brand-blue/40" /> {eyebrow}
           </span>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-[1.05]">
-            The Production Pipeline
+            {title}
           </h2>
           <p className="mt-5 text-white/50 max-w-2xl mx-auto text-sm sm:text-base font-light leading-relaxed">
-            Four phases, each broken down into the exact services behind it. Open a phase to see what&apos;s included.
+            {description}
           </p>
         </div>
 
@@ -129,14 +140,11 @@ export default function Pipeline() {
                           the hero's frame sequence for bandwidth. */}
                       <div className="relative rounded-xl overflow-hidden border border-white/10 aspect-video md:aspect-auto md:h-full min-h-[160px]">
                         {isOpen && videosEnabled && (
-                          <video
+                          <SmartVideo
                             key={cat.video}
                             src={cat.video}
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                            preload="auto"
+                            vimeo={cat.videoVimeoUrl}
+                            variant="background"
                             className="absolute inset-0 w-full h-full object-cover"
                           />
                         )}
@@ -169,28 +177,35 @@ export default function Pipeline() {
                           })}
                         </div>
 
-                        {/* Detail panel for the highlighted service */}
-                        <div
-                          className="rounded-xl border p-5 sm:p-6 transition-colors duration-300 flex-1"
-                          style={{ borderColor: `${cat.color}30`, background: `${cat.color}0A` }}
-                        >
-                          <h3 className="font-semibold text-white text-base mb-3">{active.name}</h3>
-                          {active.tags ? (
-                            <div className="flex flex-wrap gap-2">
-                              {active.tags.map((t) => (
-                                <span
-                                  key={t}
-                                  className="text-xs font-mono px-3 py-1.5 rounded-full border text-white/75"
-                                  style={{ borderColor: `${cat.color}40`, background: `${cat.color}12` }}
-                                >
-                                  {t}
-                                </span>
-                              ))}
-                            </div>
-                          ) : (
-                            <p className="text-white/60 text-sm font-light leading-relaxed">{active.desc}</p>
-                          )}
-                        </div>
+                        {/* Detail panel for the highlighted service -- `active`
+                            is undefined when this category has zero
+                            services, since both `services[activeService]`
+                            and `services[0]` fall through to nothing.
+                            Guard the whole panel rather than assume there's
+                            always at least one service to show. */}
+                        {active && (
+                          <div
+                            className="rounded-xl border p-5 sm:p-6 transition-colors duration-300 flex-1"
+                            style={{ borderColor: `${cat.color}30`, background: `${cat.color}0A` }}
+                          >
+                            <h3 className="font-semibold text-white text-base mb-3">{active.name}</h3>
+                            {active.tags ? (
+                              <div className="flex flex-wrap gap-2">
+                                {active.tags.map((t) => (
+                                  <span
+                                    key={t}
+                                    className="text-xs font-mono px-3 py-1.5 rounded-full border text-white/75"
+                                    style={{ borderColor: `${cat.color}40`, background: `${cat.color}12` }}
+                                  >
+                                    {t}
+                                  </span>
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="text-white/60 text-sm font-light leading-relaxed">{active.desc}</p>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

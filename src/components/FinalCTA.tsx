@@ -7,11 +7,21 @@ import { useGSAP } from '@gsap/react'
 import { ArrowRight } from 'lucide-react'
 import { BorderBeam } from '@/components/ui/border-beam'
 import posthog from 'posthog-js'
+import type { FinalCta } from '@/payload-types'
 
 gsap.registerPlugin(ScrollTrigger)
 
-export default function FinalCTA() {
+export default function FinalCTA({ data }: { data?: FinalCta | null }) {
   const sectionRef = useRef<HTMLElement>(null)
+  const eyebrow = data?.eyebrow || '// Ready To Scale?'
+  const headlineLine1 = data?.headlineLine1 || 'Your next era'
+  const headlineLine2 = data?.headlineLine2 || 'starts here'
+  const description =
+    data?.description ||
+    "Don't let your brand fade into the background. Partner with Slate Cinema to engineer attention, drive engagement, and generate scalable ROI."
+  const buttonLabel = data?.buttonLabel || 'Get Started'
+  const buttonHref = data?.buttonHref || '/contact'
+  const trustNote = data?.trustNote || 'Replies within minutes'
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -72,25 +82,25 @@ export default function FinalCTA() {
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[100px] bg-[#00AEEF]/10 blur-[80px] pointer-events-none rounded-full" />
 
           <span className="cta-fade font-mono text-xs md:text-sm text-white/50 tracking-[0.4em] uppercase mb-8">
-            {'// Ready To Scale?'}
+            {eyebrow}
           </span>
 
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 leading-[1.1]">
-            <span className="block overflow-hidden"><span className="cta-line block">Your next era</span></span>
+            <span className="block overflow-hidden"><span className="cta-line block">{headlineLine1}</span></span>
             <span className="block overflow-hidden">
               <span className="cta-line block text-transparent bg-clip-text bg-gradient-to-r from-white to-white/40 italic font-serif-accent">
-                starts here
+                {headlineLine2}
               </span>
             </span>
           </h2>
 
           <p className="cta-fade text-white/60 text-lg md:text-xl font-light mb-12 max-w-2xl">
-            Don&apos;t let your brand fade into the background. Partner with Slate Cinema to engineer attention, drive engagement, and generate scalable ROI.
+            {description}
           </p>
 
           <div className="cta-fade flex items-center justify-center gap-4 flex-wrap">
             <a
-              href="/contact"
+              href={buttonHref}
               onMouseMove={handleMagneticMove}
               onMouseLeave={handleMagneticLeave}
               onClick={() => posthog.capture('book_call_clicked', { source: 'final_cta' })}
@@ -98,14 +108,20 @@ export default function FinalCTA() {
             >
               <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <span className="relative z-10 flex items-center transition-colors">
-                Get Started
+                {buttonLabel}
                 <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </span>
             </a>
+            {/* "View Full Portfolio" moved OUT of this final section 2026-
+                08-13, per Jake's Aug 12 call note: "we don't want view
+                portfolio at the bottom here... by the time they get to the
+                bottom of the page, they're either sold or they're not."
+                Now lives mid-page instead -- see the Portfolio grid header
+                in IndustryPageContent.tsx. */}
           </div>
 
           <p className="cta-fade mt-8 font-mono text-[10px] tracking-[0.22em] uppercase text-white/55">
-            Replies within one business day
+            {trustNote}
           </p>
         </div>
       </div>

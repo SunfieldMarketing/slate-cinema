@@ -216,7 +216,16 @@ export function MagicCard(props: MagicCardProps) {
           }}
         />
       )}
-      <div className="relative z-40">{children}</div>
+      {/* h-full here completes the height chain down from the grid item --
+          without it, this div shrink-wraps its content regardless of how
+          tall the (grid-stretched) motion.div above it actually is, which
+          silently breaks any h-full further down (e.g. Reviews.tsx's
+          testimonial cards not matching height across a row). Harmless
+          where the ancestor chain has no definite height already (e.g.
+          ContactPageContent, IndustryClientShowcase) -- height:100% with
+          no definite containing block just falls back to today's
+          content-based sizing. */}
+      <div className="relative z-40 h-full">{children}</div>
     </motion.div>
   )
 }

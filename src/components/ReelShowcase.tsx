@@ -55,7 +55,7 @@ export default function ReelShowcase() {
                 aria-label="Play the Slate Cinema showreel"
               >
                 <img
-                  src="/images/portfolio-production.png"
+                  src="/images/portfolio-production.webp"
                   alt="Slate Cinema showreel poster"
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />

@@ -37,7 +37,7 @@ export const journalPosts: JournalPost[] = [
     accent: '#00AEEF',
     date: 'July 2026',
     readTime: '6 min read',
-    coverImage: '/images/portfolio_social.png',
+    coverImage: '/images/portfolio_social.webp',
     author: 'The Slate Cinema Team',
     content: [
       {
@@ -93,7 +93,7 @@ export const journalPosts: JournalPost[] = [
     accent: '#f97316',
     date: 'July 2026',
     readTime: '7 min read',
-    coverImage: '/images/ind_products_hero.png',
+    coverImage: '/images/ind_products_hero.webp',
     author: 'The Slate Cinema Team',
     content: [
       {
@@ -152,7 +152,7 @@ export const journalPosts: JournalPost[] = [
     accent: '#c084fc',
     date: 'June 2026',
     readTime: '5 min read',
-    coverImage: '/images/portfolio_production.png',
+    coverImage: '/images/portfolio_production.webp',
     author: 'The Slate Cinema Team',
     content: [
       {
@@ -198,7 +198,7 @@ export const journalPosts: JournalPost[] = [
     accent: '#34d399',
     date: 'June 2026',
     readTime: '6 min read',
-    coverImage: '/images/mediavoid_team_bright.png',
+    coverImage: '/images/mediavoid_team_bright.webp',
     author: 'The Slate Cinema Team',
     content: [
       {
@@ -246,7 +246,7 @@ export const journalPosts: JournalPost[] = [
     accent: '#00AEEF',
     date: 'May 2026',
     readTime: '6 min read',
-    coverImage: '/images/mediavoid_creative_bright.png',
+    coverImage: '/images/mediavoid_creative_bright.webp',
     author: 'The Slate Cinema Team',
     content: [
       {
@@ -298,7 +298,7 @@ export const journalPosts: JournalPost[] = [
     accent: '#f97316',
     date: 'May 2026',
     readTime: '5 min read',
-    coverImage: '/images/portfolio_event.png',
+    coverImage: '/images/portfolio_event.webp',
     author: 'The Slate Cinema Team',
     content: [
       {

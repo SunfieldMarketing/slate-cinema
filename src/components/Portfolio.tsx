@@ -5,11 +5,9 @@ import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { Play, ArrowUpRight } from 'lucide-react'
-import { portfolioProjects as projects } from '@/lib/portfolio-projects'
+import type { PortfolioProjectLocal } from '@/lib/normalize'
 
 gsap.registerPlugin(ScrollTrigger)
-
-const filters = ['All', 'Commercial', 'Social', 'Documentary', 'Event', 'Action']
 
 /*
   Explicit bento placement for the full, unfiltered 8-project set — hand
@@ -29,9 +27,14 @@ const bentoPlacement = [
   'lg:col-start-1 lg:col-span-1 lg:row-start-3 lg:row-span-1',
 ]
 
-export default function Portfolio({ limit, showFilters = true }: { limit?: number; showFilters?: boolean } = {}) {
+export default function Portfolio({
+  projects,
+  limit,
+}: {
+  projects: PortfolioProjectLocal[]
+  limit?: number
+}) {
   const sectionRef = useRef<HTMLElement>(null)
-  const [filter, setFilter] = useState('All')
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -49,9 +52,8 @@ export default function Portfolio({ limit, showFilters = true }: { limit?: numbe
     return () => ctx.revert()
   }, { scope: sectionRef })
 
-  const filtered = filter === 'All' ? projects : projects.filter((p) => p.category === filter)
-  const visible = limit ? filtered.slice(0, limit) : filtered
-  const useBento = filter === 'All' && !limit && visible.length === bentoPlacement.length
+  const visible = limit ? projects.slice(0, limit) : projects
+  const useBento = !limit && visible.length === bentoPlacement.length
 
   return (
     <section ref={sectionRef} className="relative w-full min-h-screen overflow-hidden py-24 md:py-28">
@@ -64,27 +66,9 @@ export default function Portfolio({ limit, showFilters = true }: { limit?: numbe
               <span className="w-8 h-px bg-[#00AEEF]/40" /> Our Work
             </span>
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05]">
-              {showFilters ? 'A Gallery of Impact' : 'Selected Work'}
+              A Gallery of Impact
             </h2>
           </div>
-          {/* Filter chips */}
-          {showFilters && (
-            <div className="flex flex-wrap gap-2">
-              {filters.map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setFilter(f)}
-                  className={`px-4 py-2 rounded-full text-xs font-mono tracking-wide transition-all duration-300 border ${
-                    filter === f
-                      ? 'bg-[#00AEEF] text-black border-[#00AEEF]'
-                      : 'bg-white/[0.03] text-white/60 border-white/10 hover:border-white/30 hover:text-white'
-                  }`}
-                >
-                  {f}
-                </button>
-              ))}
-            </div>
-          )}
         </div>
 
         {/* Cinematic bento grid — hand-tiled for the full set so it fills
@@ -106,13 +90,6 @@ export default function Portfolio({ limit, showFilters = true }: { limit?: numbe
               {/* Grade + gradient */}
               <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
               <div className="absolute inset-0 mix-blend-overlay bg-[#00AEEF]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-              {/* Category tag */}
-              <div className="absolute top-4 left-4 z-10">
-                <span className="font-mono text-[10px] tracking-widest uppercase px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/15 text-white/80">
-                  {p.category}
-                </span>
-              </div>
 
               {/* Play button on hover */}
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">

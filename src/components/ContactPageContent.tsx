@@ -10,37 +10,24 @@ import {
   Phone,
   MapPin,
   ArrowRight,
-  FileText,
-  PhoneCall,
-  FileCheck2,
-  Clapperboard,
   Clock,
   Navigation,
-  HelpCircle,
-  ClipboardList,
-  CalendarClock,
   CheckCircle2,
-  Target,
-  Clock3,
-  Wallet,
   ChevronDown,
-  ShieldCheck,
-  Timer,
-  MessageCircleMore,
-  Sparkles,
-  Users,
-  BadgeCheck,
-  Receipt,
-  Repeat,
+  CalendarClock,
   type LucideIcon,
 } from 'lucide-react'
 import posthog from 'posthog-js'
+import { pushConversion } from '@/lib/analytics'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import PageHero from '@/components/ui/PageHero'
 import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
 import { MagicCard } from '@/components/ui/magic-card'
 import IntakeCTABand from '@/components/IntakeCTABand'
+import { resolveIcon } from '@/lib/icon-map'
+import { useSiteData } from '@/lib/site-data-context'
+import type { ContactPage, ReadyToTalk as ReadyToTalkGlobal } from '@/payload-types'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -224,48 +211,57 @@ function TrustBadge({ icon: Icon, label, accent = '#00AEEF' }: { icon: LucideIco
   )
 }
 
+type Badge = { icon?: string | null; label: string }
+
+function BadgeRow({ badges, accent }: { badges?: Badge[] | null; accent?: string }) {
+  if (!badges?.length) return null
+  return (
+    <>
+      {badges.map((b) => (
+        <TrustBadge key={b.label} icon={resolveIcon(b.icon)} label={b.label} accent={accent} />
+      ))}
+    </>
+  )
+}
+
 /* ── Stage router — the three intent tiers ─────────────────────────── */
-const stages = [
+const fallbackStages = [
   {
-    icon: HelpCircle,
+    icon: 'HelpCircle',
     step: '01',
     title: 'Not Sure Yet',
     desc: 'Not sure what you need? Leave your info and we’ll reach out.',
-    cta: 'Send a Quick Note',
+    ctaLabel: 'Send a Quick Note',
     href: '#lead-form',
     accent: '#00AEEF',
-    accentClass: 'text-[#00AEEF]',
-    borderClass: 'border-[#00AEEF]/40',
-    glow: '0 0 20px rgba(0,174,239,0.2)',
   },
   {
-    icon: ClipboardList,
+    icon: 'ClipboardList',
     step: '02',
     title: 'Know What You Need',
     desc: 'Have a project in mind? Walk us through the details and we’ll follow up with a plan.',
-    cta: 'Start the Intake Form',
+    ctaLabel: 'Start the Intake Form',
     href: '/contact/project',
     accent: '#c084fc',
-    accentClass: 'text-purple-400',
-    borderClass: 'border-purple-400/40',
-    glow: '0 0 20px rgba(192,132,252,0.25)',
   },
   {
-    icon: CalendarClock,
+    icon: 'CalendarClock',
     step: '03',
     title: 'Ready to Talk',
     desc: 'Prefer to talk it through live? Grab a time on our calendar.',
-    cta: 'Schedule a Call',
+    ctaLabel: 'Schedule a Call',
     href: '/schedule-a-call',
     accent: '#34d399',
-    accentClass: 'text-emerald-400',
-    borderClass: 'border-emerald-400/40',
-    glow: '0 0 20px rgba(52,211,153,0.25)',
   },
 ]
 
-function StageRouter() {
+function StageRouter({ copy }: { copy?: ContactPage['stageRouter'] }) {
   const ref = useRef<HTMLElement>(null)
+  const eyebrow = copy?.eyebrow || '// Get Started'
+  const headline = copy?.headline || 'What stage are you at?'
+  const subhead = copy?.subhead || "No wrong answer here, pick whichever fits where you're at now."
+  const stages = copy?.stages?.length ? copy.stages : fallbackStages
+
   useGSAP(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo('.sr-head', { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: ref.current, start: 'top 85%', once: true } })
@@ -278,15 +274,15 @@ function StageRouter() {
     <section ref={ref} id="get-started" className="relative w-full overflow-hidden py-16 md:py-20">
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         <div className="sr-head text-center mb-10 max-w-2xl mx-auto">
-          <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{'// Get Started'}</span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1]">What stage are you at?</h2>
-          <p className="mt-5 text-white/55 font-light text-sm sm:text-base">
-            No wrong answer here, pick whichever fits where you&rsquo;re at now.
-          </p>
+          <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{eyebrow}</span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1]">{headline}</h2>
+          <p className="mt-5 text-white/55 font-light text-sm sm:text-base">{subhead}</p>
         </div>
 
         <div className="sr-grid grid grid-cols-1 md:grid-cols-3 gap-5">
           {stages.map((s) => {
+            const Icon = resolveIcon(s.icon)
+            const accentClass = { color: s.accent }
             return (
               <MagicCard
                 key={s.step}
@@ -300,8 +296,8 @@ function StageRouter() {
                 <div className="relative flex flex-col h-full p-8 sm:p-9 border-t-2 rounded-t-3xl overflow-hidden" style={{ borderColor: `${s.accent}55` }}>
                   <span className="absolute top-8 right-8 sm:top-9 sm:right-9 font-mono text-[10px] tracking-widest text-white/25">{s.step}</span>
                   <div className="flex flex-col items-center text-center flex-1">
-                    <div className={`w-16 h-16 rounded-full border ${s.borderClass} bg-ink flex items-center justify-center`} style={{ boxShadow: s.glow }}>
-                      <s.icon className={`w-7 h-7 ${s.accentClass}`} />
+                    <div className="w-16 h-16 rounded-full border bg-ink flex items-center justify-center" style={{ borderColor: `${s.accent}66`, boxShadow: `0 0 20px ${s.accent}33` }}>
+                      <Icon className="w-7 h-7" style={accentClass} />
                     </div>
                     {/* Fixed-height slot so a two-line title (e.g. "Know What
                         You Need") doesn't push its card's description and
@@ -319,7 +315,7 @@ function StageRouter() {
                       onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = s.accent; e.currentTarget.style.color = '#fff' }}
                       onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = '' }}
                     >
-                      {s.cta}
+                      {s.ctaLabel}
                       <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                     </a>
                   ) : (
@@ -330,7 +326,7 @@ function StageRouter() {
                       onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = s.accent; e.currentTarget.style.color = '#fff' }}
                       onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = '' }}
                     >
-                      {s.cta}
+                      {s.ctaLabel}
                       <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                     </Link>
                   )}
@@ -370,10 +366,19 @@ interface LeadFormData {
   message: string
 }
 
-function LeadForm() {
+function LeadForm({ copy }: { copy?: ContactPage['leadForm'] }) {
   const ref = useRef<HTMLElement>(null)
   const [data, setData] = useState<LeadFormData>({ name: '', email: '', phone: '', company: '', message: '' })
   const [submitted, setSubmitted] = useState(false)
+
+  const eyebrow = copy?.eyebrow || '// Not Sure Yet'
+  const headline = copy?.headline || 'Drop us a line'
+  const description =
+    copy?.description ||
+    "Not sure exactly what you need yet? Totally fine — most people aren't at first. Leave your info and a real person on our team will reach out with the right next step, no matter how vague the ask."
+  const badges: Badge[] = copy?.badges?.length ? copy.badges : [{ icon: 'Timer', label: '~10 Seconds' }, { icon: 'ShieldCheck', label: 'No Spam, Ever' }, { icon: 'Mail', label: 'Replies Within Minutes' }]
+  const submitLabel = copy?.submitLabel || 'Send Message'
+  const successMessage = copy?.successMessage || "We'll be in touch within minutes."
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -389,6 +394,15 @@ function LeadForm() {
     e.preventDefault()
     if (!data.name || !data.email || !data.phone) return
     posthog.capture('lead_form_submitted', { has_company: !!data.company })
+    pushConversion('lead_form_submitted')
+    // Real submission destination (Payload form-submissions, visible in
+    // /admin) — fire-and-forget so a CMS/network hiccup can never block
+    // the success state the visitor already expects.
+    fetch('/api/lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    }).catch(() => {})
     setSubmitted(true)
   }
 
@@ -398,26 +412,23 @@ function LeadForm() {
         <div className="text-center mb-8 md:mb-9">
           <div className="inline-flex items-center gap-4 mb-6">
             <div className="w-12 h-12 shrink-0 rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(0,174,239,0.2)]">
-              <HelpCircle className="w-5 h-5 text-[#00AEEF]" />
+              {React.createElement(resolveIcon('HelpCircle'), { className: 'w-5 h-5 text-[#00AEEF]' })}
             </div>
-            <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase">{'// Not Sure Yet'}</span>
+            <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase">{eyebrow}</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1] mb-5">Drop us a line</h2>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1] mb-5">{headline}</h2>
           <p className="text-white/55 font-light text-sm sm:text-base max-w-xl mx-auto mb-6">
-            Not sure exactly what you need yet? Totally fine — most people aren&rsquo;t at first. Leave your info
-            and a real person on our team will reach out with the right next step, no matter how vague the ask.
+            {description}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <TrustBadge icon={Timer} label="~10 Seconds" />
-            <TrustBadge icon={ShieldCheck} label="No Spam, Ever" />
-            <TrustBadge icon={Mail} label="Reply Within 1 Business Day" />
+            <BadgeRow badges={badges} />
           </div>
         </div>
 
         <div className="relative rounded-3xl border border-white/[0.14] bg-white/[0.05] backdrop-blur-md p-8 sm:p-10 max-w-2xl mx-auto shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#00AEEF] to-transparent" />
           {submitted ? (
-            <SuccessNote text="We’ll be in touch within one business day." />
+            <SuccessNote text={successMessage} />
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
               <div className="grid sm:grid-cols-2 gap-5">
@@ -448,7 +459,7 @@ function LeadForm() {
                 type="submit"
                 className="group mt-2 inline-flex items-center justify-center gap-2.5 self-start px-8 py-4 rounded-full text-sm font-semibold text-black bg-white hover:bg-[#00AEEF] hover:text-white transition-colors duration-300"
               >
-                Send Message
+                {submitLabel}
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </button>
             </form>
@@ -480,16 +491,30 @@ function StageDivider() {
   )
 }
 
-/* ── Ready to Talk — the high-intent, "just book it" option ────────── */
-const prepItems = [
-  { icon: Target, label: 'Your goals', desc: 'What the video needs to do for your business.' },
-  { icon: Clock3, label: 'Your timeline', desc: 'When you need it shot, edited, and live.' },
-  { icon: Wallet, label: 'A budget ballpark', desc: 'Rough range is fine — it keeps the call efficient.' },
-  { icon: Sparkles, label: 'Any references', desc: 'Links or examples you like are a bonus, not required.' },
-]
-
-function ReadyToTalk() {
+/* ── Ready to Talk — the high-intent, "just book it" option — shared
+   copy source with /schedule-a-call's own framing (ReadyToTalk global) */
+function ReadyToTalkSection({ copy }: { copy?: ReadyToTalkGlobal | null }) {
   const ref = useRef<HTMLElement>(null)
+  const eyebrow = copy?.eyebrow || '// Ready to Talk'
+  const headline = copy?.headline || 'Book a time on our calendar'
+  const description =
+    copy?.description ||
+    'Prefer to talk it through live? Grab a 20-minute slot with our team — no pitch deck, no sales script, just an honest read on scope, timeline, and budget so you know exactly where you stand.'
+  const badges = copy?.badges?.length
+    ? copy.badges
+    : [{ icon: 'Clock3', label: '20-Minute Call' }, { icon: 'Users', label: 'Talk to a Real Producer' }, { icon: 'ShieldCheck', label: 'No Pitch Deck' }]
+  const prepItems = copy?.prepItems?.length
+    ? copy.prepItems
+    : [
+        { icon: 'Target', label: 'Your goals', desc: 'What the video needs to do for your business.' },
+        { icon: 'Clock3', label: 'Your timeline', desc: 'When you need it shot, edited, and live.' },
+        { icon: 'Wallet', label: 'A budget ballpark', desc: 'Rough range is fine — it keeps the call efficient.' },
+        { icon: 'Sparkles', label: 'Any references', desc: 'Links or examples you like are a bonus, not required.' },
+      ]
+  const buttonLabel = copy?.buttonLabel || 'Schedule a Call'
+  const buttonHref = copy?.buttonHref || '/schedule-a-call'
+  const note = copy?.note || 'No commitment — reschedule or cancel anytime.'
+
   useGSAP(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo('.rt-inner', { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: ref.current, start: 'top 85%', once: true } })
@@ -505,44 +530,44 @@ function ReadyToTalk() {
             <div className="w-12 h-12 shrink-0 rounded-full border border-emerald-400/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.25)]">
               <CalendarClock className="w-5 h-5 text-emerald-400" />
             </div>
-            <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-emerald-400 uppercase">{'// Ready to Talk'}</span>
+            <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-emerald-400 uppercase">{eyebrow}</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1] mb-5">Book a time on our calendar</h2>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1] mb-5">{headline}</h2>
           <p className="text-white/55 font-light text-sm sm:text-base max-w-xl mx-auto mb-6">
-            Prefer to talk it through live? Grab a 20-minute slot with our team — no pitch deck, no sales script,
-            just an honest read on scope, timeline, and budget so you know exactly where you stand.
+            {description}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <TrustBadge icon={Clock3} label="20-Minute Call" accent="#34d399" />
-            <TrustBadge icon={Users} label="Talk to a Real Producer" accent="#34d399" />
-            <TrustBadge icon={ShieldCheck} label="No Pitch Deck" accent="#34d399" />
+            <BadgeRow badges={badges} accent="#34d399" />
           </div>
         </div>
 
         <div className="relative rounded-3xl border border-emerald-400/20 bg-white/[0.05] backdrop-blur-md p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-9">
-            {prepItems.map((p) => (
-              <div key={p.label} className="rounded-2xl border border-white/[0.12] bg-white/[0.03] p-5">
-                <div className="w-9 h-9 rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center mb-3.5 shadow-[0_0_20px_rgba(0,174,239,0.2)]">
-                  <p.icon className="w-4 h-4 text-[#00AEEF]" />
+            {prepItems.map((p) => {
+              const Icon = resolveIcon(p.icon)
+              return (
+                <div key={p.label} className="rounded-2xl border border-white/[0.12] bg-white/[0.03] p-5">
+                  <div className="w-9 h-9 rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center mb-3.5 shadow-[0_0_20px_rgba(0,174,239,0.2)]">
+                    <Icon className="w-4 h-4 text-[#00AEEF]" />
+                  </div>
+                  <div className="text-white font-bold text-sm mb-1">{p.label}</div>
+                  <p className="text-white/50 text-xs font-light leading-relaxed">{p.desc}</p>
                 </div>
-                <div className="text-white font-bold text-sm mb-1">{p.label}</div>
-                <p className="text-white/50 text-xs font-light leading-relaxed">{p.desc}</p>
-              </div>
-            ))}
+              )
+            })}
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <Link
-              href="/schedule-a-call"
+              href={buttonHref}
               onClick={() => posthog.capture('ready_to_talk_clicked', { source: 'contact_page' })}
               className="group inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full text-sm font-semibold text-black bg-white hover:bg-[#00AEEF] hover:text-white transition-colors duration-300"
             >
-              Schedule a Call
+              {buttonLabel}
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
-            <span className="text-white/40 text-xs font-light">No commitment — reschedule or cancel anytime.</span>
+            <span className="text-white/40 text-xs font-light">{note}</span>
           </div>
         </div>
       </div>
@@ -551,15 +576,22 @@ function ReadyToTalk() {
 }
 
 /* ── What happens next — response steps ────────────────────────────── */
-const nextSteps = [
-  { icon: FileText, step: '01', title: 'Share Your Scope', desc: 'Fill out a form above or reach out directly with your goals and timeline.' },
-  { icon: PhoneCall, step: '02', title: 'Discovery Call', desc: 'We hop on a call within one business day to align on vision and budget.' },
-  { icon: FileCheck2, step: '03', title: 'Custom Proposal', desc: 'You get a fixed-price execution plan tailored to your campaign.' },
-  { icon: Clapperboard, step: '04', title: 'We Roll Camera', desc: 'Approve and we move straight into pre-production. Lights, camera, launch.' },
+const fallbackNextSteps = [
+  { icon: 'FileText', step: '01', title: 'Share Your Scope', desc: 'Fill out a form above or reach out directly with your goals and timeline.' },
+  { icon: 'PhoneCall', step: '02', title: 'Discovery Call', desc: 'We hop on a call within one business day to align on vision and budget.' },
+  { icon: 'FileCheck2', step: '03', title: 'Custom Proposal', desc: 'You get a fixed-price execution plan tailored to your campaign.' },
+  { icon: 'Clapperboard', step: '04', title: 'We Roll Camera', desc: 'Approve and we move straight into pre-production. Lights, camera, launch.' },
 ]
 
-function WhatHappensNext() {
+function WhatHappensNext({ copy }: { copy?: ContactPage['whatHappensNext'] }) {
   const ref = useRef<HTMLElement>(null)
+  const eyebrow = copy?.eyebrow || '// After You Reach Out'
+  const headline = copy?.headline || 'What happens next'
+  const subhead = copy?.subhead || "From hello until final delivery, here's the road map laid out."
+  const formPrompt = copy?.formPrompt || 'Fill out a form below'
+  const badges: Badge[] = copy?.badges?.length ? copy.badges : [{ icon: 'Receipt', label: 'Fixed-Price Proposals' }, { icon: 'Repeat', label: 'Revision Rounds Included' }, { icon: 'BadgeCheck', label: 'One Team End-to-End' }]
+  const nextSteps = copy?.steps?.length ? copy.steps : fallbackNextSteps
+
   useGSAP(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo('.whn-head', { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: ref.current, start: 'top 80%', once: true } })
@@ -573,33 +605,34 @@ function WhatHappensNext() {
     <section ref={ref} className="relative w-full overflow-hidden mt-6 md:mt-12 pt-28 md:pt-40 pb-16 md:pb-20">
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
         <div className="whn-head text-center mb-12 max-w-2xl mx-auto">
-          <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{'// After You Reach Out'}</span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1]">What happens next</h2>
+          <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{eyebrow}</span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1]">{headline}</h2>
           <p className="mt-5 text-white/55 font-light text-sm sm:text-base">
-            From hello until final delivery, here&rsquo;s the road map laid out.
+            {subhead}
           </p>
           <p className="mt-2 font-mono text-[11px] tracking-[0.15em] text-[#00AEEF] uppercase">
-            Fill out a form below
+            {formPrompt}
           </p>
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-            <TrustBadge icon={Receipt} label="Fixed-Price Proposals" />
-            <TrustBadge icon={Repeat} label="Revision Rounds Included" />
-            <TrustBadge icon={BadgeCheck} label="One Team End-to-End" />
+            <BadgeRow badges={badges} />
           </div>
         </div>
         <div className="whn-grid relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {/* connecting line on desktop */}
           <div className="whn-line hidden lg:block absolute top-7 left-[12%] right-[12%] h-px bg-gradient-to-r from-[#00AEEF]/50 via-white/20 to-[#00AEEF]/50" />
-          {nextSteps.map((s) => (
-            <div key={s.step} className="whn-step relative text-center">
-              <div className="relative z-10 w-14 h-14 mx-auto rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(0,174,239,0.2)]">
-                <s.icon className="w-6 h-6 text-[#00AEEF]" />
+          {nextSteps.map((s) => {
+            const Icon = resolveIcon(s.icon)
+            return (
+              <div key={s.step} className="whn-step relative text-center">
+                <div className="relative z-10 w-14 h-14 mx-auto rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(0,174,239,0.2)]">
+                  <Icon className="w-6 h-6 text-[#00AEEF]" />
+                </div>
+                <div className="font-mono text-[10px] tracking-widest text-white/30 mb-2">{s.step}</div>
+                <h3 className="text-white font-bold text-lg mb-2">{s.title}</h3>
+                <p className="text-white/50 text-sm font-light leading-relaxed max-w-[240px] mx-auto">{s.desc}</p>
               </div>
-              <div className="font-mono text-[10px] tracking-widest text-white/30 mb-2">{s.step}</div>
-              <h3 className="text-white font-bold text-lg mb-2">{s.title}</h3>
-              <p className="text-white/50 text-sm font-light leading-relaxed max-w-[240px] mx-auto">{s.desc}</p>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>
@@ -607,8 +640,22 @@ function WhatHappensNext() {
 }
 
 /* ── Studio / location ─────────────────────────────────────────────── */
-function StudioLocation() {
+function StudioLocation({ copy }: { copy?: ContactPage['studioLocation'] }) {
   const ref = useRef<HTMLElement>(null)
+  const { settings } = useSiteData()
+  const contact = settings?.contact
+  const eyebrow = copy?.eyebrow || '// The Studio'
+  const headlineLine1 = copy?.headlineLine1 || 'Based in Brooklyn,'
+  const headlineLine2 = copy?.headlineLine2 || 'shooting everywhere.'
+  const studioName = contact?.studioName || 'Slate Cinema Studio'
+  const addressLine = contact?.addressLine || '132 32nd St'
+  const city = contact?.city || 'Brooklyn'
+  const state = contact?.state || 'NY'
+  const postalCode = contact?.postalCode || '11232'
+  const hours = contact?.hours || 'Mon–Fri · 9am – 7pm ET · On-location by appointment'
+  const email = contact?.email || 'info@slatecinema.com'
+  const fullAddress = `${addressLine}, ${city}, ${state} ${postalCode}`
+
   useGSAP(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo('.sl-inner', { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: ref.current, start: 'top 82%', once: true } })
@@ -624,7 +671,7 @@ function StudioLocation() {
           <div className="relative rounded-3xl overflow-hidden border border-white/10 min-h-[320px] group">
             <iframe
               title="Slate Cinema Studio location"
-              src="https://www.google.com/maps?q=132+32nd+St,+Brooklyn,+NY+11232&output=embed&z=14"
+              src={`https://www.google.com/maps?q=${encodeURIComponent(fullAddress)}&output=embed&z=14`}
               className="absolute inset-0 w-full h-full grayscale-[0.3] opacity-90"
               style={{ border: 0 }}
               loading="lazy"
@@ -632,31 +679,31 @@ function StudioLocation() {
             />
             <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-ink via-transparent to-transparent" />
             <div className="absolute bottom-5 left-5 flex items-center gap-2 font-mono text-[11px] tracking-widest text-white/80 uppercase pointer-events-none [text-shadow:0_1px_6px_rgba(0,0,0,0.9)]">
-              <Navigation className="w-4 h-4 text-[#22d3ee]" /> 132 32nd St, Brooklyn, NY 11232
+              <Navigation className="w-4 h-4 text-[#22d3ee]" /> {fullAddress}
             </div>
           </div>
 
           {/* Studio details */}
           <div className="relative flex flex-col justify-center rounded-3xl border border-white/[0.14] bg-white/[0.05] backdrop-blur-md p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#22d3ee] to-transparent" />
-            <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#22d3ee] uppercase mb-4">{'// The Studio'}</span>
-            <h2 className="text-3xl sm:text-4xl font-black tracking-tighter text-white mb-5">Based in Brooklyn,<br />shooting everywhere.</h2>
+            <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#22d3ee] uppercase mb-4">{eyebrow}</span>
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tighter text-white mb-5">{headlineLine1}<br />{headlineLine2}</h2>
             <div className="mb-6 flex flex-wrap gap-3">
               <TrustBadge icon={Navigation} label="On-Location Nationwide" accent="#22d3ee" />
-              <TrustBadge icon={Clock} label="Mon–Fri, 9am–7pm ET" accent="#22d3ee" />
+              <TrustBadge icon={Clock} label={hours} accent="#22d3ee" />
             </div>
             <div className="flex flex-col gap-5">
               <div className="flex items-start gap-4">
                 <MapPin className="w-5 h-5 text-[#22d3ee] mt-0.5 shrink-0" />
-                <div><div className="text-white font-medium text-sm">Slate Cinema Studio</div><div className="text-white/50 text-sm">Brooklyn, New York</div></div>
+                <div><div className="text-white font-medium text-sm">{studioName}</div><div className="text-white/50 text-sm">{city}, {state}</div></div>
               </div>
               <div className="flex items-start gap-4">
                 <Clock className="w-5 h-5 text-[#22d3ee] mt-0.5 shrink-0" />
-                <div><div className="text-white font-medium text-sm">Studio Hours</div><div className="text-white/50 text-sm">Mon–Fri · 9am – 7pm ET · On-location by appointment</div></div>
+                <div><div className="text-white font-medium text-sm">Studio Hours</div><div className="text-white/50 text-sm">{hours}</div></div>
               </div>
               <div className="flex items-start gap-4">
                 <Mail className="w-5 h-5 text-[#22d3ee] mt-0.5 shrink-0" />
-                <a href="mailto:info@slatecinema.com" className="text-white/70 text-sm hover:text-[#22d3ee] transition-colors">info@slatecinema.com</a>
+                <a href={`mailto:${email}`} className="text-white/70 text-sm hover:text-[#22d3ee] transition-colors">{email}</a>
               </div>
             </div>
           </div>
@@ -666,14 +713,25 @@ function StudioLocation() {
   )
 }
 
-const contactCards = [
-  { icon: Mail, label: 'Email', value: 'info@slatecinema.com', href: 'mailto:info@slatecinema.com' },
-  { icon: Phone, label: 'Phone', value: '+1 732 930 1934', href: 'tel:+17329301934' },
-  { icon: MapPin, label: 'Studio', value: 'Brooklyn, NY', href: '#' },
-]
-
-function ContactMethods() {
+function ContactMethods({ copy }: { copy?: ContactPage['contactMethods'] }) {
   const ref = useRef<HTMLElement>(null)
+  const { settings } = useSiteData()
+  const contact = settings?.contact
+  const eyebrow = copy?.eyebrow || 'Or Reach Us Directly'
+  const headline = copy?.headline || 'Real Humans. Real Work.'
+  const description = copy?.description || "No forms, no queue — email, call, or stop by the studio directly. Whatever's easiest for you."
+  const badges: Badge[] = copy?.badges?.length ? copy.badges : [{ icon: 'MessageCircleMore', label: 'We Reply Fast' }, { icon: 'Users', label: 'Handled With Care' }]
+  const email = contact?.email || 'info@slatecinema.com'
+  const phone = contact?.phone || '+1 732 930 1934'
+  const city = contact?.city || 'Brooklyn'
+  const state = contact?.state || 'NY'
+
+  const contactCards = [
+    { icon: Mail, label: 'Email', value: email, href: `mailto:${email}` },
+    { icon: Phone, label: 'Phone', value: phone, href: `tel:${phone.replace(/[^+\d]/g, '')}` },
+    { icon: MapPin, label: 'Studio', value: `${city}, ${state}`, href: '#' },
+  ]
+
   useGSAP(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo('.cm-card', { y: 40, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 0.6, ease: 'power3.out', scrollTrigger: { trigger: ref.current, start: 'top 85%', once: true } })
@@ -686,15 +744,14 @@ function ContactMethods() {
       <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-8">
         <div className="cm-head text-center mb-10 max-w-xl mx-auto">
           <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#fbbf24] uppercase mb-4">
-            <span className="w-8 h-px bg-[#fbbf24]/40" /> Or Reach Us Directly <span className="w-8 h-px bg-[#fbbf24]/40" />
+            <span className="w-8 h-px bg-[#fbbf24]/40" /> {eyebrow} <span className="w-8 h-px bg-[#fbbf24]/40" />
           </span>
-          <h2 className="text-3xl sm:text-4xl font-black tracking-tighter text-white leading-[1.1] mb-4">Real Humans. Real Work.</h2>
+          <h2 className="text-3xl sm:text-4xl font-black tracking-tighter text-white leading-[1.1] mb-4">{headline}</h2>
           <p className="text-white/55 font-light text-sm sm:text-base max-w-lg mx-auto">
-            No forms, no queue — email, call, or stop by the studio directly. Whatever&rsquo;s easiest for you.
+            {description}
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <TrustBadge icon={MessageCircleMore} label="We Reply Fast" accent="#fbbf24" />
-            <TrustBadge icon={Users} label="Handled With Care" accent="#fbbf24" />
+            <BadgeRow badges={badges} accent="#fbbf24" />
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -725,8 +782,9 @@ function ContactMethods() {
   )
 }
 
-export default function ContactPageContent() {
+export default function ContactPageContent({ page, readyToTalk }: { page: ContactPage; readyToTalk: ReadyToTalkGlobal | null }) {
   const backdropRootRef = useRef<HTMLDivElement>(null)
+  const hero = page?.hero
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-[#00AEEF] selection:text-white">
@@ -739,26 +797,26 @@ export default function ContactPageContent() {
           <PageBackdrop rootRef={backdropRootRef} />
 
           <PageHero
-            eyebrow="Get Started"
-            title={['Let’s get', 'you started']}
-            subtitle="Tell us where you’re at and we’ll point you to the right next step. We reply within one business day."
+            eyebrow={hero?.eyebrow || 'Get Started'}
+            title={[hero?.titleLine1 || "Let's get", hero?.titleLine2 || 'you started']}
+            subtitle={hero?.subtitle || "Tell us where you're at and we'll point you to the right next step. We reply within minutes."}
             accent="#00AEEF"
           />
 
           <div data-glow-color="#00AEEF" data-glow-size="32" data-glow-opacity="0.12">
-            <WhatHappensNext />
+            <WhatHappensNext copy={page?.whatHappensNext} />
           </div>
 
           <div data-glow-color="#00AEEF" data-glow-size="38" data-glow-opacity="0.13">
-            <StageRouter />
+            <StageRouter copy={page?.stageRouter} />
           </div>
           <StageDivider />
           <div data-glow-color="#00AEEF" data-glow-size="34" data-glow-opacity="0.12">
-            <LeadForm />
+            <LeadForm copy={page?.leadForm} />
           </div>
           <StageDivider />
           <div data-glow-color="#34d399" data-glow-size="40" data-glow-opacity="0.13">
-            <ReadyToTalk />
+            <ReadyToTalkSection copy={readyToTalk} />
           </div>
 
           <div data-glow-color="#00AEEF" data-glow-size="34" data-glow-opacity="0.12">
@@ -766,11 +824,11 @@ export default function ContactPageContent() {
           </div>
 
           <div data-glow-color="#fbbf24" data-glow-size="34" data-glow-opacity="0.1">
-            <ContactMethods />
+            <ContactMethods copy={page?.contactMethods} />
           </div>
 
           <div data-glow-color="#22d3ee" data-glow-size="36" data-glow-opacity="0.12">
-            <StudioLocation />
+            <StudioLocation copy={page?.studioLocation} />
           </div>
         </div>
 

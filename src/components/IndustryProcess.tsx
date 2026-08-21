@@ -68,7 +68,7 @@ export default function IndustryProcess({ steps, accent }: { steps: IndustryProc
             <span className="w-8 h-px" style={{ background: `${accent}66` }} /> How It Works
           </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.05]">
-            The timeline, <span className="font-serif-accent italic text-white/60">scrubbed by scroll.</span>
+            The timeline, <span className="font-serif-accent italic text-white/60">concept to distribution.</span>
           </h2>
         </div>
 

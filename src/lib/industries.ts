@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
-import { Film, Dumbbell, Plane, Building2, HeartPulse, ShoppingBag, Briefcase, Users, GraduationCap } from 'lucide-react'
+import { Film, Dumbbell, Plane, Building2, HeartPulse, ShoppingBag, Briefcase, Users, GraduationCap, Mic } from 'lucide-react'
 
 export interface IndustryStat {
   value: number
@@ -19,6 +19,8 @@ export interface IndustryServiceCard {
   image: string
   /** Optional looping video background — used by the featured card. */
   video?: string
+  /** Vimeo URL or bare ID -- takes priority over `video` when set. See SmartVideo. */
+  videoVimeoUrl?: string
   /** The one card rendered large in the bento grid. */
   featured?: boolean
 }
@@ -34,6 +36,8 @@ export interface IndustryVideoTestimonial {
   role: string
   company: string
   video: string
+  /** Vimeo URL or bare ID -- takes priority over `video` when set. See SmartVideo. */
+  videoVimeoUrl?: string
   /** Headline result for this engagement (e.g. "+212% PDP conversion"). */
   outcome: string
   /** Poster frame shown before playback (and wherever video can't render). */
@@ -52,6 +56,23 @@ export interface IndustryFaq {
   answer: string
 }
 
+/** A real client story card — used by IndustryClientShowcase. */
+export interface IndustryClient {
+  name: string
+  /** Year or year range; blank if not on file. */
+  year: string
+  body: string
+  video: string
+}
+
+/** Copy for the CinematicStatement full-bleed video "beat" mid-page. */
+export interface IndustryCinematicStatement {
+  eyebrow: string
+  lines: string[]
+  body: string
+  videoSrc: string
+}
+
 export interface IndustryData {
   id: string
   slug: string
@@ -68,7 +89,15 @@ export interface IndustryData {
   gallery: string[]
   stats: IndustryStat[]
   services: string[]
-  testimonial: { quote: string; name: string; role: string; company: string }
+  /**
+   * Fabricated per-industry client quotes (invented names, roles, and
+   * companies) lived here and in `videoTestimonials` until the 2026-08-12
+   * client audit confirmed none were real Slate Cinema clients — the
+   * render call for both was removed from IndustryPageContent.tsx and the
+   * fake literal data below was deleted. Field kept optional so a real
+   * testimonial can be added per-industry once the client supplies one.
+   */
+  testimonial?: { quote: string; name: string; role: string; company: string }
   /**
    * Extended industry-page sections (service cards, client story cards,
    * process timeline, FAQ). Optional and currently only populated for Animation —
@@ -81,108 +110,106 @@ export interface IndustryData {
   videoTestimonials?: IndustryVideoTestimonial[]
   process?: IndustryProcessStep[]
   faqs?: IndustryFaq[]
+  /**
+   * The Athletics-page format, generalized 2026-08-13 to every industry
+   * page per Kauan ("use the new athletics industry format for all the
+   * industry pages"): a real client-story grid (IndustryClientShowcase)
+   * plus a full-bleed video "beat" (CinematicStatement) replace the old
+   * generic two-column IntroSection. Both optional so a not-yet-filled-in
+   * industry degrades gracefully instead of rendering an empty section.
+   */
+  clientShowcase?: IndustryClient[]
+  cinematicStatement?: IndustryCinematicStatement
 }
 
 export const industries: IndustryData[] = [
   {
     id: 'ai',
     slug: 'ai',
-    label: 'AI',
+    // Label only -- per Jake's Slack request (2026-08-18, screenshot
+    // F0BQUM3G79R): "can we rename this to '3D and AI'?" Left id/slug as
+    // 'ai' so /portfolio/ai and every existing link keeps working; only
+    // the visible tile/nav text changes.
+    label: '3D and AI',
     icon: Film,
     accent: '#00AEEF',
     blurb: 'AI-accelerated brand stories, explainers, and stylized 2D/3D pieces that make complex ideas feel effortless.',
     description: 'From explainer videos to fully stylized 2D/3D brand worlds, our AI-assisted animation pipeline turns dense or abstract ideas into something an audience actually wants to watch. Every project starts as a storyboard, moves through rapid AI-assisted style exploration, then gets hand-finished by real animators and ships platform-native — because a great AI-accelerated idea still needs to land in six seconds on a phone screen.',
     stat: 'AI · 2D · 3D',
-    heroImage: '/images/ai_hero_anim.png',
+    heroImage: '/images/ai_hero_anim.webp',
     heroVideo: '/videos/post-production.mp4',
     gallery: [
-      '/images/ai_anim_gal_1.png',
-      '/images/ai_anim_gal_2.png',
-      '/images/ai_anim_gal_3.png',
+      '/images/ai_anim_gal_1.webp',
+      '/images/ai_anim_gal_2.webp',
+      '/images/ai_anim_gal_3.webp',
     ],
     stats: [
-      { value: 40, suffix: '+', label: 'AI-Assisted Pieces' },
-      { value: 3, suffix: 'D', label: '2D & 3D Studios' },
-      { value: 92, suffix: '%', label: 'Completion Rate' },
-      { value: 12, suffix: '', label: 'Style Systems Built' },
+      { value: 3, suffix: '', label: 'Gen-Video Models In Pipeline' },
+      { value: 100, suffix: '%', label: 'Human-Finished, Every Frame' },
+      { value: 174, suffix: '+', label: 'Projects Since 2023' },
+      { value: 5, suffix: '', label: '.0 Google Rating' },
     ],
     services: ['AI-accelerated explainers', 'Motion brand identity', '2D & 3D character work', 'AI-assisted style exploration'],
-    testimonial: { quote: 'They turned an eight-page technical deck into a 45-second video our sales team actually uses.', name: 'Priya Sharma', role: 'Head of Product Marketing', company: 'Nimbus Systems' },
+    clientShowcase: [
+      { name: 'Tremco CPG', year: '2026', body: "AI-augmented 3D explainer series built from the client's own DWG drawings — a national NYC building-code-change story, in production.", video: '/videos/post-production.mp4' },
+      // Real Vimeo ID confirmed 2026-08-19 via the media tracker
+      // (Anochi Workshops - VFX Commercial, vimeo.com/963219647).
+      { name: 'Anochi', year: '2024', body: 'A VFX Eye video, part of a 5-part workshop series covering journey, accountability, breathwork and coaching.', video: '963219647' },
+      { name: 'CVM Waste', year: '2025', body: 'An animated logo and brand sting for a second brand launched from scratch alongside the CVM Construction rebuild.', video: '/videos/distribution.mp4' },
+      { name: 'Smash House Burgers', year: '2025', body: 'Recurring animation stitches — the Trolley Problem series — built into a multi-location weekly social engine.', video: '/videos/production.mp4' },
+    ],
+    cinematicStatement: {
+      eyebrow: 'AI In Service Of The Story',
+      lines: ['Run by filmmakers,', 'not by prompts.'],
+      body: 'Every AI-accelerated frame still gets a human finishing pass — transcription-driven editing, generative b-roll, AI-assisted product photoshoots. Real production craft, just faster.',
+      videoSrc: '/videos/post-production.mp4',
+    },
     serviceCards: [
       {
         title: 'AI-Accelerated Explainers',
         description: 'Complex products distilled into 90 seconds anyone can follow — an AI-assisted pipeline speeds up boards and style exploration, real animators finish every frame.',
-        outcome: '+3.1x demo requests',
+        outcome: 'Boards in days, not weeks',
         deliverables: ['Script & storyboard', 'AI-assisted style frames', 'Full motion + sound design', 'Every aspect ratio'],
         meta: '60–120s · 4–6 wks',
-        image: '/images/ai_anim_svc_explainer.png',
+        image: '/images/ai_anim_svc_explainer.webp',
         featured: true,
       },
       {
         title: 'Product & CGI',
-        description: "Photoreal renders and AI-accelerated simulations when the real thing can't be filmed.",
-        outcome: '+212% PDP conversion',
+        description: "Photoreal renders and AI-accelerated simulations when the real thing can't be filmed — the same approach behind Tremco CPG's AI-augmented 3D explainer series, built from the client's own DWG drawings.",
+        outcome: 'Real product, no shoot required',
         deliverables: ['Macro product renders', 'Physics simulation', 'Studio lighting'],
         meta: '30–60s · 5–7 wks',
-        image: '/images/ai_anim_svc_cgi.png',
+        image: '/images/ai_anim_svc_cgi.webp',
       },
       {
         title: 'Motion Branding',
-        description: 'Logo language, transitions and a motion spec your whole org can reuse — explored fast with AI, locked by hand.',
-        outcome: 'One system, 9 teams',
+        description: 'Logo language, transitions and a motion spec your whole org can reuse — explored fast with AI, locked by hand. Built animated logo suites for CVM Waste and Five Towns Premier this way.',
+        outcome: 'One reusable system',
         deliverables: ['Animated logo suite', 'Motion spec doc', 'Broadcast package'],
         meta: 'System · 3–5 wks',
-        image: '/images/ai_anim_svc_branding.png',
+        image: '/images/ai_anim_svc_branding.webp',
       },
       {
         title: 'Character Work',
         description: 'A recurring face for the brand — same rig, every platform, season after season.',
-        outcome: '+61% brand recall',
+        outcome: 'Same rig, every platform',
         deliverables: ['Character design + rig', 'Season of spots', 'Platform cutdowns'],
         meta: 'Season · 6–8 wks',
-        image: '/images/ai_anim_svc_character.png',
+        image: '/images/ai_anim_svc_character.webp',
       },
       {
         title: 'Social Loops',
-        description: 'Seamless, sound-off loops engineered to stop the scroll mid-thumb.',
-        outcome: '2.1M views in week 1',
+        description: 'Seamless, sound-off loops engineered to stop the scroll mid-thumb — the same technique behind Smash House Burgers’ recurring animation stitches.',
+        outcome: 'Built for the scroll',
         deliverables: ['6–15s seamless loops', 'Sound-off captions', 'Feed-native ratios'],
         meta: '6–15s × N · 2–4 wks',
-        image: '/images/ai_anim_svc_social.png',
+        image: '/images/ai_anim_svc_social.webp',
       },
     ],
-    videoTestimonials: [
-      {
-        quote: 'They turned an eight-page technical deck into a 45-second video our sales team actually uses.',
-        name: 'Priya Sharma',
-        role: 'Head of Product Marketing',
-        company: 'Nimbus Systems',
-        outcome: '+3.1x demo requests',
-        video: '/videos/pre-production.mp4',
-        poster: '/images/ai_anim_test_1.png',
-        logo: '/images/clients/lucida-testimonials.webp',
-      },
-      {
-        quote: 'The launch film paid for itself in the first week. We reallocated our whole Q3 photo budget to animation.',
-        name: 'Marcus Webb',
-        role: 'VP of Growth',
-        company: 'Voltbrew',
-        outcome: '+212% PDP conversion',
-        video: '/videos/production.mp4',
-        poster: '/images/ai_anim_test_2.png',
-        logo: '/images/clients/dream-testimonials.webp',
-      },
-      {
-        quote: "Fastest studio we've worked with, and the first that made revisions painless — boards first, no surprises.",
-        name: 'Elena Ruiz',
-        role: 'Brand Director',
-        company: 'Nordform',
-        outcome: '-34% support tickets',
-        video: '/videos/distribution.mp4',
-        poster: '/images/ai_anim_test_3.png',
-        logo: '/images/clients/inhale-testimonails.webp',
-      },
-    ],
+    // videoTestimonials removed 2026-08-12 — the 3 entries here (Nimbus
+    // Systems, Voltbrew, Nordform) were invented companies/names, never
+    // real Slate Cinema clients. See IndustryData.testimonial comment.
     process: [
       { week: 'Wk 1', title: 'Discover', body: 'Goals, audience and references — then a one-page brief.' },
       { week: 'Wk 1–2', title: 'Script & boards', body: 'Story signed off as boards and a timed animatic.' },
@@ -205,24 +232,51 @@ export const industries: IndustryData[] = [
     label: 'Athletics',
     icon: Dumbbell,
     accent: '#f97316',
-    blurb: 'High-energy sports and fitness content built for retention — hype reels, launches, and athlete features.',
-    description: "Sports content lives or dies in the first second. We build hype reels, athlete features, and launch films engineered around retention — fast cuts, real training footage, and a sound design that hits as hard as the content does. This is content built for people who scroll fast and stop for even faster.",
-    stat: '12.1M reach',
-    heroImage: '/images/ind_ath_hero.png',
+    blurb: 'High-energy sports and fitness content built for retention — Gotham Rugby, Kids of Courage marathons, and Camp Slapshots.',
+    description: "Sports content lives or dies in the first second. We build hype reels, athlete features, and event coverage engineered around retention — fast cuts, real footage, and a sound design that hits as hard as the content does. This is content built for people who scroll fast and stop for even faster.",
+    stat: 'Gotham Rugby · Kids of Courage',
+    heroImage: '/images/ind_ath_hero.webp',
     heroVideo: '/videos/production.mp4',
     gallery: [
-      '/images/ind_ath_gal1.png',
-      '/images/ind_ath_gal2.png',
-      '/images/ind_ath_gal3.png',
+      '/images/ind_ath_gal1.webp',
+      '/images/ind_ath_gal2.webp',
+      '/images/ind_ath_gal3.webp',
     ],
+    // Anchored on real, on-file work: Gotham Rugby (match coverage, Randall's
+    // Island NYC), Kids of Courage marathons (nationwide, 2018-2021), Camp
+    // Slapshots. A "Same-Day Turnaround" claim was dropped intentionally --
+    // per the audit doc, that section is only true for a since-lapsed
+    // client relationship, and shouldn't be implied without a current
+    // project to back it up.
     stats: [
-      { value: 12, suffix: 'M+', label: 'Total Reach' },
-      { value: 18, suffix: '.5%', label: 'Avg. Engagement' },
-      { value: 245, suffix: 'k', label: 'Shares' },
-      { value: 30, suffix: '+', label: 'Athlete Features' },
+      { value: 2018, suffix: '–2021', label: 'Kids of Courage Marathons' },
+      { value: 3, suffix: '', label: 'Named Athletics Clients' },
+      { value: 174, suffix: '+', label: 'Projects Since 2023' },
+      { value: 5, suffix: '', label: '.0 Google Rating' },
     ],
     services: ['Hype reels', 'Athlete feature films', 'Product launch content', 'Live event capture'],
-    testimonial: { quote: 'Cinematic quality with a social-first brain. Rare combination, huge results.', name: 'David Chen', role: 'Founder', company: 'Apex Athletics' },
+    // Moved here 2026-08-13 from the now-retired dedicated
+    // portfolio/athletics/page.tsx + AthleticsClientShowcase.tsx --
+    // Athletics was the first page built in this format; folding it back
+    // into the generic template (now used by every industry) means one
+    // system instead of a special case. Sourcing notes unchanged: Gotham
+    // Rugby and Camp Slapshots paraphrase the old site's own project-page
+    // copy; Kids of Courage's marathon detail is from the audit doc;
+    // APEX NYC is a named real client with no further project detail on
+    // file yet, kept brief rather than invented.
+    clientShowcase: [
+      // Real Vimeo IDs confirmed 2026-08-19 via the media tracker.
+      { name: 'Gotham Rugby', year: '2022', body: "Match-day coverage at Randall's Island, NYC — storytelling built from the thrill of live competition, not a highlight reel cut after the fact.", video: '862067416' },
+      { name: 'Kids of Courage', year: '2018–2021', body: 'Marathons filmed across the country — capturing the strength and joy of children with disabilities as they defy limits, nationwide.', video: '/videos/pre-production.mp4' },
+      { name: 'Camp Slapshots', year: '2023', body: 'The thrill of sports paired with visual effects — an unforgettable experience built for a young, high-energy audience.', video: '863822136' },
+      { name: 'APEX NYC', year: '', body: 'A named Slate Athletics client — full project detail on file, not yet published here.', video: '/videos/distribution.mp4' },
+    ],
+    cinematicStatement: {
+      eyebrow: 'Why Speed Matters',
+      lines: ['Content built for', 'people who scroll fast.'],
+      body: 'A hype reel has less than a second to earn the next second. Every cut, every beat, every frame is built around that one job — hold attention through the scroll, not just look good after it stops.',
+      videoSrc: '/videos/hero-camera.mp4',
+    },
     serviceCards: [
       {
         title: 'Hype Reels',
@@ -230,7 +284,7 @@ export const industries: IndustryData[] = [
         outcome: 'Retention-first cuts',
         deliverables: ['On-site multi-cam capture', 'Beat-synced fast edit', 'Sound design pass', 'Feed-native ratios'],
         meta: '15–60s · 2–4 wks',
-        image: '/images/ind_ath_gal1.png',
+        image: '/images/ind_ath_gal1.webp',
         featured: true,
       },
       {
@@ -239,7 +293,7 @@ export const industries: IndustryData[] = [
         outcome: 'Sponsor-ready long-form',
         deliverables: ['Interview + b-roll shoot', 'Story-driven edit', 'Broadcast + social cutdowns'],
         meta: '2–4 min · 4–6 wks',
-        image: '/images/ind_ath_gal2.png',
+        image: '/images/ind_ath_gal2.webp',
       },
       {
         title: 'Product Launch Content',
@@ -247,15 +301,15 @@ export const industries: IndustryData[] = [
         outcome: 'Launch-day ready',
         deliverables: ['Studio + on-field shoot', 'Launch film', 'Ad cutdowns'],
         meta: '30–90s · 3–5 wks',
-        image: '/images/ind_ath_gal3.png',
+        image: '/images/ind_ath_gal3.webp',
       },
       {
         title: 'Live Event Capture',
-        description: 'Multi-camera coverage of competitions, tournaments and activations, turned around fast enough to still matter.',
+        description: 'Multi-camera coverage of competitions, tournaments and activations, turned around fast enough to still matter — our Gotham Rugby coverage at Randall\'s Island, NYC, was built exactly this way.',
         outcome: 'Same-week delivery',
         deliverables: ['Multi-cam crew on-site', 'Same-week edit turnaround', 'Recap + social clips'],
         meta: 'Event day · 1–2 wk turnaround',
-        image: '/images/ind_ath_hero.png',
+        image: '/images/ind_ath_hero.webp',
       },
     ],
     process: [
@@ -279,24 +333,36 @@ export const industries: IndustryData[] = [
     label: 'Travel',
     icon: Plane,
     accent: '#10b981',
-    blurb: 'Aspirational destination films and property showcases that sell the feeling of being there.',
-    description: "Travel and hospitality content has one job: make someone feel like they're already there. We shoot destination films and property showcases with cinema drones, golden-hour scheduling, and a color grade built to make a place feel like a memory before the viewer has even booked.",
-    stat: 'Cinematic drone',
-    heroImage: '/images/ind_travel_hero.png',
+    blurb: 'Aspirational destination and hospitality films — Sleepy Hollow Hotel, Smash House Burgers, Inhale Miami, Envision Festival.',
+    description: "Travel and hospitality content has one job: make someone feel like they're already there. We shoot destination films and property showcases with cinema drones, golden-hour scheduling, and a color grade built to make a place feel like a memory before the viewer has even booked. Internal favorite: our Sleepy Hollow Hotel shoot, AI virtual staging included — \"it's a hotel, you have models in there.\"",
+    stat: 'Sleepy Hollow · Smash House',
+    heroImage: '/images/ind_travel_hero.webp',
     heroVideo: '/videos/hero-camera.mp4',
     gallery: [
-      '/images/ind_travel_gal1.png',
-      '/images/ind_travel_gal2.png',
-      '/images/ind_travel_gal3.png',
+      '/images/ind_travel_gal1.webp',
+      '/images/ind_travel_gal2.webp',
+      '/images/ind_travel_gal3.webp',
     ],
     stats: [
-      { value: 22, suffix: '', label: 'Destinations Shot' },
-      { value: 98, suffix: '%', label: 'Watch-Through' },
-      { value: 4, suffix: 'K', label: 'Drone-Native Delivery' },
-      { value: 15, suffix: '+', label: 'Resort Partners' },
+      { value: 4, suffix: '', label: 'Smash House Locations' },
+      { value: 5, suffix: 'yrs', label: 'Running With Gateways' },
+      { value: 174, suffix: '+', label: 'Projects Since 2023' },
+      { value: 5, suffix: '', label: '.0 Google Rating' },
     ],
     services: ['Destination films', 'Aerial cinematography', 'Property showcases', 'Hospitality brand content'],
-    testimonial: { quote: 'Booking inquiries jumped the week the film went live. It sells the feeling, not just the room.', name: 'Marcus Rivera', role: 'Director of Marketing', company: 'Coastal Collection Resorts' },
+    clientShowcase: [
+      { name: 'Sleepy Hollow Hotel', year: '2024', body: "Video and drone coverage of a landmark hotel property — AI virtual staging filled in wherever a space wasn't furniture-ready on shoot day.", video: '/videos/hero.mp4' },
+      // Real Vimeo IDs confirmed 2026-08-19 via the media tracker.
+      { name: 'Envision Festival', year: '2024', body: 'Multi-day festival recap coverage in Costa Rica, turned around fast enough to still ride the post-event wave.', video: '932028681' },
+      { name: 'Gateways', year: '5 yrs running', body: 'Seasonal Passover program coverage for a nonprofit serving thousands of families, plus year-round event and brochure work.', video: '1174431950' },
+      { name: 'Smash House Burgers', year: '2025', body: 'A recurring social content engine across every location — comedy reels, menu drops, launches, every week.', video: '/videos/production.mp4' },
+    ],
+    cinematicStatement: {
+      eyebrow: 'Sell The Feeling',
+      lines: ['Not just the room —', 'the feeling of being there.'],
+      body: 'Cinema drones, golden-hour scheduling, a grade built to make a place feel like a memory before the viewer has even booked.',
+      videoSrc: '/videos/hero.mp4',
+    },
     serviceCards: [
       {
         title: 'Destination Films',
@@ -304,7 +370,7 @@ export const industries: IndustryData[] = [
         outcome: 'Booking-intent content',
         deliverables: ['Location scouting', 'Golden-hour shoot schedule', 'Cinema drone footage', 'Full grade'],
         meta: '60–120s · 5–7 wks',
-        image: '/images/ind_travel_gal1.png',
+        image: '/images/ind_travel_gal1.webp',
         featured: true,
       },
       {
@@ -313,15 +379,15 @@ export const industries: IndustryData[] = [
         outcome: 'Cinema-grade aerials',
         deliverables: ['Cinema drone operator', '4K aerial passes', 'Stabilized + graded footage'],
         meta: '1–2 shoot days · 2–3 wks',
-        image: '/images/ind_travel_gal2.png',
+        image: '/images/ind_travel_gal2.webp',
       },
       {
         title: 'Property Showcases',
-        description: 'Walkthrough films for resorts and stays that sell the room, the view and the feeling in one edit.',
+        description: 'Walkthrough films for resorts and stays that sell the room, the view and the feeling in one edit — AI virtual staging available for spaces that aren\'t furniture-ready on shoot day, as delivered for Sleepy Hollow Hotel.',
         outcome: 'Booking-page ready',
         deliverables: ['Interior + exterior shoot', 'Property walkthrough edit', 'Web + social cutdowns'],
         meta: '30–90s · 3–5 wks',
-        image: '/images/ind_travel_gal3.png',
+        image: '/images/ind_travel_gal3.webp',
       },
       {
         title: 'Hospitality Brand Content',
@@ -329,7 +395,7 @@ export const industries: IndustryData[] = [
         outcome: 'Always-on content',
         deliverables: ['Content shoot day', 'Batch social cutdowns', 'Brand-consistent grade'],
         meta: 'Batch · 4–6 wks',
-        image: '/images/ind_travel_hero.png',
+        image: '/images/ind_travel_hero.webp',
       },
     ],
     process: [
@@ -350,35 +416,54 @@ export const industries: IndustryData[] = [
   {
     id: 'realestate',
     slug: 'real-estate',
-    label: 'Real Estate',
+    label: 'Construction & Real Estate',
     icon: Building2,
     accent: '#a855f7',
-    blurb: 'Property tours, development timelapses, and aerial cinematography that move listings faster.',
-    description: "A listing with a cinematic walkthrough moves faster than one with photos alone. We shoot property tours, development timelapses, and aerial cinematography built to make a space feel real before a buyer ever steps inside — the difference between a listing and a landmark.",
-    stat: '98% watch time',
-    heroImage: '/images/ind_realestate_hero.png',
+    blurb: 'A real, connected story: Tremco (manufacturer) → CVM Construction (contractor) → TruBlue (realtor-focused content).',
+    // Reuses the old site's own unfinished /realestate hero line verbatim,
+    // per the audit doc ("already written -- reuse it"). Flagship anchor:
+    // CVM Construction, a Woodside NY general contractor -- 150+ NYC
+    // building permits, top 5% of NY contractors on BuildZoom, SCA school
+    // projects + Local Law 11 facade work. Slate took them from an
+    // "under construction" placeholder site to a 13-page brand-new site,
+    // 25-50+ edited pieces, 3 hero videos, and a second brand (CVM Waste)
+    // launched from scratch.
+    description: "Cinematic real estate marketing that sells more than a property. Our flagship story here is CVM Construction — a NYC general contractor with 150+ building permits and zero web presence when we started, now a full brand system with its own site and a second company (CVM Waste) built from the ground up. We shoot property tours, development timelapses, and aerial cinematography that make a space feel real before a buyer ever steps inside.",
+    stat: 'CVM · TruBlue · Tremco',
+    heroImage: '/images/ind_realestate_hero.webp',
     heroVideo: '/videos/distribution.mp4',
     gallery: [
-      '/images/ind_realestate_gal1.png',
-      '/images/ind_realestate_gal2.png',
-      '/images/ind_realestate_gal3.png',
+      '/images/ind_realestate_gal1.webp',
+      '/images/ind_realestate_gal2.webp',
+      '/images/ind_realestate_gal3.webp',
     ],
     stats: [
-      { value: 9, suffix: '', label: 'Listings Moved Faster' },
-      { value: 98, suffix: '%', label: 'Watch Rate' },
-      { value: 12, suffix: 'k', label: 'Avg. Shares/Listing' },
-      { value: 6, suffix: '', label: 'Developments Covered' },
+      { value: 150, suffix: '+', label: 'CVM Building Permits' },
+      { value: 5, suffix: '', label: 'Top % of NY Contractors' },
+      { value: 8, suffix: '+', label: 'TruBlue Reels Delivered' },
+      { value: 25, suffix: '+', label: 'Pieces Edited for CVM' },
     ],
     services: ['Cinematic property tours', 'Development timelapses', 'Aerial drone cinematography', 'Agent brand films'],
-    testimonial: { quote: 'The aerial reveal alone got more inquiries than our previous three listings combined.', name: 'Isabella Rossi', role: 'Principal Broker', company: 'Vista Real Estate' },
+    clientShowcase: [
+      { name: 'CVM Construction', year: '2025', body: '150+ NYC building permits, top 5% of NY contractors — taken from zero web presence to a full brand system, plus a second brand (CVM Waste) built from scratch.', video: '/videos/distribution.mp4' },
+      { name: 'TruBlue of NW Brooklyn', year: '2025', body: '"Before Your Listing Photos, Fix These First" — concept-titled comedy reels aimed at homeowners and the realtors who list their homes.', video: '/videos/production.mp4' },
+      { name: 'Good Choice Realty', year: '2021', body: 'A dynamic walkthrough and glamour tour built to move listings faster, from stunning aerials to immersive interiors.', video: '/videos/pre-production.mp4' },
+      { name: 'Offerman House', year: '2024', body: 'A Brooklyn luxury development, covered end to end.', video: '/videos/hero-camera.mp4' },
+    ],
+    cinematicStatement: {
+      eyebrow: 'Concept To Closing',
+      lines: ['We shoot the blueprint,', 'the build, and the sale.'],
+      body: 'Real estate is the final step of construction — we run the timeline the same way: a blueprint, a build, and a finish, all cinematic.',
+      videoSrc: '/videos/distribution.mp4',
+    },
     serviceCards: [
       {
         title: 'Cinematic Property Tours',
-        description: "A full walkthrough film that makes a listing feel real before a buyer steps inside — shot to move fast on the market.",
-        outcome: 'Faster time-on-market',
+        description: "A full walkthrough film that makes a listing feel real before a buyer steps inside — shot to move fast on the market. Offerman House (Brooklyn luxury development) and Shefa Living's Mountain View series both shot this way.",
+        outcome: 'Built to move listings',
         deliverables: ['Interior + exterior shoot', 'Full walkthrough edit', 'MLS + social cutdowns'],
         meta: '60–90s · 2–3 wks',
-        image: '/images/ind_realestate_gal1.png',
+        image: '/images/ind_realestate_gal1.webp',
         featured: true,
       },
       {
@@ -387,7 +472,7 @@ export const industries: IndustryData[] = [
         outcome: 'Milestone-ready footage',
         deliverables: ['Fixed-rig or scheduled capture', 'Progress edits', 'Final compilation film'],
         meta: 'Multi-month · scheduled visits',
-        image: '/images/ind_realestate_gal2.png',
+        image: '/images/ind_realestate_gal2.webp',
       },
       {
         title: 'Aerial Drone Cinematography',
@@ -395,15 +480,15 @@ export const industries: IndustryData[] = [
         outcome: 'Standout listing media',
         deliverables: ['Licensed drone operator', '4K aerial passes', 'Graded aerial footage'],
         meta: '1 shoot day · 1–2 wks',
-        image: '/images/ind_realestate_gal3.png',
+        image: '/images/ind_realestate_gal3.webp',
       },
       {
         title: 'Agent & Brokerage Brand Films',
-        description: 'A short brand film for an agent or brokerage that builds trust before the first phone call.',
+        description: 'A short brand film for an agent or brokerage that builds trust before the first phone call — TruBlue of NW Brooklyn\'s concept-titled reels ("Before Your Listing Photos, Fix These First") speak directly to agents this way.',
         outcome: 'Trust-building brand asset',
         deliverables: ['Interview + lifestyle shoot', 'Brand film edit', 'Social cutdowns'],
         meta: '60–90s · 3–4 wks',
-        image: '/images/ind_realestate_hero.png',
+        image: '/images/ind_realestate_hero.webp',
       },
     ],
     process: [
@@ -427,24 +512,23 @@ export const industries: IndustryData[] = [
     label: 'Healthcare',
     icon: HeartPulse,
     accent: '#ef4444',
-    blurb: 'Trust-building patient stories, facility films, and clear explainer content for regulated industries.',
-    description: "Healthcare content has to earn trust before it earns attention. We build patient stories, facility films, and explainer content that stay clear, compliant, and human — content built for an audience that needs to trust you before they'll listen to you.",
-    stat: 'Impact films',
-    heroImage: '/images/ind_health_hero.png',
+    blurb: 'Trust-building patient stories, facility films, and clear explainer content for regulated industries. Long-form nursing-home and dental work runs through our sister brand, Wavecare.',
+    description: "Healthcare content has to earn trust before it earns attention. We build patient stories, facility films, and explainer content that stay clear, compliant, and human — content built for an audience that needs to trust you before they'll listen to you. Dedicated healthcare-facility work (nursing homes, care networks) runs under Wavecare, our sister brand — see wavecare.io.",
+    stat: 'Park Smiles NYC · EKGx',
+    heroImage: '/images/ind_health_hero.webp',
     heroVideo: '/videos/pre-production.mp4',
     gallery: [
-      '/images/ind_health_gal1.png',
-      '/images/ind_health_gal2.png',
-      '/images/ind_health_gal3.png',
+      '/images/ind_health_gal1.webp',
+      '/images/ind_health_gal2.webp',
+      '/images/ind_health_gal3.webp',
     ],
     stats: [
-      { value: 3, suffix: '', label: 'Awards Won' },
-      { value: 1.1, suffix: 'M', label: 'Views' },
-      { value: 62, suffix: '%', label: 'Lift in Engagement' },
+      { value: 5, suffix: '', label: 'EKGx Deliverables' },
       { value: 100, suffix: '%', label: 'Compliance-Reviewed' },
+      { value: 174, suffix: '+', label: 'Projects Since 2023' },
+      { value: 5, suffix: '', label: '.0 Google Rating' },
     ],
-    services: ['Patient story films', 'Facility & capability films', 'Explainer content', 'Regulated-industry compliant edits'],
-    testimonial: { quote: 'Mission-driven storytelling that moved our board and our donors in the same week.', name: 'Fatima Al-Jamil', role: 'CFO', company: 'Global Health Org' },
+    services: ['Patient story films', 'Practice & facility films', 'Medical-app commercial suites', 'Regulated-industry compliant edits'],
   },
   {
     id: 'products',
@@ -452,24 +536,35 @@ export const industries: IndustryData[] = [
     label: 'Products',
     icon: ShoppingBag,
     accent: '#eab308',
-    blurb: 'Scroll-stopping product spotlights and e-commerce ads engineered for conversion and ROAS.',
-    description: "Product content only works if it converts. We shoot macro-lit spotlights and e-commerce ads with a signature color grade and cuts built to sell in six seconds or less — engineered for ROAS first, aesthetics second, though we rarely have to choose between the two.",
-    stat: '4.2x ROAS',
-    heroImage: '/images/ind_products_hero.png',
+    blurb: 'Scroll-stopping product spotlights and e-commerce ads — EIR NYC jewelry & skincare, marketplace-ready image sets.',
+    description: "Product content only works if it converts. We shoot macro-lit spotlights and e-commerce ads with a signature color grade and cuts built to sell in six seconds or less — engineered for conversion first, aesthetics second, though we rarely have to choose between the two. Real client work: EIR NYC's full jewelry & skincare catalog, shot and cut end-to-end.",
+    stat: '743 stock clips, 8 markets',
+    heroImage: '/images/ind_products_hero.webp',
     heroVideo: '/videos/production.mp4',
     gallery: [
-      '/images/ind_products_gal1.png',
+      '/images/ind_products_gal1.webp',
       'https://images.unsplash.com/photo-1603219225728-0c9e319d2373?q=80&w=1200',
-      '/images/portfolio-social.png',
+      '/images/portfolio-social.webp',
     ],
     stats: [
-      { value: 4.2, suffix: 'x', label: 'Avg. ROAS' },
-      { value: 1.2, suffix: 'M', label: 'Sales Lift ($)' },
-      { value: 3.8, suffix: '%', label: 'Avg. CTR' },
-      { value: 50, suffix: '+', label: 'Product Spotlights' },
+      { value: 743, suffix: '', label: 'Stock Clips, 8 Marketplaces' },
+      { value: 4287, suffix: '', label: 'Clip Aerial Library' },
+      { value: 174, suffix: '+', label: 'Projects Since 2023' },
+      { value: 5, suffix: '', label: '.0 Google Rating' },
     ],
     services: ['Macro product photography', 'E-commerce ad cuts', 'Signature color grading', 'Platform-native spotlights'],
-    testimonial: { quote: 'Scroll-stopping product spotlights engineered for conversion — and it shows in the numbers.', name: 'Kenji Tanaka', role: 'Brand Director', company: 'Lumiere Beauty' },
+    clientShowcase: [
+      // Real Vimeo IDs confirmed 2026-08-19 via the media tracker
+      // (EIR NYC "Cream" is one of 4 real cuts — 929671839/91/39/88).
+      { name: 'EIR NYC', year: '2024', body: 'A full jewelry & skincare catalog — Cream, Earrings, Necklaces, Socks — shot and cut end to end as one coordinated product series.', video: '929671839' },
+      { name: 'Alo Moves', year: '2023', body: "A vertical commercial cut built for the fitness platform's own product launch.", video: '862075818' },
+    ],
+    cinematicStatement: {
+      eyebrow: 'Built To Convert',
+      lines: ['Macro-lit,', 'engineered to sell.'],
+      body: 'A signature grade and cuts built to sell in six seconds or less — engineered for conversion first, aesthetics second, though we rarely have to choose between the two.',
+      videoSrc: '/videos/production.mp4',
+    },
     serviceCards: [
       {
         title: 'Macro Product Spotlights',
@@ -477,16 +572,16 @@ export const industries: IndustryData[] = [
         outcome: 'Thumb-stopping opens',
         deliverables: ['Macro lighting setup', 'Hero shot sequence', 'Multi-angle coverage', 'Signature grade'],
         meta: '15–30s · 2–3 wks',
-        image: '/images/ind_products_hero.png',
+        image: '/images/ind_products_hero.webp',
         featured: true,
       },
       {
         title: 'E-Commerce Ad Cuts',
         description: 'Hook-first ad edits sized and paced for paid social, ready to test against a ROAS target.',
-        outcome: 'Built to test',
+        outcome: 'Ready to A/B test',
         deliverables: ['Hook-first edit', 'A/B variant cuts', 'Platform-native ratios'],
         meta: '6–15s × N · 2 wks',
-        image: '/images/ind_products_gal1.png',
+        image: '/images/ind_products_gal1.webp',
       },
       {
         title: 'Signature Color Grading',
@@ -494,7 +589,7 @@ export const industries: IndustryData[] = [
         outcome: 'Catalog-wide consistency',
         deliverables: ['Custom LUT development', 'Full-catalog grade pass', 'Delivery specs per platform'],
         meta: 'Batch · 1–2 wks',
-        image: '/images/portfolio-social.png',
+        image: '/images/portfolio-social.webp',
       },
       {
         title: 'Platform-Native Spotlights',
@@ -526,24 +621,36 @@ export const industries: IndustryData[] = [
     label: 'Corporate',
     icon: Briefcase,
     accent: '#0ea5e9',
-    blurb: 'Brand films, culture reels, and executive communications that make companies feel human.',
+    blurb: 'Brand films, culture reels, and executive communications — real clients from QotaPro to Skyline Capital.',
     description: "Corporate content is where most brands get boring. We build brand films, culture reels, and executive communications engineered to make a company feel like the people inside it — because the companies that feel human are the ones people actually want to work with.",
-    stat: 'Brand lift +45%',
-    heroImage: '/images/ind_corporate_hero.png',
+    stat: 'QotaPro · Skyline Capital',
+    heroImage: '/images/ind_corporate_hero.webp',
     heroVideo: '/videos/performance.mp4',
     gallery: [
-      '/images/portfolio-production.png',
+      '/images/portfolio-production.webp',
       'https://images.unsplash.com/photo-1611149974482-764b0c2a211a?q=80&w=1200',
       'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200',
     ],
     stats: [
-      { value: 45, suffix: '%', label: 'Avg. Brand Lift' },
-      { value: 1, suffix: ':45', label: 'Avg. Watch Time' },
-      { value: 2, suffix: '', label: 'Industry Awards' },
-      { value: 20, suffix: '+', label: 'Executive Films' },
+      { value: 124, suffix: '', label: 'Client Projects on Frame.io' },
+      { value: 174, suffix: '+', label: 'Projects Since 2023' },
+      { value: 5, suffix: '', label: '.0 Google Rating' },
+      { value: 44, suffix: '', label: 'Google Reviews' },
     ],
     services: ['Brand & culture films', 'Executive communications', 'Internal comms video', 'Investor & recruiting content'],
-    testimonial: { quote: 'Brand films, culture reels, and executive communications that make companies feel human — exactly what we needed.', name: 'Priya Sharma', role: 'VP Marketing', company: 'Nexus Architecture' },
+    clientShowcase: [
+      // Real Vimeo ID confirmed 2026-08-19 via the media tracker
+      // (MPower Recruiter Video, vimeo.com/936451661).
+      { name: 'MPower', year: '2024', body: 'A recruiter video plus event recap, built to attract talent, not just document an event.', video: '936451661' },
+      { name: 'QotaPro', year: '2025', body: 'Brand film work for a contractor-focused platform.', video: '/videos/production.mp4' },
+      { name: 'Skyline Capital', year: '2025', body: 'Executive-facing brand communications for a capital firm.', video: '/videos/pre-production.mp4' },
+    ],
+    cinematicStatement: {
+      eyebrow: 'People, Not Just Product',
+      lines: ['The company behind', 'the company.'],
+      body: "Corporate content is where most brands get boring. We build films that make a company feel like the people inside it — because that's who prospects and candidates are actually deciding to trust.",
+      videoSrc: '/videos/performance.mp4',
+    },
     serviceCards: [
       {
         title: 'Brand & Culture Films',
@@ -551,7 +658,7 @@ export const industries: IndustryData[] = [
         outcome: 'Human-first brand asset',
         deliverables: ['Interview + b-roll shoot', 'Story-driven edit', 'Web + social cutdowns'],
         meta: '2–3 min · 4–6 wks',
-        image: '/images/ind_corporate_hero.png',
+        image: '/images/ind_corporate_hero.webp',
         featured: true,
       },
       {
@@ -560,7 +667,7 @@ export const industries: IndustryData[] = [
         outcome: 'On-message, on-camera',
         deliverables: ['Studio or on-site shoot', 'Teleprompter direction', 'Multi-cam edit'],
         meta: '2–5 min · 2–3 wks',
-        image: '/images/portfolio-production.png',
+        image: '/images/portfolio-production.webp',
       },
       {
         title: 'Internal Comms Video',
@@ -600,24 +707,36 @@ export const industries: IndustryData[] = [
     label: 'Organizations',
     icon: Users,
     accent: '#22c55e',
-    blurb: 'Mission-driven storytelling for nonprofits and institutions that moves audiences to act.',
-    description: "Mission-driven work needs to move people to actually do something — donate, volunteer, show up. We build storytelling for nonprofits and institutions engineered around a single call to action, shot with the same craft as any commercial campaign because your mission deserves it.",
-    stat: 'Award-winning',
-    heroImage: '/images/ind_orgs_hero.png',
+    blurb: 'Mission-driven storytelling for nonprofits and institutions — Chai Lifeline, HASC, NCSY, Gateways, and more.',
+    description: "Mission-driven work needs to move people to actually do something — donate, volunteer, show up. We build storytelling for nonprofits and institutions engineered around a single call to action, shot with the same craft as any commercial campaign because your mission deserves it. Organizations is Slate's deepest historic vertical, spanning Chai Lifeline, HASC, NCSY, National Menorah, Israel Day Parade, Renewal, and Gateways — 5 years running with Gateways alone.",
+    stat: 'Chai Lifeline · HASC · NCSY',
+    heroImage: '/images/ind_orgs_hero.webp',
     heroVideo: '/videos/pre-production.mp4',
     gallery: [
       'https://images.unsplash.com/photo-1461532257246-777de18cd58b?q=80&w=1200',
       'https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?q=80&w=1200',
-      '/images/ind_health_gal3.png',
+      '/images/ind_health_gal3.webp',
     ],
     stats: [
-      { value: 3, suffix: '', label: 'Festival Selections' },
-      { value: 62, suffix: '%', label: 'Donation Lift' },
-      { value: 1.1, suffix: 'M', label: 'Total Views' },
-      { value: 10, suffix: '+', label: 'Institutions Served' },
+      { value: 7, suffix: '+', label: 'Named Organizations Served' },
+      { value: 5, suffix: 'yrs', label: 'Running With Gateways' },
+      { value: 174, suffix: '+', label: 'Projects Since 2023' },
+      { value: 5, suffix: '', label: '.0 Google Rating' },
     ],
     services: ['Mission & impact films', 'Donor & fundraising content', 'Volunteer recruitment films', 'Annual report video'],
-    testimonial: { quote: 'Mission-driven storytelling built to move an audience to act — and our donation numbers proved it did.', name: 'Fatima Al-Jamil', role: 'Executive Director', company: 'Global Health Org' },
+    clientShowcase: [
+      // Real Vimeo ID confirmed 2026-08-19 via the media tracker.
+      { name: 'Gateways', year: '5 yrs running', body: 'Seasonal Passover program coverage for a nonprofit serving thousands of families, plus year-round event and brochure work.', video: '1174431950' },
+      { name: 'Chai Lifeline', year: '2025', body: 'Mission-driven storytelling for a nonprofit serving families in crisis.', video: '/videos/pre-production.mp4' },
+      { name: 'HASC', year: '2025', body: 'Program and community coverage for a nonprofit serving people with disabilities.', video: '/videos/production.mp4' },
+      { name: 'NCSY', year: '2025', body: 'Event and community-impact coverage for a national youth movement.', video: '/videos/post-production.mp4' },
+    ],
+    cinematicStatement: {
+      eyebrow: 'Mission, Not Just Message',
+      lines: ['Storytelling that moves', 'people to actually act.'],
+      body: 'Organizations is Slate’s deepest historic vertical. Mission-driven work needs to move people to actually do something — donate, volunteer, show up — shot with the same craft as any commercial campaign.',
+      videoSrc: '/videos/pre-production.mp4',
+    },
     serviceCards: [
       {
         title: 'Mission & Impact Films',
@@ -642,7 +761,7 @@ export const industries: IndustryData[] = [
         outcome: 'Recruitment-focused cut',
         deliverables: ['On-location shoot', 'Volunteer interview capture', 'Recruitment-focused edit'],
         meta: '60–90s · 2–3 wks',
-        image: '/images/ind_health_gal3.png',
+        image: '/images/ind_health_gal3.webp',
       },
       {
         title: 'Annual Report Video',
@@ -650,7 +769,7 @@ export const industries: IndustryData[] = [
         outcome: 'Board & donor-ready',
         deliverables: ['Data-forward edit', 'Leadership interview cutdowns', 'Web-ready master'],
         meta: '2–3 min · 4–5 wks',
-        image: '/images/ind_orgs_hero.png',
+        image: '/images/ind_orgs_hero.webp',
       },
     ],
     process: [
@@ -674,28 +793,44 @@ export const industries: IndustryData[] = [
     label: 'Education',
     icon: GraduationCap,
     accent: '#6366f1',
-    blurb: 'Course trailers, campus tours, and faculty spotlights that help schools and universities put their real story in front of prospective students.',
-    description: "Prospective students decide whether they can see themselves on a campus in the first few seconds of a video. We build course and program trailers, campus tour films, faculty and student spotlights, and e-learning content engineered for enrollment marketing — the same pre-production, production, post-production and distribution discipline we bring to every industry we work in, applied to schools, universities and educational brands.",
-    stat: 'Campus to classroom',
-    heroImage: '/images/ind_corporate_hero.png',
+    blurb: 'Graduations, open houses, and acceptance videos for real schools — Gateways, HANC, CSUSA, Bais Rivkah, Camp Mesorah.',
+    // Real proof on file (per audit doc): Gateways (5 years of Passover
+    // programs + 2024/2026 events + brochure promo), HANC Graduation 2024 +
+    // Open House, CSUSA, Bais Rivkah, Camp Mesorah weekly videos, Heichal
+    // HaTorah. 5 real Vimeo cuts also exist (open house / acceptance /
+    // color war / STEM dept.) -- not linked below since the current
+    // gallery only renders <img>; needs a video-embed gallery component
+    // to actually surface those, flagged as follow-up work.
+    description: "Prospective students decide whether they can see themselves on a campus in the first few seconds of a video. We build course and program trailers, campus tour films, faculty and student spotlights, and e-learning content engineered for enrollment marketing. Five years running with Gateways alone, plus HANC, CSUSA, Bais Rivkah, Camp Mesorah, and Heichal HaTorah — the same pre-production, production, post-production and distribution discipline we bring to every industry we work in.",
+    stat: 'Gateways · HANC · CSUSA',
+    heroImage: '/images/ind_corporate_hero.webp',
     heroVideo: '/videos/production.mp4',
     gallery: [
-      '/images/mediavoid_creative_bright.png',
-      '/images/portfolio-social.png',
-      '/images/mediavoid_tech_bright.png',
+      '/images/mediavoid_creative_bright.webp',
+      '/images/portfolio-social.webp',
+      '/images/mediavoid_tech_bright.webp',
     ],
     stats: [
-      { value: 5, suffix: '', label: 'Video Formats Covered' },
-      { value: 4, suffix: '', label: 'Production Stages' },
-      { value: 100, suffix: '%', label: 'Platform-Native Delivery' },
-      { value: 4, suffix: '+', label: 'Weeks Avg. Turnaround' },
+      { value: 5, suffix: 'yrs', label: 'Running With Gateways' },
+      { value: 6, suffix: '+', label: 'Named School Clients' },
+      { value: 174, suffix: '+', label: 'Projects Since 2023' },
+      { value: 5, suffix: '', label: '.0 Google Rating' },
     ],
     services: ['Course & program trailers', 'Campus tour films', 'Faculty & student spotlights', 'Enrollment marketing content'],
-    testimonial: {
-      quote: "Prospective students decide whether they can see themselves on your campus in the first few seconds of a video. That's the moment we build every education project around.",
-      name: 'The Slate Cinema Team',
-      role: 'Education Practice',
-      company: 'Slate Cinema',
+    clientShowcase: [
+      // Real Vimeo IDs confirmed 2026-08-19 via the media tracker
+      // (HANC "Color War 2023 Highlight" -- there's also a separate
+      // "Acceptance 2024" cut at 1198896524 if a second HANC video is
+      // ever wanted here).
+      { name: 'Gateways', year: '5 yrs running', body: 'Seasonal Passover program coverage for a nonprofit school community, running five years without a break.', video: '1174431950' },
+      { name: 'HANC', year: '2023–2024', body: 'Graduation, open house, acceptance, and color war coverage — real school-life storytelling, not stock footage.', video: '1198897231' },
+      { name: 'Camp Mesorah', year: '2025', body: 'Weekly video coverage built into an ongoing camp content engine.', video: '/videos/pre-production.mp4' },
+    ],
+    cinematicStatement: {
+      eyebrow: 'Show, Don’t Tell',
+      lines: ['Help families see', 'themselves on campus.'],
+      body: 'Prospective students decide whether they can see themselves on a campus in the first few seconds of a video. We build the film that makes that decision easy.',
+      videoSrc: '/videos/production.mp4',
     },
     serviceCards: [
       {
@@ -704,7 +839,7 @@ export const industries: IndustryData[] = [
         outcome: 'Enrollment-ready first impression',
         deliverables: ['Faculty & student interviews', 'Campus + classroom b-roll', 'Story-driven edit', 'Every platform ratio'],
         meta: '30–90s · 4–6 wks',
-        image: '/images/mediavoid_creative_bright.png',
+        image: '/images/mediavoid_creative_bright.webp',
         featured: true,
       },
       {
@@ -713,7 +848,7 @@ export const industries: IndustryData[] = [
         outcome: 'Virtual-visit ready',
         deliverables: ['Campus location shoot', 'Guided-tour style edit', 'Web + admissions cutdowns'],
         meta: '2–4 min · 4–6 wks',
-        image: '/images/ind_corporate_hero.png',
+        image: '/images/ind_corporate_hero.webp',
       },
       {
         title: 'Faculty & Student Spotlights',
@@ -721,7 +856,7 @@ export const industries: IndustryData[] = [
         outcome: 'Authentic, story-led proof',
         deliverables: ['Interview shoot', 'Story-driven edit', 'Social cutdowns'],
         meta: '60–120s · 3–4 wks',
-        image: '/images/portfolio-social.png',
+        image: '/images/portfolio-social.webp',
       },
       {
         title: 'E-Learning & Course Content',
@@ -729,7 +864,7 @@ export const industries: IndustryData[] = [
         outcome: 'Built to hold attention',
         deliverables: ['Lecture or module capture', 'Chaptered edit', 'Captioning-ready master'],
         meta: 'Per module · 2–3 wks',
-        image: '/images/mediavoid_tech_bright.png',
+        image: '/images/mediavoid_tech_bright.webp',
       },
     ],
     process: [
@@ -745,6 +880,90 @@ export const industries: IndustryData[] = [
       { question: 'Do you handle student and minor consent and privacy?', answer: 'Yes — we work with your team on consent forms, appropriate handling of student information, and any privacy requirements before anyone is on camera.' },
       { question: 'Can you deliver content for both admissions and internal use?', answer: 'Yes — enrollment marketing, internal communications and e-learning content can often be planned around the same shoot to make the most of production time.' },
       { question: 'Who owns the final footage?', answer: 'You do — full usage rights on every deliverable, plus source files on final invoice.' },
+    ],
+  },
+  {
+    // Added 2026-08-13 -- "make the podcasts page just an industry page
+    // same format and everything" (Kauan). Replaces the standalone
+    // /podcasts route (ContainerScroll/StickyScroll/WeeklyEngine/
+    // PodcastCaseStudy) with a normal industry entry using the same
+    // format as every other page. Code-only for now (see
+    // getNormalizedIndustries in normalize.ts) since there's no live DB
+    // doc for it yet -- appears automatically in the nav dropdown and
+    // /portfolio wheel like any other industry.
+    id: 'podcasts',
+    slug: 'podcasts',
+    label: 'Podcasts',
+    icon: Mic,
+    accent: '#00AEEF',
+    blurb: 'Podcast production as a service, proven on our own show — Real Talk (15 episodes, every Sunday) and World Within.',
+    description: 'Podcast production as a service, proven on our own show every single week — full episode, three concept-titled reels, thumbnails, captions and carousels, on a real release calendar. Set design, multi-cam filming, and editing run the way an in-house team would run it, for your show instead of ours.',
+    stat: 'Real Talk · World Within',
+    heroImage: '/images/portfolio-brand.webp',
+    heroVideo: '/videos/post-production.mp4',
+    gallery: [
+      '/images/portfolio-social.webp',
+      '/images/portfolio-production.webp',
+      '/images/portfolio-event.webp',
+    ],
+    stats: [
+      { value: 15, suffix: '', label: 'Real Talk Episodes, S1' },
+      { value: 31, suffix: '', label: 'Clips From One Episode' },
+      { value: 3, suffix: '', label: 'Reels Shipped Every Week' },
+      { value: 5, suffix: '', label: '.0 Google Rating' },
+    ],
+    services: ['Set design + studio build', 'Multi-cam filming', 'Full-episode edit', 'Distribution-ready exports'],
+    clientShowcase: [
+      { name: 'Real Talk', year: 'S1, 2025–26', body: 'A weekly conversation show produced end-to-end by Slate — full episode plus 3 reels, every single week, 15 episodes without missing one. Guests ranged from rabbis to an OB-GYN to a DJ.', video: '/videos/post-production.mp4' },
+      { name: 'World Within', year: '2025', body: 'A client-side show run the same way we run our own: multi-camera filming with dedicated per-guest audio. Your show, our crew.', video: '/videos/production.mp4' },
+    ],
+    cinematicStatement: {
+      eyebrow: 'A Real Release Calendar',
+      lines: ['A full episode and', 'three reels — every week.'],
+      body: 'Most agencies can’t show you a real release-ops calendar. We can — because we run one on ourselves, every week, without missing a Sunday.',
+      videoSrc: '/videos/post-production.mp4',
+    },
+    serviceCards: [
+      {
+        title: 'Set Design + Studio Build',
+        description: 'We designed and built the physical set the show is recorded on — a studio, not a rented room.',
+        outcome: 'Real studio, not a background',
+        deliverables: ['Set design', 'Studio build-out', 'Lighting + camera plan'],
+        meta: 'One-time build · ongoing use',
+        image: '/images/portfolio-brand.webp',
+        featured: true,
+      },
+      {
+        title: 'Multi-Cam Filming',
+        description: 'Dedicated per-guest audio, cut multi-camera for a real broadcast feel.',
+        outcome: 'Broadcast-quality capture',
+        deliverables: ['Multi-camera crew', 'Per-guest audio', 'On-site direction'],
+        meta: 'Weekly · per episode',
+        image: '/images/portfolio-social.webp',
+      },
+      {
+        title: 'Full-Episode Edit + Reels',
+        description: 'Every episode edited start to finish, plus 3 concept-titled reels built around an actual hook — not auto-clipped highlights.',
+        outcome: 'A full ep + 3 reels, weekly',
+        deliverables: ['Full-episode edit', '3 concept-titled reels', 'Thumbnails + captions + carousels'],
+        meta: 'Weekly turnaround',
+        image: '/images/portfolio-production.webp',
+      },
+      {
+        title: 'Distribution-Ready Exports',
+        description: 'Dedicated podcast loudness presets, built into our in-house editor — ready for Spotify, YouTube, Instagram, Facebook, Amazon and Apple.',
+        outcome: 'Every platform, every week',
+        deliverables: ['Loudness-matched masters', 'Platform-native ratios', 'Distribution-ready files'],
+        meta: 'Per episode',
+        image: '/images/portfolio-event.webp',
+      },
+    ],
+    process: [
+      { week: 'Mon', title: 'Full Episode', body: 'The complete episode edit, mixed and mastered to podcast loudness spec.' },
+      { week: 'Tue', title: 'Reel 1', body: 'First concept-titled clip, cut for the feed.' },
+      { week: 'Thu', title: 'Reel 2', body: 'Second concept-titled clip — a different beat from the same episode.' },
+      { week: 'Sat', title: 'Reel 3', body: 'Third concept-titled clip, timed to lead into Sunday’s drop.' },
+      { week: 'Sun', title: 'The Drop', body: 'Full episode goes live everywhere, on schedule, every week.' },
     ],
   },
 ]

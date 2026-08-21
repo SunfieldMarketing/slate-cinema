@@ -6,6 +6,7 @@ import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { ArrowRight, Check } from 'lucide-react'
 import type { IndustryServiceCard } from '@/lib/industries'
+import SmartVideo from '@/components/ui/SmartVideo'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -72,13 +73,11 @@ export default function IndustryServices({ services, accent }: { services: Indus
               loading="lazy"
               className="absolute inset-0 w-full h-full object-cover opacity-50 transition-transform duration-[1400ms] ease-out group-hover:scale-105"
             />
-            {featured.video && (
-              <video
+            {(featured.video || featured.videoVimeoUrl) && (
+              <SmartVideo
                 src={featured.video}
-                autoPlay
-                loop
-                muted
-                playsInline
+                vimeo={featured.videoVimeoUrl}
+                variant="background"
                 className="absolute inset-0 w-full h-full object-cover opacity-50 transition-transform duration-[1400ms] ease-out group-hover:scale-105"
               />
             )}
@@ -134,8 +133,10 @@ export default function IndustryServices({ services, accent }: { services: Indus
                 <h3 className="text-lg font-bold text-white mb-1.5">{s.title}</h3>
                 <p className="text-xs text-white/55 leading-relaxed font-light mb-3">{s.description}</p>
 
-                {/* Deliverables reveal on hover */}
-                <ul className="max-h-0 opacity-0 group-hover:max-h-24 group-hover:opacity-100 transition-all duration-500 overflow-hidden mb-0 group-hover:mb-3">
+                {/* Always shown -- was a hover-triggered max-height expand
+                    that grew/shrank the whole card on hover; removed per
+                    request while keeping the deliverables list itself. */}
+                <ul className="mb-3">
                   {s.deliverables.map((d) => (
                     <li key={d} className="flex items-center gap-1.5 text-[11px] text-white/65 py-0.5">
                       <Check className="w-3 h-3 shrink-0" style={{ color: accent }} /> {d}

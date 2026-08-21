@@ -8,6 +8,8 @@ export interface Category {
   id: string
   title: string
   video: string
+  /** Vimeo URL/ID -- takes priority over `video` when set. See SmartVideo. */
+  videoVimeoUrl?: string
   color: string
   services: Service[]
 }
@@ -35,17 +37,17 @@ export const categories: Category[] = [
     ],
   },
   {
+    // Consolidated to the same 2-category / tags-list shape as
+    // Pre-Production and Production (client audit 2026-08-12: this
+    // section previously rendered as loose description paragraphs
+    // instead of the bullet-list format used everywhere else).
     id: 'post-production',
     title: 'Post-Production',
     video: '/videos/post-production.mp4',
     color: '#10b981',
     services: [
-      { name: 'Cut + Color', desc: 'Obtain a clean edit at an affordable price.' },
-      { name: 'Sound Design', desc: 'Bring your dream to life with realistic sound effects and intricate sound design.' },
-      { name: 'Motion Graphics', desc: "When static images aren't enough, let motion tell your story through animated graphics." },
-      { name: '2D + 3D', desc: 'Create new worlds with our custom animation services.' },
-      { name: 'AI Services', desc: 'From upscaling to image generation, inquire about our AI-assisted editing models.' },
-      { name: 'VFX', desc: 'Create custom visual effects that turn your dreams into reality.' },
+      { name: 'Edit + Finish', tags: ['Editing + Revisions', 'Color + Sound Design', 'Delivery + Export Prep'] },
+      { name: 'Visual Enhancement', tags: ['Motion Graphics', 'VFX', 'AI-Assisted Post Tools'] },
     ],
   },
   {

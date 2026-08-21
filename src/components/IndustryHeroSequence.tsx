@@ -43,7 +43,7 @@ export default function IndustryHeroSequence({
     const loadFrame = async (i: number) => {
       if (cancelled || bitmapsRef.current[i]) return
       try {
-        const resp = await fetch(`${basePath}${i.toString().padStart(4, '0')}.jpg`)
+        const resp = await fetch(`${basePath}${i.toString().padStart(4, '0')}.webp`)
         if (cancelled) return
         const blob = await resp.blob()
         if (cancelled) return

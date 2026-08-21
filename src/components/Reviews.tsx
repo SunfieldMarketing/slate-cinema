@@ -6,7 +6,10 @@ import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { Star, Quote, Play, Volume2 } from 'lucide-react'
 import { MagicCard } from '@/components/ui/magic-card'
-import { industries } from '@/lib/industries'
+import { useSiteData } from '@/lib/site-data-context'
+import type { HomePage } from '@/payload-types'
+import type { IndustryVideoTestimonial } from '@/lib/normalize'
+import { extractVimeoId } from '@/lib/vimeo'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -18,36 +21,32 @@ interface Testimonial {
   rating: number
 }
 
-// Three real Google reviews, curated per the client's own instruction —
-// no need for six, and every one of these is a genuine review.
-const testimonials: Testimonial[] = [
+// Fallback Google reviews (matches HomePage global's seeded defaults) —
+// used only if the CMS reviews field is somehow empty. Real reviews as of
+// 2026-08-17 (dates intentionally omitted per Kauan's instruction).
+const fallbackTestimonials: Testimonial[] = [
   {
-    quote: "The attention to detail is better than anyone we've ever worked with! I would highly recommend using Slate for any and all media. We've been working hand-in-hand with Slate for 6+ years now — I would never go back to using anyone else!",
-    name: 'Dan Jennings',
-    role: 'Local Guide',
+    quote: "Extremely creative agency with strong experience to back up their ideas. Takes the time to really understand client needs and puts in the effort to bring them to life.",
+    name: 'Good Baklava',
+    role: '8 reviews',
     company: 'Google Review',
     rating: 5,
   },
   {
-    quote: "Slate Cinema is hands-down one of the best video production companies in Brooklyn. They took our ideas and turned them into stunning, high-quality content that perfectly captured our brand. The team is creative, professional, and easy to work with from start to finish.",
-    name: 'Sara Greenberg',
-    role: 'Client',
+    quote: "We've worked with Slate Cinema to create a professional video. Amazing experience! Their willingness and understanding to schedule around our availability to ensure that we're able to complete the project while still running a full operation was amazing. Having someone that understands what we're trying to capture and seamlessly works it all into the shoot was such a great feeling. Just 5 star experience all around.",
+    name: 'Ben Kaller',
+    role: 'Local Guide · 27 reviews',
     company: 'Google Review',
     rating: 5,
   },
   {
-    quote: "Jake created an amazing promotional video for my organization and I couldn't be happier with the result. He was professional, creative, and really understood the message we wanted to share. The final product was polished, engaging, and better than I imagined.",
-    name: 'Chana W',
-    role: 'Local Guide',
+    quote: 'Amazingly talented. Professional. And artistic. Exactly what we needed for the job.',
+    name: 'Lia Jay',
+    role: 'Local Guide · 12 reviews',
     company: 'Google Review',
     rating: 5,
   },
 ]
-
-// Pull whichever industry currently has real video testimonials wired up
-// (only the flagship industry does today) rather than hardcoding a slug —
-// stays correct regardless of which industry that ends up being.
-const videoTestimonials = industries.find((i) => i.videoTestimonials?.length)?.videoTestimonials?.slice(0, 3) ?? []
 
 function initials(name: string) {
   return name.split(' ').map((p) => p[0]).join('').slice(0, 2).toUpperCase()
@@ -66,15 +65,23 @@ function StarRow({ n }: { n: number }) {
 /* Portrait "phone" video testimonial — filmed vertically like a real
    selfie-style client testimonial, framed as a mobile screen so it reads
    immediately as video proof rather than another text card. */
-function PhoneVideoCard({ t }: { t: NonNullable<typeof videoTestimonials>[number] }) {
+function PhoneVideoCard({ t }: { t: IndustryVideoTestimonial }) {
   const [playing, setPlaying] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
   // The clip itself (several MB) is only fetched once someone actually
   // presses play — no `src` in the JSX below means nothing loads while
   // this card just sits on screen showing its poster.
   const loadedRef = useRef(false)
+  // See the matching comment in IndustryVideoTestimonials.tsx -- a Vimeo
+  // iframe can't be driven by a <video> ref, so it gets its own
+  // autoplay-on-mount branch below instead.
+  const vimeoId = extractVimeoId(t.videoVimeoUrl)
 
   const toggle = () => {
+    if (vimeoId) {
+      setPlaying((p) => !p)
+      return
+    }
     const v = videoRef.current
     if (!v) return
     if (playing) {
@@ -100,15 +107,28 @@ function PhoneVideoCard({ t }: { t: NonNullable<typeof videoTestimonials>[number
     >
       <div className="relative aspect-[9/16] w-full">
         {t.poster && <img src={t.poster} alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover" />}
-        <video
-          ref={videoRef}
-          poster={t.poster}
-          muted
-          playsInline
-          preload="none"
-          onEnded={() => setPlaying(false)}
-          className={`absolute inset-0 w-full h-full object-cover ${playing ? '' : 'opacity-0'}`}
-        />
+        {vimeoId ? (
+          playing && (
+            <iframe
+              src={`https://player.vimeo.com/video/${vimeoId}?autoplay=1&muted=0&title=0&byline=0&portrait=0`}
+              className="absolute inset-0 w-full h-full"
+              style={{ border: 0 }}
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowFullScreen
+              title={`Testimonial from ${t.name}`}
+            />
+          )
+        ) : (
+          <video
+            ref={videoRef}
+            poster={t.poster}
+            muted
+            playsInline
+            preload="none"
+            onEnded={() => setPlaying(false)}
+            className={`absolute inset-0 w-full h-full object-cover ${playing ? '' : 'opacity-0'}`}
+          />
+        )}
         {/* phone notch */}
         <div className="absolute top-2 left-1/2 -translate-x-1/2 w-16 h-4 rounded-full bg-black/70 z-10" />
         <div className={`absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/10 to-black/30 transition-opacity duration-500 ${playing ? 'opacity-40' : 'opacity-100'}`} />
@@ -135,8 +155,24 @@ function PhoneVideoCard({ t }: { t: NonNullable<typeof videoTestimonials>[number
   )
 }
 
-export default function Reviews() {
+export default function Reviews({ data }: { data?: HomePage['reviews'] }) {
   const sectionRef = useRef<HTMLElement>(null)
+  const { industries } = useSiteData()
+
+  const eyebrow = data?.eyebrow || 'Client Feedback'
+  const headlineLine1 = data?.headlineLine1 || 'Trusted by leaders'
+  const headlineLine2 = data?.headlineLine2 || 'across industries'
+  const ratingText = data?.ratingText || '5.0/5 average · 44 Google reviews'
+  const videoTestimonialsLabel = data?.videoTestimonialsLabel || 'Hear it from them, not us'
+  const googleReviewsLabel = data?.googleReviewsLabel || 'From Google reviews'
+  const testimonials: Testimonial[] = data?.testimonials?.length
+    ? data.testimonials.map((t) => ({ quote: t.quote, name: t.name, role: t.role, company: t.company, rating: t.rating ?? 5 }))
+    : fallbackTestimonials
+
+  // Pull whichever industry currently has real video testimonials wired up
+  // (only the flagship industry does today) rather than hardcoding a slug —
+  // stays correct regardless of which industry that ends up being.
+  const videoTestimonials = industries.find((i) => i.videoTestimonials?.length)?.videoTestimonials?.slice(0, 3) ?? []
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -163,23 +199,30 @@ export default function Reviews() {
         {/* Header */}
         <div className="rv-head text-center mb-12 md:mb-14">
           <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase mb-5">
-            <span className="w-8 h-px bg-[#00AEEF]/40" /> Client Feedback <span className="w-8 h-px bg-[#00AEEF]/40" />
+            <span className="w-8 h-px bg-[#00AEEF]/40" /> {eyebrow} <span className="w-8 h-px bg-[#00AEEF]/40" />
           </span>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05]">
-            Trusted by leaders
-            <br className="hidden sm:block" /> across industries
+            {headlineLine1}
+            <br className="hidden sm:block" /> {headlineLine2}
           </h2>
           <div className="mt-6 inline-flex items-center gap-3 text-white/50 text-sm">
             <StarRow n={5} />
-            <span className="font-mono">5.0/5 average · 44 Google reviews</span>
+            <span className="font-mono">{ratingText}</span>
           </div>
         </div>
 
-        {/* Video testimonials — real face, real name, filmed vertically */}
-        {videoTestimonials.length > 0 && (
+        {/* Video testimonials — DISABLED 2026-08-19 per Kauan ("for now
+            remove the mobile phone video testimonial reviews on
+            homepage"). The underlying data is also the fabricated trio
+            flagged in the media audit (Priya Sharma/Marcus Webb/Elena
+            Ruiz — invented people, still sitting in the "ai" industry's
+            DB record; no DB write access this session to clear it at
+            the source). Re-enable once real client video testimonials
+            replace it: delete the `false &&` below. */}
+        {false && videoTestimonials.length > 0 && (
           <div className="mb-14 md:mb-16">
             <div className="text-center mb-6">
-              <span className="font-mono text-[10px] tracking-[0.25em] text-white/40 uppercase">Hear it from them, not us</span>
+              <span className="font-mono text-[10px] tracking-[0.25em] text-white/40 uppercase">{videoTestimonialsLabel}</span>
             </div>
             <div className="rv-video-row flex justify-start sm:justify-center gap-5 overflow-x-auto snap-x snap-mandatory px-5 sm:px-0 -mx-5 sm:mx-0 pb-2">
               {videoTestimonials.map((t) => (
@@ -191,13 +234,13 @@ export default function Reviews() {
 
         {/* Google reviews */}
         <div className="text-center mb-6">
-          <span className="font-mono text-[10px] tracking-[0.25em] text-white/40 uppercase">From Google reviews</span>
+          <span className="font-mono text-[10px] tracking-[0.25em] text-white/40 uppercase">{googleReviewsLabel}</span>
         </div>
         <div className="rv-grid grid grid-cols-1 md:grid-cols-3 gap-5">
           {testimonials.map((t, i) => (
             <MagicCard
               key={i}
-              className="rv-card rounded-2xl transition-transform duration-500 hover:-translate-y-1"
+              className="rv-card rounded-2xl transition-transform duration-500 hover:-translate-y-1 h-full"
               gradientFrom="#00AEEF"
               gradientTo="#0369A1"
               gradientColor="#00AEEF"
