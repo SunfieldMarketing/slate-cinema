@@ -188,6 +188,75 @@ needs one dev-mode push first (`npm run dev`, hit any API route once) to
 get past that; only real, additive schema changes belong in migration files
 after that.
 
+## The two bugs this migration actually shipped with, found after promoting
+
+Passing locally and applying cleanly to production (both covered above)
+turned out not to be the whole story. Promoting this migration to
+production surfaced two more real bugs -- one that made the entire site
+look empty, one that quietly deleted real content.
+
+**Bug 1: `_status text DEFAULT 'draft'` backfilled every existing row as
+a draft.** That default is correct for brand-new documents going
+forward, but the migration's `ADD COLUMN`/table-rebuild statements apply
+it to every row that already existed too -- so the instant this shipped,
+every industry, portfolio project, journal post, and every global's
+current row became `_status = 'draft'`. Payload's plain
+`find()`/`findGlobal()` only returns `_status = 'published'` rows without
+an explicit `?draft=true`, so every page's data fetch started coming back
+empty. No data was lost here -- fixed with a one-shot script that flips
+`_status` to `'published'` on every row not already published, across
+all 14 affected tables.
+
+**Bug 2: the table-rebuild sequence's `DROP TABLE <parent>` step
+cascade-deleted every child array row that had *just* been correctly
+rebuilt.** This is the real damage. `PRAGMA foreign_keys=ON` was in
+effect for the whole back half of `up()` (turned on at the day-one
+`_status`-column-add sequence and never turned off again), and every
+array-field child table (e.g. `navigation` -> `navigation_links`,
+`industries` -> `gallery`/`stats`/`services`/`serviceCards`/`faqs`/
+`videoTestimonials`/`process`, `home_page`'s several arrays,
+`portfolio_projects` -> `metrics`, `footer` -> `marqueeItems`/
+`sitemapColumn.links`, `pipeline` -> `categories.services`) has
+`FOREIGN KEY (_parent_id) REFERENCES <parent>(id) ON DELETE CASCADE`.
+The generated migration always rebuilds a table's array children
+*before* rebuilding the table itself (needed for that same table's own
+`_status` column) -- so by the time `DROP TABLE <parent>` ran, the child
+rebuild moments earlier had already correctly copied every row back into
+place, and SQLite's cascade wiped all of it out again the instant the
+parent got dropped. Scalar/relationship fields on the parent (title,
+slug, images, hero video) were untouched -- only child-table array rows
+were lost.
+
+Recovered by replaying this project's fidelity rule in reverse: the seed
+script (`src/seed/index.ts`) already holds the exact source data + field
+mapping used to originally populate every one of these fields, so a
+one-shot recovery route reused it verbatim (including its `uploadMedia()`
+media-lookup helper) to restore just the wiped arrays via targeted
+`update()`/`updateGlobal()` calls, explicitly publishing rather than
+risking an invisible draft. One further wrinkle: several industries had
+been relabeled since their media was first uploaded ("AI" -> "3D and AI",
+"Real Estate" -> "Construction & Real Estate") -- the recovery's media
+lookup keyed on the *current* label at first, missing everything
+uploaded under the old one, since the slug (stable across renames) is
+what should have been keyed on instead. A handful of media items came
+back genuinely never-uploaded under any name (a few Corporate/
+Education/Organizations gallery slots) -- not a bug, just content that
+needs real files supplied.
+
+If this exact migration-generation pattern (rebuild a child array table,
+then rebuild its own parent afterward, for an unrelated reason like
+adding a new column) ever recurs, the fix is either: don't let
+`PRAGMA foreign_keys` stay `ON` across a rebuild sequence that touches
+both a table and its array children, or explicitly re-populate the
+child rows *after* the parent's own rebuild completes, not before.
+
+**Also found while chasing "media not working" separately**: the S3
+storage config was missing `endpoint` (every media URL would have
+rendered with a literal `"undefined"` host once S3 activated) and the
+`prefix: 'slate'` option needs its own migration (adds a real `prefix`
+column to `media` that nothing had added yet) -- both are their own,
+much smaller bugs, unrelated to the two above, fixed the same day.
+
 ## Going forward
 
 `npm run build` now runs `payload migrate` before `next build`, so any
@@ -195,3 +264,11 @@ future schema change needs a real committed migration
 (`npm run migrate:create <name>`) or it will 500 in production exactly
 like the incident above -- dev-mode push still keeps local development
 fast and migration-free, this only closes the gap for what actually ships.
+
+This project also has **no cache-revalidation hooks configured** --
+every page is static HTML baked at build time, so a content or data fix
+(admin edit, direct API/DB write, whatever) never appears on the live
+site until the next actual deployment. Worth adding proper
+`revalidatePath`/`revalidateTag` hooks on the collections/globals that
+change most often, so this stops being "make the fix, then redeploy to
+see it" every time.
