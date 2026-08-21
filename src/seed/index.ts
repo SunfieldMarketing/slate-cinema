@@ -538,7 +538,7 @@ async function main() {
         },
       },
       trustSection: {
-        eyebrow: 'Join the leaders working with Slate Cinema',
+        eyebrow: 'Join the leaders that worked with Slate Cinema',
         ratingText: '5.0/5 · 44 Google reviews',
         marqueeLabel: 'More collaborations & partnerships',
         flagshipLogos: await Promise.all(
@@ -549,9 +549,9 @@ async function main() {
         ),
       },
       results: {
-        viewsTarget: 120000000,
-        likesTarget: 14352910,
-        commentsTarget: 1670823,
+        viewsTarget: 120000,
+        likesTarget: 14352,
+        commentsTarget: 1670,
         reachPercent: '98.2%',
         description:
           'Slate Cinema creates content built for the platforms where attention is won or lost in seconds. Every frame, hook, cut, and caption is meticulously shaped to make audiences stop scrolling.',

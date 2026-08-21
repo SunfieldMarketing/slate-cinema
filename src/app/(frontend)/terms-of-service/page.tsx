@@ -27,14 +27,20 @@ export default function TermsOfServicePage() {
   .legal-page { --ink:#0b0c0e; --panel:#101216; --line:#22262d; --text:#f4f5f7; --muted:#9aa1ab;
           --blue:#00AEEF; --orange:#f97316; }
   .legal-page * { box-sizing:border-box; }
-  .legal-page { background:var(--ink); color:var(--text);
-         font:16.5px/1.75 -apple-system,'Segoe UI',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  .legal-page { background:var(--ink); -webkit-font-smoothing:antialiased; }
   .legal-page .wrap { max-width:780px; margin:0 auto; padding:0 28px; }
   /* Scoped to .wrap, not the bare page -- a bare ".legal-page a" rule was
      leaking into the real <Nav />'s own links (also nested inside
      .legal-page), turning them blue instead of their normal white/50
      styling. That was the "its blue" bug Kauan flagged. */
   .legal-page .wrap a { color:var(--blue); }
+  /* color/font also scoped to .wrap only, not the bare .legal-page -- same
+     leak as the link-color bug above, but for typography: it was
+     cascading into the real shared <Footer /> (also nested inside
+     .legal-page), giving it a different typeface/size than every other
+     page's footer. */
+  .legal-page .wrap { color:var(--text);
+         font:16.5px/1.75 -apple-system,'Segoe UI',system-ui,sans-serif; }
 
   /* Top margin cleared for the fixed shared Nav (see header comment). */
   .legal-page .docmark { display:flex; align-items:center; gap:12px; margin:144px 0 26px; }

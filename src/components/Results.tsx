@@ -11,9 +11,9 @@ gsap.registerPlugin(ScrollTrigger)
 
 export default function Results({ data }: { data?: HomePage['results'] }) {
   const containerRef = useRef<HTMLElement>(null)
-  const viewsTarget = data?.viewsTarget ?? 120000000
-  const likesTarget = data?.likesTarget ?? 14352910
-  const commentsTarget = data?.commentsTarget ?? 1670823
+  const viewsTarget = data?.viewsTarget ?? 120000
+  const likesTarget = data?.likesTarget ?? 14352
+  const commentsTarget = data?.commentsTarget ?? 1670
   const reachPercent = data?.reachPercent || '98.2%'
   const description =
     data?.description ||
@@ -172,6 +172,9 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
         <div className="metrics-block flex flex-col items-center max-w-4xl w-full" style={{ transformStyle: 'preserve-3d' }}>
 
           {/* Views Counter */}
+          <span className="font-mono text-sm sm:text-base tracking-[0.2em] text-white/50 uppercase mb-4">
+            Our Clients This Month
+          </span>
           <div className="flex items-baseline gap-4 md:gap-8 justify-center flex-wrap">
             <div className="text-[5rem] md:text-[8rem] lg:text-[11rem] font-bold text-white tracking-tighter leading-none" style={{ textShadow: '0 0 100px rgba(0,174,239,0.25), 0 10px 40px rgba(0,0,0,0.5)' }}>
               {views.toLocaleString()}

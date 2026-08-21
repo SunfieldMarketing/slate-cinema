@@ -133,24 +133,20 @@ export default function MediaVoid({ data }: { data?: HomePage['mediaVoid'] }) {
       {/* Floating media thumbnails at different depths */}
       <div className="absolute inset-0 z-0" style={{ transformStyle: 'preserve-3d' }}>
         {[
-          { src: '/images/mediavoid_team_bright.webp', cls: 'top-[15%] left-[10%] w-44 h-28', title: 'Production Reel' },
-          { src: '/images/mediavoid_creative_bright.webp', cls: 'top-[55%] right-[12%] w-52 h-32', title: 'Brand Campaign' },
-          { src: '/images/mediavoid_tech_bright.webp', cls: 'top-[18%] right-[15%] w-36 h-44', title: 'Social Series' },
-          { src: '/images/mediavoid_award_bright.webp', cls: 'bottom-[20%] left-[15%] w-48 h-28', title: 'Event Coverage' },
+          { src: '/images/mediavoid_team_bright.webp', cls: 'top-[15%] left-[10%] w-44 h-28' },
+          { src: '/images/mediavoid_creative_bright.webp', cls: 'top-[55%] right-[12%] w-52 h-32' },
+          { src: '/images/mediavoid_tech_bright.webp', cls: 'top-[18%] right-[15%] w-36 h-44' },
+          { src: '/images/mediavoid_award_bright.webp', cls: 'bottom-[20%] left-[15%] w-48 h-28' },
         ].map((item, i) => (
           <div key={i} className={`media-thumb absolute ${item.cls}`} style={{ transformStyle: 'preserve-3d' }}>
             <div className="w-full h-full rounded-lg overflow-hidden border border-white/10 cursor-pointer group hover:shadow-[0_0_30px_rgba(0,174,239,0.3)] hover:border-white/30 transition-all duration-500 hover:scale-[1.05] relative bg-ink">
-              <img src={item.src} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100" />
+              <img src={item.src} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100" />
               <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent opacity-80" />
               {/* Play button overlay */}
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110">
                 <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/30 flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.2)]">
                   <svg className="w-6 h-6 text-white ml-1" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </div>
-              </div>
-              {/* Title label */}
-              <div className="absolute bottom-3 left-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0">
-                <span className="text-xs font-mono text-white tracking-widest uppercase font-semibold drop-shadow-md">{item.title}</span>
               </div>
             </div>
           </div>

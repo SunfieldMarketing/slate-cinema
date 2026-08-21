@@ -105,7 +105,7 @@ export const HomePage: GlobalConfig = {
       name: 'trustSection',
       type: 'group',
       fields: [
-        { name: 'eyebrow', type: 'text', required: true, defaultValue: 'Join the leaders working with Slate Cinema' },
+        { name: 'eyebrow', type: 'text', required: true, defaultValue: 'Join the leaders that worked with Slate Cinema' },
         { name: 'ratingText', type: 'text', defaultValue: '5.0/5 · 44 Google reviews' },
         { name: 'marqueeLabel', type: 'text', defaultValue: 'More collaborations & partnerships' },
         {
@@ -132,9 +132,9 @@ export const HomePage: GlobalConfig = {
       name: 'results',
       type: 'group',
       fields: [
-        { name: 'viewsTarget', type: 'number', defaultValue: 120000000 },
-        { name: 'likesTarget', type: 'number', defaultValue: 14352910 },
-        { name: 'commentsTarget', type: 'number', defaultValue: 1670823 },
+        { name: 'viewsTarget', type: 'number', defaultValue: 120000 },
+        { name: 'likesTarget', type: 'number', defaultValue: 14352 },
+        { name: 'commentsTarget', type: 'number', defaultValue: 1670 },
         { name: 'reachPercent', type: 'text', defaultValue: '98.2%' },
         {
           name: 'description',

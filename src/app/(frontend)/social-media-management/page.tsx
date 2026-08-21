@@ -44,8 +44,7 @@ export default function SocialMediaManagementPage() {
     --blue:#00AEEF; --orange:#f97316; --orange-soft:rgba(249,115,22,.12);
   }
   .smm-page * { box-sizing:border-box; }
-  .smm-page { background:var(--ink); color:var(--text);
-         font:16.5px/1.7 -apple-system,'Segoe UI',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  .smm-page { background:var(--ink); -webkit-font-smoothing:antialiased; }
   .smm-page .mono { font-family:'Courier Prime',Courier,monospace; }
   .smm-page .wrap { max-width:1100px; margin:0 auto; padding:0 28px; }
   /* Scoped to .wrap (body copy), not the bare page -- a bare ".smm-page a"
@@ -53,6 +52,13 @@ export default function SocialMediaManagementPage() {
      inside .smm-page), turning them blue instead of their normal
      white/50 styling. That was the "its blue" bug Kauan flagged. */
   .smm-page .wrap a { color:var(--blue); }
+  /* color/font scoped to the ported content only (.hero + section), not
+     the bare .smm-page -- that was the same leak as the link-color bug
+     above, but for typography: it was cascading into the real shared
+     <Footer /> (also nested inside .smm-page), giving it a different
+     typeface/size than every other page's footer. */
+  .smm-page .hero, .smm-page section { color:var(--text);
+         font:16.5px/1.7 -apple-system,'Segoe UI',system-ui,sans-serif; }
 
   /* hero -- padding-top cleared for the fixed shared Nav (see header comment) */
   .smm-page .hero { padding:168px 0 64px; border-bottom:1px solid var(--line); position:relative; overflow:hidden; }

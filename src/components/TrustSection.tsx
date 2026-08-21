@@ -37,7 +37,7 @@ const fallbackClients = [
 
 export default function TrustSection({ data }: { data?: HomePage['trustSection'] }) {
   const sectionRef = useRef<HTMLElement>(null)
-  const eyebrow = data?.eyebrow || 'Join the leaders working with Slate Cinema'
+  const eyebrow = data?.eyebrow || 'Join the leaders that worked with Slate Cinema'
   const ratingText = data?.ratingText || '5.0/5 · 44 Google reviews'
   const marqueeLabel = data?.marqueeLabel || 'More collaborations & partnerships'
   const flagship = data?.flagshipLogos?.length
