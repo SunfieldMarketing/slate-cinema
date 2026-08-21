@@ -21,6 +21,15 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
+  // One-time, explicit-opt-in reveal so the actual media migration (Blob ->
+  // S3) can run as a local script instead of inside a serverless function's
+  // time/memory limits. Gated behind the same token plus a second explicit
+  // param so it never shows up by accident. This route + the value it
+  // reveals get deleted the moment the migration is done.
+  if (searchParams.get('revealBlobToken') === '1') {
+    return NextResponse.json({ BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN ?? null })
+  }
+
   const hasBlobToken = Boolean(process.env.BLOB_READ_WRITE_TOKEN)
   const hasS3 = Boolean(
     process.env.S3_BUCKET && process.env.S3_REGION && process.env.S3_ACCESS_KEY_ID && process.env.S3_SECRET_ACCESS_KEY,
