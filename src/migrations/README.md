@@ -134,6 +134,52 @@ would have skipped the buggy rebuild SQL entirely. Confirmed the resulting
 `industries` table has a working `_status` column and `payload_migrations`
 shows all 4 migrations recorded in the right batches.
 
+**It still failed on the real shared preview/production DB anyway, on the
+first real deploy.** Local testing above only proves the SQL is *correct*
+against a schema matching production's -- it can't catch a transient
+failure on the actual remote connection. What happened: the build's
+`CREATE INDEX industries_service_cards_deliverables_order_idx` failed with
+"already exists" partway through, even though nothing had run against that
+database before. A follow-up read-only diagnostic route (deployed from a
+throwaway branch cut off the last known-good commit, talking to Turso
+directly via `@libsql/client` so it didn't depend on the very schema that
+was broken) confirmed: 46 of the new `_v`/`_v_version_*` tables *had* been
+created by the failed run, but the specific index that supposedly
+"already existed" did not actually exist when queried afterward -- a
+genuine transient hiccup on Turso's end, not a real duplicate. Either way,
+the migration was now half-applied on a database `payload_migrations`
+didn't know about, and simply retrying `up()` from the top would collide
+with those 46 already-created tables immediately.
+
+Fixed by making the entire `up()` idempotent rather than trying to guess
+or replicate the exact partial state: every `CREATE TABLE` (including the
+`__new_X` rebuild scratch tables) got `IF NOT EXISTS`, every `DROP TABLE`
+got `IF EXISTS`, every `CREATE INDEX`/`CREATE UNIQUE INDEX` got
+`IF NOT EXISTS`. SQLite has no `ADD COLUMN IF NOT EXISTS`, so the 5 plain
+`ALTER TABLE X ADD `_status`` statements (for globals that didn't need a
+full rebuild) are each wrapped in a `try/catch` that swallows a "duplicate
+column name" failure and re-throws anything else. Safe to do blanket-style
+here specifically because an audit confirmed `up()` never both creates
+*and* drops the same table/index/column (i.e. nothing here is destructive
+enough that "run it twice" could lose data) -- checked before hardening,
+not assumed.
+
+The `try/catch` needed a second pass: the first version checked
+`e instanceof Error ? e.message : String(e)`, which missed the real
+"duplicate column name" text entirely and re-threw anyway, because
+Drizzle/libsql errors here are nested custom classes
+(`DrizzleQueryError` -> `LibsqlError` -> `SqliteError`) that don't
+reliably satisfy `instanceof Error` or expose the message through `.message`
+alone. Fixed by checking the error, its `.message`, and up to two levels
+of `.cause`/`.cause.message`, joined together, instead of trusting any
+single field.
+
+Verified by deleting this migration's `payload_migrations` row and
+re-running `up()` from scratch against an already-fully-migrated local db
+**three times** (not just once) -- confirming it's genuinely safe to
+re-run from a clean state, not just from the one specific partial state
+the real failure happened to leave behind.
+
 Note: `payload migrate`/`migrate:fresh` cannot bootstrap a **totally
 empty** local db by themselves in this project -- the baseline migration is
 a deliberate no-op (see above), so nothing ever creates the base tables or
