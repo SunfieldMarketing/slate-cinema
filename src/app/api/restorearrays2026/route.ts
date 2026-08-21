@@ -80,6 +80,16 @@ export async function GET(req: Request) {
     const payload = await getPayload({ config })
 
     // ---- 1. Industries: restore the array/nested fields only ----
+    // Industry labels have been renamed since media was first uploaded
+    // (e.g. "AI" -> "3D and AI", per git history), but the media docs
+    // themselves keep the ORIGINAL alt text from upload time -- the
+    // slug is stable across renames, so key on that instead of trusting
+    // the current label to match what's actually stored.
+    const OLD_LABEL_BY_SLUG: Record<string, string> = {
+      ai: 'AI',
+      'real-estate': 'Real Estate',
+    }
+
     const industriesResults: Record<string, string> = {}
     for (const ind of industries) {
       const existing = await payload.find({ collection: 'industries', where: { slug: { equals: ind.slug } }, limit: 1 })
@@ -87,14 +97,15 @@ export async function GET(req: Request) {
         industriesResults[ind.slug] = 'NOT FOUND -- skipped'
         continue
       }
+      const mediaLabel = OLD_LABEL_BY_SLUG[ind.slug] ?? ind.label
       const gallery = []
       for (const g of ind.gallery) {
-        const id = await uploadMedia(payload, g, `${ind.label} gallery ${ind.gallery.indexOf(g) + 1}`)
+        const id = await uploadMedia(payload, g, `${mediaLabel} gallery ${ind.gallery.indexOf(g) + 1}`)
         if (id) gallery.push({ image: id })
       }
       const serviceCards = []
       for (const sc of ind.serviceCards ?? []) {
-        const image = await uploadMedia(payload, sc.image, `${ind.label} — ${sc.title}`)
+        const image = await uploadMedia(payload, sc.image, `${mediaLabel} — ${sc.title}`)
         if (image === undefined) continue
         serviceCards.push({
           title: sc.title,
@@ -103,7 +114,7 @@ export async function GET(req: Request) {
           deliverables: sc.deliverables.map((item) => ({ item })),
           meta: sc.meta,
           image,
-          video: sc.video ? await uploadMedia(payload, sc.video, `${ind.label} — ${sc.title} video`) : undefined,
+          video: sc.video ? await uploadMedia(payload, sc.video, `${mediaLabel} — ${sc.title} video`) : undefined,
           featured: !!sc.featured,
         })
       }
