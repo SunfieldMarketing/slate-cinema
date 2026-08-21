@@ -12,6 +12,7 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 */
 export const JournalPosts: CollectionConfig = {
   slug: 'journal-posts',
+  versions: { drafts: true },
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'category', 'date'],

@@ -2,6 +2,7 @@ import type { GlobalConfig } from 'payload'
 
 export const Footer: GlobalConfig = {
   slug: 'footer',
+  versions: { drafts: true },
   access: {
     read: () => true,
     update: ({ req }) => Boolean(req.user),

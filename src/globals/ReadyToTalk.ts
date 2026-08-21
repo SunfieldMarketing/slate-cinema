@@ -14,6 +14,7 @@ const ICONS = ['Clock3', 'Users', 'ShieldCheck', 'Target', 'Wallet', 'Sparkles',
 */
 export const ReadyToTalk: GlobalConfig = {
   slug: 'ready-to-talk',
+  versions: { drafts: true },
   access: {
     read: () => true,
     update: ({ req }) => Boolean(req.user),

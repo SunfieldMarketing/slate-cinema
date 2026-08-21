@@ -8,6 +8,7 @@ import type { GlobalConfig } from 'payload'
 */
 export const Pipeline: GlobalConfig = {
   slug: 'pipeline',
+  versions: { drafts: true },
   access: {
     read: () => true,
     update: ({ req }) => Boolean(req.user),

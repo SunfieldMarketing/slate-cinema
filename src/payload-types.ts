@@ -352,6 +352,7 @@ export interface Industry {
     | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -388,6 +389,7 @@ export interface PortfolioProject {
   order?: number | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -430,6 +432,7 @@ export interface JournalPost {
   };
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -876,6 +879,7 @@ export interface IndustriesSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -899,6 +903,7 @@ export interface PortfolioProjectsSelect<T extends boolean = true> {
   order?: T;
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -917,6 +922,7 @@ export interface JournalPostsSelect<T extends boolean = true> {
   content?: T;
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1131,6 +1137,7 @@ export interface Navigation {
    * Where the "Client Portal" nav link sends visitors.
    */
   clientPortalHref?: string | null;
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1173,6 +1180,7 @@ export interface Footer {
     termsHref?: string | null;
     clientPortalHref?: string | null;
   };
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1201,6 +1209,7 @@ export interface SiteSetting {
     postalCode?: string | null;
     hours?: string | null;
   };
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1252,6 +1261,7 @@ export interface Pipeline {
         id?: string | null;
       }[]
     | null;
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1268,6 +1278,7 @@ export interface FinalCta {
   buttonLabel: string;
   buttonHref: string;
   trustNote?: string | null;
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1298,6 +1309,7 @@ export interface ReadyToTalk {
   buttonLabel?: string | null;
   buttonHref?: string | null;
   note?: string | null;
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1418,6 +1430,7 @@ export interface HomePage {
         }[]
       | null;
   };
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1502,6 +1515,7 @@ export interface HowItWorksPage {
         id?: string | null;
       }[]
     | null;
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1538,6 +1552,7 @@ export interface PortfolioIndexPage {
         id?: string | null;
       }[]
     | null;
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1734,6 +1749,7 @@ export interface ContactPage {
     headlineLine1?: string | null;
     headlineLine2?: string | null;
   };
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1763,6 +1779,7 @@ export interface ScheduleACallPage {
     confirmLabel?: string | null;
     confirmedLabel?: string | null;
   };
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1785,6 +1802,7 @@ export interface NavigationSelect<T extends boolean = true> {
         href?: T;
       };
   clientPortalHref?: T;
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1835,6 +1853,7 @@ export interface FooterSelect<T extends boolean = true> {
         termsHref?: T;
         clientPortalHref?: T;
       };
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1864,6 +1883,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         postalCode?: T;
         hours?: T;
       };
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1902,6 +1922,7 @@ export interface PipelineSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1918,6 +1939,7 @@ export interface FinalCtaSelect<T extends boolean = true> {
   buttonLabel?: T;
   buttonHref?: T;
   trustNote?: T;
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1948,6 +1970,7 @@ export interface ReadyToTalkSelect<T extends boolean = true> {
   buttonLabel?: T;
   buttonHref?: T;
   note?: T;
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -2065,6 +2088,7 @@ export interface HomePageSelect<T extends boolean = true> {
               id?: T;
             };
       };
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -2145,6 +2169,7 @@ export interface HowItWorksPageSelect<T extends boolean = true> {
         desc?: T;
         id?: T;
       };
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -2184,6 +2209,7 @@ export interface PortfolioIndexPageSelect<T extends boolean = true> {
         name?: T;
         id?: T;
       };
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -2281,6 +2307,7 @@ export interface ContactPageSelect<T extends boolean = true> {
         headlineLine1?: T;
         headlineLine2?: T;
       };
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -2311,6 +2338,7 @@ export interface ScheduleACallPageSelect<T extends boolean = true> {
         confirmLabel?: T;
         confirmedLabel?: T;
       };
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

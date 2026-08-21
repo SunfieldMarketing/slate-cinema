@@ -6,6 +6,7 @@ import type { GlobalConfig } from 'payload'
 */
 export const FinalCTA: GlobalConfig = {
   slug: 'final-cta',
+  versions: { drafts: true },
   access: {
     read: () => true,
     update: ({ req }) => Boolean(req.user),

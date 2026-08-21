@@ -75,6 +75,56 @@ const db = isPostgres
       },
     })
 
+// Frontend URL for each collection/global doc, for Live Preview's iframe.
+// Route inventory confirmed directly from src/app/(frontend) rather than
+// assumed: /portfolio/[industry] and /journal/[slug] are the only two
+// collections with a real per-doc page; PortfolioProjects has no
+// standalone route (rendered inside the /portfolio grid/modal only), so
+// its preview just points at that index page.
+const livePreviewURL = ({
+  data,
+  collectionConfig,
+  globalConfig,
+}: {
+  data: Record<string, unknown>
+  collectionConfig?: { slug: string }
+  globalConfig?: { slug: string }
+}) => {
+  const base = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+  if (globalConfig) {
+    switch (globalConfig.slug) {
+      case 'home-page':
+        return base
+      case 'contact-page':
+        return `${base}/contact`
+      case 'schedule-a-call-page':
+        return `${base}/schedule-a-call`
+      case 'how-it-works-page':
+        return `${base}/how-it-works`
+      case 'portfolio-index-page':
+        return `${base}/portfolio`
+      default:
+        // Navigation/Footer/SiteSettings/Pipeline/FinalCTA/ReadyToTalk
+        // render on every page -- home is the most representative single
+        // preview target for these shared/site-wide globals.
+        return base
+    }
+  }
+  if (collectionConfig) {
+    switch (collectionConfig.slug) {
+      case 'industries':
+        return `${base}/portfolio/${data.slug}`
+      case 'journal-posts':
+        return `${base}/journal/${data.slug}`
+      case 'portfolio-projects':
+        return `${base}/portfolio`
+      default:
+        return base
+    }
+  }
+  return base
+}
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -91,6 +141,20 @@ export default buildConfig({
         Logo: '/components/admin/AdminLogo#AdminLogo',
         Icon: '/components/admin/AdminIcon#AdminIcon',
       },
+    },
+    // Live Preview -- added 2026-08-20 alongside drafts/versions on every
+    // content collection/global. Needs the frontend to actually listen
+    // for live edits via useLivePreview (see src/components/LivePreviewListener.tsx)
+    // for the iframe to update before a save; without that half, this
+    // still gives a real preview iframe + device-size toggle, it just
+    // only refreshes on save rather than on every keystroke.
+    livePreview: {
+      breakpoints: [
+        { label: 'Mobile', name: 'mobile', width: 375, height: 667 },
+        { label: 'Tablet', name: 'tablet', width: 768, height: 1024 },
+        { label: 'Desktop', name: 'desktop', width: 1440, height: 900 },
+      ],
+      url: livePreviewURL,
     },
   },
   collections: [Users, Media, Industries, PortfolioProjects, JournalPosts],

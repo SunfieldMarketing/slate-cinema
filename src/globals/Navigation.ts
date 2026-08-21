@@ -8,6 +8,7 @@ import type { GlobalConfig } from 'payload'
 */
 export const Navigation: GlobalConfig = {
   slug: 'navigation',
+  versions: { drafts: true },
   access: {
     read: () => true,
     update: ({ req }) => Boolean(req.user),

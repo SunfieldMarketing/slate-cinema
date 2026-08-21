@@ -7,6 +7,7 @@ import type { GlobalConfig } from 'payload'
 */
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
+  versions: { drafts: true },
   access: {
     read: () => true,
     update: ({ req }) => Boolean(req.user),

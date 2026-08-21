@@ -8,6 +8,7 @@ import type { GlobalConfig } from 'payload'
 */
 export const HomePage: GlobalConfig = {
   slug: 'home-page',
+  versions: { drafts: true },
   access: {
     read: () => true,
     update: ({ req }) => Boolean(req.user),

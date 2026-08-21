@@ -8,6 +8,7 @@ import type { GlobalConfig } from 'payload'
 */
 export const ScheduleACallPage: GlobalConfig = {
   slug: 'schedule-a-call-page',
+  versions: { drafts: true },
   access: {
     read: () => true,
     update: ({ req }) => Boolean(req.user),

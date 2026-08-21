@@ -15,6 +15,12 @@ const ICON_OPTIONS = [
 
 export const Industries: CollectionConfig = {
   slug: 'industries',
+  // Drafts + Live Preview added 2026-08-20. read: () => true below needs
+  // no change -- Payload only serves the published version on a plain
+  // read; draft content only comes back when the request explicitly asks
+  // for it (?draft=true), which is exactly what the admin preview iframe
+  // does and a normal site visitor never would.
+  versions: { drafts: true },
   admin: {
     useAsTitle: 'label',
     defaultColumns: ['label', 'slug', 'accent'],

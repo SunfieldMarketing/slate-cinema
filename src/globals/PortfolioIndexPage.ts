@@ -2,6 +2,7 @@ import type { GlobalConfig } from 'payload'
 
 export const PortfolioIndexPage: GlobalConfig = {
   slug: 'portfolio-index-page',
+  versions: { drafts: true },
   access: {
     read: () => true,
     update: ({ req }) => Boolean(req.user),

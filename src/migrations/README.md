@@ -86,6 +86,62 @@ genuinely fine for a no-op baseline + pure-additive columns, `migrate` and
 isn't deleted by confirming, so this prompt -- and the auto-`y` -- fires
 on every future build forever; that's expected, not a bug to fix later.
 
+## `20260820_233310_add_drafts_versions_live_preview`
+
+Adds `versions: { drafts: true }` to all 3 content collections
+(`Industries`, `PortfolioProjects`, `JournalPosts`) and all 11 globals, plus
+`admin.livePreview` config in `payload.config.ts`. This is what makes
+`/admin` editing draftable/publishable and (once the frontend listener
+component is built) live-previewable. `read: () => true` access control is
+unaffected -- Payload only serves the published version on a plain read;
+draft content is only returned when a request explicitly passes
+`?draft=true`, which is what the Live Preview iframe does.
+
+131 `CREATE TABLE` statements -- one `_slug_v` table per
+collection/global, plus one `_slug_v_version_X` table per nested
+array/block field (e.g. `_industries_v_version_gallery`,
+`_navigation_v_version_links`). This is Payload's normal versions-table
+architecture, not a red flag.
+
+**Auto-generated migration had a real bug, hand-fixed before ever running
+it anywhere:** for every table that needed a full rebuild (SQLite's
+`CREATE __new_X` / copy / drop / rename dance, needed here because a new
+column -- `_status` -- was being added), the generated
+`INSERT INTO __new_X(...) SELECT ... FROM X` incorrectly included
+`"_status"` in the SELECT's source column list even though the *old* table
+doesn't have that column yet. Every affected `up()` failed immediately with
+`SQLITE_ERROR: no such column: _status`. Fixed by dropping `_status` from
+both the INSERT target list and the SELECT source list on the 9 affected
+statements (`industries`, `portfolio_projects`, `journal_posts`,
+`navigation`, `footer`, `site_settings`, `final_cta`, `ready_to_talk`,
+`home_page`) -- the column's own `DEFAULT 'draft'` fills it in for existing
+rows once it's omitted from the copy. If `migrate:create` is ever re-run
+and diffs pick up a *new* boolean/select/date field with a default on an
+existing table, check the generated file for this exact pattern
+(`"_status"` -- or any new column -- appearing in both halves of a rebuild
+INSERT) before trusting it un-audited again.
+
+Verified locally end-to-end before this ever touched production: reproduced
+production's actual current schema by stashing this migration's config
+changes, letting Payload's normal dev-mode push rebuild a fresh local db
+against the *previously-shipped* schema (baseline + api_key_auth +
+video_vimeo_url, matching what's actually live), hand-inserting
+`payload_migrations` rows for those 3 already-shipped migrations (batch 1,
+matching production's real history), then popping the stash and running
+`migrate` for real -- so the local test exercised the exact same
+incremental path production will take, not a from-scratch schema push that
+would have skipped the buggy rebuild SQL entirely. Confirmed the resulting
+`industries` table has a working `_status` column and `payload_migrations`
+shows all 4 migrations recorded in the right batches.
+
+Note: `payload migrate`/`migrate:fresh` cannot bootstrap a **totally
+empty** local db by themselves in this project -- the baseline migration is
+a deliberate no-op (see above), so nothing ever creates the base tables or
+the `payload_migrations` table itself from zero. A truly fresh local db
+needs one dev-mode push first (`npm run dev`, hit any API route once) to
+get past that; only real, additive schema changes belong in migration files
+after that.
+
 ## Going forward
 
 `npm run build` now runs `payload migrate` before `next build`, so any

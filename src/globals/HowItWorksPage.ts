@@ -10,6 +10,7 @@ const GUARANTEE_ICONS = ['Clock', 'ShieldCheck', 'RefreshCw', 'Handshake'].map((
 */
 export const HowItWorksPage: GlobalConfig = {
   slug: 'how-it-works-page',
+  versions: { drafts: true },
   access: {
     read: () => true,
     update: ({ req }) => Boolean(req.user),

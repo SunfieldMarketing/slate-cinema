@@ -9,6 +9,7 @@ import type { CollectionConfig } from 'payload'
 */
 export const PortfolioProjects: CollectionConfig = {
   slug: 'portfolio-projects',
+  versions: { drafts: true },
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'company', 'category'],

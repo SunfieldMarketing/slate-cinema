@@ -13,6 +13,7 @@ const CONTACT_ICONS = [
 
 export const ContactPage: GlobalConfig = {
   slug: 'contact-page',
+  versions: { drafts: true },
   access: {
     read: () => true,
     update: ({ req }) => Boolean(req.user),
