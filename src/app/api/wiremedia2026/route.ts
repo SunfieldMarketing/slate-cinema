@@ -252,6 +252,67 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: true, mediaId: id, updated: 'Alo' })
   }
 
+  // The real fix for the trust section: TrustSection.tsx's own fallback
+  // arrays already point at genuine client-provided logo files sitting in
+  // this repo's public/ folder (public/images/clients/*.webp -- committed
+  // 2026-07-24, "Wire in real brand assets"), but that fallback only
+  // fires when home-page.trustSection.flagshipLogos/marqueeClients is
+  // EMPTY. It isn't empty -- it's populated with references to media docs
+  // whose bytes only ever lived in the now-suspended Vercel Blob store, so
+  // every logo 403s. Re-upload those same exact public/ files (self-fetch
+  // over this deployment's own origin -- no Dropbox/Vimeo dependency at
+  // all, S3 is healthy) into fresh media docs and point the CMS arrays at
+  // those instead. fixFlagshipLogos (above) only ever fixed Alo via a
+  // Vimeo thumbnail as a stopgap before this file's real source was found;
+  // this supersedes it for all 8 marks including Meta, which has no Vimeo
+  // footage and was the one logo that mode couldn't touch.
+  if (searchParams.get('fixTrustLogos') === '1') {
+    const origin = new URL(req.url).origin
+    const uploadPublicAsset = async (file: string, alt: string): Promise<number> => {
+      const existing = await payload.find({ collection: 'media', where: { alt: { equals: alt } }, limit: 1 })
+      if (existing.totalDocs > 0) return existing.docs[0]!.id as number
+      const res = await fetch(`${origin}/images/clients/${file}`)
+      if (!res.ok) throw new Error(`fetch ${file} failed: ${res.status}`)
+      const buf = Buffer.from(await res.arrayBuffer())
+      const doc = await payload.create({
+        collection: 'media',
+        data: { alt },
+        file: { data: buf, mimetype: 'image/webp', name: file, size: buf.length },
+      })
+      return doc.id as number
+    }
+
+    const flagshipFiles: Array<{ name: string; file: string }> = [
+      { name: 'Meta', file: 'meta-logo.webp' },
+      { name: 'Alo', file: 'alo-logo.webp' },
+      { name: 'B&H', file: 'bh-logo.webp' },
+    ]
+    const clientFiles: Array<{ name: string; file: string }> = [
+      { name: 'Dream', file: 'dream-testimonials.webp' },
+      { name: 'Healing Partners', file: 'healing-partners.webp' },
+      { name: 'Inhale', file: 'inhale-testimonails.webp' },
+      { name: 'Lucida', file: 'lucida-testimonials.webp' },
+      { name: 'Workplace Realty', file: 'workplace-realty.webp' },
+    ]
+
+    const flagshipLogos = []
+    for (const f of flagshipFiles) {
+      const id = await uploadPublicAsset(f.file, `Trust section flagship logo -- ${f.name}`)
+      flagshipLogos.push({ name: f.name, logo: id })
+    }
+    const marqueeClients = []
+    for (const c of clientFiles) {
+      const id = await uploadPublicAsset(c.file, `Trust section marquee logo -- ${c.name}`)
+      marqueeClients.push({ name: c.name, logo: id })
+    }
+
+    await payload.updateGlobal({
+      slug: 'home-page',
+      data: { trustSection: { flagshipLogos, marqueeClients }, _status: 'published' } as any,
+    })
+    return NextResponse.json({ ok: true, flagshipLogos, marqueeClients })
+  }
+
   // statsBand's Google-rating stat had the whole "★ / 44 Reviews" string
   // crammed into `suffix`, which StatsBand renders at the same giant
   // font-size as the number itself (fine for a short "+"/"wk" suffix,
