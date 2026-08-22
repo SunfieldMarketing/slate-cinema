@@ -315,6 +315,64 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: true, results })
   }
 
+  // "Selected Work" (portfolio-projects collection, 8 docs) already got its
+  // company-identity fix on 2026-08-12 -- CVM Construction, Real Talk,
+  // TruBlue of NW Brooklyn, EKGx, Smash House Burgers, Park Smiles NYC,
+  // Sleepy Hollow Hotel, Gateways are all real clients, confirmed live via
+  // the API, NOT the fabricated Neon Nights/HyperDrive-style roster an
+  // earlier (13 Aug) tracker draft still describes -- that tracker draft
+  // predates this fix and was proposing a *different* real-company swap
+  // that never got applied because this one landed first. Do NOT overwrite
+  // real names with a different real roster; only backfill real posters
+  // where a source actually exists for these specific 8 companies.
+  // Of the 8: Park Smiles NYC and Gateways have real Vimeo cuts; Sleepy
+  // Hollow Hotel has a real photo on the old Wix site but no Vimeo match;
+  // the other 5 (CVM Construction, Real Talk, TruBlue, EKGx, Smash House
+  // Burgers) postdate the old-site/Vimeo archive entirely -- no real
+  // source found anywhere searched, left untouched rather than guessed.
+  if (searchParams.get('fixSelectedWork') === '1') {
+    const uploadFromUrl = async (url: string, alt: string, mimetype: string, filename: string): Promise<number | null> => {
+      const existing = await payload.find({ collection: 'media', where: { alt: { equals: alt } }, limit: 1 })
+      if (existing.totalDocs > 0) return existing.docs[0]!.id as number
+      const res = await fetch(url)
+      if (!res.ok) return null
+      const buf = Buffer.from(await res.arrayBuffer())
+      const doc = await payload.create({ collection: 'media', data: { alt }, file: { data: buf, mimetype, name: filename, size: buf.length } })
+      return doc.id as number
+    }
+
+    const results: Record<string, any> = {}
+
+    const parkSmilesPoster = await uploadVimeoThumbnail(payload, '949325387', 'Selected Work poster -- Park Smiles NYC')
+    const gatewaysPoster = await uploadVimeoThumbnail(payload, '1174431950', 'Selected Work poster -- Gateways')
+    const sleepyHollowPoster = await uploadFromUrl(
+      'https://static.wixstatic.com/media/8a48ae_03c1558276bb482b99197cdcb54197f1~mv2.jpg',
+      'Selected Work poster -- Sleepy Hollow Hotel',
+      'image/jpeg',
+      'sleepy-hollow-hotel.jpg',
+    )
+
+    const updates: Array<{ company: string; poster: number | null }> = [
+      { company: 'Park Smiles NYC', poster: parkSmilesPoster },
+      { company: 'Gateways', poster: gatewaysPoster },
+      { company: 'Sleepy Hollow Hotel', poster: sleepyHollowPoster },
+    ]
+
+    for (const u of updates) {
+      if (!u.poster) { results[u.company] = { error: 'upload failed' }; continue }
+      const found = await payload.find({ collection: 'portfolio-projects', where: { company: { equals: u.company } }, limit: 1 })
+      if (found.totalDocs === 0) { results[u.company] = { error: 'no matching portfolio-projects doc' }; continue }
+      await payload.update({
+        collection: 'portfolio-projects',
+        id: found.docs[0]!.id,
+        data: { poster: u.poster, _status: 'published' } as any,
+      })
+      results[u.company] = { ok: true, posterId: u.poster }
+    }
+
+    return NextResponse.json({ ok: true, results, skipped: ['CVM Construction', 'Real Talk', 'TruBlue of NW Brooklyn', 'EKGx', 'Smash House Burgers'], skippedReason: 'no real source found in Vimeo/Dropbox/old-site archive' })
+  }
+
   if (searchParams.get('fixFlagshipLogos') === '1') {
     const id = await uploadVimeoThumbnail(payload, '862075818', 'Alo flagship logo -- Vimeo 862075818')
     if (!id) return NextResponse.json({ ok: false, error: 'thumbnail fetch failed' })
