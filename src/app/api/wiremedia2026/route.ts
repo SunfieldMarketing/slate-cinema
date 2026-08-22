@@ -238,6 +238,61 @@ export async function GET(req: Request) {
     return NextResponse.json({ results: reResults })
   }
 
+  // Every industry's "What We Make" serviceCards image was still a dead
+  // pre-session Blob doc (confirmed: all 20 across the 8 industries that
+  // have serviceCards return 403 direct from S3) -- same root cause as
+  // every other Blob-suspension fix this session. Healthcare specifically
+  // has ZERO serviceCards in the CMS at all (verified directly, not a
+  // draft/publish mismatch) -- that's a missing-content gap, not a broken
+  // image, and adding cards means writing real description/outcome copy
+  // for required fields, which isn't mine to invent (see priority issue
+  // #1 upstream: inventing metrics is exactly the problem already fixed
+  // once). Left untouched here on purpose; only real, already-existing
+  // cards get their image swapped for a real Vimeo thumbnail.
+  if (searchParams.get('fixServiceCards') === '1') {
+    type Fix = { slug: string; title: string; vimeoId: string }
+    const fixes: Fix[] = [
+      { slug: 'education', title: 'Course & Program Trailers', vimeoId: '1198896524' }, // HANC Acceptance 2024
+      { slug: 'education', title: 'Faculty & Student Spotlights', vimeoId: '486871052' }, // Maayanot STEM Dept
+      { slug: 'education', title: 'E-Learning & Course Content', vimeoId: '1198897231' }, // HANC Color War 2023
+      { slug: 'organizations', title: 'Volunteer Recruitment Films', vimeoId: '1105627835' }, // TJC Campaign 2025
+      { slug: 'corporate', title: 'Executive Communications', vimeoId: '936453597' }, // MPower Event Recap PC-19
+      { slug: 'products', title: 'E-Commerce Ad Cuts', vimeoId: '929671988' }, // EIR NYC - Socks
+      { slug: 'products', title: 'Signature Color Grading', vimeoId: '862075818' }, // Alo Moves Commercial
+      { slug: 'real-estate', title: 'Cinematic Property Tours', vimeoId: '501888251' }, // Good Choice Realty Glamour
+      { slug: 'real-estate', title: 'Development Timelapses', vimeoId: '278155978' }, // Offerman House
+      { slug: 'real-estate', title: 'Aerial Drone Cinematography', vimeoId: '1065583536' }, // Nyack Ridge banner
+      { slug: 'travel', title: 'Destination Films', vimeoId: '928188366' }, // Envision Recap Costa Rica
+      { slug: 'travel', title: 'Aerial Cinematography', vimeoId: '1079646173' }, // TNR Africa Aftermovie
+      { slug: 'travel', title: 'Property Showcases', vimeoId: '1163043374' }, // First Flight NYC
+      { slug: 'athletics', title: 'Hype Reels', vimeoId: '863822136' }, // Camp Slapshots Pump Up Promo
+      { slug: 'athletics', title: 'Athlete Feature Films', vimeoId: '1198896524' }, // HANC Acceptance 2024
+      { slug: 'athletics', title: 'Product Launch Content', vimeoId: '588692725' }, // KOC Miami Marathon 2020
+      { slug: 'ai', title: 'AI-Accelerated Explainers', vimeoId: '963219647' }, // Anochi VFX Commercial
+      { slug: 'ai', title: 'Product & CGI', vimeoId: '963220447' }, // Anochi Journey to Anochi
+      { slug: 'ai', title: 'Motion Branding', vimeoId: '963221744' }, // Anochi Being Accountable
+      { slug: 'ai', title: 'Character Work', vimeoId: '963223558' }, // Anochi Breathwork
+      { slug: 'ai', title: 'Social Loops', vimeoId: '963225662' }, // Anochi Coaching Program
+    ]
+
+    const results: Record<string, any> = {}
+    for (const f of fixes) {
+      const key = `${f.slug} / ${f.title}`
+      const posterId = await uploadVimeoThumbnail(payload, f.vimeoId, `serviceCard poster -- ${f.slug} -- ${f.title}`)
+      if (!posterId) { results[key] = { error: 'thumbnail fetch failed' }; continue }
+      const found = await payload.find({ collection: 'industries', where: { slug: { equals: f.slug } }, limit: 1 })
+      if (found.totalDocs === 0) { results[key] = { error: 'industry not found' }; continue }
+      const doc = found.docs[0] as any
+      const cards = (doc.serviceCards ?? []) as any[]
+      const card = cards.find((c) => c.title === f.title)
+      if (!card) { results[key] = { error: 'card not found' }; continue }
+      card.image = posterId
+      await payload.update({ collection: 'industries', id: doc.id, data: { serviceCards: cards, _status: 'published' } as any })
+      results[key] = { ok: true, posterId }
+    }
+    return NextResponse.json({ ok: true, results, healthcareSkipped: 'zero serviceCards in CMS -- missing content, not a broken image; needs real copy from the client, not invented' })
+  }
+
   // Flagship logos (Meta/Alo/B&H) and marquee client logos are among the
   // ORIGINAL media docs, whose actual bytes only ever existed in Vercel
   // Blob -- still suspended, still unreachable, so these still 403 even
