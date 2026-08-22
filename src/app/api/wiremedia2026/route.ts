@@ -123,6 +123,51 @@ export async function GET(req: Request) {
   const payload = await getPayload({ config })
   const results: Record<string, unknown>[] = []
 
+  // Downloads the real Home hero cut (Shortened Reel 2024, 110MB) straight
+  // from its Dropbox share link server-side, uploads it into the media
+  // library (S3), and wires it into Education's heroVideo per Kauan's
+  // explicit instruction ("for education page hero use slate cinema home
+  // page hero section 1st video"). Returns the resulting S3 url so it can
+  // be hardcoded as the real Home hero too -- committing a 110MB file to
+  // git isn't viable (GitHub rejects anything over 100MB outright), so
+  // Home's actual hero swap happens in code once this URL is known.
+  if (searchParams.get('homeHeroVideo') === '1') {
+    const alt = 'Home hero -- Shortened Reel 2024'
+    const existing = await payload.find({ collection: 'media', where: { alt: { equals: alt } }, limit: 1 })
+    let mediaId: number
+    let mediaUrl: string
+    if (existing.totalDocs > 0) {
+      mediaId = existing.docs[0]!.id as number
+      mediaUrl = (existing.docs[0] as any).url
+    } else {
+      const dropboxUrl =
+        'https://www.dropbox.com/scl/fo/8885n37svhzac53dznww6/AF7CT06oy1qosuQ6LFtAwsY/01%20Home%20Page/01%20Hero/Shortened%20Reel%202024.mp4?rlkey=md2ztdu9dpisgo1wtvplwolja&dl=1'
+      const res = await fetch(dropboxUrl)
+      if (!res.ok) {
+        return NextResponse.json({ error: `dropbox fetch failed: ${res.status}` }, { status: 502 })
+      }
+      const buf = Buffer.from(await res.arrayBuffer())
+      const doc = await payload.create({
+        collection: 'media',
+        data: { alt },
+        file: { data: buf, mimetype: 'video/mp4', name: 'shortened-reel-2024.mp4', size: buf.length },
+      })
+      mediaId = doc.id as number
+      mediaUrl = (doc as any).url
+    }
+
+    const eduFound = await payload.find({ collection: 'industries', where: { slug: { equals: 'education' } }, limit: 1 })
+    if (eduFound.totalDocs > 0) {
+      await payload.update({
+        collection: 'industries',
+        id: eduFound.docs[0]!.id,
+        data: { heroVideo: mediaId, _status: 'published' },
+      })
+    }
+
+    return NextResponse.json({ ok: true, mediaId, mediaUrl, educationWired: eduFound.totalDocs > 0 })
+  }
+
   // ?slug=healthcare processes just one industry (fast, safe to retry);
   // omit it to attempt all of them in one call.
   const onlySlug = searchParams.get('slug')
