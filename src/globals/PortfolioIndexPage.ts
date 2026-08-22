@@ -13,6 +13,11 @@ export const PortfolioIndexPage: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'video', type: 'upload', relationTo: 'media' },
+        {
+          name: 'videoVimeoUrl',
+          type: 'text',
+          admin: { description: 'Paste a Vimeo URL or ID -- takes priority over the uploaded file when set' },
+        },
         { name: 'title', type: 'text', defaultValue: 'Our Work' },
         { name: 'date', type: 'text', defaultValue: 'Selected Campaigns' },
         { name: 'scrollToExpandLabel', type: 'text', defaultValue: 'Scroll To Explore' },

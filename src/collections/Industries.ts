@@ -47,6 +47,11 @@ export const Industries: CollectionConfig = {
     { name: 'heroImage', type: 'upload', relationTo: 'media' },
     { name: 'heroVideo', type: 'upload', relationTo: 'media' },
     {
+      name: 'heroVideoVimeoUrl',
+      type: 'text',
+      admin: { description: 'Paste a Vimeo URL or ID -- takes priority over the uploaded file when set' },
+    },
+    {
       name: 'gallery',
       type: 'array',
       fields: [{ name: 'image', type: 'upload', relationTo: 'media', required: true }],
@@ -93,6 +98,11 @@ export const Industries: CollectionConfig = {
         { name: 'meta', type: 'text', admin: { description: 'e.g. "60–120s · 4–6 wks"' } },
         { name: 'image', type: 'upload', relationTo: 'media' },
         { name: 'video', type: 'upload', relationTo: 'media' },
+        {
+          name: 'videoVimeoUrl',
+          type: 'text',
+          admin: { description: 'Paste a Vimeo URL or ID -- takes priority over the uploaded file when set' },
+        },
         { name: 'featured', type: 'checkbox', defaultValue: false },
       ],
     },
@@ -106,6 +116,11 @@ export const Industries: CollectionConfig = {
         { name: 'role', type: 'text', required: true },
         { name: 'company', type: 'text', required: true },
         { name: 'video', type: 'upload', relationTo: 'media', required: true },
+        {
+          name: 'videoVimeoUrl',
+          type: 'text',
+          admin: { description: 'Paste a Vimeo URL or ID -- takes priority over the uploaded file when set' },
+        },
         { name: 'outcome', type: 'text', required: true },
         { name: 'poster', type: 'upload', relationTo: 'media' },
         { name: 'logo', type: 'upload', relationTo: 'media' },

@@ -36,6 +36,11 @@ export const Pipeline: GlobalConfig = {
         { name: 'categoryId', type: 'text', required: true, admin: { description: 'e.g. "pre-production" -- used as the React key, keep stable' } },
         { name: 'title', type: 'text', required: true },
         { name: 'video', type: 'upload', relationTo: 'media', required: true },
+        {
+          name: 'videoVimeoUrl',
+          type: 'text',
+          admin: { description: 'Paste a Vimeo URL or ID -- takes priority over the uploaded file when set' },
+        },
         { name: 'color', type: 'text', required: true, admin: { description: 'Hex color' } },
         {
           name: 'services',
