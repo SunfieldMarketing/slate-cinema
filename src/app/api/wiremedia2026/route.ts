@@ -230,6 +230,28 @@ export async function GET(req: Request) {
     return NextResponse.json({ results: reResults })
   }
 
+  // Flagship logos (Meta/Alo/B&H) and marquee client logos are among the
+  // ORIGINAL media docs, whose actual bytes only ever existed in Vercel
+  // Blob -- still suspended, still unreachable, so these still 403 even
+  // though the doc references themselves are fine. Alo has a real Vimeo
+  // match (862075818, "Alo Moves Commercial") per the tracker, so its
+  // thumbnail can be re-sourced the same way industries' hero images
+  // were -- no Dropbox/Blob needed. Meta and B&H have no Vimeo footage;
+  // those still need the Dropbox Logo Videos/Renders folder specifically.
+  if (searchParams.get('fixFlagshipLogos') === '1') {
+    const id = await uploadVimeoThumbnail(payload, '862075818', 'Alo flagship logo -- Vimeo 862075818')
+    if (!id) return NextResponse.json({ ok: false, error: 'thumbnail fetch failed' })
+    const doc = await payload.findGlobal({ slug: 'home-page', depth: 0 })
+    const logos = ((doc as any).trustSection?.flagshipLogos ?? []) as any[]
+    const alo = logos.find((l) => l.name === 'Alo')
+    if (alo) alo.logo = id
+    await payload.updateGlobal({
+      slug: 'home-page',
+      data: { trustSection: { flagshipLogos: logos }, _status: 'published' } as any,
+    })
+    return NextResponse.json({ ok: true, mediaId: id, updated: 'Alo' })
+  }
+
   // statsBand's Google-rating stat had the whole "★ / 44 Reviews" string
   // crammed into `suffix`, which StatsBand renders at the same giant
   // font-size as the number itself (fine for a short "+"/"wk" suffix,
