@@ -238,6 +238,37 @@ export async function GET(req: Request) {
   // thumbnail can be re-sourced the same way industries' hero images
   // were -- no Dropbox/Blob needed. Meta and B&H have no Vimeo footage;
   // those still need the Dropbox Logo Videos/Renders folder specifically.
+  // Diagnostic: the fixTrustLogos re-uploads landed real DB media docs
+  // (200 from the route, real numeric ids) but their S3 URLs 403 on
+  // direct GET -- HeadObject with the app's own IAM creds (bypasses the
+  // public bucket policy entirely) to tell "object doesn't exist at that
+  // key" apart from "object exists, policy just isn't granting anon
+  // reads for it".
+  if (searchParams.get('checkTrustLogos') === '1') {
+    const { HeadObjectCommand } = await import('@aws-sdk/client-s3')
+    const keys = [
+      'slate/meta-logo-1.png',
+      'slate/bh-logo-1.png',
+      'slate/alo-logo-1.png',
+      'slate/dream-testimonials-5.webp',
+      'slate/healing-partners-1.webp',
+      'slate/inhale-testimonails-5.webp',
+      'slate/lucida-testimonials-5.webp',
+      'slate/workplace-realty-1.webp',
+      'slate/vimeo-862075818-thumb-1.jpg', // known-good control
+    ]
+    const results: Record<string, any> = {}
+    for (const key of keys) {
+      try {
+        const head = await s3.send(new HeadObjectCommand({ Bucket: process.env.S3_BUCKET, Key: key }))
+        results[key] = { exists: true, size: head.ContentLength, contentType: head.ContentType }
+      } catch (e: any) {
+        results[key] = { exists: false, error: e?.name ?? String(e), message: e?.message }
+      }
+    }
+    return NextResponse.json({ ok: true, results })
+  }
+
   if (searchParams.get('fixFlagshipLogos') === '1') {
     const id = await uploadVimeoThumbnail(payload, '862075818', 'Alo flagship logo -- Vimeo 862075818')
     if (!id) return NextResponse.json({ ok: false, error: 'thumbnail fetch failed' })

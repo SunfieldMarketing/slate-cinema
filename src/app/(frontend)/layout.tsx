@@ -17,6 +17,18 @@ const courier = Courier_Prime({ subsets: ["latin"], weight: ["400", "700"], vari
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://slatecinema.com'
 
+// Time-based revalidation for every route under this layout that doesn't
+// set its own `revalidate`. Without this, every page here is fully
+// static (Payload's local API is a direct DB call, not a `fetch()`, so
+// it never participates in Next's data cache -- Next just treats the
+// whole route as static at build time instead). That's the exact,
+// repeatedly-hit bug behind "I fixed the CMS data but it's not showing
+// up on the live site": a plain content/media edit through /admin never
+// appears until the next full redeploy regenerates the page. 5 minutes
+// keeps most of the performance benefit of static rendering while
+// making that class of bug self-heal instead of requiring a redeploy.
+export const revalidate = 300
+
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings()
   const title = settings.seo?.defaultTitle || "Slate Cinema | Video Marketing at Your Fingertips"
