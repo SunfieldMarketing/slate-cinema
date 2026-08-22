@@ -238,6 +238,85 @@ export async function GET(req: Request) {
     return NextResponse.json({ results: reResults })
   }
 
+  // A full site scan (every page, every S3-hosted media URL, checked for
+  // real HTTP status) turned up the rest of what's still dead: all 6
+  // journal post covers, Education's heroImage (which was actually
+  // pointing at Corporate's old image, not just dead) and missing
+  // heroVideoVimeoUrl, 3 more industries missing heroVideoVimeoUrl (their
+  // heroImage already got fixed earlier, but the video slot didn't, so it
+  // was still falling back to a dead file), Real Estate's heroImage, and
+  // one of How It Works' 4 "Behind The Scenes" stills (the other 3 need
+  // the Slate Internal/All BTS/ Dropbox folder specifically, which isn't
+  // in this session's shared-link scope -- left alone rather than
+  // mislabeling unrelated client footage as "Edit Bay"/"Color Suite"/
+  // "Sound Stage").
+  if (searchParams.get('fixRemainingMedia') === '1') {
+    const results: Record<string, any> = {}
+
+    const journalFixes: Array<{ slug: string; vimeoId: string }> = [
+      { slug: 'one-shoot-day-month-of-content', vimeoId: '929671839' }, // EIR NYC - Cream
+      { slug: 'pre-production-explained', vimeoId: '929642483' }, // BTS - Link Homecare
+      { slug: 'how-to-brief-a-video-team', vimeoId: '936451661' }, // MPower Recruiter Video
+      { slug: 'storytelling-vs-selling', vimeoId: '906114513' }, // Link Homecare - New Employee Film
+      { slug: 'anatomy-of-a-scroll-stopping-ad', vimeoId: '929671988' }, // EIR NYC - Socks
+      { slug: 'first-three-seconds', vimeoId: '862075818' }, // Alo Moves Commercial
+    ]
+    for (const f of journalFixes) {
+      const posterId = await uploadVimeoThumbnail(payload, f.vimeoId, `Journal cover -- ${f.slug}`)
+      if (!posterId) { results[`journal/${f.slug}`] = { error: 'thumbnail fetch failed' }; continue }
+      const found = await payload.find({ collection: 'journal-posts', where: { slug: { equals: f.slug } }, limit: 1 })
+      if (found.totalDocs === 0) { results[`journal/${f.slug}`] = { error: 'post not found' }; continue }
+      await payload.update({ collection: 'journal-posts', id: found.docs[0]!.id, data: { coverImage: posterId, _status: 'published' } as any })
+      results[`journal/${f.slug}`] = { ok: true, posterId }
+    }
+
+    const industryFixes: Array<{ slug: string; heroImageVimeoId?: string; heroVideoVimeoUrl?: string }> = [
+      { slug: 'education', heroImageVimeoId: '1198896524', heroVideoVimeoUrl: '1198896524' }, // HANC Acceptance 2024 -- was wrongly showing Corporate's old image
+      { slug: 'organizations', heroVideoVimeoUrl: '1174431950' }, // matches existing heroImage
+      { slug: 'healthcare', heroVideoVimeoUrl: '929602809' }, // matches existing heroImage
+      { slug: 'products', heroVideoVimeoUrl: '929671839' }, // matches existing heroImage
+      { slug: 'real-estate', heroImageVimeoId: '278155978' }, // Offerman House - Brooklyn, NY
+    ]
+    for (const f of industryFixes) {
+      const found = await payload.find({ collection: 'industries', where: { slug: { equals: f.slug } }, limit: 1 })
+      if (found.totalDocs === 0) { results[`industry/${f.slug}`] = { error: 'not found' }; continue }
+      const doc = found.docs[0] as any
+      const data: any = { _status: 'published' }
+      if (f.heroImageVimeoId) {
+        const id = await uploadVimeoThumbnail(payload, f.heroImageVimeoId, `${f.slug} heroImage -- Vimeo ${f.heroImageVimeoId}`)
+        if (id) data.heroImage = id
+      }
+      if (f.heroVideoVimeoUrl) data.heroVideoVimeoUrl = f.heroVideoVimeoUrl
+      await payload.update({ collection: 'industries', id: doc.id, data })
+      results[`industry/${f.slug}`] = { ok: true, ...data }
+    }
+
+    const btsPosterId = await uploadVimeoThumbnail(payload, '929642483', 'BTS still -- On Set -- Vimeo 929642483')
+    if (btsPosterId) {
+      const hiw = await payload.findGlobal({ slug: 'how-it-works-page', depth: 0 })
+      const stills = (((hiw as any).behindTheScenes?.stills ?? []) as any[])
+      const onSet = stills.find((s) => s.label === 'On Set')
+      if (onSet) {
+        onSet.image = btsPosterId
+        await payload.updateGlobal({ slug: 'how-it-works-page', data: { behindTheScenes: { stills }, _status: 'published' } as any })
+        results['bts/On Set'] = { ok: true, posterId: btsPosterId }
+      } else {
+        results['bts/On Set'] = { error: 'still not found' }
+      }
+    } else {
+      results['bts/On Set'] = { error: 'thumbnail fetch failed' }
+    }
+
+    return NextResponse.json({
+      ok: true,
+      results,
+      stillNotFixed: {
+        'portfolio-projects posters (5)': 'CVM Construction, Real Talk, TruBlue of NW Brooklyn, EKGx, Smash House Burgers -- no real source in any archive searched',
+        'behindTheScenes stills (3 of 4)': 'Edit Bay, Color Suite, Sound Stage -- need Slate Internal/All BTS/ Dropbox folder, outside current share-link scope',
+      },
+    })
+  }
+
   // Every industry's "What We Make" serviceCards image was still a dead
   // pre-session Blob doc (confirmed: all 20 across the 8 industries that
   // have serviceCards return 403 direct from S3) -- same root cause as
