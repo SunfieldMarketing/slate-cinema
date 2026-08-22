@@ -4,7 +4,6 @@ import React, { useRef, useState } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-import { ArrowUpRight } from 'lucide-react'
 import type { PortfolioProjectLocal } from '@/lib/normalize'
 import ThreeDPhotoCarousel from '@/components/ui/three-d-carousel'
 import ProjectCardModal from '@/components/ProjectCardModal'
@@ -59,18 +58,9 @@ export default function PortfolioCarousel({ projects }: { projects: PortfolioPro
           <ThreeDPhotoCarousel cards={cards} onSelect={setOpenProject} />
         </div>
 
-        <div className="flex justify-center mt-12">
-          <a
-            href="/portfolio"
-            className="group relative inline-flex items-center gap-2 px-8 py-4 rounded-full overflow-hidden border border-white/20 bg-white/5 backdrop-blur-md"
-          >
-            <div className="absolute inset-0 bg-white scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
-            <span className="relative text-sm font-semibold tracking-widest text-white group-hover:text-black transition-colors uppercase">
-              View Full Portfolio
-            </span>
-            <ArrowUpRight className="relative w-4 h-4 text-white group-hover:text-black transition-colors" />
-          </a>
-        </div>
+        {/* "View Full Portfolio" removed from here 2026-08-22 -- the Final
+            CTA right below now carries that exact link/label instead, so
+            this section no longer needed its own duplicate button. */}
       </div>
 
       <ProjectCardModal

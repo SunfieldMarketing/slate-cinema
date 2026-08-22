@@ -1,7 +1,7 @@
 import { cache } from 'react'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
-export { mediaUrl } from '@/lib/media-url'
+export { mediaUrl, mediaUrlOrPlaceholder } from '@/lib/media-url'
 
 /*
   Server-only data-fetch layer for the frontend. Every function here uses

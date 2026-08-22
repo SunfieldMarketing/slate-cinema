@@ -123,6 +123,172 @@ export async function GET(req: Request) {
   const payload = await getPayload({ config })
   const results: Record<string, unknown>[] = []
 
+  // 3 globals (site-settings, final-cta, schedule-a-call-page) were stuck
+  // on _status:'draft' with no published version at all -- same class of
+  // bug as the drafts/versions migration's _status incident, just missed
+  // the first sweep since these three weren't in that fix's table list.
+  // Also updates final-cta's button per the explicit content change:
+  // "Get Started" -> "View Full Portfolio", pointing at /portfolio instead
+  // of /contact (the Portfolio-carousel section's own duplicate button
+  // was removed in the same commit, so this is now the one place that link
+  // lives on the homepage).
+  if (searchParams.get('fixGlobals') === '1') {
+    for (const slug of ['site-settings', 'schedule-a-call-page'] as const) {
+      try {
+        await payload.updateGlobal({ slug, data: { _status: 'published' } as any })
+        results.push({ slug, ok: true, applied: ['_status'] })
+      } catch (e) {
+        results.push({ slug, ok: false, error: e instanceof Error ? e.message : String(e) })
+      }
+    }
+    try {
+      await payload.updateGlobal({
+        slug: 'final-cta',
+        data: { buttonLabel: 'View Full Portfolio', buttonHref: '/portfolio', _status: 'published' } as any,
+      })
+      results.push({ slug: 'final-cta', ok: true, applied: ['buttonLabel', 'buttonHref', '_status'] })
+    } catch (e) {
+      results.push({ slug: 'final-cta', ok: false, error: e instanceof Error ? e.message : String(e) })
+    }
+    return NextResponse.json({ results })
+  }
+
+  // Real Estate is the one industry with no clean Vimeo match for its
+  // hero + first 2 gallery slots -- Offerman House and Good Choice Realty
+  // only exist as real Dropbox footage. Downloads all 3 server-side
+  // (55-265MB) and wires hero + gallery[0..1]; gallery[2] (The Brownstone,
+  // via Vimeo 1049438739) was already set by the industries wiring above.
+  if (searchParams.get('realEstateVideos') === '1') {
+    const FILES: Record<string, { url: string; filename: string; mimetype: string }> = {
+      offerman: {
+        url: 'https://www.dropbox.com/scl/fo/8885n37svhzac53dznww6/AFsuRwIseEZsx-_IcT4in8o/03%20Portfolio/Real%20Estate/offerman_house_-_brooklyn%2C_ny%20%281080p%29.mp4?rlkey=md2ztdu9dpisgo1wtvplwolja&dl=1',
+        filename: 'real-estate-offerman-house.mp4',
+        mimetype: 'video/mp4',
+      },
+      glamour: {
+        url: 'https://www.dropbox.com/scl/fo/8885n37svhzac53dznww6/AD-YzL555ONmUvWXAQxc2KY/03%20Portfolio/Real%20Estate/4a%20Glamour%20Tour%20-%20Good%20Choice%20Realty.mp4?rlkey=md2ztdu9dpisgo1wtvplwolja&dl=1',
+        filename: 'real-estate-good-choice-glamour.mp4',
+        mimetype: 'video/mp4',
+      },
+      walkthrough: {
+        url: 'https://www.dropbox.com/scl/fo/8885n37svhzac53dznww6/ANFifUlMBRF4siZ8YyGaXQE/03%20Portfolio/Real%20Estate/2%20Walkthrough%20Tour%20-%20Good%20Choice%20Realty.mp4?rlkey=md2ztdu9dpisgo1wtvplwolja&dl=1',
+        filename: 'real-estate-good-choice-walkthrough.mp4',
+        mimetype: 'video/mp4',
+      },
+    }
+    const which = searchParams.get('file') // process one at a time -- the 265MB walkthrough alone can eat the whole time budget
+    const toProcess = which ? { [which]: FILES[which] } : FILES
+    const reResults: Record<string, unknown>[] = []
+    let heroMediaId: number | null = null
+    let glamourMediaId: number | null = null
+    let walkthroughMediaId: number | null = null
+
+    for (const [key, file] of Object.entries(toProcess)) {
+      if (!file) continue
+      const alt = `Real Estate -- ${key}`
+      const existing = await payload.find({ collection: 'media', where: { alt: { equals: alt } }, limit: 1 })
+      let mediaId: number
+      if (existing.totalDocs > 0) {
+        mediaId = existing.docs[0]!.id as number
+      } else {
+        const res = await fetch(file.url)
+        if (!res.ok) {
+          reResults.push({ key, ok: false, error: `dropbox fetch failed: ${res.status}` })
+          continue
+        }
+        const buf = Buffer.from(await res.arrayBuffer())
+        const doc = await payload.create({
+          collection: 'media',
+          data: { alt },
+          file: { data: buf, mimetype: file.mimetype, name: file.filename, size: buf.length },
+        })
+        mediaId = doc.id as number
+      }
+      if (key === 'offerman') heroMediaId = mediaId
+      if (key === 'glamour') glamourMediaId = mediaId
+      if (key === 'walkthrough') walkthroughMediaId = mediaId
+      reResults.push({ key, ok: true, mediaId })
+    }
+
+    const reFound = await payload.find({ collection: 'industries', where: { slug: { equals: 'real-estate' } }, limit: 1, depth: 0 })
+    if (reFound.totalDocs > 0) {
+      const doc = reFound.docs[0]!
+      // Earlier wiring already put The Brownstone (Vimeo 1049438739) as
+      // the one existing gallery entry -- preserve it as slot 3 rather
+      // than clobbering it when inserting these two ahead of it.
+      const brownstone = ((doc as any).gallery ?? [])[0]
+      const gallery: { image: number }[] = []
+      if (glamourMediaId) gallery.push({ image: glamourMediaId })
+      if (walkthroughMediaId) gallery.push({ image: walkthroughMediaId })
+      if (brownstone) gallery.push(brownstone)
+      const data: Record<string, unknown> = { _status: 'published' }
+      if (heroMediaId) data.heroVideo = heroMediaId
+      if (gallery.length) data.gallery = gallery
+      await payload.update({ collection: 'industries', id: doc.id, data })
+    }
+
+    return NextResponse.json({ results: reResults })
+  }
+
+  // Downloads all 4 real Production Pipeline phase videos from Dropbox
+  // server-side (small files, 5-27MB each -- no batching needed) and
+  // wires each into its matching pipeline category by categoryId. These
+  // are Slate's own internal "how we work" cuts; no Vimeo ID exists for
+  // them (confirmed against the full tracker + Appendix A list), so this
+  // is the one set of home-page videos that has to come from Dropbox.
+  if (searchParams.get('pipelineVideos') === '1') {
+    const PIPELINE_FILES: Record<string, { url: string; filename: string }> = {
+      'pre-production': {
+        url: 'https://www.dropbox.com/scl/fo/8885n37svhzac53dznww6/AFmtQDRV_LSzrZcyXMxQFik/01%20Home%20Page/02%20Pipeline%20%28How%20It%20Works%29/2%20Pre-Production%20Video.mp4?rlkey=md2ztdu9dpisgo1wtvplwolja&dl=1',
+        filename: 'pipeline-pre-production.mp4',
+      },
+      production: {
+        url: 'https://www.dropbox.com/scl/fo/8885n37svhzac53dznww6/AEDzXP-meGa97kdy0bK_yx0/01%20Home%20Page/02%20Pipeline%20%28How%20It%20Works%29/2%20Production%20Video.mp4?rlkey=md2ztdu9dpisgo1wtvplwolja&dl=1',
+        filename: 'pipeline-production.mp4',
+      },
+      'post-production': {
+        url: 'https://www.dropbox.com/scl/fo/8885n37svhzac53dznww6/ADDOlE3xONwj2gWY1vZ27Lg/01%20Home%20Page/02%20Pipeline%20%28How%20It%20Works%29/4%20Post-Production%20Video.mp4?rlkey=md2ztdu9dpisgo1wtvplwolja&dl=1',
+        filename: 'pipeline-post-production.mp4',
+      },
+      distribution: {
+        url: 'https://www.dropbox.com/scl/fo/8885n37svhzac53dznww6/AJBOkoDYCAtuM5raur3iHuI/01%20Home%20Page/02%20Pipeline%20%28How%20It%20Works%29/Distribution%20Video.mp4?rlkey=md2ztdu9dpisgo1wtvplwolja&dl=1',
+        filename: 'pipeline-distribution.mp4',
+      },
+    }
+
+    const pipelineDoc = await payload.findGlobal({ slug: 'pipeline', depth: 0 })
+    const categories = (pipelineDoc.categories ?? []) as any[]
+    const pipelineResults: Record<string, unknown>[] = []
+
+    for (const [categoryId, file] of Object.entries(PIPELINE_FILES)) {
+      const alt = `Pipeline -- ${categoryId}`
+      let mediaId: number
+      const existing = await payload.find({ collection: 'media', where: { alt: { equals: alt } }, limit: 1 })
+      if (existing.totalDocs > 0) {
+        mediaId = existing.docs[0]!.id as number
+      } else {
+        const res = await fetch(file.url)
+        if (!res.ok) {
+          pipelineResults.push({ categoryId, ok: false, error: `dropbox fetch failed: ${res.status}` })
+          continue
+        }
+        const buf = Buffer.from(await res.arrayBuffer())
+        const doc = await payload.create({
+          collection: 'media',
+          data: { alt },
+          file: { data: buf, mimetype: 'video/mp4', name: file.filename, size: buf.length },
+        })
+        mediaId = doc.id as number
+      }
+      const cat = categories.find((c) => c.categoryId === categoryId)
+      if (cat) cat.video = mediaId
+      pipelineResults.push({ categoryId, ok: true, mediaId })
+    }
+
+    await payload.updateGlobal({ slug: 'pipeline', data: { categories, _status: 'published' } as any })
+    return NextResponse.json({ results: pipelineResults })
+  }
+
   // Downloads the real Home hero cut (Shortened Reel 2024, 110MB) straight
   // from its Dropbox share link server-side, uploads it into the media
   // library (S3), and wires it into Education's heroVideo per Kauan's

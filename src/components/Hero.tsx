@@ -1,7 +1,6 @@
 'use client'
 
 import { useRef, useEffect } from 'react'
-import { preload } from 'react-dom'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -34,8 +33,13 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
   const scrollHintRef = useRef<HTMLDivElement>(null)
   const timecodeRef = useRef<HTMLSpanElement>(null)
 
-  // Preload main hero video immediately with high priority
-  preload('/videos/hero.mp4', { as: 'video', fetchPriority: 'high' })
+  // No preload() call for /videos/hero.mp4 here -- that file is only the
+  // SmartVideo fallback for if HERO_MASTER_REEL_VIMEO_ID above is ever
+  // cleared. While it's set (the real, current state), what actually
+  // renders is the Vimeo iframe, so preloading the local file was pure
+  // wasted bandwidth (a full unused video download on every load). The
+  // `priority` prop on SmartVideo below covers the resource that's
+  // actually shown, whichever path is currently live.
 
   const currentFrameRef = useRef<number>(1)
 
@@ -309,6 +313,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
               src="/videos/hero.mp4"
               vimeo={HERO_MASTER_REEL_VIMEO_ID}
               variant="background"
+              priority
               className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-w-[177.78vh] min-h-[100vh] object-cover -translate-x-1/2 -translate-y-1/2"
             />
           </div>

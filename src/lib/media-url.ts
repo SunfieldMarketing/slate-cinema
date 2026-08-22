@@ -11,3 +11,16 @@ export function mediaUrl(value: unknown): string | undefined {
   }
   return undefined
 }
+
+// A slot with no real image assigned yet used to render an empty <img>
+// (broken icon) or nothing at all. Per "every piece of media on site
+// should be using placeholder media if there's no direct piece of media
+// for it yet", every still-image slot without real media falls back to
+// this instead -- a plain local SVG, so it always resolves even before
+// any CMS media exists.
+export const PLACEHOLDER_IMAGE = '/images/placeholder.svg'
+
+/** mediaUrl(), but falls back to PLACEHOLDER_IMAGE instead of undefined. */
+export function mediaUrlOrPlaceholder(value: unknown): string {
+  return mediaUrl(value) || PLACEHOLDER_IMAGE
+}
