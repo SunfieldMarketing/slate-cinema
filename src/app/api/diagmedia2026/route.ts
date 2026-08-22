@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
-import { S3Client, HeadObjectCommand } from '@aws-sdk/client-s3'
+import { S3Client, HeadObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3'
 import { list as blobList } from '@vercel/blob'
+
+// Batched copy needs more than the default execution window -- 250+ files,
+// some 40MB+ videos, fetched from Blob and re-uploaded to S3 one at a time
+// within each batch call.
+export const maxDuration = 300
 
 // Temporary read-only diagnostic: figure out where Slate Cinema's real
 // media files actually live. The `slate/` prefix in the S3 bucket is
@@ -24,6 +29,74 @@ export async function GET(req: Request) {
   if (searchParams.get('listBlobs') === '1') {
     const res = await blobList({ token: process.env.BLOB_READ_WRITE_TOKEN, limit: 30 })
     return NextResponse.json({ blobs: res.blobs.map((b) => ({ pathname: b.pathname, url: b.url, size: b.size })) })
+  }
+
+  // The actual fix: every real Slate Cinema media file is still sitting in
+  // the old Vercel Blob store (73/74 DB docs' filenames matched there, 0 in
+  // S3) -- copy each one into the S3 bucket under the same `slate/<filename>`
+  // key the app's s3Storage config already expects reads at. Runs entirely
+  // server-side: list() needs the Blob token, but each blob's own `url` is
+  // a plain public HTTPS GET, so the token itself never has to leave the
+  // server or show up in a response. Batched via offset/limit because 250+
+  // files (several 40MB+ videos) won't finish in one call; call repeatedly
+  // with increasing offset until `done` comes back true.
+  if (searchParams.get('copyToS3') === '1') {
+    const offset = parseInt(searchParams.get('offset') || '0', 10)
+    const limit = parseInt(searchParams.get('limit') || '8', 10)
+
+    const s3 = new S3Client({
+      region: process.env.S3_REGION,
+      credentials: {
+        accessKeyId: process.env.S3_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY!,
+      },
+    })
+
+    const allBlobs: { pathname: string; url: string; size: number }[] = []
+    let cursor: string | undefined
+    do {
+      const res = await blobList({ token: process.env.BLOB_READ_WRITE_TOKEN, cursor, limit: 1000 })
+      allBlobs.push(...res.blobs)
+      cursor = res.cursor
+    } while (cursor)
+    // Stable order so offset/limit paging is consistent across calls.
+    allBlobs.sort((a, b) => a.pathname.localeCompare(b.pathname))
+
+    const batch = allBlobs.slice(offset, offset + limit)
+    const results: { key: string; ok: boolean; size?: number; error?: string }[] = []
+
+    for (const blob of batch) {
+      // Use just the bare filename -- that's what media.filename (and every
+      // S3 read this app does) actually keys off, regardless of whatever
+      // folder structure the old Blob store used.
+      const filename = blob.pathname.split('/').pop()!
+      const key = `slate/${filename}`
+      try {
+        const resp = await fetch(blob.url)
+        if (!resp.ok) throw new Error(`fetch ${resp.status}`)
+        const buf = Buffer.from(await resp.arrayBuffer())
+        await s3.send(
+          new PutObjectCommand({
+            Bucket: process.env.S3_BUCKET,
+            Key: key,
+            Body: buf,
+            ContentType: resp.headers.get('content-type') || undefined,
+          }),
+        )
+        results.push({ key, ok: true, size: buf.length })
+      } catch (e) {
+        results.push({ key, ok: false, error: e instanceof Error ? e.message : String(e) })
+      }
+    }
+
+    return NextResponse.json({
+      total: allBlobs.length,
+      offset,
+      limit,
+      done: offset + limit >= allBlobs.length,
+      nextOffset: offset + limit,
+      results,
+    })
   }
 
   const hasBlobToken = Boolean(process.env.BLOB_READ_WRITE_TOKEN)
