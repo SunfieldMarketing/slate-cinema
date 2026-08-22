@@ -18,6 +18,14 @@ export const maxDuration = 300
 //     official thumbnail via Vimeo's public oEmbed API and uploads it as
 //     real media -- a genuine frame from the genuine video, not a guess.
 // Read-only against Vimeo/Dropbox; only writes to this site's own DB/S3.
+//
+// 2026-08-22 fixSelectedWork run: Park Smiles NYC / Gateways / Sleepy
+// Hollow Hotel posters fixed (real Vimeo/old-site sources); CVM
+// Construction, Real Talk, TruBlue of NW Brooklyn, EKGx, and Smash House
+// Burgers postdate every archive searched -- no real source exists to
+// wire in. This comment exists to force a fresh deploy so the frontend
+// layout's 5-min ISR window rebuilds from the DB write above rather than
+// waiting out whatever's left of the prior cache cycle.
 
 const WIRE_TOKEN = 'r4n7k-slate-wiremedia-2026-08-22-vq83zx'
 
