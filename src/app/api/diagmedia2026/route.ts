@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { S3Client, HeadObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3'
-import { list as blobList, get as blobGet } from '@vercel/blob'
+import { list as blobList, get as blobGet, put as blobPut, del as blobDel, head as blobHead } from '@vercel/blob'
 
 // Batched copy needs more than the default execution window -- 250+ files,
 // some 40MB+ videos, fetched from Blob and re-uploaded to S3 one at a time
@@ -55,6 +55,65 @@ export async function GET(req: Request) {
       results.push({ title: u.title, id: doc.id, ok: true, videoVimeoUrl: u.videoVimeoUrl })
     }
     return NextResponse.json({ results })
+  }
+
+  // Narrows down exactly what "Your store is blocked" actually blocks --
+  // does it block writes/deletes too, or only content reads? Uses a brand
+  // new throwaway blob (never touches any real media) so it's safe
+  // regardless of the answer: put a tiny test file, head it, try to read
+  // it back, then delete it, reporting which steps succeeded.
+  if (searchParams.get('testOps') === '1') {
+    const out: Record<string, string> = {}
+    let testUrl: string | null = null
+    try {
+      const putRes = await blobPut('diag-test/probe.txt', 'hello', {
+        access: 'public',
+        token: process.env.BLOB_READ_WRITE_TOKEN,
+        addRandomSuffix: true,
+      })
+      testUrl = putRes.url
+      out.put = 'ok: ' + putRes.url
+    } catch (e) {
+      out.put = 'FAIL: ' + (e instanceof Error ? e.message : String(e))
+    }
+    if (testUrl) {
+      try {
+        const h = await blobHead(testUrl, { token: process.env.BLOB_READ_WRITE_TOKEN })
+        out.head = 'ok: size ' + h.size
+      } catch (e) {
+        out.head = 'FAIL: ' + (e instanceof Error ? e.message : String(e))
+      }
+      try {
+        const g = await blobGet(testUrl, { access: 'public', token: process.env.BLOB_READ_WRITE_TOKEN })
+        out.get = g && g.statusCode === 200 ? 'ok' : `FAIL: status ${g?.statusCode}`
+      } catch (e) {
+        out.get = 'FAIL: ' + (e instanceof Error ? e.message : String(e))
+      }
+      try {
+        const r = await fetch(testUrl)
+        out.rawFetch = `status ${r.status}`
+      } catch (e) {
+        out.rawFetch = 'FAIL: ' + (e instanceof Error ? e.message : String(e))
+      }
+      try {
+        await blobDel(testUrl, { token: process.env.BLOB_READ_WRITE_TOKEN })
+        out.del = 'ok'
+      } catch (e) {
+        out.del = 'FAIL: ' + (e instanceof Error ? e.message : String(e))
+      }
+    }
+    return NextResponse.json(out)
+  }
+
+  // Same read attempt as copyToS3, but via each blob's downloadUrl instead
+  // of its plain url -- different query param, worth ruling out separately.
+  if (searchParams.get('testDownloadUrl') === '1') {
+    const res = await blobList({ token: process.env.BLOB_READ_WRITE_TOKEN, limit: 1 })
+    const b = res.blobs[0]
+    if (!b) return NextResponse.json({ error: 'no blobs' })
+    const r1 = await fetch(b.url)
+    const r2 = await fetch(b.downloadUrl)
+    return NextResponse.json({ pathname: b.pathname, urlStatus: r1.status, downloadUrlStatus: r2.status })
   }
 
   if (searchParams.get('listBlobs') === '1') {
