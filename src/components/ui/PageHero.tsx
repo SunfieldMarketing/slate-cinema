@@ -38,6 +38,11 @@ interface Props {
   posterSrc?: string
   /** Optional stat row — when provided, renders inside the hero at the bottom. */
   stats?: HeroStat[]
+  /** This is a page's actual hero in every real usage, so it should win the
+      load race by default; only set false for a secondary/duplicate render
+      of the same hero (e.g. a hidden alternate breakpoint) to avoid two
+      "highest priority" fetches competing with each other. */
+  priority?: boolean
 }
 
 export default function PageHero({
@@ -51,6 +56,7 @@ export default function PageHero({
   cta,
   secondaryCta,
   trustNote,
+  priority = true,
   stats,
 }: Props) {
   const ref = useRef<HTMLElement>(null)
@@ -88,6 +94,7 @@ export default function PageHero({
             vimeo={videoVimeoUrl}
             poster={posterSrc}
             variant="background"
+            priority={priority}
             className="w-full h-full object-cover opacity-40"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/40 to-ink" />

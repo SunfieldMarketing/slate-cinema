@@ -11,7 +11,17 @@ import { extractVimeoId, vimeoEmbedUrl } from '@/lib/vimeo'
   `vimeo` -- this only branches into the iframe path when a real Vimeo
   URL/ID is present, so this is purely additive, not a rewrite of how
   video already renders everywhere.
+
+  2026-08-22 -- a slot with no `vimeo`, `src`, or `poster` at all used to
+  render nothing: an empty box (see Pipeline's "Live Preview" badge over
+  a blank panel whenever a phase has no video assigned yet). Per
+  "every piece of media on site should be using placeholder media if
+  there's no direct piece of media for it yet", fall back to one of the
+  site's existing generic B-roll clips instead of rendering nothing --
+  same placeholder-over-blank principle already applied to images via
+  PLACEHOLDER_IMAGE in media-url.ts.
 */
+const PLACEHOLDER_VIDEO = '/videos/production.mp4'
 interface SmartVideoProps {
   /** Local file path or Payload-Media/Vercel-Blob URL -- today's behavior. */
   src?: string
@@ -30,6 +40,10 @@ interface SmartVideoProps {
   /** Only meaningful on the file-based path; a Vimeo iframe ignores this
       (its own poster/play-button UI stands in for it in "player" mode). */
   onLoadedData?: () => void
+  /** Set on every page's actual hero -- the one video that should win the
+      race against everything else on the page (frame sequences, gallery
+      thumbnails, etc.) instead of loading whenever the browser gets to it. */
+  priority?: boolean
 }
 
 export default function SmartVideo({
@@ -39,6 +53,7 @@ export default function SmartVideo({
   variant = 'background',
   className,
   onLoadedData,
+  priority = false,
 }: SmartVideoProps) {
   const vimeoId = extractVimeoId(vimeo)
 
@@ -50,6 +65,10 @@ export default function SmartVideo({
         style={{ border: 0 }}
         allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
         allowFullScreen
+        loading={priority ? 'eager' : undefined}
+        // @ts-expect-error -- fetchpriority isn't in React's iframe attribute
+        // types yet, but every Chromium/Firefox browser that matters honors it.
+        fetchpriority={priority ? 'high' : undefined}
         title="Vimeo video"
       />
     )
@@ -73,6 +92,9 @@ export default function SmartVideo({
         controls={variant === 'player'}
         className={className}
         onLoadedData={onLoadedData}
+        preload={priority ? 'auto' : undefined}
+        // @ts-expect-error -- same as the iframe path above.
+        fetchpriority={priority ? 'high' : undefined}
       />
     )
   }
@@ -82,5 +104,16 @@ export default function SmartVideo({
     return <img src={poster} alt="" className={className} />
   }
 
-  return null
+  // Nothing set at all -- generic B-roll instead of a blank box.
+  return (
+    <video
+      src={PLACEHOLDER_VIDEO}
+      autoPlay
+      loop
+      muted
+      playsInline
+      controls={variant === 'player'}
+      className={className}
+    />
+  )
 }

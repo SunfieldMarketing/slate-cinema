@@ -123,6 +123,36 @@ export async function GET(req: Request) {
   const payload = await getPayload({ config })
   const results: Record<string, unknown>[] = []
 
+  // 3 globals (site-settings, final-cta, schedule-a-call-page) were stuck
+  // on _status:'draft' with no published version at all -- same class of
+  // bug as the drafts/versions migration's _status incident, just missed
+  // the first sweep since these three weren't in that fix's table list.
+  // Also updates final-cta's button per the explicit content change:
+  // "Get Started" -> "View Full Portfolio", pointing at /portfolio instead
+  // of /contact (the Portfolio-carousel section's own duplicate button
+  // was removed in the same commit, so this is now the one place that link
+  // lives on the homepage).
+  if (searchParams.get('fixGlobals') === '1') {
+    for (const slug of ['site-settings', 'schedule-a-call-page'] as const) {
+      try {
+        await payload.updateGlobal({ slug, data: { _status: 'published' } as any })
+        results.push({ slug, ok: true, applied: ['_status'] })
+      } catch (e) {
+        results.push({ slug, ok: false, error: e instanceof Error ? e.message : String(e) })
+      }
+    }
+    try {
+      await payload.updateGlobal({
+        slug: 'final-cta',
+        data: { buttonLabel: 'View Full Portfolio', buttonHref: '/portfolio', _status: 'published' } as any,
+      })
+      results.push({ slug: 'final-cta', ok: true, applied: ['buttonLabel', 'buttonHref', '_status'] })
+    } catch (e) {
+      results.push({ slug: 'final-cta', ok: false, error: e instanceof Error ? e.message : String(e) })
+    }
+    return NextResponse.json({ results })
+  }
+
   // Downloads the real Home hero cut (Shortened Reel 2024, 110MB) straight
   // from its Dropbox share link server-side, uploads it into the media
   // library (S3), and wires it into Education's heroVideo per Kauan's

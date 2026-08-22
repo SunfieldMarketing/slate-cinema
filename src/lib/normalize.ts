@@ -16,6 +16,7 @@
 import type { Industry, PortfolioProject as PayloadPortfolioProject, JournalPost as PayloadJournalPost, Pipeline as PayloadPipeline } from '@/payload-types'
 import {
   mediaUrl,
+  mediaUrlOrPlaceholder,
   getIndustriesCollection,
   getPortfolioProjectsCollection,
   getJournalPostsCollection,
@@ -113,12 +114,12 @@ export function normalizeIndustry(doc: Industry): IndustryData {
     blurb: doc.blurb,
     description: doc.description,
     stat: doc.stat,
-    heroImage: mediaUrl(doc.heroImage) || '',
+    heroImage: mediaUrlOrPlaceholder(doc.heroImage),
     heroVideo: mediaUrl(doc.heroVideo) || '',
     // Re-enabled 2026-08-22 -- heroVideoVimeoUrl is a real column now
     // (see src/migrations/).
     heroVideoVimeoUrl: doc.heroVideoVimeoUrl ?? undefined,
-    gallery: (doc.gallery ?? []).map((g) => mediaUrl(g.image) || '').filter(Boolean),
+    gallery: (doc.gallery ?? []).map((g) => mediaUrlOrPlaceholder(g.image)),
     stats: (doc.stats ?? []).map((s) => ({ value: s.value, suffix: s.suffix || '', label: s.label })),
     services: (doc.services ?? []).map((s) => s.name),
     // Only surface a testimonial when every field is actually filled in —
@@ -139,7 +140,7 @@ export function normalizeIndustry(doc: Industry): IndustryData {
       outcome: sc.outcome,
       deliverables: (sc.deliverables ?? []).map((d) => d.item),
       meta: sc.meta || '',
-      image: mediaUrl(sc.image) || '',
+      image: mediaUrlOrPlaceholder(sc.image),
       video: mediaUrl(sc.video),
       videoVimeoUrl: sc.videoVimeoUrl ?? undefined,
       featured: sc.featured ?? false,
@@ -152,7 +153,7 @@ export function normalizeIndustry(doc: Industry): IndustryData {
       video: mediaUrl(vt.video) || '',
       videoVimeoUrl: vt.videoVimeoUrl ?? undefined,
       outcome: vt.outcome,
-      poster: mediaUrl(vt.poster),
+      poster: mediaUrlOrPlaceholder(vt.poster),
       logo: mediaUrl(vt.logo),
     })),
     process: (doc.process ?? []).map((p) => ({ week: p.week, title: p.title, body: p.body })),
@@ -184,7 +185,7 @@ export function normalizePortfolioProject(doc: PayloadPortfolioProject): Portfol
     title: doc.title,
     category: doc.category,
     company: doc.company,
-    url: mediaUrl(doc.poster) || '',
+    url: mediaUrlOrPlaceholder(doc.poster),
     copy: doc.copy,
     metrics: (doc.metrics ?? []).map((m) => ({ label: m.label, value: m.value })),
     video: mediaUrl(doc.video),
@@ -216,7 +217,7 @@ export function normalizeJournalPost(doc: PayloadJournalPost): JournalPostLocal 
     accent: doc.accent,
     date: doc.date,
     readTime: doc.readTime,
-    coverImage: mediaUrl(doc.coverImage) || '',
+    coverImage: mediaUrlOrPlaceholder(doc.coverImage),
     author: doc.author,
     content: doc.content,
   }
