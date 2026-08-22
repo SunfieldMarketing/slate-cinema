@@ -97,6 +97,11 @@ export const HowItWorksPage: GlobalConfig = {
             { name: 'title', type: 'text', required: true },
             { name: 'color', type: 'text', required: true },
             { name: 'video', type: 'upload', relationTo: 'media', required: true },
+            {
+              name: 'videoVimeoUrl',
+              type: 'text',
+              admin: { description: 'Paste a Vimeo URL or ID -- takes priority over the uploaded file when set' },
+            },
             { name: 'description', type: 'textarea', required: true },
           ],
         },

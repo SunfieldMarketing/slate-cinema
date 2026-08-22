@@ -258,6 +258,10 @@ export interface Industry {
   stat: string;
   heroImage?: (number | null) | Media;
   heroVideo?: (number | null) | Media;
+  /**
+   * Paste a Vimeo URL or ID -- takes priority over the uploaded file when set
+   */
+  heroVideoVimeoUrl?: string | null;
   gallery?:
     | {
         image: number | Media;
@@ -310,6 +314,10 @@ export interface Industry {
         meta?: string | null;
         image?: (number | null) | Media;
         video?: (number | null) | Media;
+        /**
+         * Paste a Vimeo URL or ID -- takes priority over the uploaded file when set
+         */
+        videoVimeoUrl?: string | null;
         featured?: boolean | null;
         id?: string | null;
       }[]
@@ -324,6 +332,10 @@ export interface Industry {
         role: string;
         company: string;
         video: number | Media;
+        /**
+         * Paste a Vimeo URL or ID -- takes priority over the uploaded file when set
+         */
+        videoVimeoUrl?: string | null;
         outcome: string;
         poster?: (number | null) | Media;
         logo?: (number | null) | Media;
@@ -805,6 +817,7 @@ export interface IndustriesSelect<T extends boolean = true> {
   stat?: T;
   heroImage?: T;
   heroVideo?: T;
+  heroVideoVimeoUrl?: T;
   gallery?:
     | T
     | {
@@ -848,6 +861,7 @@ export interface IndustriesSelect<T extends boolean = true> {
         meta?: T;
         image?: T;
         video?: T;
+        videoVimeoUrl?: T;
         featured?: T;
         id?: T;
       };
@@ -859,6 +873,7 @@ export interface IndustriesSelect<T extends boolean = true> {
         role?: T;
         company?: T;
         video?: T;
+        videoVimeoUrl?: T;
         outcome?: T;
         poster?: T;
         logo?: T;
@@ -1238,6 +1253,10 @@ export interface Pipeline {
         title: string;
         video: number | Media;
         /**
+         * Paste a Vimeo URL or ID -- takes priority over the uploaded file when set
+         */
+        videoVimeoUrl?: string | null;
+        /**
          * Hex color
          */
         color: string;
@@ -1493,6 +1512,10 @@ export interface HowItWorksPage {
           title: string;
           color: string;
           video: number | Media;
+          /**
+           * Paste a Vimeo URL or ID -- takes priority over the uploaded file when set
+           */
+          videoVimeoUrl?: string | null;
           description: string;
           id?: string | null;
         }[]
@@ -1529,6 +1552,10 @@ export interface PortfolioIndexPage {
   id: number;
   hero?: {
     video?: (number | null) | Media;
+    /**
+     * Paste a Vimeo URL or ID -- takes priority over the uploaded file when set
+     */
+    videoVimeoUrl?: string | null;
     title?: string | null;
     date?: string | null;
     scrollToExpandLabel?: string | null;
@@ -1908,6 +1935,7 @@ export interface PipelineSelect<T extends boolean = true> {
         categoryId?: T;
         title?: T;
         video?: T;
+        videoVimeoUrl?: T;
         color?: T;
         services?:
           | T
@@ -2151,6 +2179,7 @@ export interface HowItWorksPageSelect<T extends boolean = true> {
               title?: T;
               color?: T;
               video?: T;
+              videoVimeoUrl?: T;
               description?: T;
               id?: T;
             };
@@ -2185,6 +2214,7 @@ export interface PortfolioIndexPageSelect<T extends boolean = true> {
     | T
     | {
         video?: T;
+        videoVimeoUrl?: T;
         title?: T;
         date?: T;
         scrollToExpandLabel?: T;

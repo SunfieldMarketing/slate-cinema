@@ -3,6 +3,7 @@ import * as migration_20260819_203226_add_api_key_auth from './20260819_203226_a
 import * as migration_20260819_231231_add_portfolio_video_vimeo_url from './20260819_231231_add_portfolio_video_vimeo_url';
 import * as migration_20260820_233310_add_drafts_versions_live_preview from './20260820_233310_add_drafts_versions_live_preview';
 import * as migration_20260821_214210_add_s3_media_prefix from './20260821_214210_add_s3_media_prefix';
+import * as migration_20260822_062619_add_vimeo_hookups from './20260822_062619_add_vimeo_hookups';
 
 export const migrations = [
   {
@@ -28,6 +29,11 @@ export const migrations = [
   {
     up: migration_20260821_214210_add_s3_media_prefix.up,
     down: migration_20260821_214210_add_s3_media_prefix.down,
-    name: '20260821_214210_add_s3_media_prefix'
+    name: '20260821_214210_add_s3_media_prefix',
+  },
+  {
+    up: migration_20260822_062619_add_vimeo_hookups.up,
+    down: migration_20260822_062619_add_vimeo_hookups.down,
+    name: '20260822_062619_add_vimeo_hookups'
   },
 ];

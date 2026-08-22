@@ -164,9 +164,8 @@ function ProcessWalkthrough({ copy }: { copy?: HowItWorksPage['processWalkthroug
         title: p.title,
         color: p.color,
         video: mediaUrl(p.video) || '',
-        // videoVimeoUrl intentionally NOT read from `p` -- no DB column
-        // for it in production (see the matching normalize.ts comments).
-        videoVimeoUrl: undefined as string | undefined,
+        // Re-enabled 2026-08-22 -- videoVimeoUrl is a real column now.
+        videoVimeoUrl: p.videoVimeoUrl ?? undefined,
         description: p.description,
       }))
     : fallbackProcessPhases
