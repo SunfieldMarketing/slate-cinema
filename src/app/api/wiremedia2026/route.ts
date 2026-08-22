@@ -238,6 +238,52 @@ export async function GET(req: Request) {
   // thumbnail can be re-sourced the same way industries' hero images
   // were -- no Dropbox/Blob needed. Meta and B&H have no Vimeo footage;
   // those still need the Dropbox Logo Videos/Renders folder specifically.
+  // checkTrustLogos confirmed the fixTrustLogos docs' S3 objects were
+  // never actually written (HeadObject: NotFound for all 8, even with
+  // this app's own IAM creds) despite payload.create() returning success
+  // with real doc ids -- the s3Storage plugin's own upload silently
+  // no-op'd or failed without payload surfacing it. Repairs by writing
+  // the bytes directly via a raw S3 PutObjectCommand (same s3 client this
+  // route already authenticates with) to the exact key each existing doc
+  // already references, rather than touching the DB records again.
+  if (searchParams.get('repairTrustLogos') === '1') {
+    const origin = new URL(req.url).origin
+    const alts = [
+      { alt: 'Trust section flagship logo -- Meta', file: 'meta-logo.webp' },
+      { alt: 'Trust section flagship logo -- Alo', file: 'alo-logo.webp' },
+      { alt: 'Trust section flagship logo -- B&H', file: 'bh-logo.webp' },
+      { alt: 'Trust section marquee logo -- Dream', file: 'dream-testimonials.webp' },
+      { alt: 'Trust section marquee logo -- Healing Partners', file: 'healing-partners.webp' },
+      { alt: 'Trust section marquee logo -- Inhale', file: 'inhale-testimonails.webp' },
+      { alt: 'Trust section marquee logo -- Lucida', file: 'lucida-testimonials.webp' },
+      { alt: 'Trust section marquee logo -- Workplace Realty', file: 'workplace-realty.webp' },
+    ]
+    const results: Record<string, any> = {}
+    for (const a of alts) {
+      const found = await payload.find({ collection: 'media', where: { alt: { equals: a.alt } }, limit: 1 })
+      if (found.totalDocs === 0) {
+        results[a.alt] = { error: 'no matching media doc' }
+        continue
+      }
+      const doc = found.docs[0] as any
+      const key = `slate/${doc.filename}`
+      const res = await fetch(`${origin}/images/clients/${a.file}`)
+      if (!res.ok) {
+        results[a.alt] = { error: `source fetch failed: ${res.status}` }
+        continue
+      }
+      const buf = Buffer.from(await res.arrayBuffer())
+      await s3.send(new PutObjectCommand({
+        Bucket: process.env.S3_BUCKET,
+        Key: key,
+        Body: buf,
+        ContentType: 'image/webp',
+      }))
+      results[a.alt] = { id: doc.id, key, bytes: buf.length, url: doc.url }
+    }
+    return NextResponse.json({ ok: true, results })
+  }
+
   // Diagnostic: the fixTrustLogos re-uploads landed real DB media docs
   // (200 from the route, real numeric ids) but their S3 URLs 403 on
   // direct GET -- HeadObject with the app's own IAM creds (bypasses the
