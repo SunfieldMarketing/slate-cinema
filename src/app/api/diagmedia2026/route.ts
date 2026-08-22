@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { S3Client, HeadObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3'
-import { list as blobList } from '@vercel/blob'
+import { list as blobList, get as blobGet } from '@vercel/blob'
 
 // Batched copy needs more than the default execution window -- 250+ files,
 // some 40MB+ videos, fetched from Blob and re-uploaded to S3 one at a time
@@ -103,15 +103,25 @@ export async function GET(req: Request) {
       const filename = blob.pathname.split('/').pop()!
       const key = `slate/${filename}`
       try {
-        const resp = await fetch(blob.url)
-        if (!resp.ok) throw new Error(`fetch ${resp.status}`)
-        const buf = Buffer.from(await resp.arrayBuffer())
+        // A bare fetch(blob.url) 403s -- these blobs need authenticated
+        // access even to read, so go through the SDK's own get() (which
+        // knows how to attach the token) instead of a plain HTTPS GET.
+        const got = await blobGet(blob.pathname, { access: 'public', token: process.env.BLOB_READ_WRITE_TOKEN })
+        if (!got || got.statusCode !== 200 || !got.stream) throw new Error(`blob get() status ${got?.statusCode ?? 'null'}`)
+        const chunks: Uint8Array[] = []
+        const reader = got.stream.getReader()
+        for (;;) {
+          const { done: rDone, value } = await reader.read()
+          if (rDone) break
+          if (value) chunks.push(value)
+        }
+        const buf = Buffer.concat(chunks.map((c) => Buffer.from(c)))
         await s3.send(
           new PutObjectCommand({
             Bucket: process.env.S3_BUCKET,
             Key: key,
             Body: buf,
-            ContentType: resp.headers.get('content-type') || undefined,
+            ContentType: got.blob.contentType || undefined,
           }),
         )
         results.push({ key, ok: true, size: buf.length })
