@@ -230,6 +230,35 @@ export async function GET(req: Request) {
     return NextResponse.json({ results: reResults })
   }
 
+  // The How It Works page's own "Watch it move through every phase"
+  // scrollytelling section (processWalkthrough.phases) is a SEPARATE
+  // field from pipeline.categories -- same 4 phases conceptually, but
+  // its own copy of the video relation, so wiring Pipeline above doesn't
+  // touch it. Reuses the same 4 uploads instead of re-downloading.
+  if (searchParams.get('processWalkthroughVideos') === '1') {
+    const mediaByAlt: Record<string, number> = {}
+    for (const categoryId of ['pre-production', 'production', 'post-production', 'distribution']) {
+      const found = await payload.find({ collection: 'media', where: { alt: { equals: `Pipeline -- ${categoryId}` } }, limit: 1 })
+      if (found.totalDocs > 0) mediaByAlt[categoryId] = found.docs[0]!.id as number
+    }
+    const howItWorksDoc = await payload.findGlobal({ slug: 'how-it-works-page', depth: 0 })
+    const phases = ((howItWorksDoc as any).processWalkthrough?.phases ?? []) as any[]
+    const order = ['pre-production', 'production', 'post-production', 'distribution']
+    const pwResults: Record<string, unknown>[] = []
+    phases.forEach((p, i) => {
+      const categoryId = order[i]
+      if (categoryId && mediaByAlt[categoryId]) {
+        p.video = mediaByAlt[categoryId]
+        pwResults.push({ index: i, categoryId, mediaId: mediaByAlt[categoryId], ok: true })
+      }
+    })
+    await payload.updateGlobal({
+      slug: 'how-it-works-page',
+      data: { processWalkthrough: { phases }, _status: 'published' } as any,
+    })
+    return NextResponse.json({ results: pwResults })
+  }
+
   // Downloads all 4 real Production Pipeline phase videos from Dropbox
   // server-side (small files, 5-27MB each -- no batching needed) and
   // wires each into its matching pipeline category by categoryId. These
