@@ -3,6 +3,10 @@ import { getPayload, type Payload } from 'payload'
 import config from '@/payload.config'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 
+// ~9 industries x up to 4 thumbnail fetch+upload round-trips each --
+// comfortably over the platform default execution window.
+export const maxDuration = 300
+
 // One-shot: wires real Slate Cinema Vimeo footage (Jake's account,
 // vimeo.com/user58842347) into industries / pipeline / portfolio-index
 // slots per the Aug 13 Dropbox/Vimeo media tracker. Every ID here is
@@ -119,7 +123,13 @@ export async function GET(req: Request) {
   const payload = await getPayload({ config })
   const results: Record<string, unknown>[] = []
 
-  for (const w of INDUSTRY_WIRING) {
+  // ?slug=healthcare processes just one industry (fast, safe to retry);
+  // omit it to attempt all of them in one call.
+  const onlySlug = searchParams.get('slug')
+  const skipPortfolioHero = searchParams.get('skipPortfolioHero') === '1'
+  const wiringList = onlySlug ? INDUSTRY_WIRING.filter((w) => w.slug === onlySlug) : INDUSTRY_WIRING
+
+  for (const w of wiringList) {
     const found = await payload.find({ collection: 'industries', where: { slug: { equals: w.slug } }, limit: 1 })
     if (found.totalDocs === 0) {
       results.push({ slug: w.slug, ok: false, error: 'industry not found' })
@@ -154,14 +164,16 @@ export async function GET(req: Request) {
 
   // Portfolio index hero -- reuse a real showreel (Slate Reel - Sports and
   // Travel) as the /portfolio hero video until a dedicated 2026 cut exists.
-  try {
-    await payload.updateGlobal({
-      slug: 'portfolio-index-page',
-      data: { hero: { videoVimeoUrl: '937380835' }, _status: 'published' } as any,
-    })
-    results.push({ slug: 'portfolio-index-page', ok: true, applied: ['hero.videoVimeoUrl'] })
-  } catch (e) {
-    results.push({ slug: 'portfolio-index-page', ok: false, error: e instanceof Error ? e.message : String(e) })
+  if (!onlySlug && !skipPortfolioHero) {
+    try {
+      await payload.updateGlobal({
+        slug: 'portfolio-index-page',
+        data: { hero: { videoVimeoUrl: '937380835' }, _status: 'published' } as any,
+      })
+      results.push({ slug: 'portfolio-index-page', ok: true, applied: ['hero.videoVimeoUrl'] })
+    } catch (e) {
+      results.push({ slug: 'portfolio-index-page', ok: false, error: e instanceof Error ? e.message : String(e) })
+    }
   }
 
   return NextResponse.json({ results })
