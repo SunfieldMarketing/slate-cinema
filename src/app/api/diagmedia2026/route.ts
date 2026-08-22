@@ -26,6 +26,37 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
+  // Wires the two real client Vimeo videos the 2026-08-13 scrape actually
+  // confirmed (see PROJECT_CONTEXT.md's "Scrape findings") into the matching
+  // live portfolio-projects docs -- found by exact title search against
+  // Jake's own Vimeo account (vimeo.com/user58842347), not guessed. Every
+  // other new portfolio client name (CVM, TruBlue, EKGx, Smash House, Real
+  // Talk) returned 0 title matches there, so those stay on the placeholder
+  // asset until real footage is supplied -- not touched here.
+  if (searchParams.get('wireVimeo') === '1') {
+    const payload = await getPayload({ config })
+    const updates = [
+      { title: 'Chairside Calm', company: 'Park Smiles NYC', videoVimeoUrl: '949324576' }, // the ad -- matches the source doc's own citation
+      { title: 'Timeless Passover Memories', company: 'Gateways', videoVimeoUrl: '1174431950' }, // "Gateways 2026 POV commercial"
+    ]
+    const results = []
+    for (const u of updates) {
+      const found = await payload.find({ collection: 'portfolio-projects', where: { title: { equals: u.title } }, limit: 1 })
+      if (found.totalDocs === 0) {
+        results.push({ title: u.title, ok: false, error: 'not found' })
+        continue
+      }
+      const doc = found.docs[0]!
+      await payload.update({
+        collection: 'portfolio-projects',
+        id: doc.id,
+        data: { videoVimeoUrl: u.videoVimeoUrl, _status: 'published' },
+      })
+      results.push({ title: u.title, id: doc.id, ok: true, videoVimeoUrl: u.videoVimeoUrl })
+    }
+    return NextResponse.json({ results })
+  }
+
   if (searchParams.get('listBlobs') === '1') {
     const res = await blobList({ token: process.env.BLOB_READ_WRITE_TOKEN, limit: 30 })
     return NextResponse.json({ blobs: res.blobs.map((b) => ({ pathname: b.pathname, url: b.url, size: b.size })) })
