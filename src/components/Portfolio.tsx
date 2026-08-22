@@ -6,6 +6,7 @@ import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { Play, ArrowUpRight } from 'lucide-react'
 import type { PortfolioProjectLocal } from '@/lib/normalize'
+import { PLACEHOLDER_IMAGE } from '@/lib/media-url'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -85,6 +86,13 @@ export default function Portfolio({
                 src={p.url}
                 alt={p.title}
                 loading="lazy"
+                onError={(e) => {
+                  // The media doc can exist and still 404/403 at the storage
+                  // layer (e.g. a since-migrated bucket) -- catch that at
+                  // render time, not just "doc is unset", so the grid never
+                  // shows a browser's broken-image icon.
+                  if (e.currentTarget.src !== PLACEHOLDER_IMAGE) e.currentTarget.src = PLACEHOLDER_IMAGE
+                }}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110 opacity-80 group-hover:opacity-100"
               />
               {/* Grade + gradient */}
