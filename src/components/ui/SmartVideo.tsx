@@ -1,5 +1,6 @@
 'use client'
 
+import type { CSSProperties } from 'react'
 import { extractVimeoId, vimeoEmbedUrl } from '@/lib/vimeo'
 
 /*
@@ -44,6 +45,15 @@ interface SmartVideoProps {
       race against everything else on the page (frame sequences, gallery
       thumbnails, etc.) instead of loading whenever the browser gets to it. */
   priority?: boolean
+  /** object-fit:cover only works on <video>/<img>, never on an <iframe> --
+      a plain w-full/h-full className just stretches or letterboxes a Vimeo
+      embed instead of covering. Set this on a "background" usage whose
+      container isn't already handling its own oversize-and-crop sizing
+      (Hero.tsx's viewport-relative vw/vh math already does this itself,
+      so it deliberately leaves this off). Requires the immediate parent
+      to be position:relative + overflow:hidden, same as every existing
+      video-backdrop wrapper already is. */
+  coverFit?: boolean
 }
 
 export default function SmartVideo({
@@ -54,15 +64,27 @@ export default function SmartVideo({
   className,
   onLoadedData,
   priority = false,
+  coverFit = false,
 }: SmartVideoProps) {
   const vimeoId = extractVimeoId(vimeo)
 
   if (vimeoId) {
+    // CSS object-fit only affects replaced elements (<video>/<img>), never
+    // an <iframe>'s content -- a plain w-full/h-full className just
+    // stretches or letterboxes the player instead of covering. Oversizing
+    // by a fixed percentage covers regardless of the parent's actual
+    // aspect ratio. Opt-in via coverFit rather than automatic, since
+    // Hero.tsx's own className already does its own (more precise,
+    // viewport-relative) version of this and an inline style here would
+    // win specificity and clobber it.
+    const coverStyle: CSSProperties = coverFit
+      ? { border: 0, position: 'absolute', top: '-50%', left: '-50%', width: '200%', height: '200%' }
+      : { border: 0 }
     return (
       <iframe
         src={vimeoEmbedUrl(vimeoId, variant)}
         className={className}
-        style={{ border: 0 }}
+        style={coverStyle}
         allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
         allowFullScreen
         loading={priority ? 'eager' : undefined}

@@ -2,6 +2,7 @@
 
 import { memo, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { motion, useAnimation, useMotionValue, type LegacyAnimationControls } from 'motion/react'
+import { PLACEHOLDER_IMAGE } from '@/lib/media-url'
 
 export const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
@@ -148,6 +149,9 @@ const Carousel = memo(
                   src={card.image}
                   alt={card.title}
                   draggable={false}
+                  onError={(e) => {
+                    if (e.currentTarget.src !== PLACEHOLDER_IMAGE) e.currentTarget.src = PLACEHOLDER_IMAGE
+                  }}
                   className="pointer-events-none absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}

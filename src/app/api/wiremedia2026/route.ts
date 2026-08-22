@@ -230,6 +230,25 @@ export async function GET(req: Request) {
     return NextResponse.json({ results: reResults })
   }
 
+  // statsBand's Google-rating stat had the whole "★ / 44 Reviews" string
+  // crammed into `suffix`, which StatsBand renders at the same giant
+  // font-size as the number itself (fine for a short "+"/"wk" suffix,
+  // not for a compound phrase) -- that's the 3-line wrap/oversized-text
+  // bug. Move the review count into `label` (rendered as the small mono
+  // caption every other stat already uses it for) and shorten suffix to
+  // just the star, matching the other 3 stats' shape.
+  if (searchParams.get('fixStatsBand') === '1') {
+    const doc = await payload.findGlobal({ slug: 'how-it-works-page', depth: 0 })
+    const statsBand = ((doc as any).statsBand ?? []) as any[]
+    const rating = statsBand.find((s) => s.label === 'Google Rating')
+    if (rating) {
+      rating.suffix = '.0★'
+      rating.label = '44 Google Reviews'
+    }
+    await payload.updateGlobal({ slug: 'how-it-works-page', data: { statsBand, _status: 'published' } as any })
+    return NextResponse.json({ ok: true, statsBand })
+  }
+
   // The How It Works page's own "Watch it move through every phase"
   // scrollytelling section (processWalkthrough.phases) is a SEPARATE
   // field from pipeline.categories -- same 4 phases conceptually, but

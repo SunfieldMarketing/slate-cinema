@@ -95,6 +95,7 @@ export default function PageHero({
             poster={posterSrc}
             variant="background"
             priority={priority}
+            coverFit
             className="w-full h-full object-cover opacity-40"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/40 to-ink" />
