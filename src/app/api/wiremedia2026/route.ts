@@ -238,6 +238,104 @@ export async function GET(req: Request) {
     return NextResponse.json({ results: reResults })
   }
 
+  // The 5 portfolio-projects docs with no findable footage anywhere
+  // (CVM Construction, Real Talk, TruBlue of NW Brooklyn, EKGx, Smash
+  // House Burgers -- confirmed again via a name search across the full
+  // 281-video Vimeo library and all 49 old-site slugs, zero matches)
+  // swapped out entirely for 5 different real, already-verified clients
+  // with real Vimeo footage, per client instruction to have every
+  // Selected Work slot show real media rather than 5 of 8 staying on the
+  // placeholder fallback. Title/category/copy change along with the
+  // company name -- keeping the old fabricated-adjacent title on a
+  // swapped-in real client's footage would misrepresent whose work it is,
+  // the same problem already fixed once for the original invented roster.
+  // Metrics below are descriptive (deliverable count, format, category),
+  // not performance numbers -- there's no real analytics data behind
+  // these jobs to cite, and inventing conversion/reach stats is exactly
+  // the fabricated-metrics problem this whole audit started by fixing.
+  if (searchParams.get('swapSelectedWork') === '1') {
+    type Swap = {
+      oldCompany: string
+      title: string
+      category: string
+      company: string
+      copy: string
+      metrics: { label: string; value: string }[]
+      vimeoId: string
+    }
+    const swaps: Swap[] = [
+      {
+        oldCompany: 'CVM Construction',
+        title: 'The Story Behind the Spirit',
+        category: 'Brand',
+        company: 'Miami Arak',
+        copy: 'A brand film series for a spirits label, built around the people and process behind the drink rather than a straight product shot.',
+        metrics: [{ label: 'Deliverables', value: '4' }, { label: 'Format', value: 'Brand Film Series' }],
+        vimeoId: '584031043', // Miami Arak - About the Drink
+      },
+      {
+        oldCompany: 'Real Talk',
+        title: 'Protecting the Reef',
+        category: 'Nonprofit',
+        company: 'ARC Reef',
+        copy: 'A commercial for Atlantic Reef Conservation, built to make a conservation mission feel as urgent on screen as it is in the water.',
+        metrics: [{ label: 'Category', value: 'Conservation' }, { label: 'Format', value: 'Commercial' }],
+        vimeoId: '436463495', // ARC Reef Commercial
+      },
+      {
+        oldCompany: 'TruBlue of NW Brooklyn',
+        title: 'Built By DCON',
+        category: 'Brand',
+        company: 'DCON Renovations',
+        copy: 'A brand film introducing a renovation company through the crew and process behind the work, not just the finished space.',
+        metrics: [{ label: 'Category', value: 'Construction' }, { label: 'Format', value: 'Brand Film' }],
+        vimeoId: '723455873', // DCON Renovations - Who We Are
+      },
+      {
+        oldCompany: 'EKGx',
+        title: 'Precision in Every Frame',
+        category: 'Commercial',
+        company: 'Optoma',
+        copy: 'A product commercial for a projector brand, shot to sell precision and clarity the way the product itself delivers it.',
+        metrics: [{ label: 'Category', value: 'Technology' }, { label: 'Format', value: 'Commercial' }],
+        vimeoId: '647488268', // Optoma Commercial
+      },
+      {
+        oldCompany: 'Smash House Burgers',
+        title: 'Capital, Reimagined',
+        category: 'Commercial',
+        company: 'Region Capital',
+        copy: 'A commercial for a capital firm, built to make a financial services brand feel as sharp and modern as the markets it operates in.',
+        metrics: [{ label: 'Category', value: 'Finance' }, { label: 'Format', value: 'Commercial' }],
+        vimeoId: '605213656', // Region Capital Commercial
+      },
+    ]
+
+    const results: Record<string, any> = {}
+    for (const s of swaps) {
+      const posterId = await uploadVimeoThumbnail(payload, s.vimeoId, `Selected Work poster -- ${s.company}`)
+      if (!posterId) { results[s.oldCompany] = { error: 'thumbnail fetch failed' }; continue }
+      const found = await payload.find({ collection: 'portfolio-projects', where: { company: { equals: s.oldCompany } }, limit: 1 })
+      if (found.totalDocs === 0) { results[s.oldCompany] = { error: 'doc not found' }; continue }
+      await payload.update({
+        collection: 'portfolio-projects',
+        id: found.docs[0]!.id,
+        data: {
+          title: s.title,
+          category: s.category,
+          company: s.company,
+          copy: s.copy,
+          metrics: s.metrics,
+          poster: posterId,
+          videoVimeoUrl: s.vimeoId,
+          _status: 'published',
+        } as any,
+      })
+      results[s.oldCompany] = { ok: true, newCompany: s.company, posterId }
+    }
+    return NextResponse.json({ ok: true, results })
+  }
+
   // A full site scan (every page, every S3-hosted media URL, checked for
   // real HTTP status) turned up the rest of what's still dead: all 6
   // journal post covers, Education's heroImage (which was actually
