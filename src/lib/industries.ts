@@ -267,7 +267,7 @@ export const industries: IndustryData[] = [
     clientShowcase: [
       // Real Vimeo IDs confirmed 2026-08-19 via the media tracker.
       { name: 'Gotham Rugby', year: '2022', body: "Match-day coverage at Randall's Island, NYC — storytelling built from the thrill of live competition, not a highlight reel cut after the fact.", video: '862067416' },
-      { name: 'Kids of Courage', year: '2018–2021', body: 'Marathons filmed across the country — capturing the strength and joy of children with disabilities as they defy limits, nationwide.', video: '/videos/pre-production.mp4' },
+      { name: 'Kids of Courage', year: '2018–2021', body: 'Marathons filmed across the country — capturing the strength and joy of children with disabilities as they defy limits, nationwide.', video: '588692923' },
       { name: 'Camp Slapshots', year: '2023', body: 'The thrill of sports paired with visual effects — an unforgettable experience built for a young, high-energy audience.', video: '863822136' },
       { name: 'APEX NYC', year: '', body: 'A named Slate Athletics client — full project detail on file, not yet published here.', video: '/videos/distribution.mp4' },
     ],
@@ -447,8 +447,8 @@ export const industries: IndustryData[] = [
     clientShowcase: [
       { name: 'CVM Construction', year: '2025', body: '150+ NYC building permits, top 5% of NY contractors — taken from zero web presence to a full brand system, plus a second brand (CVM Waste) built from scratch.', video: '/videos/distribution.mp4' },
       { name: 'TruBlue of NW Brooklyn', year: '2025', body: '"Before Your Listing Photos, Fix These First" — concept-titled comedy reels aimed at homeowners and the realtors who list their homes.', video: '/videos/production.mp4' },
-      { name: 'Good Choice Realty', year: '2021', body: 'A dynamic walkthrough and glamour tour built to move listings faster, from stunning aerials to immersive interiors.', video: '/videos/pre-production.mp4' },
-      { name: 'Offerman House', year: '2024', body: 'A Brooklyn luxury development, covered end to end.', video: '/videos/hero-camera.mp4' },
+      { name: 'Good Choice Realty', year: '2021', body: 'A dynamic walkthrough and glamour tour built to move listings faster, from stunning aerials to immersive interiors.', video: '501888251' },
+      { name: 'Offerman House', year: '2024', body: 'A Brooklyn luxury development, covered end to end.', video: '278155978' },
     ],
     cinematicStatement: {
       eyebrow: 'Concept To Closing',
@@ -728,7 +728,7 @@ export const industries: IndustryData[] = [
       // Real Vimeo ID confirmed 2026-08-19 via the media tracker.
       { name: 'Gateways', year: '5 yrs running', body: 'Seasonal Passover program coverage for a nonprofit serving thousands of families, plus year-round event and brochure work.', video: '1174431950' },
       { name: 'Chai Lifeline', year: '2025', body: 'Mission-driven storytelling for a nonprofit serving families in crisis.', video: '/videos/pre-production.mp4' },
-      { name: 'HASC', year: '2025', body: 'Program and community coverage for a nonprofit serving people with disabilities.', video: '/videos/production.mp4' },
+      { name: 'HASC', year: '2025', body: 'Program and community coverage for a nonprofit serving people with disabilities.', video: '521940131' },
       { name: 'NCSY', year: '2025', body: 'Event and community-impact coverage for a national youth movement.', video: '/videos/post-production.mp4' },
     ],
     cinematicStatement: {
@@ -824,7 +824,7 @@ export const industries: IndustryData[] = [
       // ever wanted here).
       { name: 'Gateways', year: '5 yrs running', body: 'Seasonal Passover program coverage for a nonprofit school community, running five years without a break.', video: '1174431950' },
       { name: 'HANC', year: '2023–2024', body: 'Graduation, open house, acceptance, and color war coverage — real school-life storytelling, not stock footage.', video: '1198897231' },
-      { name: 'Camp Mesorah', year: '2025', body: 'Weekly video coverage built into an ongoing camp content engine.', video: '/videos/pre-production.mp4' },
+      { name: 'Camp Mesorah', year: '2025', body: 'Weekly video coverage built into an ongoing camp content engine.', video: '855035069' },
     ],
     cinematicStatement: {
       eyebrow: 'Show, Don’t Tell',
