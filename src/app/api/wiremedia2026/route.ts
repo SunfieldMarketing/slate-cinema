@@ -238,6 +238,26 @@ export async function GET(req: Request) {
     return NextResponse.json({ results: reResults })
   }
 
+  // Last remaining local-file video reference anywhere on the site with
+  // no real override: Sleepy Hollow Hotel's portfolio-projects.video
+  // still points at the dead pre-session placeholder (hero-3.mp4) --
+  // already confirmed twice this session that no real Vimeo/Dropbox
+  // footage exists for this one specifically (poster already fixed).
+  // Clears the field outright rather than leaving a known-dead reference
+  // set: SmartVideo falls back to the poster-only <img> path when no
+  // video/vimeo is set at all, which is honest about what's actually
+  // available instead of pointing at a placeholder.
+  if (searchParams.get('clearDeadVideoRefs') === '1') {
+    const found = await payload.find({ collection: 'portfolio-projects', where: { company: { equals: 'Sleepy Hollow Hotel' } }, limit: 1 })
+    if (found.totalDocs === 0) return NextResponse.json({ ok: false, error: 'doc not found' })
+    await payload.update({
+      collection: 'portfolio-projects',
+      id: found.docs[0]!.id,
+      data: { video: null, _status: 'published' } as any,
+    })
+    return NextResponse.json({ ok: true, cleared: 'Sleepy Hollow Hotel.video' })
+  }
+
   // A repetition audit (every Vimeo ID currently referenced site-wide,
   // deduped by the vimeo-<id>-thumb filename pattern) found real
   // cross-industry contamination, not just heavy reuse of one clip:
