@@ -162,7 +162,7 @@ export const industries: IndustryData[] = [
       eyebrow: 'AI In Service Of The Story',
       lines: ['Run by filmmakers,', 'not by prompts.'],
       body: 'Every AI-accelerated frame still gets a human finishing pass — transcription-driven editing, generative b-roll, AI-assisted product photoshoots. Real production craft, just faster.',
-      videoSrc: '/videos/post-production.mp4',
+      videoSrc: '963219647',
     },
     serviceCards: [
       {
@@ -275,7 +275,7 @@ export const industries: IndustryData[] = [
       eyebrow: 'Why Speed Matters',
       lines: ['Content built for', 'people who scroll fast.'],
       body: 'A hype reel has less than a second to earn the next second. Every cut, every beat, every frame is built around that one job — hold attention through the scroll, not just look good after it stops.',
-      videoSrc: '/videos/hero-camera.mp4',
+      videoSrc: '862067416',
     },
     serviceCards: [
       {
@@ -361,7 +361,7 @@ export const industries: IndustryData[] = [
       eyebrow: 'Sell The Feeling',
       lines: ['Not just the room —', 'the feeling of being there.'],
       body: 'Cinema drones, golden-hour scheduling, a grade built to make a place feel like a memory before the viewer has even booked.',
-      videoSrc: '/videos/hero.mp4',
+      videoSrc: '932028681',
     },
     serviceCards: [
       {
@@ -454,7 +454,7 @@ export const industries: IndustryData[] = [
       eyebrow: 'Concept To Closing',
       lines: ['We shoot the blueprint,', 'the build, and the sale.'],
       body: 'Real estate is the final step of construction — we run the timeline the same way: a blueprint, a build, and a finish, all cinematic.',
-      videoSrc: '/videos/distribution.mp4',
+      videoSrc: '278155978',
     },
     serviceCards: [
       {
@@ -563,7 +563,7 @@ export const industries: IndustryData[] = [
       eyebrow: 'Built To Convert',
       lines: ['Macro-lit,', 'engineered to sell.'],
       body: 'A signature grade and cuts built to sell in six seconds or less — engineered for conversion first, aesthetics second, though we rarely have to choose between the two.',
-      videoSrc: '/videos/production.mp4',
+      videoSrc: '929671891',
     },
     serviceCards: [
       {
@@ -649,7 +649,7 @@ export const industries: IndustryData[] = [
       eyebrow: 'People, Not Just Product',
       lines: ['The company behind', 'the company.'],
       body: "Corporate content is where most brands get boring. We build films that make a company feel like the people inside it — because that's who prospects and candidates are actually deciding to trust.",
-      videoSrc: '/videos/performance.mp4',
+      videoSrc: '936453597',
     },
     serviceCards: [
       {
@@ -735,7 +735,7 @@ export const industries: IndustryData[] = [
       eyebrow: 'Mission, Not Just Message',
       lines: ['Storytelling that moves', 'people to actually act.'],
       body: 'Organizations is Slate’s deepest historic vertical. Mission-driven work needs to move people to actually do something — donate, volunteer, show up — shot with the same craft as any commercial campaign.',
-      videoSrc: '/videos/pre-production.mp4',
+      videoSrc: '363484201',
     },
     serviceCards: [
       {
@@ -830,7 +830,7 @@ export const industries: IndustryData[] = [
       eyebrow: 'Show, Don’t Tell',
       lines: ['Help families see', 'themselves on campus.'],
       body: 'Prospective students decide whether they can see themselves on a campus in the first few seconds of a video. We build the film that makes that decision easy.',
-      videoSrc: '/videos/production.mp4',
+      videoSrc: '1198897231',
     },
     serviceCards: [
       {
