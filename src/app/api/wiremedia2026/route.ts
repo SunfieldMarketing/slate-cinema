@@ -238,6 +238,47 @@ export async function GET(req: Request) {
     return NextResponse.json({ results: reResults })
   }
 
+  // Only ~30 of the full 281-video Vimeo library have been used anywhere
+  // on the site so far. 8 more real, entirely untouched clips (none
+  // reused from any of the 16 existing portfolio-projects or any
+  // industry/serviceCard/clientShowcase slot) added to the Gallery of
+  // Impact only -- homepage Selected Work stays at its first-8 slice,
+  // unaffected. order 16-23.
+  if (searchParams.get('addPortfolioVariety3') === '1') {
+    type NewProject = {
+      title: string; category: string; company: string; copy: string
+      metrics: { label: string; value: string }[]; vimeoId: string; order: number
+    }
+    const newProjects: NewProject[] = [
+      { title: 'Our Mission', category: 'Brand', company: 'Miami Arak', copy: 'A brand film exploring the mission behind a spirits label -- a companion piece to the drink itself.', metrics: [{ label: 'Category', value: 'Products' }, { label: 'Format', value: 'Brand Film' }], vimeoId: '585032895', order: 16 },
+      { title: 'The Brownstone Tour', category: 'Real Estate', company: 'The Brownstone', copy: 'A walkthrough tour of a Brooklyn brownstone, shot to sell the space before a buyer ever steps inside.', metrics: [{ label: 'Category', value: 'Real Estate' }, { label: 'Format', value: 'Property Tour' }], vimeoId: '1049438739', order: 17 },
+      { title: 'Brand Commercial', category: 'Commercial', company: 'Eyeleos', copy: 'A named-client commercial built around a single clear brand message.', metrics: [{ label: 'Category', value: 'Products' }, { label: 'Format', value: 'Commercial' }], vimeoId: '592431874', order: 18 },
+      { title: 'Brand Commercial', category: 'Commercial', company: 'ValuClean', copy: 'A product commercial built to sell a cleaning brand on trust and results.', metrics: [{ label: 'Category', value: 'Products' }, { label: 'Format', value: 'Commercial' }], vimeoId: '595327116', order: 19 },
+      { title: 'Virtual Tour, 2026', category: 'Documentary', company: 'Park Gardens', copy: 'A facility virtual tour built to earn a family\'s trust before they ever visit in person.', metrics: [{ label: 'Category', value: 'Healthcare' }, { label: 'Format', value: 'Virtual Tour' }], vimeoId: '1183056612', order: 20 },
+      { title: 'Virtual Tour', category: 'Documentary', company: 'Star City Rehab', copy: 'A rehabilitation-facility virtual tour, real space and real staff, not a stock walkthrough.', metrics: [{ label: 'Category', value: 'Healthcare' }, { label: 'Format', value: 'Virtual Tour' }], vimeoId: '1052283430', order: 21 },
+      { title: 'Jewish Medical Network', category: 'Brand', company: 'Chemed', copy: 'A brand film introducing a medical network built to serve its community.', metrics: [{ label: 'Category', value: 'Healthcare' }, { label: 'Format', value: 'Brand Film' }], vimeoId: '677951072', order: 22 },
+      { title: 'Who We Are', category: 'Brand', company: 'Barista & The Baker', copy: 'A brand film introducing a hospitality business through its people, food, and space.', metrics: [{ label: 'Category', value: 'Travel' }, { label: 'Format', value: 'Brand Film' }], vimeoId: '683936381', order: 23 },
+    ]
+
+    const results: Record<string, any> = {}
+    for (const p of newProjects) {
+      const existing = await payload.find({ collection: 'portfolio-projects', where: { company: { equals: p.company } }, limit: 1 })
+      if (existing.totalDocs > 0) { results[p.company] = { skipped: 'already exists' }; continue }
+      const posterId = await uploadVimeoThumbnail(payload, p.vimeoId, `Portfolio project poster -- ${p.company} -- ${p.title}`)
+      if (!posterId) { results[p.company] = { error: 'thumbnail fetch failed' }; continue }
+      const doc = await payload.create({
+        collection: 'portfolio-projects',
+        data: {
+          title: p.title, category: p.category, company: p.company, copy: p.copy,
+          metrics: p.metrics, poster: posterId, videoVimeoUrl: p.vimeoId, order: p.order,
+          _status: 'published',
+        } as any,
+      })
+      results[p.company] = { ok: true, id: doc.id, posterId }
+    }
+    return NextResponse.json({ ok: true, results })
+  }
+
   // Selected Work (homepage 3D carousel) and "A Gallery of Impact"
   // (/portfolio grid) read the same collection -- confirmed, by reading
   // Portfolio.tsx directly, that a non-8 count is genuinely safe there
