@@ -238,6 +238,49 @@ export async function GET(req: Request) {
     return NextResponse.json({ results: reResults })
   }
 
+  // Selected Work (homepage) and "A Gallery of Impact" (/portfolio hub)
+  // both render off the exact same 8-doc portfolio-projects collection,
+  // via the same getNormalizedPortfolioProjects() call -- so the two
+  // sections were structurally guaranteed to always show identical
+  // content, never different. Adds 8 more real, distinct client projects
+  // (real Vimeo footage, none reused from these same 8 slots elsewhere on
+  // the site) so there's a real pool to split between the two placements.
+  // order controls display sequence (collection is already sorted by it).
+  if (searchParams.get('addPortfolioVariety') === '1') {
+    type NewProject = {
+      title: string; category: string; company: string; copy: string
+      metrics: { label: string; value: string }[]; vimeoId: string; order: number
+    }
+    const newProjects: NewProject[] = [
+      { title: 'Pump Up Promo', category: 'Social', company: 'Camp Slapshots', copy: 'A high-energy promo built for a young audience, pairing real sports footage with visual effects for extra punch.', metrics: [{ label: 'Category', value: 'Athletics' }, { label: 'Format', value: 'Promo' }], vimeoId: '863822136', order: 9 },
+      { title: 'A Place That Feels Like Home', category: 'Documentary', company: 'Waterview Nursing & Rehabilitation', copy: 'A facility film built to earn trust before a family ever visits in person.', metrics: [{ label: 'Category', value: 'Healthcare' }, { label: 'Format', value: 'Facility Film' }], vimeoId: '1183669641', order: 10 },
+      { title: 'Festival Recap, Fast', category: 'Event', company: 'Envision Festival', copy: 'Multi-day festival coverage in Costa Rica, turned around fast enough to still ride the post-event wave.', metrics: [{ label: 'Category', value: 'Travel' }, { label: 'Format', value: 'Recap Film' }], vimeoId: '932028681', order: 11 },
+      { title: 'Who We Are', category: 'Brand', company: 'Censible', copy: 'A virtual-tour marketing commercial built to make a construction-tech platform feel as modern as its product.', metrics: [{ label: 'Category', value: 'Corporate' }, { label: 'Format', value: 'Commercial' }], vimeoId: '630102974', order: 12 },
+      { title: 'BiTac', category: 'Commercial', company: 'Neil Kerman', copy: "A product commercial built around a single named client's own brand.", metrics: [{ label: 'Category', value: 'Products' }, { label: 'Format', value: 'Commercial' }], vimeoId: '521163963', order: 13 },
+      { title: 'Africa Aftermovie', category: 'Documentary', company: 'The Next Ride', copy: 'A 15-minute aftermovie from a multi-day African expedition — long-form documentary work, not a highlight reel.', metrics: [{ label: 'Category', value: 'Travel' }, { label: 'Format', value: 'Documentary' }], vimeoId: '1079646173', order: 14 },
+      { title: 'Acceptance Day', category: 'Documentary', company: 'HANC', copy: 'Real school-life storytelling — acceptance day coverage, not stock campus footage.', metrics: [{ label: 'Category', value: 'Education' }, { label: 'Format', value: 'Event Film' }], vimeoId: '1198896524', order: 15 },
+      { title: 'Administrator Appreciation', category: 'Documentary', company: 'Priority Healthcare', copy: 'A 60-second appreciation film built around the people who keep a healthcare practice running.', metrics: [{ label: 'Category', value: 'Healthcare' }, { label: 'Format', value: 'Documentary' }], vimeoId: '856449144', order: 16 },
+    ]
+
+    const results: Record<string, any> = {}
+    for (const p of newProjects) {
+      const existing = await payload.find({ collection: 'portfolio-projects', where: { company: { equals: p.company } }, limit: 1 })
+      if (existing.totalDocs > 0) { results[p.company] = { skipped: 'already exists' }; continue }
+      const posterId = await uploadVimeoThumbnail(payload, p.vimeoId, `Portfolio project poster -- ${p.company}`)
+      if (!posterId) { results[p.company] = { error: 'thumbnail fetch failed' }; continue }
+      const doc = await payload.create({
+        collection: 'portfolio-projects',
+        data: {
+          title: p.title, category: p.category, company: p.company, copy: p.copy,
+          metrics: p.metrics, poster: posterId, videoVimeoUrl: p.vimeoId, order: p.order,
+          _status: 'published',
+        } as any,
+      })
+      results[p.company] = { ok: true, id: doc.id, posterId }
+    }
+    return NextResponse.json({ ok: true, results })
+  }
+
   // Client-requested revert: restore the exact original service-card and
   // portfolio-wheel (heroImage) images from src/lib/industries.ts -- the
   // AI-generated/Unsplash stock set that predates this session's Vimeo
