@@ -238,6 +238,58 @@ export async function GET(req: Request) {
     return NextResponse.json({ results: reResults })
   }
 
+  // A repetition audit (every Vimeo ID currently referenced site-wide,
+  // deduped by the vimeo-<id>-thumb filename pattern) found real
+  // cross-industry contamination, not just heavy reuse of one clip:
+  // Athletics' gallery and one service card were pulling Education's HANC
+  // videos (HANC Acceptance 2024 / HANC Color War), and Education itself
+  // used the same single video in 3 different slots. Both get fresh,
+  // previously-unused real footage from the Vimeo library instead.
+  if (searchParams.get('dedupeMedia') === '1') {
+    const results: Record<string, any> = {}
+
+    const athleticsFixes: Array<{ field: 'gallery1' | 'gallery2' | 'card'; cardTitle?: string; vimeoId: string; alt: string }> = [
+      { field: 'gallery1', vimeoId: '588692923', alt: 'athletics gallery -- KOC Arizona Marathon Highlights 2018' },
+      { field: 'gallery2', vimeoId: '588690944', alt: 'athletics gallery -- Kids of Courage 2019 Miami Marathon' },
+      { field: 'card', cardTitle: 'Athlete Feature Films', vimeoId: '588692923', alt: 'serviceCard poster -- athletics -- Athlete Feature Films (v2)' },
+    ]
+    const athleticsFound = await payload.find({ collection: 'industries', where: { slug: { equals: 'athletics' } }, limit: 1 })
+    if (athleticsFound.totalDocs > 0) {
+      const doc = athleticsFound.docs[0] as any
+      const gallery = (doc.gallery ?? []) as any[]
+      const cards = (doc.serviceCards ?? []) as any[]
+      for (const f of athleticsFixes) {
+        const posterId = await uploadVimeoThumbnail(payload, f.vimeoId, f.alt)
+        if (!posterId) { results[`athletics.${f.field}`] = { error: 'thumbnail fetch failed' }; continue }
+        if (f.field === 'gallery1' && gallery[1]) gallery[1].image = posterId
+        if (f.field === 'gallery2' && gallery[2]) gallery[2].image = posterId
+        if (f.field === 'card') {
+          const card = cards.find((c) => c.title === f.cardTitle)
+          if (card) card.image = posterId
+        }
+        results[`athletics.${f.field}`] = { ok: true, posterId }
+      }
+      await payload.update({ collection: 'industries', id: doc.id, data: { gallery, serviceCards: cards, _status: 'published' } as any })
+    }
+
+    const eduFound = await payload.find({ collection: 'industries', where: { slug: { equals: 'education' } }, limit: 1 })
+    if (eduFound.totalDocs > 0) {
+      const doc = eduFound.docs[0] as any
+      const cards = (doc.serviceCards ?? []) as any[]
+      const posterId = await uploadVimeoThumbnail(payload, '486871052', 'serviceCard poster -- education -- Campus Tour Films (v2)')
+      if (posterId) {
+        const card = cards.find((c) => c.title === 'Campus Tour Films')
+        if (card) card.image = posterId
+        await payload.update({ collection: 'industries', id: doc.id, data: { serviceCards: cards, _status: 'published' } as any })
+        results['education.card'] = { ok: true, posterId }
+      } else {
+        results['education.card'] = { error: 'thumbnail fetch failed' }
+      }
+    }
+
+    return NextResponse.json({ ok: true, results })
+  }
+
   // src/lib/industries.ts (the static fallback file, used only when an
   // industry has no DB doc at all) turns out to have a FULLER serviceCards
   // set than most industries' actual live DB docs -- the DB migration
