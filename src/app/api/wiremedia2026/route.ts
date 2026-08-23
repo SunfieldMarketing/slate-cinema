@@ -238,6 +238,50 @@ export async function GET(req: Request) {
     return NextResponse.json({ results: reResults })
   }
 
+  // Selected Work (homepage 3D carousel) and "A Gallery of Impact"
+  // (/portfolio grid) read the same collection -- confirmed, by reading
+  // Portfolio.tsx directly, that a non-8 count is genuinely safe there
+  // (bento layout only applies at exactly 8; anything else falls back to
+  // plain uniform squares, "which can never gap regardless of count" per
+  // the component's own comment). So the fix is just: give the two
+  // placements different, non-overlapping subsets of a bigger real pool,
+  // no format risk. 8 more real projects, order 8-15; page.tsx below
+  // gives the homepage only order 0-7, leaves /portfolio the full set.
+  if (searchParams.get('addPortfolioVariety2') === '1') {
+    type NewProject = {
+      title: string; category: string; company: string; copy: string
+      metrics: { label: string; value: string }[]; vimeoId: string; order: number
+    }
+    const newProjects: NewProject[] = [
+      { title: 'Pump Up Promo', category: 'Social', company: 'Camp Slapshots', copy: 'A high-energy promo built for a young audience, pairing real sports footage with visual effects for extra punch.', metrics: [{ label: 'Category', value: 'Athletics' }, { label: 'Format', value: 'Promo' }], vimeoId: '863822136', order: 8 },
+      { title: 'A Place That Feels Like Home', category: 'Documentary', company: 'Waterview Nursing & Rehabilitation', copy: 'A facility film built to earn trust before a family ever visits in person.', metrics: [{ label: 'Category', value: 'Healthcare' }, { label: 'Format', value: 'Facility Film' }], vimeoId: '1183669641', order: 9 },
+      { title: 'Festival Recap, Fast', category: 'Event', company: 'Envision Festival', copy: 'Multi-day festival coverage in Costa Rica, turned around fast enough to still ride the post-event wave.', metrics: [{ label: 'Category', value: 'Travel' }, { label: 'Format', value: 'Recap Film' }], vimeoId: '932028681', order: 10 },
+      { title: 'Who We Are', category: 'Brand', company: 'Censible', copy: 'A virtual-tour marketing commercial built to make a construction-tech platform feel as modern as its product.', metrics: [{ label: 'Category', value: 'Corporate' }, { label: 'Format', value: 'Commercial' }], vimeoId: '630102974', order: 11 },
+      { title: 'BiTac', category: 'Commercial', company: 'Neil Kerman', copy: "A product commercial built around a single named client's own brand.", metrics: [{ label: 'Category', value: 'Products' }, { label: 'Format', value: 'Commercial' }], vimeoId: '521163963', order: 12 },
+      { title: 'Africa Aftermovie', category: 'Documentary', company: 'The Next Ride', copy: 'A 15-minute aftermovie from a multi-day African expedition — long-form documentary work, not a highlight reel.', metrics: [{ label: 'Category', value: 'Travel' }, { label: 'Format', value: 'Documentary' }], vimeoId: '1079646173', order: 13 },
+      { title: 'Acceptance Day', category: 'Documentary', company: 'HANC', copy: 'Real school-life storytelling — acceptance day coverage, not stock campus footage.', metrics: [{ label: 'Category', value: 'Education' }, { label: 'Format', value: 'Event Film' }], vimeoId: '1198896524', order: 14 },
+      { title: 'Administrator Appreciation', category: 'Documentary', company: 'Priority Healthcare', copy: 'A 60-second appreciation film built around the people who keep a healthcare practice running.', metrics: [{ label: 'Category', value: 'Healthcare' }, { label: 'Format', value: 'Documentary' }], vimeoId: '856449144', order: 15 },
+    ]
+
+    const results: Record<string, any> = {}
+    for (const p of newProjects) {
+      const existing = await payload.find({ collection: 'portfolio-projects', where: { company: { equals: p.company } }, limit: 1 })
+      if (existing.totalDocs > 0) { results[p.company] = { skipped: 'already exists' }; continue }
+      const posterId = await uploadVimeoThumbnail(payload, p.vimeoId, `Portfolio project poster -- ${p.company}`)
+      if (!posterId) { results[p.company] = { error: 'thumbnail fetch failed' }; continue }
+      const doc = await payload.create({
+        collection: 'portfolio-projects',
+        data: {
+          title: p.title, category: p.category, company: p.company, copy: p.copy,
+          metrics: p.metrics, poster: posterId, videoVimeoUrl: p.vimeoId, order: p.order,
+          _status: 'published',
+        } as any,
+      })
+      results[p.company] = { ok: true, id: doc.id, posterId }
+    }
+    return NextResponse.json({ ok: true, results })
+  }
+
   // Client-requested revert: the 8 extra portfolio-projects added by
   // addPortfolioVariety (below), plus splitting Selected Work from
   // "A Gallery of Impact" onto different subsets, broke card sizing --
