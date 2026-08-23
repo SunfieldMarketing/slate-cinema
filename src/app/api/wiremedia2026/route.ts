@@ -238,6 +238,26 @@ export async function GET(req: Request) {
     return NextResponse.json({ results: reResults })
   }
 
+  // Client-requested revert: the 8 extra portfolio-projects added by
+  // addPortfolioVariety (below), plus splitting Selected Work from
+  // "A Gallery of Impact" onto different subsets, broke card sizing --
+  // the new entries' longer/shorter copy and metrics values threw off
+  // the grid's row heights next to the original 8. Reverting to exactly
+  // the original 8 (page.tsx's homepage/hub split was reverted in code
+  // separately); real, non-repetitive media across those 8 stays as
+  // already fixed earlier this session.
+  if (searchParams.get('removePortfolioVariety') === '1') {
+    const companies = ['Camp Slapshots', 'Waterview Nursing & Rehabilitation', 'Envision Festival', 'Censible', 'Neil Kerman', 'The Next Ride', 'HANC', 'Priority Healthcare']
+    const results: Record<string, any> = {}
+    for (const company of companies) {
+      const found = await payload.find({ collection: 'portfolio-projects', where: { company: { equals: company } }, limit: 1 })
+      if (found.totalDocs === 0) { results[company] = { skipped: 'not found' }; continue }
+      await payload.delete({ collection: 'portfolio-projects', id: found.docs[0]!.id })
+      results[company] = { ok: true, deleted: found.docs[0]!.id }
+    }
+    return NextResponse.json({ ok: true, results })
+  }
+
   // Selected Work (homepage) and "A Gallery of Impact" (/portfolio hub)
   // both render off the exact same 8-doc portfolio-projects collection,
   // via the same getNormalizedPortfolioProjects() call -- so the two
