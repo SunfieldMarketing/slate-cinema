@@ -238,6 +238,164 @@ export async function GET(req: Request) {
     return NextResponse.json({ results: reResults })
   }
 
+  // src/lib/industries.ts (the static fallback file, used only when an
+  // industry has no DB doc at all) turns out to have a FULLER serviceCards
+  // set than most industries' actual live DB docs -- the DB migration
+  // dropped 1-3 cards per industry somewhere along the way. This is real,
+  // already-written service-description copy (what Slate offers, not a
+  // claim about a specific client's results), just never made it into the
+  // CMS. Restores the missing cards verbatim from that file and gives
+  // each a real Vimeo-thumbnail image instead of the local placeholder
+  // path the static file itself uses. Cards that already exist in the DB
+  // are left untouched -- this only appends what's missing.
+  if (searchParams.get('restoreServiceCards') === '1') {
+    type NewCard = {
+      title: string
+      description: string
+      outcome: string
+      deliverables: string[]
+      meta: string
+      vimeoId: string
+    }
+    const restorations: Record<string, NewCard[]> = {
+      athletics: [
+        {
+          title: 'Live Event Capture',
+          description: "Multi-camera coverage of competitions, tournaments and activations, turned around fast enough to still matter -- our Gotham Rugby coverage at Randall's Island, NYC, was built exactly this way.",
+          outcome: 'Same-week delivery',
+          deliverables: ['Multi-cam crew on-site', 'Same-week edit turnaround', 'Recap + social clips'],
+          meta: 'Event day · 1-2 wk turnaround',
+          vimeoId: '862067416', // Gotham Rugby
+        },
+      ],
+      travel: [
+        {
+          title: 'Hospitality Brand Content',
+          description: 'Ongoing content built around a property or destination brand -- social-native, always on-brand.',
+          outcome: 'Always-on content',
+          deliverables: ['Content shoot day', 'Batch social cutdowns', 'Brand-consistent grade'],
+          meta: 'Batch · 4-6 wks',
+          vimeoId: '932028681', // Envision Festival 2024 Recap
+        },
+      ],
+      'real-estate': [
+        {
+          title: 'Agent & Brokerage Brand Films',
+          description: "A short brand film for an agent or brokerage that builds trust before the first phone call.",
+          outcome: 'Trust-building brand asset',
+          deliverables: ['Interview + lifestyle shoot', 'Brand film edit', 'Social cutdowns'],
+          meta: '60-90s · 3-4 wks',
+          vimeoId: '501888251', // Good Choice Realty - Glamour Tour
+        },
+      ],
+      education: [
+        {
+          title: 'Campus Tour Films',
+          description: 'A cinematic walk of campus that gives a prospective student a real feel for the place before they ever visit in person.',
+          outcome: 'Virtual-visit ready',
+          deliverables: ['Campus location shoot', 'Guided-tour style edit', 'Web + admissions cutdowns'],
+          meta: '2-4 min · 4-6 wks',
+          vimeoId: '1198896524', // HANC Acceptance 2024
+        },
+      ],
+      organizations: [
+        {
+          title: 'Mission & Impact Films',
+          description: "The flagship story film -- who you serve, why it matters, and what a viewer's support actually does.",
+          outcome: 'Built to move people to act',
+          deliverables: ['Interview + on-location shoot', 'Story-driven edit', 'Event + web cutdowns'],
+          meta: '2-4 min · 4-6 wks',
+          vimeoId: '553074722', // Gateways Passover Experience 2021 - Highlights
+        },
+        {
+          title: 'Donor & Fundraising Content',
+          description: 'Campaign-ready films built around a single, clear ask -- for galas, year-end appeals, or capital campaigns.',
+          outcome: 'Campaign-ready asset',
+          deliverables: ['Campaign-specific edit', 'Ask-driven CTA cut', 'Social + email cutdowns'],
+          meta: '60-90s · 3-4 wks',
+          vimeoId: '1142588998', // Aliya Promo 2026
+        },
+        {
+          title: 'Annual Report Video',
+          description: 'The numbers-and-narrative recap that turns a written annual report into something a board or donor actually watches.',
+          outcome: 'Board & donor-ready',
+          deliverables: ['Data-forward edit', 'Leadership interview cutdowns', 'Web-ready master'],
+          meta: '2-3 min · 4-5 wks',
+          vimeoId: '363484201', // Gateways Cinematic Highlight Reel
+        },
+      ],
+      corporate: [
+        {
+          title: 'Brand & Culture Films',
+          description: 'A film that makes the people inside a company as visible as the product -- shot to make prospects and candidates alike want in.',
+          outcome: 'Human-first brand asset',
+          deliverables: ['Interview + b-roll shoot', 'Story-driven edit', 'Web + social cutdowns'],
+          meta: '2-3 min · 4-6 wks',
+          vimeoId: '936451661', // MPower Recruiter Video
+        },
+        {
+          title: 'Internal Comms Video',
+          description: 'All-hands updates, policy rollouts and training content built to actually get watched, not just archived.',
+          outcome: 'Higher watch-through',
+          deliverables: ['Script support', 'Studio shoot', 'Chaptered edit'],
+          meta: '1-3 min · 2 wks',
+          vimeoId: '936453597', // MPower Event Recap PC-19
+        },
+        {
+          title: 'Investor & Recruiting Content',
+          description: 'The film that runs before a pitch or a first interview -- company story, numbers and culture in one confident cut.',
+          outcome: 'First-impression asset',
+          deliverables: ['Interview + facility shoot', 'Data-forward edit', 'Deck-ready cutdown'],
+          meta: '90s-3 min · 3-5 wks',
+          vimeoId: '1187767005', // Wavecare Landing Video
+        },
+      ],
+      products: [
+        {
+          title: 'Macro Product Spotlights',
+          description: 'Macro-lit hero shots and turntable sequences that make a product the whole frame -- built for the scroll-stopping first second.',
+          outcome: 'Thumb-stopping opens',
+          deliverables: ['Macro lighting setup', 'Hero shot sequence', 'Multi-angle coverage', 'Signature grade'],
+          meta: '15-30s · 2-3 wks',
+          vimeoId: '929671891', // EIR NYC - Earrings
+        },
+        {
+          title: 'Platform-Native Spotlights',
+          description: 'The same product, cut natively for every placement -- feed, story, PDP -- instead of one video stretched to fit.',
+          outcome: 'One shoot, every placement',
+          deliverables: ['Multi-ratio shoot plan', 'Platform-specific cutdowns', 'PDP-ready master'],
+          meta: '30-60s · 2-3 wks',
+          vimeoId: '929671939', // EIR NYC - Necklaces
+        },
+      ],
+    }
+
+    const results: Record<string, any> = {}
+    for (const [slug, cards] of Object.entries(restorations)) {
+      const found = await payload.find({ collection: 'industries', where: { slug: { equals: slug } }, limit: 1 })
+      if (found.totalDocs === 0) { results[slug] = { error: 'industry not found' }; continue }
+      const doc = found.docs[0] as any
+      const existing = (doc.serviceCards ?? []) as any[]
+      const added: string[] = []
+      for (const c of cards) {
+        if (existing.some((e) => e.title === c.title)) continue // already restored on a re-run
+        const posterId = await uploadVimeoThumbnail(payload, c.vimeoId, `serviceCard poster -- ${slug} -- ${c.title}`)
+        existing.push({
+          title: c.title,
+          description: c.description,
+          outcome: c.outcome,
+          deliverables: c.deliverables.map((item) => ({ item })),
+          meta: c.meta,
+          image: posterId,
+        })
+        added.push(c.title)
+      }
+      await payload.update({ collection: 'industries', id: doc.id, data: { serviceCards: existing, _status: 'published' } as any })
+      results[slug] = { ok: true, added, totalNow: existing.length }
+    }
+    return NextResponse.json({ ok: true, results })
+  }
+
   // The 5 portfolio-projects docs with no findable footage anywhere
   // (CVM Construction, Real Talk, TruBlue of NW Brooklyn, EKGx, Smash
   // House Burgers -- confirmed again via a name search across the full
