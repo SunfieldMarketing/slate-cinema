@@ -238,6 +238,126 @@ export async function GET(req: Request) {
     return NextResponse.json({ results: reResults })
   }
 
+  // Client-requested revert: restore the exact original service-card and
+  // portfolio-wheel (heroImage) images from src/lib/industries.ts -- the
+  // AI-generated/Unsplash stock set that predates this session's Vimeo
+  // sourcing pass. Every path below is copied verbatim from that file.
+  // Local /images/*.webp paths are self-fetched over this deployment's
+  // own origin (same pattern as every other public/ asset uploaded this
+  // session); the 4 Unsplash URLs fetch directly. Each unique image is
+  // uploaded once and reused across every field that originally pointed
+  // at it (e.g. ind_ath_hero.webp backs both Athletics' heroImage and
+  // its "Live Event Capture" card, exactly as industries.ts has it).
+  if (searchParams.get('revertToStockImages') === '1') {
+    const origin = new URL(req.url).origin
+    const cache: Record<string, number> = {}
+    const uploadOnce = async (pathOrUrl: string): Promise<number | null> => {
+      if (cache[pathOrUrl]) return cache[pathOrUrl]
+      const alt = `stock revert -- ${pathOrUrl}`
+      const existing = await payload.find({ collection: 'media', where: { alt: { equals: alt } }, limit: 1 })
+      if (existing.totalDocs > 0) { cache[pathOrUrl] = existing.docs[0]!.id as number; return cache[pathOrUrl] }
+      const isLocal = pathOrUrl.startsWith('/')
+      const url = isLocal ? `${origin}${pathOrUrl}` : pathOrUrl
+      const res = await fetch(url)
+      if (!res.ok) return null
+      const buf = Buffer.from(await res.arrayBuffer())
+      const mimetype = isLocal ? 'image/webp' : (res.headers.get('content-type') || 'image/jpeg')
+      const filename = isLocal ? pathOrUrl.split('/').pop()! : `unsplash-${pathOrUrl.match(/photo-([a-z0-9]+)/)?.[1] ?? Date.now()}.jpg`
+      const doc = await payload.create({ collection: 'media', data: { alt }, file: { data: buf, mimetype, name: filename, size: buf.length } })
+      cache[pathOrUrl] = doc.id as number
+      return cache[pathOrUrl]
+    }
+
+    const heroImages: Record<string, string> = {
+      ai: '/images/ai_hero_anim.webp',
+      athletics: '/images/ind_ath_hero.webp',
+      travel: '/images/ind_travel_hero.webp',
+      'real-estate': '/images/ind_realestate_hero.webp',
+      healthcare: '/images/ind_health_hero.webp',
+      products: '/images/ind_products_hero.webp',
+      corporate: '/images/ind_corporate_hero.webp',
+      organizations: '/images/ind_orgs_hero.webp',
+      education: '/images/ind_corporate_hero.webp', // verbatim from industries.ts -- shares Corporate's image there too
+    }
+    const serviceCardImages: Record<string, Record<string, string>> = {
+      ai: {
+        'AI-Accelerated Explainers': '/images/ai_anim_svc_explainer.webp',
+        'Product & CGI': '/images/ai_anim_svc_cgi.webp',
+        'Motion Branding': '/images/ai_anim_svc_branding.webp',
+        'Character Work': '/images/ai_anim_svc_character.webp',
+        'Social Loops': '/images/ai_anim_svc_social.webp',
+      },
+      athletics: {
+        'Hype Reels': '/images/ind_ath_gal1.webp',
+        'Athlete Feature Films': '/images/ind_ath_gal2.webp',
+        'Product Launch Content': '/images/ind_ath_gal3.webp',
+        'Live Event Capture': '/images/ind_ath_hero.webp',
+      },
+      travel: {
+        'Destination Films': '/images/ind_travel_gal1.webp',
+        'Aerial Cinematography': '/images/ind_travel_gal2.webp',
+        'Property Showcases': '/images/ind_travel_gal3.webp',
+        'Hospitality Brand Content': '/images/ind_travel_hero.webp',
+      },
+      'real-estate': {
+        'Cinematic Property Tours': '/images/ind_realestate_gal1.webp',
+        'Development Timelapses': '/images/ind_realestate_gal2.webp',
+        'Aerial Drone Cinematography': '/images/ind_realestate_gal3.webp',
+        'Agent & Brokerage Brand Films': '/images/ind_realestate_hero.webp',
+      },
+      products: {
+        'Macro Product Spotlights': '/images/ind_products_hero.webp',
+        'E-Commerce Ad Cuts': '/images/ind_products_gal1.webp',
+        'Signature Color Grading': '/images/portfolio-social.webp',
+        'Platform-Native Spotlights': 'https://images.unsplash.com/photo-1603219225728-0c9e319d2373?q=80&w=1200',
+      },
+      corporate: {
+        'Brand & Culture Films': '/images/ind_corporate_hero.webp',
+        'Executive Communications': '/images/portfolio-production.webp',
+        'Internal Comms Video': 'https://images.unsplash.com/photo-1611149974482-764b0c2a211a?q=80&w=1200',
+        'Investor & Recruiting Content': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200',
+      },
+      organizations: {
+        'Mission & Impact Films': 'https://images.unsplash.com/photo-1461532257246-777de18cd58b?q=80&w=1200',
+        'Donor & Fundraising Content': 'https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?q=80&w=1200',
+        'Volunteer Recruitment Films': '/images/ind_health_gal3.webp',
+        'Annual Report Video': '/images/ind_orgs_hero.webp',
+      },
+      education: {
+        'Course & Program Trailers': '/images/mediavoid_creative_bright.webp',
+        'Campus Tour Films': '/images/ind_corporate_hero.webp',
+        'Faculty & Student Spotlights': '/images/portfolio-social.webp',
+        'E-Learning & Course Content': '/images/mediavoid_tech_bright.webp',
+      },
+    }
+
+    const results: Record<string, any> = {}
+    for (const [slug, path] of Object.entries(heroImages)) {
+      const id = await uploadOnce(path)
+      if (!id) { results[`${slug}.heroImage`] = { error: 'upload failed', path }; continue }
+      const found = await payload.find({ collection: 'industries', where: { slug: { equals: slug } }, limit: 1 })
+      if (found.totalDocs === 0) { results[`${slug}.heroImage`] = { error: 'industry not found' }; continue }
+      await payload.update({ collection: 'industries', id: found.docs[0]!.id, data: { heroImage: id, _status: 'published' } as any })
+      results[`${slug}.heroImage`] = { ok: true, id }
+    }
+    for (const [slug, cards] of Object.entries(serviceCardImages)) {
+      const found = await payload.find({ collection: 'industries', where: { slug: { equals: slug } }, limit: 1 })
+      if (found.totalDocs === 0) { results[`${slug}.serviceCards`] = { error: 'industry not found' }; continue }
+      const doc = found.docs[0] as any
+      const existingCards = (doc.serviceCards ?? []) as any[]
+      for (const [title, path] of Object.entries(cards)) {
+        const id = await uploadOnce(path)
+        if (!id) { results[`${slug}.${title}`] = { error: 'upload failed', path }; continue }
+        const card = existingCards.find((c) => c.title === title)
+        if (card) { card.image = id; results[`${slug}.${title}`] = { ok: true, id } }
+        else results[`${slug}.${title}`] = { error: 'card not found' }
+      }
+      await payload.update({ collection: 'industries', id: doc.id, data: { serviceCards: existingCards, _status: 'published' } as any })
+    }
+
+    return NextResponse.json({ ok: true, results })
+  }
+
   // Last remaining local-file video reference anywhere on the site with
   // no real override: Sleepy Hollow Hotel's portfolio-projects.video
   // still points at the dead pre-session placeholder (hero-3.mp4) --
