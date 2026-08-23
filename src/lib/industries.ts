@@ -269,7 +269,7 @@ export const industries: IndustryData[] = [
       { name: 'Gotham Rugby', year: '2022', body: "Match-day coverage at Randall's Island, NYC — storytelling built from the thrill of live competition, not a highlight reel cut after the fact.", video: '862067416' },
       { name: 'Kids of Courage', year: '2018–2021', body: 'Marathons filmed across the country — capturing the strength and joy of children with disabilities as they defy limits, nationwide.', video: '588692923' },
       { name: 'Camp Slapshots', year: '2023', body: 'The thrill of sports paired with visual effects — an unforgettable experience built for a young, high-energy audience.', video: '863822136' },
-      { name: 'APEX NYC', year: '', body: 'A named Slate Athletics client — full project detail on file, not yet published here.', video: '/videos/distribution.mp4' },
+      { name: 'APEX NYC', year: '2019', body: 'Event highlight coverage from APEX Assembly\'s NYC gathering — full production detail still on file.', video: '399193884' },
     ],
     cinematicStatement: {
       eyebrow: 'Why Speed Matters',

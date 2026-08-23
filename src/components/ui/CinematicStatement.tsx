@@ -57,6 +57,7 @@ export default function CinematicStatement({ eyebrow, lines, body, videoSrc, acc
           src={videoSrc}
           vimeo={videoSrc}
           variant="background"
+          coverFit
           className="cs-media absolute inset-0 w-full h-full object-cover scale-110 opacity-35"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/60 to-ink/90" />
