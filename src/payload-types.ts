@@ -1226,6 +1226,20 @@ export interface SiteSetting {
     postalCode?: string | null;
     hours?: string | null;
   };
+  /**
+   * The credibility strip under the hero on every industry page (src/components/TrustBanner.tsx) -- was fully hardcoded (rating text, tagline, and all 5 client logos on local /public files) until this field was added. Same idea as Home's trustSection, just a single-row layout with no flagship logos.
+   */
+  trustBanner?: {
+    ratingText?: string | null;
+    marqueeLabel?: string | null;
+    clients?:
+      | {
+          name: string;
+          logo: number | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1911,6 +1925,19 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         state?: T;
         postalCode?: T;
         hours?: T;
+      };
+  trustBanner?:
+    | T
+    | {
+        ratingText?: T;
+        marqueeLabel?: T;
+        clients?:
+          | T
+          | {
+              name?: T;
+              logo?: T;
+              id?: T;
+            };
       };
   _status?: T;
   updatedAt?: T;

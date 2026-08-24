@@ -279,6 +279,64 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: true, results })
   }
 
+  // TrustBanner.tsx (the industry-page credibility strip) was found fully
+  // hardcoded during a "make everything CMS-editable" audit -- no props,
+  // no CMS read at all, including its 5 client-logo images sitting on
+  // local /public files rather than S3. SiteSettings.trustBanner is the
+  // new field; this seeds it once with the exact same visible content
+  // (same 5 logos, same rating text, same tagline) so nothing changes on
+  // the live page, it just becomes editable in /admin going forward.
+  if (searchParams.get('seedTrustBanner') === '1') {
+    const origin = new URL(req.url).origin
+    const clients = [
+      { name: 'Dream', path: '/images/clients/dream-testimonials.webp' },
+      { name: 'Healing Partners', path: '/images/clients/healing-partners.webp' },
+      { name: 'Inhale', path: '/images/clients/inhale-testimonails.webp' },
+      { name: 'Lucida', path: '/images/clients/lucida-testimonials.webp' },
+      { name: 'Workplace Realty', path: '/images/clients/workplace-realty.webp' },
+    ]
+    const results: Record<string, any> = {}
+    const clientFields: { name: string; logo: number }[] = []
+    for (const c of clients) {
+      const alt = `trust banner -- ${c.name}`
+      const existing = await payload.find({ collection: 'media', where: { alt: { equals: alt } }, limit: 1 })
+      if (existing.totalDocs > 0) {
+        clientFields.push({ name: c.name, logo: existing.docs[0]!.id as number })
+        results[c.name] = { ok: true, reused: true, id: existing.docs[0]!.id }
+        continue
+      }
+      const res = await fetch(`${origin}${c.path}`)
+      if (!res.ok) { results[c.name] = { error: `fetch failed ${res.status}` }; continue }
+      const buf = Buffer.from(await res.arrayBuffer())
+      const doc = await payload.create({
+        collection: 'media',
+        data: { alt },
+        file: { data: buf, mimetype: 'image/webp', name: c.path.split('/').pop()!, size: buf.length },
+      })
+      clientFields.push({ name: c.name, logo: doc.id as number })
+      results[c.name] = { ok: true, id: doc.id }
+    }
+
+    const settings = await payload.findGlobal({ slug: 'site-settings' })
+    if (!(settings as any)?.trustBanner?.clients?.length) {
+      await payload.updateGlobal({
+        slug: 'site-settings',
+        data: {
+          trustBanner: {
+            ratingText: '5.0/5 · 44 Google reviews',
+            marqueeLabel: 'More collaborations & partnerships',
+            clients: clientFields,
+          },
+        } as any,
+      })
+      results._global = { ok: true, updated: true }
+    } else {
+      results._global = { ok: true, skipped: 'already populated' }
+    }
+
+    return NextResponse.json({ ok: true, results })
+  }
+
   // Boolean-only env var presence check -- never returns the actual
   // secret value, just whether each is set in THIS (production) runtime,
   // since .env.local presence doesn't guarantee it's also set on Vercel.

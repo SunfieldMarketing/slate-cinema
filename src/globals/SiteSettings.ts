@@ -50,5 +50,26 @@ export const SiteSettings: GlobalConfig = {
         { name: 'hours', type: 'text', defaultValue: 'Mon–Fri · 9am – 7pm ET · On-location by appointment' },
       ],
     },
+    {
+      name: 'trustBanner',
+      type: 'group',
+      admin: {
+        description:
+          'The credibility strip under the hero on every industry page (src/components/TrustBanner.tsx) -- was fully hardcoded (rating text, tagline, and all 5 client logos on local /public files) until this field was added. Same idea as Home\'s trustSection, just a single-row layout with no flagship logos.',
+      },
+      fields: [
+        { name: 'ratingText', type: 'text', defaultValue: '5.0/5 · 44 Google reviews' },
+        { name: 'marqueeLabel', type: 'text', defaultValue: 'More collaborations & partnerships' },
+        {
+          name: 'clients',
+          type: 'array',
+          minRows: 1,
+          fields: [
+            { name: 'name', type: 'text', required: true },
+            { name: 'logo', type: 'upload', relationTo: 'media', required: true },
+          ],
+        },
+      ],
+    },
   ],
 }
