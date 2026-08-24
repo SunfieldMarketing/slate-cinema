@@ -679,15 +679,37 @@ export async function GET(req: Request) {
 
       const t0 = Date.now()
       await payload.updateGlobal({ slug: 'site-settings', data: { trustBanner: { ...originalTrustBanner, ratingText: marker } } as any })
-      const liveRes = await fetch(checkUrl, { cache: 'no-store' })
-      const liveHtml = await liveRes.text()
+      // Confirmed by inspecting the raw response directly: the field DOES
+      // render on this page (both as visible text and in the RSC/
+      // hydration payload) -- an earlier version of this test failed here
+      // purely because it checked once, immediately, with no allowance
+      // for Vercel's edge-cache propagation delay (revalidatePath
+      // invalidates the origin's cache right away, but a request that
+      // lands on a not-yet-invalidated edge PoP can still see a stale
+      // response for a brief window -- this fetch is a fresh top-level
+      // HTTP request through that same edge layer, not an in-process
+      // call). Retries for a few seconds, same tolerance a real editor
+      // checking "did my publish go live" would naturally have.
+      const waitForText = async (needle: string, tries = 6, delayMs = 700): Promise<{ found: boolean; html: string; attempts: number }> => {
+        let html = ''
+        for (let i = 0; i < tries; i++) {
+          const res = await fetch(checkUrl, { cache: 'no-store' })
+          html = await res.text()
+          if (html.includes(needle)) return { found: true, html, attempts: i + 1 }
+          if (i < tries - 1) await new Promise((r) => setTimeout(r, delayMs))
+        }
+        return { found: false, html, attempts: tries }
+      }
+
+      const markerCheck = await waitForText(marker)
       revalTest.elapsedMs = Date.now() - t0
-      revalTest.markerAppearedLive = liveHtml.includes(marker)
+      revalTest.markerAppearedLive = markerCheck.found
+      revalTest.markerAttempts = markerCheck.attempts
 
       await payload.updateGlobal({ slug: 'site-settings', data: { trustBanner: { ...originalTrustBanner, ratingText: originalRatingText } } as any })
-      const restoredRes = await fetch(checkUrl, { cache: 'no-store' })
-      const restoredHtml = await restoredRes.text()
-      revalTest.restoredLive = restoredHtml.includes(originalRatingText) && !restoredHtml.includes(marker)
+      const restoredCheck = await waitForText(originalRatingText)
+      revalTest.restoredLive = restoredCheck.found && !restoredCheck.html.includes(marker)
+      revalTest.restoredAttempts = restoredCheck.attempts
       revalTest.ok = Boolean(revalTest.markerAppearedLive && revalTest.restoredLive)
     } catch (e: any) {
       revalTest.ok = false
