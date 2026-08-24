@@ -218,8 +218,8 @@ export default function Footer() {
             <Heart size={12} className="text-[#00AEEF]" />
           </div>
           <div className="flex gap-4">
-            <a href={bottomBar?.privacyHref || '#'} className="hover:text-white transition-colors">Privacy</a>
-            <a href={bottomBar?.termsHref || '#'} className="hover:text-white transition-colors">Terms</a>
+            <a href={bottomBar?.privacyHref || '/privacy-policy'} className="hover:text-white transition-colors">Privacy</a>
+            <a href={bottomBar?.termsHref || '/terms-of-service'} className="hover:text-white transition-colors">Terms</a>
             <a href={bottomBar?.clientPortalHref || 'https://my.slatecinema.com/'} target="_blank" rel="noopener noreferrer" className="hover:text-[#00AEEF] transition-colors">Client Portal</a>
           </div>
         </div>
