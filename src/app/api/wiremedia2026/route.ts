@@ -279,6 +279,22 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: true, results })
   }
 
+  // Boolean-only env var presence check -- never returns the actual
+  // secret value, just whether each is set in THIS (production) runtime,
+  // since .env.local presence doesn't guarantee it's also set on Vercel.
+  if (searchParams.get('checkEnvVars') === '1') {
+    const vars = [
+      'GHL_LEAD_WEBHOOK_URL', 'GHL_BOOKING_WEBHOOK_URL',
+      'NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN',
+      'S3_BUCKET', 'S3_REGION', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY',
+      'BLOB_READ_WRITE_TOKEN', 'DATABASE_URI', 'PAYLOAD_SECRET',
+    ]
+    return NextResponse.json({
+      ok: true,
+      env: Object.fromEntries(vars.map((v) => [v, !!process.env[v]])),
+    })
+  }
+
   // Diagnostic: StatsBand reads industries' `stats` straight from the DB
   // (normalize.ts: `doc.stats ?? []`) -- it never falls back to
   // industries.ts's static array, so a fix made only to that static file
