@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 
 /*
   Matches src/lib/pipeline-data.ts's `categories` shape exactly. Shared
@@ -12,6 +13,9 @@ export const Pipeline: GlobalConfig = {
   access: {
     read: () => true,
     update: ({ req }) => Boolean(req.user),
+  },
+  hooks: {
+    afterChange: [revalidateGlobalAfterChange],
   },
   fields: [
     {

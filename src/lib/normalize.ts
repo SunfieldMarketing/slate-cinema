@@ -270,8 +270,8 @@ function staticToNormalized(industry: StaticIndustryData): IndustryData {
 
 /* Convenience wrappers — fetch + normalize in one call, for the common
    case of a Server Component that just wants the plain shape. */
-export async function getNormalizedIndustries(): Promise<IndustryData[]> {
-  const docs = await getIndustriesCollection()
+export async function getNormalizedIndustries(draft = false): Promise<IndustryData[]> {
+  const docs = await getIndustriesCollection(draft)
   const fromDb = docs.map(normalizeIndustry)
   // Any industry that only exists in the static file (e.g. "podcasts",
   // added 2026-08-13 per "make the podcasts page just an industry page
@@ -283,12 +283,12 @@ export async function getNormalizedIndustries(): Promise<IndustryData[]> {
   return [...fromDb, ...staticOnly]
 }
 
-export async function getNormalizedPortfolioProjects(): Promise<PortfolioProjectLocal[]> {
-  const docs = await getPortfolioProjectsCollection()
+export async function getNormalizedPortfolioProjects(draft = false): Promise<PortfolioProjectLocal[]> {
+  const docs = await getPortfolioProjectsCollection(draft)
   return docs.map(normalizePortfolioProject)
 }
 
-export async function getNormalizedJournalPosts(): Promise<JournalPostLocal[]> {
-  const docs = await getJournalPostsCollection()
+export async function getNormalizedJournalPosts(draft = false): Promise<JournalPostLocal[]> {
+  const docs = await getJournalPostsCollection(draft)
   return docs.map(normalizeJournalPost)
 }

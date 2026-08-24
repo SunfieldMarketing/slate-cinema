@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { draftMode } from 'next/headers'
 import { CalendarClock } from 'lucide-react'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
@@ -87,7 +88,8 @@ function CallFraming({ copy }: { copy: ReadyToTalkGlobal | null }) {
 }
 
 export default async function ScheduleACallPage() {
-  const [page, readyToTalk] = await Promise.all([getScheduleACallPageGlobal(), getReadyToTalk()])
+  const draft = (await draftMode()).isEnabled
+  const [page, readyToTalk] = await Promise.all([getScheduleACallPageGlobal(draft), getReadyToTalk(draft)])
   const hero = page?.hero
 
   return (

@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import { draftMode } from 'next/headers'
 import { getNormalizedIndustries, getNormalizedPortfolioProjects } from '@/lib/normalize'
 import { getFinalCTA } from '@/lib/payload-data'
 import IndustryPageContent from '@/components/IndustryPageContent'
@@ -28,10 +29,13 @@ export async function generateMetadata({ params }: { params: Promise<{ industry:
 
 export default async function IndustryPage({ params }: { params: Promise<{ industry: string }> }) {
   const { industry: slug } = await params
+  // Set by /api/preview, which every Live Preview iframe URL routes
+  // through -- see payload.config.ts's livePreviewURL.
+  const draft = (await draftMode()).isEnabled
   const [industries, portfolioProjects, finalCta] = await Promise.all([
-    getNormalizedIndustries(),
-    getNormalizedPortfolioProjects(),
-    getFinalCTA(),
+    getNormalizedIndustries(draft),
+    getNormalizedPortfolioProjects(draft),
+    getFinalCTA(draft),
   ])
   const industry = industries.find((i) => i.slug === slug)
   if (!industry) notFound()

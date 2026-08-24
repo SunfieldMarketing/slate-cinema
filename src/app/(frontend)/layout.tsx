@@ -3,12 +3,14 @@ import { Inter, Bebas_Neue, Fraunces, Courier_Prime } from "next/font/google";
 import "./globals.css";
 import SmoothScrolling from "@/components/SmoothScrolling";
 import ScrollRestoration from "@/components/ScrollRestoration";
+import RefreshRouteOnSave from "@/components/RefreshRouteOnSave";
 import PostHogInit from "@/components/PostHogInit";
 import GoogleAdsTag from "@/components/GoogleAdsTag";
 import { SiteDataProvider } from "@/lib/site-data-context";
 import { getNavigation, getFooterGlobal, getSiteSettings, mediaUrl } from "@/lib/payload-data";
 import { getNormalizedIndustries } from "@/lib/normalize";
 import { preload } from 'react-dom';
+import { draftMode } from 'next/headers';
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const bebas = Bebas_Neue({ subsets: ["latin"], weight: "400", variable: "--font-bebas" });
@@ -72,11 +74,18 @@ export default async function RootLayout({
 }>) {
   preload('/videos/hero.mp4', { as: 'video', fetchPriority: 'high' });
 
+  // Draft Mode (set by /api/preview, which every Live Preview iframe URL
+  // routes through -- see payload.config.ts's livePreviewURL) is a
+  // cookie, so it's readable here in the root layout even though
+  // layout.tsx never receives searchParams -- unlike the page-specific
+  // ?draft=true a page.tsx could read, this is what lets shared globals
+  // (Nav, Footer, SiteSettings -- e.g. TrustBanner) preview a draft too.
+  const draft = (await draftMode()).isEnabled
   const [navigation, footer, industries, settings] = await Promise.all([
-    getNavigation(),
-    getFooterGlobal(),
-    getNormalizedIndustries(),
-    getSiteSettings(),
+    getNavigation(draft),
+    getFooterGlobal(draft),
+    getNormalizedIndustries(draft),
+    getSiteSettings(draft),
   ])
 
   // Organization/LocalBusiness structured data — sourced from Site
@@ -118,6 +127,7 @@ export default async function RootLayout({
         <link rel="dns-prefetch" href="https://f.vimeocdn.com" />
       </head>
       <body className="font-sans antialiased bg-ink text-foreground overflow-x-hidden">
+        <RefreshRouteOnSave />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}

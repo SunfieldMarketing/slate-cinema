@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { draftMode } from 'next/headers'
 import HowItWorksPageContent from '@/components/HowItWorksPageContent'
 import { getHowItWorksPageGlobal, getPipeline, getFinalCTA } from '@/lib/payload-data'
 import { normalizePipeline } from '@/lib/normalize'
@@ -10,10 +11,11 @@ export const metadata: Metadata = {
 }
 
 export default async function HowItWorksPage() {
+  const draft = (await draftMode()).isEnabled
   const [page, pipeline, finalCta] = await Promise.all([
-    getHowItWorksPageGlobal(),
-    getPipeline(),
-    getFinalCTA(),
+    getHowItWorksPageGlobal(draft),
+    getPipeline(draft),
+    getFinalCTA(draft),
   ])
   return (
     <HowItWorksPageContent

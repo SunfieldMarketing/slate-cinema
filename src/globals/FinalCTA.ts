@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 
 /*
   The closing CTA card ("Your next era starts here") rendered identically
@@ -10,6 +11,9 @@ export const FinalCTA: GlobalConfig = {
   access: {
     read: () => true,
     update: ({ req }) => Boolean(req.user),
+  },
+  hooks: {
+    afterChange: [revalidateGlobalAfterChange],
   },
   fields: [
     { name: 'eyebrow', type: 'text', defaultValue: '// Ready To Scale?' },

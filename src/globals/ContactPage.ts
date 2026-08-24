@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 
 // Every lucide-react icon used anywhere across the Contact page's cards/
 // badges, in one shared option list rather than a dozen near-duplicate
@@ -17,6 +18,9 @@ export const ContactPage: GlobalConfig = {
   access: {
     read: () => true,
     update: ({ req }) => Boolean(req.user),
+  },
+  hooks: {
+    afterChange: [revalidateGlobalAfterChange],
   },
   fields: [
     {

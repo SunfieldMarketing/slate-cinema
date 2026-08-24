@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 
 export const PortfolioIndexPage: GlobalConfig = {
   slug: 'portfolio-index-page',
@@ -6,6 +7,9 @@ export const PortfolioIndexPage: GlobalConfig = {
   access: {
     read: () => true,
     update: ({ req }) => Boolean(req.user),
+  },
+  hooks: {
+    afterChange: [revalidateGlobalAfterChange],
   },
   fields: [
     {

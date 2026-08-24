@@ -81,6 +81,22 @@ const db = isPostgres
 // collections with a real per-doc page; PortfolioProjects has no
 // standalone route (rendered inside the /portfolio grid/modal only), so
 // its preview just points at that index page.
+//
+// Every URL below routes through /api/preview first, which enables
+// Next.js Draft Mode (a cookie, not a query param -- readable from
+// layout.tsx too, so shared globals like Navigation/Footer/SiteSettings
+// also preview correctly, not just the page-specific content a plain
+// ?draft=true param could reach) and then redirects to the real path.
+// See src/app/api/preview/route.ts. Confirmed directly against the
+// installed @payloadcms/ui package that Payload does NOT add any draft
+// param/cookie itself (handleLivePreview.js uses this function's return
+// value verbatim) -- without this, "Live Preview" would only ever show
+// what's already published, defeating the point of previewing an edit
+// before it goes live.
+const appendDraft = (url: string) => {
+  const u = new URL(url)
+  return `${u.origin}/api/preview?path=${encodeURIComponent(u.pathname + u.search)}`
+}
 const livePreviewURL = ({
   data,
   collectionConfig,
@@ -94,35 +110,35 @@ const livePreviewURL = ({
   if (globalConfig) {
     switch (globalConfig.slug) {
       case 'home-page':
-        return base
+        return appendDraft(base)
       case 'contact-page':
-        return `${base}/contact`
+        return appendDraft(`${base}/contact`)
       case 'schedule-a-call-page':
-        return `${base}/schedule-a-call`
+        return appendDraft(`${base}/schedule-a-call`)
       case 'how-it-works-page':
-        return `${base}/how-it-works`
+        return appendDraft(`${base}/how-it-works`)
       case 'portfolio-index-page':
-        return `${base}/portfolio`
+        return appendDraft(`${base}/portfolio`)
       default:
         // Navigation/Footer/SiteSettings/Pipeline/FinalCTA/ReadyToTalk
         // render on every page -- home is the most representative single
         // preview target for these shared/site-wide globals.
-        return base
+        return appendDraft(base)
     }
   }
   if (collectionConfig) {
     switch (collectionConfig.slug) {
       case 'industries':
-        return `${base}/portfolio/${data.slug}`
+        return appendDraft(`${base}/portfolio/${data.slug}`)
       case 'journal-posts':
-        return `${base}/journal/${data.slug}`
+        return appendDraft(`${base}/journal/${data.slug}`)
       case 'portfolio-projects':
-        return `${base}/portfolio`
+        return appendDraft(`${base}/portfolio`)
       default:
-        return base
+        return appendDraft(base)
     }
   }
-  return base
+  return appendDraft(base)
 }
 
 export default buildConfig({

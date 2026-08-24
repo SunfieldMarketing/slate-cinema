@@ -12,78 +12,88 @@ export { mediaUrl, mediaUrlOrPlaceholder } from '@/lib/media-url'
   Only ever import this from Server Components (layout.tsx, page.tsx) --
   it pulls in Payload's Node-only internals and will break if imported
   into a 'use client' file.
+
+  Every function takes an optional `draft` flag, passed straight through
+  to Payload's local API. Without it, Payload only ever returns the
+  currently-PUBLISHED version of a doc -- which is correct for real site
+  visitors, but means Live Preview's iframe (payload.config.ts's
+  livePreviewURL appends ?draft=true) would only ever show what's
+  already live, never an in-progress edit. Each previewable page.tsx
+  reads its own `draft` searchParam and threads it down to these calls;
+  everywhere else (layout.tsx, any page without that param) it's simply
+  omitted/false, so ordinary visitors are entirely unaffected.
 */
 const getClient = cache(async () => getPayload({ config }))
 
-export const getNavigation = cache(async () => {
+export const getNavigation = cache(async (draft = false) => {
   const payload = await getClient()
-  return payload.findGlobal({ slug: 'navigation' })
+  return payload.findGlobal({ slug: 'navigation', draft })
 })
 
-export const getFooterGlobal = cache(async () => {
+export const getFooterGlobal = cache(async (draft = false) => {
   const payload = await getClient()
-  return payload.findGlobal({ slug: 'footer' })
+  return payload.findGlobal({ slug: 'footer', draft })
 })
 
-export const getSiteSettings = cache(async () => {
+export const getSiteSettings = cache(async (draft = false) => {
   const payload = await getClient()
-  return payload.findGlobal({ slug: 'site-settings' })
+  return payload.findGlobal({ slug: 'site-settings', draft })
 })
 
-export const getPipeline = cache(async () => {
+export const getPipeline = cache(async (draft = false) => {
   const payload = await getClient()
-  return payload.findGlobal({ slug: 'pipeline' })
+  return payload.findGlobal({ slug: 'pipeline', draft })
 })
 
-export const getFinalCTA = cache(async () => {
+export const getFinalCTA = cache(async (draft = false) => {
   const payload = await getClient()
-  return payload.findGlobal({ slug: 'final-cta' })
+  return payload.findGlobal({ slug: 'final-cta', draft })
 })
 
-export const getReadyToTalk = cache(async () => {
+export const getReadyToTalk = cache(async (draft = false) => {
   const payload = await getClient()
-  return payload.findGlobal({ slug: 'ready-to-talk' })
+  return payload.findGlobal({ slug: 'ready-to-talk', draft })
 })
 
-export const getHomePageGlobal = cache(async () => {
+export const getHomePageGlobal = cache(async (draft = false) => {
   const payload = await getClient()
-  return payload.findGlobal({ slug: 'home-page', depth: 2 })
+  return payload.findGlobal({ slug: 'home-page', depth: 2, draft })
 })
 
-export const getHowItWorksPageGlobal = cache(async () => {
+export const getHowItWorksPageGlobal = cache(async (draft = false) => {
   const payload = await getClient()
-  return payload.findGlobal({ slug: 'how-it-works-page', depth: 2 })
+  return payload.findGlobal({ slug: 'how-it-works-page', depth: 2, draft })
 })
 
-export const getPortfolioIndexPageGlobal = cache(async () => {
+export const getPortfolioIndexPageGlobal = cache(async (draft = false) => {
   const payload = await getClient()
-  return payload.findGlobal({ slug: 'portfolio-index-page', depth: 2 })
+  return payload.findGlobal({ slug: 'portfolio-index-page', depth: 2, draft })
 })
 
-export const getContactPageGlobal = cache(async () => {
+export const getContactPageGlobal = cache(async (draft = false) => {
   const payload = await getClient()
-  return payload.findGlobal({ slug: 'contact-page' })
+  return payload.findGlobal({ slug: 'contact-page', draft })
 })
 
-export const getScheduleACallPageGlobal = cache(async () => {
+export const getScheduleACallPageGlobal = cache(async (draft = false) => {
   const payload = await getClient()
-  return payload.findGlobal({ slug: 'schedule-a-call-page' })
+  return payload.findGlobal({ slug: 'schedule-a-call-page', draft })
 })
 
-export const getIndustriesCollection = cache(async () => {
+export const getIndustriesCollection = cache(async (draft = false) => {
   const payload = await getClient()
-  const result = await payload.find({ collection: 'industries', limit: 100, depth: 2 })
+  const result = await payload.find({ collection: 'industries', limit: 100, depth: 2, draft })
   return result.docs
 })
 
-export const getPortfolioProjectsCollection = cache(async () => {
+export const getPortfolioProjectsCollection = cache(async (draft = false) => {
   const payload = await getClient()
-  const result = await payload.find({ collection: 'portfolio-projects', limit: 100, depth: 1, sort: 'order' })
+  const result = await payload.find({ collection: 'portfolio-projects', limit: 100, depth: 1, sort: 'order', draft })
   return result.docs
 })
 
-export const getJournalPostsCollection = cache(async () => {
+export const getJournalPostsCollection = cache(async (draft = false) => {
   const payload = await getClient()
-  const result = await payload.find({ collection: 'journal-posts', limit: 100, depth: 1 })
+  const result = await payload.find({ collection: 'journal-posts', limit: 100, depth: 1, draft })
   return result.docs
 })

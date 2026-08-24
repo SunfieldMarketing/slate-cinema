@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 
 const ICONS = ['Clock3', 'Users', 'ShieldCheck', 'Target', 'Wallet', 'Sparkles', 'CalendarClock'].map((v) => ({
   label: v,
@@ -15,6 +16,9 @@ const ICONS = ['Clock3', 'Users', 'ShieldCheck', 'Target', 'Wallet', 'Sparkles',
 export const ReadyToTalk: GlobalConfig = {
   slug: 'ready-to-talk',
   versions: { drafts: true },
+  hooks: {
+    afterChange: [revalidateGlobalAfterChange],
+  },
   access: {
     read: () => true,
     update: ({ req }) => Boolean(req.user),
