@@ -107,6 +107,16 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={`dark ${inter.variable} ${bebas.variable} ${fraunces.variable} ${courier.variable}`}>
+      <head>
+        {/* Every Vimeo embed on the site (background heroes + the
+            click-to-watch project modal) hits these same three hosts.
+            Nothing here previously warmed the connection, so the first
+            embed on any page paid full DNS+TLS+TCP negotiation cold --
+            part of why clicking a video to watch it feels slow. */}
+        <link rel="preconnect" href="https://player.vimeo.com" />
+        <link rel="preconnect" href="https://i.vimeocdn.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://f.vimeocdn.com" />
+      </head>
       <body className="font-sans antialiased bg-ink text-foreground overflow-x-hidden">
         <script
           type="application/ld+json"

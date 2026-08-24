@@ -38,8 +38,12 @@ interface SmartVideoProps {
    */
   variant?: 'background' | 'player'
   className?: string
-  /** Only meaningful on the file-based path; a Vimeo iframe ignores this
-      (its own poster/play-button UI stands in for it in "player" mode). */
+  /** Fires once the media is ready to show -- the file-based `<video>`'s
+      own loadeddata event, or an iframe's load event on the Vimeo path
+      (note: iframe `load` fires once the embed document is up, not once
+      the video itself is playable, but it's the earliest DOM signal
+      available and enough to know the player's own chrome has replaced
+      a blank/loading state). */
   onLoadedData?: () => void
   /** Set on every page's actual hero -- the one video that should win the
       race against everything else on the page (frame sequences, gallery
@@ -92,6 +96,10 @@ export default function SmartVideo({
         // types yet, but every Chromium/Firefox browser that matters honors it.
         fetchpriority={priority ? 'high' : undefined}
         title="Vimeo video"
+        // Previously ignored on this path (see the prop doc above) -- an
+        // iframe's own "loaded" signal is exactly what a caller wiring up
+        // a loading spinner around a player-variant embed needs.
+        onLoad={onLoadedData}
       />
     )
   }

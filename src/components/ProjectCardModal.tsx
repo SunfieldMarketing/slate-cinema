@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ArrowRight, X } from 'lucide-react'
 import type { PortfolioProjectLocal } from '@/lib/normalize'
@@ -29,6 +29,14 @@ export default function ProjectCardModal({
 }) {
   const cardRef = useRef<HTMLDivElement>(null)
   const backdropRef = useRef<HTMLButtonElement>(null)
+  // The Vimeo iframe (player variant) takes a beat to boot -- its own JS,
+  // thumbnail, and chrome all load after the iframe request completes.
+  // With nothing shown in that window it reads as "stuck" rather than
+  // loading. Track it per-project so a spinner covers exactly that gap.
+  const [videoLoaded, setVideoLoaded] = useState(false)
+  useEffect(() => {
+    setVideoLoaded(false)
+  }, [project])
 
   useEffect(() => {
     if (!project) return
@@ -106,13 +114,21 @@ export default function ProjectCardModal({
             className="absolute inset-0 w-full h-full object-cover"
           />
           {(project.video || project.videoVimeoUrl) && (
-            <SmartVideo
-              src={project.video}
-              vimeo={project.videoVimeoUrl}
-              poster={project.url}
-              variant="player"
-              className="absolute inset-0 w-full h-full object-cover"
-            />
+            <>
+              {!videoLoaded && (
+                <div className="absolute inset-0 z-[1] flex items-center justify-center bg-black/50">
+                  <div className="w-9 h-9 rounded-full border-2 border-white/25 border-t-white animate-spin" />
+                </div>
+              )}
+              <SmartVideo
+                src={project.video}
+                vimeo={project.videoVimeoUrl}
+                poster={project.url}
+                variant="player"
+                className="absolute inset-0 w-full h-full object-cover"
+                onLoadedData={() => setVideoLoaded(true)}
+              />
+            </>
           )}
           <span
             className="absolute top-4 left-4 font-mono text-[10px] tracking-[0.2em] uppercase px-3 py-1.5 rounded-full backdrop-blur-md border text-white pointer-events-none"
