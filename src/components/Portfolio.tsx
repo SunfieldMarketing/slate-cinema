@@ -11,22 +11,67 @@ import { PLACEHOLDER_IMAGE } from '@/lib/media-url'
 gsap.registerPlugin(ScrollTrigger)
 
 /*
-  Explicit bento placement for the full, unfiltered 8-project set — hand
-  tiled (not auto-packed) so the mixed wide/tall/normal cards fill every
-  cell of a 4-col x 3-row grid exactly, with zero leftover gaps. Only
-  applies to that exact 8-item "All" view; a filtered subset falls back
+  Explicit bento placement, hand-tiled per 8-project block (4-col x 3-row,
+  zero leftover gaps) — this is the original "All" view mosaic. The project
+  list has grown past 8 since that design, so this now CYCLES: every
+  complete group of 8 gets the same mixed wide/tall/normal tiling, each
+  group's row-starts shifted down by 3 to stack under the previous group.
+  Any trailing partial group (list length not a multiple of 8) falls back
   to plain uniform cards, which can never gap regardless of count.
+
+  Tailwind class names must appear as literal source text for the compiler
+  to pick them up -- they can't be assembled from runtime numbers -- so
+  each group below is spelled out in full rather than computed.
 */
-const bentoPlacement = [
-  'lg:col-start-1 lg:col-span-2 lg:row-start-1 lg:row-span-1', // wide
-  'lg:col-start-3 lg:col-span-1 lg:row-start-1 lg:row-span-2', // tall
-  'lg:col-start-4 lg:col-span-1 lg:row-start-1 lg:row-span-1',
-  'lg:col-start-1 lg:col-span-1 lg:row-start-2 lg:row-span-1',
-  'lg:col-start-2 lg:col-span-1 lg:row-start-2 lg:row-span-2', // tall
-  'lg:col-start-4 lg:col-span-1 lg:row-start-2 lg:row-span-1',
-  'lg:col-start-3 lg:col-span-2 lg:row-start-3 lg:row-span-1', // wide
-  'lg:col-start-1 lg:col-span-1 lg:row-start-3 lg:row-span-1',
+const bentoGroups = [
+  [ // rows 1-3
+    'lg:col-start-1 lg:col-span-2 lg:row-start-1 lg:row-span-1', // wide
+    'lg:col-start-3 lg:col-span-1 lg:row-start-1 lg:row-span-2', // tall
+    'lg:col-start-4 lg:col-span-1 lg:row-start-1 lg:row-span-1',
+    'lg:col-start-1 lg:col-span-1 lg:row-start-2 lg:row-span-1',
+    'lg:col-start-2 lg:col-span-1 lg:row-start-2 lg:row-span-2', // tall
+    'lg:col-start-4 lg:col-span-1 lg:row-start-2 lg:row-span-1',
+    'lg:col-start-3 lg:col-span-2 lg:row-start-3 lg:row-span-1', // wide
+    'lg:col-start-1 lg:col-span-1 lg:row-start-3 lg:row-span-1',
+  ],
+  [ // rows 4-6
+    'lg:col-start-1 lg:col-span-2 lg:row-start-4 lg:row-span-1',
+    'lg:col-start-3 lg:col-span-1 lg:row-start-4 lg:row-span-2',
+    'lg:col-start-4 lg:col-span-1 lg:row-start-4 lg:row-span-1',
+    'lg:col-start-1 lg:col-span-1 lg:row-start-5 lg:row-span-1',
+    'lg:col-start-2 lg:col-span-1 lg:row-start-5 lg:row-span-2',
+    'lg:col-start-4 lg:col-span-1 lg:row-start-5 lg:row-span-1',
+    'lg:col-start-3 lg:col-span-2 lg:row-start-6 lg:row-span-1',
+    'lg:col-start-1 lg:col-span-1 lg:row-start-6 lg:row-span-1',
+  ],
+  [ // rows 7-9
+    'lg:col-start-1 lg:col-span-2 lg:row-start-7 lg:row-span-1',
+    'lg:col-start-3 lg:col-span-1 lg:row-start-7 lg:row-span-2',
+    'lg:col-start-4 lg:col-span-1 lg:row-start-7 lg:row-span-1',
+    'lg:col-start-1 lg:col-span-1 lg:row-start-8 lg:row-span-1',
+    'lg:col-start-2 lg:col-span-1 lg:row-start-8 lg:row-span-2',
+    'lg:col-start-4 lg:col-span-1 lg:row-start-8 lg:row-span-1',
+    'lg:col-start-3 lg:col-span-2 lg:row-start-9 lg:row-span-1',
+    'lg:col-start-1 lg:col-span-1 lg:row-start-9 lg:row-span-1',
+  ],
+  [ // rows 10-12 -- headroom past today's 23 projects
+    'lg:col-start-1 lg:col-span-2 lg:row-start-10 lg:row-span-1',
+    'lg:col-start-3 lg:col-span-1 lg:row-start-10 lg:row-span-2',
+    'lg:col-start-4 lg:col-span-1 lg:row-start-10 lg:row-span-1',
+    'lg:col-start-1 lg:col-span-1 lg:row-start-11 lg:row-span-1',
+    'lg:col-start-2 lg:col-span-1 lg:row-start-11 lg:row-span-2',
+    'lg:col-start-4 lg:col-span-1 lg:row-start-11 lg:row-span-1',
+    'lg:col-start-3 lg:col-span-2 lg:row-start-12 lg:row-span-1',
+    'lg:col-start-1 lg:col-span-1 lg:row-start-12 lg:row-span-1',
+  ],
 ]
+const BENTO_GROUP_SIZE = 8
+// How many items at the front of the list get mosaic-tiled -- every
+// complete group of 8, capped by how many groups are spelled out above.
+function bentoCoveredCount(total: number): number {
+  const fullGroups = Math.min(Math.floor(total / BENTO_GROUP_SIZE), bentoGroups.length)
+  return fullGroups * BENTO_GROUP_SIZE
+}
 
 export default function Portfolio({
   projects,
@@ -54,7 +99,7 @@ export default function Portfolio({
   }, { scope: sectionRef })
 
   const visible = limit ? projects.slice(0, limit) : projects
-  const useBento = !limit && visible.length === bentoPlacement.length
+  const bentoCovered = limit ? 0 : bentoCoveredCount(visible.length)
 
   return (
     <section ref={sectionRef} className="relative w-full min-h-screen overflow-hidden py-24 md:py-28">
@@ -72,14 +117,14 @@ export default function Portfolio({
           </div>
         </div>
 
-        {/* Cinematic bento grid — hand-tiled for the full set so it fills
-            every cell with no gaps; falls back to plain squares when
-            filtered down to a smaller, variable count. */}
+        {/* Cinematic bento grid — hand-tiled in cycles of 8 so it fills
+            every cell with no gaps; any trailing partial group falls back
+            to plain squares, which can never gap regardless of count. */}
         <div className="pf-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-[240px] sm:auto-rows-[260px] gap-4">
           {visible.map((p, i) => (
             <article
               key={p.title}
-              className={`pf-card group relative rounded-2xl overflow-hidden border border-white/10 cursor-pointer transition-all duration-500 hover:border-[#00AEEF]/50 ${useBento ? bentoPlacement[i] : ''}`}
+              className={`pf-card group relative rounded-2xl overflow-hidden border border-white/10 cursor-pointer transition-all duration-500 hover:border-[#00AEEF]/50 ${i < bentoCovered ? bentoGroups[Math.floor(i / BENTO_GROUP_SIZE)][i % BENTO_GROUP_SIZE] : ''}`}
             >
               {/* Image */}
               <img
