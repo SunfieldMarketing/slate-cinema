@@ -171,16 +171,25 @@ export default function PortfolioPageContent({
           </div>
         </ScrollExpandMedia>
 
-        {/* The showcase centerpiece — drag-to-spin reel of actual work */}
-        <ReelCarousel projects={projects} copy={page?.reelCarousel} />
+        {/* The showcase centerpiece — drag-to-spin reel of actual work.
+            Capped at 8: the ring's geometry (card size, radius vs. the
+            fixed 3D perspective) was hand-tuned for an 8-card reel, and
+            feeding it the full growing project list stretched the ring
+            radius far past what the perspective can render cleanly.
+            Gallery below gets a different 8 (order 8-15) so the two
+            sections never repeat the same projects. */}
+        <ReelCarousel projects={projects.slice(0, 8)} copy={page?.reelCarousel} />
 
         {/* Who we serve — the main routing interaction on this page */}
         <Industries industries={industries} copy={page?.industriesSection} />
 
         {/* The full project archive -- no category filter chips, per the
             client's call: with only a handful of projects per category,
-            filtering makes the grid look sparse rather than deep. */}
-        <Portfolio projects={projects} />
+            filtering makes the grid look sparse rather than deep. Capped
+            at 8 (a different 8 than the reel above, order 8-15) so the
+            bento mosaic tiling -- also hand-tuned for an 8-project grid --
+            renders as originally designed instead of an ever-growing list. */}
+        <Portfolio projects={projects.slice(8, 16)} />
 
         <FinalCTA data={finalCta} />
 
