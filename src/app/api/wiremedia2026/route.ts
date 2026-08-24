@@ -527,11 +527,19 @@ export async function GET(req: Request) {
       report.migrations = { ok: false, error: String(e?.message || e) }
     }
 
-    // 3. Config wiring audit -- every collection/global must have
-    // versions.drafts (required for draft-mode preview) and an
-    // afterChange revalidate hook (required for real-time publishing).
+    // 3. Config wiring audit -- every CONTENT collection/global (the ones
+    // this site's own code defines) must have versions.drafts (required
+    // for draft-mode preview) and an afterChange revalidate hook
+    // (required for real-time publishing). Payload's own internal system
+    // collections (users, forms, form-submissions, payload-kv, payload-
+    // locked-documents, payload-preferences, payload-migrations) are
+    // listed for visibility but correctly have neither -- they were
+    // never supposed to, so they're excluded from the ok check below
+    // rather than producing a permanent false failure.
+    const contentCollectionSlugs = new Set(['industries', 'portfolio-projects', 'journal-posts'])
     const collectionAudit = payload.config.collections.map((c) => ({
       slug: c.slug,
+      isContentCollection: contentCollectionSlugs.has(c.slug),
       hasDraftsVersions: Boolean((c.versions as any)?.drafts),
       hasAfterChangeHook: (c.hooks?.afterChange?.length ?? 0) > 0,
     }))
@@ -541,7 +549,8 @@ export async function GET(req: Request) {
       hasAfterChangeHook: (g.hooks?.afterChange?.length ?? 0) > 0,
     }))
     report.configWiring = {
-      ok: [...collectionAudit, ...globalAudit].every((x) => x.hasDraftsVersions && x.hasAfterChangeHook),
+      ok: collectionAudit.filter((x) => x.isContentCollection).every((x) => x.hasDraftsVersions && x.hasAfterChangeHook)
+        && globalAudit.every((x) => x.hasDraftsVersions && x.hasAfterChangeHook),
       collections: collectionAudit,
       globals: globalAudit,
     }
@@ -593,11 +602,17 @@ export async function GET(req: Request) {
       })
       journalTest.created = true
 
-      const hiddenWhileDraft = await payload.find({ collection: 'journal-posts', draft: false, where: { slug: { equals: testSlug } } })
+      // overrideAccess:false here is deliberate -- it's what makes this
+      // simulate a REAL anonymous visitor (same as payload-data.ts's
+      // draft:false -> overrideAccess:false). Local API's own default
+      // (overrideAccess:true) bypasses access control entirely, which is
+      // exactly the gap the 2026-08-24 fix closed -- testing with the
+      // default here would silently retest the old, already-fixed bug.
+      const hiddenWhileDraft = await payload.find({ collection: 'journal-posts', draft: false, overrideAccess: false, where: { slug: { equals: testSlug } } })
       journalTest.hiddenWhileDraft = hiddenWhileDraft.totalDocs === 0
 
       await payload.update({ collection: 'journal-posts', id: created.id, data: { _status: 'published' } as any })
-      const visibleAfterPublish = await payload.find({ collection: 'journal-posts', draft: false, where: { slug: { equals: testSlug } } })
+      const visibleAfterPublish = await payload.find({ collection: 'journal-posts', draft: false, overrideAccess: false, where: { slug: { equals: testSlug } } })
       journalTest.visibleAfterPublish = visibleAfterPublish.totalDocs === 1
 
       await payload.delete({ collection: 'journal-posts', id: created.id })
@@ -644,13 +659,19 @@ export async function GET(req: Request) {
     report.mediaRoundtrip = mediaTest
 
     // 7. Real revalidation proof: flip a real, currently-live field
-    // (SiteSettings.trustBanner.ratingText, rendered directly on the
-    // homepage) to a unique marker, confirm it shows up in the LIVE public
-    // HTML within this same request, then restore the original value and
-    // confirm that reverts live too. The only test here that proves the
-    // full publish -> propagate loop end to end against production.
+    // (SiteSettings.trustBanner.ratingText) to a unique marker, confirm it
+    // shows up in the LIVE public HTML within this same request, then
+    // restore the original value and confirm that reverts live too. The
+    // only test here that proves the full publish -> propagate loop end
+    // to end against production. Checked against /portfolio/athletics,
+    // NOT the homepage -- TrustBanner.tsx only renders on industry pages
+    // (src/components/TrustBanner.tsx's own doc comment), the homepage
+    // has a separate, unrelated HomePage.trustSection with similar-
+    // looking rating text that made an earlier version of this test give
+    // a false pass/fail by coincidentally matching the wrong component.
     const revalTest: Record<string, unknown> = {}
     try {
+      const checkUrl = `${siteBase}/portfolio/athletics`
       const before: any = await payload.findGlobal({ slug: 'site-settings', depth: 0 })
       const originalTrustBanner = before?.trustBanner ?? {}
       const originalRatingText = originalTrustBanner.ratingText ?? '5.0/5 · 44 Google reviews'
@@ -658,13 +679,13 @@ export async function GET(req: Request) {
 
       const t0 = Date.now()
       await payload.updateGlobal({ slug: 'site-settings', data: { trustBanner: { ...originalTrustBanner, ratingText: marker } } as any })
-      const liveRes = await fetch(`${siteBase}/`, { cache: 'no-store' })
+      const liveRes = await fetch(checkUrl, { cache: 'no-store' })
       const liveHtml = await liveRes.text()
       revalTest.elapsedMs = Date.now() - t0
       revalTest.markerAppearedLive = liveHtml.includes(marker)
 
       await payload.updateGlobal({ slug: 'site-settings', data: { trustBanner: { ...originalTrustBanner, ratingText: originalRatingText } } as any })
-      const restoredRes = await fetch(`${siteBase}/`, { cache: 'no-store' })
+      const restoredRes = await fetch(checkUrl, { cache: 'no-store' })
       const restoredHtml = await restoredRes.text()
       revalTest.restoredLive = restoredHtml.includes(originalRatingText) && !restoredHtml.includes(marker)
       revalTest.ok = Boolean(revalTest.markerAppearedLive && revalTest.restoredLive)
