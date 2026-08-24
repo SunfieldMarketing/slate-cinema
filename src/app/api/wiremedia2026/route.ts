@@ -464,6 +464,31 @@ export async function GET(req: Request) {
     })
   }
 
+  // Safety check before a planned access-control fix (see e2eTest's
+  // journalPostLifecycle finding: draft docs are NOT filtered out of
+  // plain published-only reads). Need to confirm nothing currently live
+  // is actually sitting in _status:'draft' before tightening access.read,
+  // or that content would vanish from the public site the moment the fix
+  // ships.
+  if (searchParams.get('checkStatuses') === '1') {
+    const collections = ['industries', 'portfolio-projects', 'journal-posts'] as const
+    const collectionStatuses: Record<string, unknown> = {}
+    for (const slug of collections) {
+      const all = await payload.find({ collection: slug, limit: 200, depth: 0 })
+      collectionStatuses[slug] = all.docs.map((d: any) => ({ id: d.id, status: d._status, label: d.slug ?? d.title }))
+    }
+    const globals = [
+      'navigation', 'footer', 'site-settings', 'pipeline', 'final-cta', 'ready-to-talk',
+      'home-page', 'how-it-works-page', 'portfolio-index-page', 'contact-page', 'schedule-a-call-page',
+    ] as const
+    const globalStatuses: Record<string, unknown> = {}
+    for (const slug of globals) {
+      const g: any = await payload.findGlobal({ slug, depth: 0 })
+      globalStatuses[slug] = g?._status ?? null
+    }
+    return NextResponse.json({ ok: true, collectionStatuses, globalStatuses })
+  }
+
   // Full CMS end-to-end audit -- 2026-08-24. Exercises every layer without
   // ever touching the /admin UI or any credential (local API only, same
   // pattern this whole route already uses): migrations-applied check,
