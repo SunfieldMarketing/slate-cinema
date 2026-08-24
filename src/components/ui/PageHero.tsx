@@ -174,14 +174,20 @@ export default function PageHero({
                   className="ph-stat text-center"
                   style={i < stats.length - 1 ? { borderRight: '1px solid rgba(255,255,255,0.07)' } : {}}
                 >
+                  {/* Same fix as StatsBand.tsx: this is a separate, duplicate
+                      stat-rendering implementation (PageHero has its own,
+                      not the shared component) that had the identical
+                      wrap bug -- a long value/suffix or label (e.g. a
+                      year-range) could break to a second line and throw
+                      off row alignment against the other stats. */}
                   <div
-                    className="text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-none"
+                    className="text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-none whitespace-nowrap"
                     style={{ textShadow: `0 0 40px ${accent}44` }}
                   >
                     <NumberTicker value={s.value} className="font-bold text-white" />
                     <span style={{ color: accent }}>{s.suffix}</span>
                   </div>
-                  <div className="mt-2 font-mono text-[10px] sm:text-[11px] tracking-widest text-white/45 uppercase">
+                  <div className="mt-2 font-mono text-[9px] sm:text-[10px] tracking-wide text-white/45 uppercase whitespace-nowrap">
                     {s.label}
                   </div>
                 </div>
