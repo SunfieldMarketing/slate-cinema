@@ -147,7 +147,7 @@ export const industries: IndustryData[] = [
       { value: 3, suffix: '', label: 'Gen-Video Models In Pipeline' },
       { value: 100, suffix: '%', label: 'Human-Finished, Every Frame' },
       { value: 174, suffix: '+', label: 'Projects Since 2023' },
-      { value: 5, suffix: '', label: '.0 Google Rating' },
+      { value: 5, suffix: '.0', label: 'Google Rating' },
     ],
     services: ['AI-accelerated explainers', 'Motion brand identity', '2D & 3D character work', 'AI-assisted style exploration'],
     clientShowcase: [
@@ -252,7 +252,7 @@ export const industries: IndustryData[] = [
       { value: 4, suffix: 'yrs', label: 'Kids of Courage Marathons, 2018–21' },
       { value: 3, suffix: '', label: 'Named Athletics Clients' },
       { value: 174, suffix: '+', label: 'Projects Since 2023' },
-      { value: 5, suffix: '', label: '.0 Google Rating' },
+      { value: 5, suffix: '.0', label: 'Google Rating' },
     ],
     services: ['Hype reels', 'Athlete feature films', 'Product launch content', 'Live event capture'],
     // Moved here 2026-08-13 from the now-retired dedicated
@@ -347,7 +347,7 @@ export const industries: IndustryData[] = [
       { value: 4, suffix: '', label: 'Smash House Locations' },
       { value: 5, suffix: 'yrs', label: 'Running With Gateways' },
       { value: 174, suffix: '+', label: 'Projects Since 2023' },
-      { value: 5, suffix: '', label: '.0 Google Rating' },
+      { value: 5, suffix: '.0', label: 'Google Rating' },
     ],
     services: ['Destination films', 'Aerial cinematography', 'Property showcases', 'Hospitality brand content'],
     clientShowcase: [
@@ -526,7 +526,7 @@ export const industries: IndustryData[] = [
       { value: 5, suffix: '', label: 'EKGx Deliverables' },
       { value: 100, suffix: '%', label: 'Compliance-Reviewed' },
       { value: 174, suffix: '+', label: 'Projects Since 2023' },
-      { value: 5, suffix: '', label: '.0 Google Rating' },
+      { value: 5, suffix: '.0', label: 'Google Rating' },
     ],
     services: ['Patient story films', 'Practice & facility films', 'Medical-app commercial suites', 'Regulated-industry compliant edits'],
   },
@@ -550,7 +550,7 @@ export const industries: IndustryData[] = [
       { value: 743, suffix: '', label: 'Stock Clips, 8 Marketplaces' },
       { value: 4287, suffix: '', label: 'Clip Aerial Library' },
       { value: 174, suffix: '+', label: 'Projects Since 2023' },
-      { value: 5, suffix: '', label: '.0 Google Rating' },
+      { value: 5, suffix: '.0', label: 'Google Rating' },
     ],
     services: ['Macro product photography', 'E-commerce ad cuts', 'Signature color grading', 'Platform-native spotlights'],
     clientShowcase: [
@@ -634,7 +634,7 @@ export const industries: IndustryData[] = [
     stats: [
       { value: 124, suffix: '', label: 'Client Projects on Frame.io' },
       { value: 174, suffix: '+', label: 'Projects Since 2023' },
-      { value: 5, suffix: '', label: '.0 Google Rating' },
+      { value: 5, suffix: '.0', label: 'Google Rating' },
       { value: 44, suffix: '', label: 'Google Reviews' },
     ],
     services: ['Brand & culture films', 'Executive communications', 'Internal comms video', 'Investor & recruiting content'],
@@ -721,7 +721,7 @@ export const industries: IndustryData[] = [
       { value: 7, suffix: '+', label: 'Named Organizations Served' },
       { value: 5, suffix: 'yrs', label: 'Running With Gateways' },
       { value: 174, suffix: '+', label: 'Projects Since 2023' },
-      { value: 5, suffix: '', label: '.0 Google Rating' },
+      { value: 5, suffix: '.0', label: 'Google Rating' },
     ],
     services: ['Mission & impact films', 'Donor & fundraising content', 'Volunteer recruitment films', 'Annual report video'],
     clientShowcase: [
@@ -814,7 +814,7 @@ export const industries: IndustryData[] = [
       { value: 5, suffix: 'yrs', label: 'Running With Gateways' },
       { value: 6, suffix: '+', label: 'Named School Clients' },
       { value: 174, suffix: '+', label: 'Projects Since 2023' },
-      { value: 5, suffix: '', label: '.0 Google Rating' },
+      { value: 5, suffix: '.0', label: 'Google Rating' },
     ],
     services: ['Course & program trailers', 'Campus tour films', 'Faculty & student spotlights', 'Enrollment marketing content'],
     clientShowcase: [
@@ -910,7 +910,7 @@ export const industries: IndustryData[] = [
       { value: 15, suffix: '', label: 'Real Talk Episodes, S1' },
       { value: 31, suffix: '', label: 'Clips From One Episode' },
       { value: 3, suffix: '', label: 'Reels Shipped Every Week' },
-      { value: 5, suffix: '', label: '.0 Google Rating' },
+      { value: 5, suffix: '.0', label: 'Google Rating' },
     ],
     services: ['Set design + studio build', 'Multi-cam filming', 'Full-episode edit', 'Distribution-ready exports'],
     clientShowcase: [
