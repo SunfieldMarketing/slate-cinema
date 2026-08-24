@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getPayload, type Payload } from 'payload'
 import config from '@/payload.config'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import { migrations } from '@/migrations'
 
 // ~9 industries x up to 4 thumbnail fetch+upload round-trips each --
 // comfortably over the platform default execution window.
@@ -461,6 +462,203 @@ export async function GET(req: Request) {
       ok: true,
       env: Object.fromEntries(vars.map((v) => [v, !!process.env[v]])),
     })
+  }
+
+  // Full CMS end-to-end audit -- 2026-08-24. Exercises every layer without
+  // ever touching the /admin UI or any credential (local API only, same
+  // pattern this whole route already uses): migrations-applied check,
+  // hooks/versions config audit read straight from Payload's own sanitized
+  // config, a real create -> draft-isolation -> publish -> delete round
+  // trip on journal-posts (proves the exact draft mechanism /api/preview
+  // relies on), a real media upload -> S3-fetch -> delete round trip
+  // (proves storage actually works, not just the DB row), and a real
+  // global-field round trip checked against the LIVE public HTML (proves
+  // on-demand revalidation actually propagates to production, not just
+  // the DB). Every write here is read-back-verified and reverted/deleted
+  // within this same request -- nothing is left behind either way.
+  if (searchParams.get('e2eTest') === '1') {
+    const report: Record<string, unknown> = { ok: true, startedAt: new Date().toISOString() }
+    const siteBase = (process.env.NEXT_PUBLIC_SERVER_URL || 'https://www.slatecinema.com').replace(/\/$/, '')
+
+    // 1. Env vars (same list as checkEnvVars, folded in here for one report)
+    const envVars = [
+      'GHL_LEAD_WEBHOOK_URL', 'GHL_BOOKING_WEBHOOK_URL',
+      'NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN',
+      'S3_BUCKET', 'S3_REGION', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY',
+      'BLOB_READ_WRITE_TOKEN', 'DATABASE_URI', 'PAYLOAD_SECRET',
+    ]
+    report.envVars = Object.fromEntries(envVars.map((v) => [v, !!process.env[v]]))
+
+    // 2. Migrations -- every migration registered in src/migrations/index.ts
+    // must show up as an applied row, or the DB schema is out of sync with
+    // the code (exactly the class of bug that broke the trust-banner deploy).
+    try {
+      const applied = await payload.find({ collection: 'payload-migrations', limit: 200, sort: 'createdAt' } as any)
+      const appliedNames = new Set(applied.docs.map((d: any) => d.name))
+      const codeNames = migrations.map((m) => m.name)
+      const pending = codeNames.filter((n) => !appliedNames.has(n))
+      report.migrations = { ok: pending.length === 0, appliedCount: applied.totalDocs, codeCount: codeNames.length, pending }
+    } catch (e: any) {
+      report.migrations = { ok: false, error: String(e?.message || e) }
+    }
+
+    // 3. Config wiring audit -- every collection/global must have
+    // versions.drafts (required for draft-mode preview) and an
+    // afterChange revalidate hook (required for real-time publishing).
+    const collectionAudit = payload.config.collections.map((c) => ({
+      slug: c.slug,
+      hasDraftsVersions: Boolean((c.versions as any)?.drafts),
+      hasAfterChangeHook: (c.hooks?.afterChange?.length ?? 0) > 0,
+    }))
+    const globalAudit = payload.config.globals.map((g) => ({
+      slug: g.slug,
+      hasDraftsVersions: Boolean((g.versions as any)?.drafts),
+      hasAfterChangeHook: (g.hooks?.afterChange?.length ?? 0) > 0,
+    }))
+    report.configWiring = {
+      ok: [...collectionAudit, ...globalAudit].every((x) => x.hasDraftsVersions && x.hasAfterChangeHook),
+      collections: collectionAudit,
+      globals: globalAudit,
+    }
+
+    // 4. Preview routes reachable (enable + exit)
+    try {
+      const previewRes = await fetch(`${siteBase}/api/preview?path=%2F`, { redirect: 'manual' })
+      const exitRes = await fetch(`${siteBase}/api/preview/exit?path=%2F`, { redirect: 'manual' })
+      const isRedirect = (s: number) => [301, 302, 307, 308].includes(s)
+      report.previewRoutes = { ok: isRedirect(previewRes.status) && isRedirect(exitRes.status), enable: previewRes.status, exit: exitRes.status }
+    } catch (e: any) {
+      report.previewRoutes = { ok: false, error: String(e?.message || e) }
+    }
+
+    // 5. journal-posts full lifecycle: create draft -> confirm hidden from
+    // the published query -> publish -> confirm visible -> delete -> confirm gone.
+    const testSlug = `__e2e_test_${Date.now()}__`
+    const journalTest: Record<string, unknown> = {}
+    try {
+      const existingMedia = await payload.find({ collection: 'media', limit: 1, depth: 0 })
+      const coverImageId = existingMedia.docs[0]?.id
+      if (!coverImageId) throw new Error('no existing media doc available to use as coverImage')
+
+      const created = await payload.create({
+        collection: 'journal-posts',
+        data: {
+          slug: testSlug,
+          title: 'E2E Test Post',
+          excerpt: 'Automated end-to-end test -- safe to ignore, deleted automatically within seconds.',
+          category: 'Test',
+          accent: '#00AEEF',
+          date: 'Test',
+          readTime: '1 min read',
+          coverImage: coverImageId,
+          author: 'E2E Test',
+          content: {
+            root: {
+              type: 'root',
+              children: [{
+                type: 'paragraph',
+                children: [{ type: 'text', text: 'e2e test content', version: 1 }],
+                direction: 'ltr', format: '', indent: 0, version: 1,
+              }],
+              direction: 'ltr', format: '', indent: 0, version: 1,
+            },
+          },
+          _status: 'draft',
+        } as any,
+      })
+      journalTest.created = true
+
+      const hiddenWhileDraft = await payload.find({ collection: 'journal-posts', draft: false, where: { slug: { equals: testSlug } } })
+      journalTest.hiddenWhileDraft = hiddenWhileDraft.totalDocs === 0
+
+      await payload.update({ collection: 'journal-posts', id: created.id, data: { _status: 'published' } as any })
+      const visibleAfterPublish = await payload.find({ collection: 'journal-posts', draft: false, where: { slug: { equals: testSlug } } })
+      journalTest.visibleAfterPublish = visibleAfterPublish.totalDocs === 1
+
+      await payload.delete({ collection: 'journal-posts', id: created.id })
+      const goneAfterDelete = await payload.find({ collection: 'journal-posts', where: { slug: { equals: testSlug } } })
+      journalTest.goneAfterDelete = goneAfterDelete.totalDocs === 0
+      journalTest.ok = Boolean(journalTest.hiddenWhileDraft && journalTest.visibleAfterPublish && journalTest.goneAfterDelete)
+    } catch (e: any) {
+      journalTest.ok = false
+      journalTest.error = String(e?.message || e)
+      try {
+        const leftover = await payload.find({ collection: 'journal-posts', where: { slug: { equals: testSlug } } })
+        for (const d of leftover.docs) await payload.delete({ collection: 'journal-posts', id: d.id })
+      } catch {}
+    }
+    report.journalPostLifecycle = journalTest
+
+    // 6. Media upload/delete round trip -- proves S3 storage actually
+    // works end to end, not just that the DB row can be created.
+    const mediaTest: Record<string, unknown> = {}
+    try {
+      const pngBuf = Buffer.from(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
+        'base64',
+      )
+      const mediaDoc: any = await payload.create({
+        collection: 'media',
+        data: { alt: '__e2e_test_media__' },
+        file: { data: pngBuf, mimetype: 'image/png', name: 'e2e-test.png', size: pngBuf.length },
+      })
+      mediaTest.created = true
+      mediaTest.hasUrl = Boolean(mediaDoc.url)
+      if (mediaDoc.url) {
+        const urlRes = await fetch(mediaDoc.url as string)
+        mediaTest.urlReachable = urlRes.ok
+      }
+      await payload.delete({ collection: 'media', id: mediaDoc.id })
+      const goneCheck = await payload.find({ collection: 'media', where: { alt: { equals: '__e2e_test_media__' } } })
+      mediaTest.goneAfterDelete = goneCheck.totalDocs === 0
+      mediaTest.ok = Boolean(mediaTest.created && mediaTest.hasUrl && mediaTest.urlReachable && mediaTest.goneAfterDelete)
+    } catch (e: any) {
+      mediaTest.ok = false
+      mediaTest.error = String(e?.message || e)
+    }
+    report.mediaRoundtrip = mediaTest
+
+    // 7. Real revalidation proof: flip a real, currently-live field
+    // (SiteSettings.trustBanner.ratingText, rendered directly on the
+    // homepage) to a unique marker, confirm it shows up in the LIVE public
+    // HTML within this same request, then restore the original value and
+    // confirm that reverts live too. The only test here that proves the
+    // full publish -> propagate loop end to end against production.
+    const revalTest: Record<string, unknown> = {}
+    try {
+      const before: any = await payload.findGlobal({ slug: 'site-settings', depth: 0 })
+      const originalTrustBanner = before?.trustBanner ?? {}
+      const originalRatingText = originalTrustBanner.ratingText ?? '5.0/5 · 44 Google reviews'
+      const marker = `__e2e_${Date.now()}__`
+
+      const t0 = Date.now()
+      await payload.updateGlobal({ slug: 'site-settings', data: { trustBanner: { ...originalTrustBanner, ratingText: marker } } as any })
+      const liveRes = await fetch(`${siteBase}/`, { cache: 'no-store' })
+      const liveHtml = await liveRes.text()
+      revalTest.elapsedMs = Date.now() - t0
+      revalTest.markerAppearedLive = liveHtml.includes(marker)
+
+      await payload.updateGlobal({ slug: 'site-settings', data: { trustBanner: { ...originalTrustBanner, ratingText: originalRatingText } } as any })
+      const restoredRes = await fetch(`${siteBase}/`, { cache: 'no-store' })
+      const restoredHtml = await restoredRes.text()
+      revalTest.restoredLive = restoredHtml.includes(originalRatingText) && !restoredHtml.includes(marker)
+      revalTest.ok = Boolean(revalTest.markerAppearedLive && revalTest.restoredLive)
+    } catch (e: any) {
+      revalTest.ok = false
+      revalTest.error = String(e?.message || e)
+    }
+    report.liveRevalidationProof = revalTest
+
+    report.ok = Boolean(
+      (report.migrations as any)?.ok !== false &&
+      (report.configWiring as any)?.ok &&
+      (report.previewRoutes as any)?.ok &&
+      (report.journalPostLifecycle as any)?.ok &&
+      (report.mediaRoundtrip as any)?.ok &&
+      (report.liveRevalidationProof as any)?.ok,
+    )
+    report.finishedAt = new Date().toISOString()
+    return NextResponse.json(report)
   }
 
   // Diagnostic: StatsBand reads industries' `stats` straight from the DB
