@@ -279,6 +279,38 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: true, results })
   }
 
+  // Client asked to swap out one specific project from the featured
+  // gallery slice ("A Place That Feels Like Home" / Waterview Nursing &
+  // Rehabilitation, order 9) for something else. Rather than edit that
+  // project's own video, swap its `order` with an unfeatured one (Miami
+  // Arak "Our Mission", order 16, added by addPortfolioVariety3) -- moves
+  // Waterview out of the reel/gallery's 0-15 window entirely (still live
+  // on its own project page) and pulls a fresh, previously-unfeatured
+  // video into the gallery in its place.
+  if (searchParams.get('swapGalleryProject') === '1') {
+    const outgoing = await payload.find({ collection: 'portfolio-projects', where: { company: { equals: 'Waterview Nursing & Rehabilitation' } }, limit: 1 })
+    // Miami Arak has two docs (an earlier one from swapSelectedWork plus
+    // this one from addPortfolioVariety3) -- filter on both fields so the
+    // right one (order 16, "Our Mission") is the one picked up.
+    const incoming = await payload.find({ collection: 'portfolio-projects', where: { and: [{ company: { equals: 'Miami Arak' } }, { title: { equals: 'Our Mission' } }] }, limit: 1 })
+    if (!outgoing.docs[0] || !incoming.docs[0]) {
+      return NextResponse.json({ ok: false, error: 'one or both projects not found', outgoingFound: !!outgoing.docs[0], incomingFound: !!incoming.docs[0] }, { status: 404 })
+    }
+    const outDoc = outgoing.docs[0]
+    const inDoc = incoming.docs[0]
+    const outOrder = outDoc.order
+    const inOrder = inDoc.order
+    await payload.update({ collection: 'portfolio-projects', id: outDoc.id, data: { order: inOrder } })
+    await payload.update({ collection: 'portfolio-projects', id: inDoc.id, data: { order: outOrder } })
+    return NextResponse.json({
+      ok: true,
+      swapped: {
+        outgoing: { company: outDoc.company, title: outDoc.title, oldOrder: outOrder, newOrder: inOrder },
+        incoming: { company: inDoc.company, title: inDoc.title, oldOrder: inOrder, newOrder: outOrder },
+      },
+    })
+  }
+
   // Selected Work (homepage 3D carousel) and "A Gallery of Impact"
   // (/portfolio grid) read the same collection -- confirmed, by reading
   // Portfolio.tsx directly, that a non-8 count is genuinely safe there

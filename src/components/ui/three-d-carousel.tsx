@@ -83,12 +83,25 @@ const Carousel = memo(
     // release velocity by hand (Framer's PanInfo.velocity did this for us
     // previously) — only the last ~120ms matter for a "flick" read.
     const samplesRef = useRef<{ t: number; x: number }[]>([])
+    // setPointerCapture below retargets every subsequent pointer AND click
+    // event to the capturing element (this outer ring), not whatever's
+    // visually under the cursor -- so a real user's click on a card's own
+    // onClick handler never fires; only a script-dispatched .click() does,
+    // because that bypasses native pointer dispatch entirely. Track which
+    // card was pressed and how far the pointer actually moved, and fire
+    // selection by hand from here when it was a tap, not a drag.
+    const pressedIndexRef = useRef<number | null>(null)
+    const totalMoveRef = useRef(0)
+    const CLICK_MOVE_THRESHOLD = 6 // px
 
     const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
       if (!isActive) return
       draggingRef.current = true
       lastXRef.current = e.clientX
       samplesRef.current = [{ t: performance.now(), x: e.clientX }]
+      totalMoveRef.current = 0
+      const cardEl = (e.target as HTMLElement).closest<HTMLElement>('[data-card-index]')
+      pressedIndexRef.current = cardEl ? Number(cardEl.dataset.cardIndex) : null
       // Grabbing mid-fling needs to kill the release spring immediately —
       // `controls.stop()` stops the AnimationControls abstraction, but the
       // spring is actually still ticking the `rotation` MotionValue itself
@@ -106,6 +119,7 @@ const Carousel = memo(
       if (!draggingRef.current || !isActive) return
       const delta = e.clientX - lastXRef.current
       lastXRef.current = e.clientX
+      totalMoveRef.current += Math.abs(delta)
       rotation.set(rotation.get() + delta * dragSensitivity)
       const now = performance.now()
       samplesRef.current.push({ t: now, x: e.clientX })
@@ -117,6 +131,14 @@ const Carousel = memo(
       draggingRef.current = false
       try { e.currentTarget.releasePointerCapture(e.pointerId) } catch {}
       if (!isActive) return
+
+      // Barely moved -- this was a tap/click on a card, not a spin. Open it
+      // directly rather than relying on the card's own onClick, which
+      // pointer capture above prevents from ever receiving the event.
+      if (totalMoveRef.current < CLICK_MOVE_THRESHOLD && pressedIndexRef.current !== null) {
+        onSelect(pressedIndexRef.current)
+        return
+      }
 
       const samples = samplesRef.current
       let velocity = 0 // px/ms, matching Framer's PanInfo.velocity convention
@@ -147,6 +169,7 @@ const Carousel = memo(
           {cards.map((card, i) => (
             <motion.div
               key={`${card.title}-${i}`}
+              data-card-index={i}
               className="group absolute flex h-full origin-center items-center justify-center p-3"
               style={{ width: `${faceWidth}px`, transform: `rotateY(${i * (360 / faceCount)}deg) translateZ(${radius}px)` }}
               onClick={() => onSelect(i)}

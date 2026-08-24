@@ -7,6 +7,7 @@ import { useGSAP } from '@gsap/react'
 import { Play, ArrowUpRight } from 'lucide-react'
 import type { PortfolioProjectLocal } from '@/lib/normalize'
 import { PLACEHOLDER_IMAGE } from '@/lib/media-url'
+import ProjectCardModal from '@/components/ProjectCardModal'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -81,6 +82,10 @@ export default function Portfolio({
   limit?: number
 }) {
   const sectionRef = useRef<HTMLElement>(null)
+  // The grid's cards had no click handler at all -- the cursor-pointer
+  // styling and hover play button implied you could open one, but nothing
+  // was wired up. Reuse the same modal the reel carousel already opens.
+  const [openProject, setOpenProject] = useState<number | null>(null)
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -124,6 +129,7 @@ export default function Portfolio({
           {visible.map((p, i) => (
             <article
               key={p.title}
+              onClick={() => setOpenProject(i)}
               className={`pf-card group relative rounded-2xl overflow-hidden border border-white/10 cursor-pointer transition-all duration-500 hover:border-[#00AEEF]/50 ${i < bentoCovered ? bentoGroups[Math.floor(i / BENTO_GROUP_SIZE)][i % BENTO_GROUP_SIZE] : ''}`}
             >
               {/* Image */}
@@ -188,6 +194,12 @@ export default function Portfolio({
           </a>
         </div>
       </div>
+
+      <ProjectCardModal
+        project={openProject === null ? null : visible[openProject]}
+        accent="#00AEEF"
+        onClose={() => setOpenProject(null)}
+      />
     </section>
   )
 }
