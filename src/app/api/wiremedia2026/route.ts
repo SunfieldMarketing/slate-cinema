@@ -296,6 +296,80 @@ export async function GET(req: Request) {
     })
   }
 
+  // listIndustryStats confirmed the real DB bug: 8 of 9 industries store
+  // the Google-rating stat as { value: 5, suffix: '', label: '.0 Google
+  // Rating' } -- the ".0" belongs in `suffix` (rendered right next to the
+  // animated "5") not stuffed into the label underneath, which is why it
+  // visually reads as a stray ".0" floating in front of "GOOGLE RATING".
+  // Athletics additionally stores its first stat as { value: 2018, suffix:
+  // '–2021', label: 'Kids of Courage Marathons' } -- a 4-digit comma-
+  // formatted year plus a 5-character suffix is too wide for the stat
+  // column at text-6xl and wraps mid-number. real-estate has no Google
+  // Rating stat at all (different set), so it's left untouched.
+  // Payload array fields replace wholesale on update, so each entry here
+  // is that industry's full corrected stats array, not a partial patch.
+  if (searchParams.get('fixIndustryStats') === '1') {
+    const fixes: Record<string, { value: number; suffix: string; label: string }[]> = {
+      education: [
+        { value: 5, suffix: 'yrs', label: 'Running With Gateways' },
+        { value: 6, suffix: '+', label: 'Named School Clients' },
+        { value: 174, suffix: '+', label: 'Projects Since 2023' },
+        { value: 5, suffix: '.0', label: 'Google Rating' },
+      ],
+      organizations: [
+        { value: 7, suffix: '+', label: 'Named Organizations Served' },
+        { value: 5, suffix: 'yrs', label: 'Running With Gateways' },
+        { value: 174, suffix: '+', label: 'Projects Since 2023' },
+        { value: 5, suffix: '.0', label: 'Google Rating' },
+      ],
+      corporate: [
+        { value: 124, suffix: '', label: 'Client Projects on Frame.io' },
+        { value: 174, suffix: '+', label: 'Projects Since 2023' },
+        { value: 5, suffix: '.0', label: 'Google Rating' },
+        { value: 44, suffix: '', label: 'Google Reviews' },
+      ],
+      products: [
+        { value: 743, suffix: '', label: 'Stock Clips, 8 Marketplaces' },
+        { value: 4287, suffix: '', label: 'Clip Aerial Library' },
+        { value: 174, suffix: '+', label: 'Projects Since 2023' },
+        { value: 5, suffix: '.0', label: 'Google Rating' },
+      ],
+      healthcare: [
+        { value: 5, suffix: '', label: 'EKGx Deliverables' },
+        { value: 100, suffix: '%', label: 'Compliance-Reviewed' },
+        { value: 174, suffix: '+', label: 'Projects Since 2023' },
+        { value: 5, suffix: '.0', label: 'Google Rating' },
+      ],
+      travel: [
+        { value: 4, suffix: '', label: 'Smash House Locations' },
+        { value: 5, suffix: 'yrs', label: 'Running With Gateways' },
+        { value: 174, suffix: '+', label: 'Projects Since 2023' },
+        { value: 5, suffix: '.0', label: 'Google Rating' },
+      ],
+      athletics: [
+        { value: 4, suffix: 'yrs', label: 'Kids of Courage Marathons, 2018–21' },
+        { value: 3, suffix: '', label: 'Named Athletics Clients' },
+        { value: 174, suffix: '+', label: 'Projects Since 2023' },
+        { value: 5, suffix: '.0', label: 'Google Rating' },
+      ],
+      ai: [
+        { value: 3, suffix: '', label: 'Gen-Video Models In Pipeline' },
+        { value: 100, suffix: '%', label: 'Human-Finished, Every Frame' },
+        { value: 174, suffix: '+', label: 'Projects Since 2023' },
+        { value: 5, suffix: '.0', label: 'Google Rating' },
+      ],
+    }
+
+    const results: Record<string, any> = {}
+    for (const [slug, stats] of Object.entries(fixes)) {
+      const found = await payload.find({ collection: 'industries', where: { slug: { equals: slug } }, limit: 1 })
+      if (!found.docs[0]) { results[slug] = { error: 'not found' }; continue }
+      await payload.update({ collection: 'industries', id: found.docs[0].id, data: { stats } as any })
+      results[slug] = { ok: true, id: found.docs[0].id }
+    }
+    return NextResponse.json({ ok: true, results })
+  }
+
   if (searchParams.get('listPortfolioOrder') === '1') {
     const all = await payload.find({ collection: 'portfolio-projects', limit: 100, sort: 'order', depth: 0 })
     return NextResponse.json({
