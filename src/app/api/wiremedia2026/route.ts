@@ -37,6 +37,19 @@ const s3 = new S3Client({
   },
 })
 
+// Same logic as src/lib/vimeo.ts's extractVimeoId -- duplicated locally
+// (not imported) since that file is also pulled into 'use client'
+// components and this route's build target shouldn't need to care
+// about that boundary for one small pure function.
+function extractVimeoIdLocal(input?: string | null): string | null {
+  if (!input) return null
+  const trimmed = input.trim()
+  if (!trimmed) return null
+  if (/^\d+$/.test(trimmed)) return trimmed
+  const match = trimmed.match(/vimeo(?:\.com)?\/(?:video\/)?(\d+)/)
+  return match ? match[1] : null
+}
+
 async function vimeoThumbnail(id: string): Promise<{ url: string; width: number; height: number } | null> {
   const res = await fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${id}&width=1920`)
   if (!res.ok) return null
@@ -277,6 +290,103 @@ export async function GET(req: Request) {
       results[p.company] = { ok: true, id: doc.id, posterId }
     }
     return NextResponse.json({ ok: true, results })
+  }
+
+  // Media/text matching audit: gathers every card-with-a-Vimeo-video on
+  // the site (portfolio-projects, industries.serviceCards,
+  // industries.videoTestimonials, plus the two code-only fields --
+  // clientShowcase and cinematicStatement -- read directly from
+  // src/lib/industries.ts since they don't live in the DB) alongside
+  // each video's own real Vimeo oEmbed title/author, so a mismatch
+  // between what a card CLAIMS (title/company) and what the video
+  // ACTUALLY is (per Vimeo's own metadata) is directly visible rather
+  // than assumed from memory of when each ID was originally wired in.
+  if (searchParams.get('auditMediaMatch') === '1') {
+    const vimeoMeta = async (id: string): Promise<{ title: string; author: string } | null> => {
+      try {
+        const res = await fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${id}`)
+        if (!res.ok) return null
+        const j = await res.json()
+        return { title: j.title || '', author: j.author_name || '' }
+      } catch {
+        return null
+      }
+    }
+
+    type Row = { section: string; context: string; cardTitle: string; cardCompany: string; vimeoId: string }
+    const rows: Row[] = []
+
+    const portfolioProjects = await payload.find({ collection: 'portfolio-projects', limit: 100, depth: 0 })
+    for (const p of portfolioProjects.docs as any[]) {
+      const id = extractVimeoIdLocal(p.videoVimeoUrl)
+      if (id) rows.push({ section: 'portfolio-projects', context: `order ${p.order}`, cardTitle: p.title, cardCompany: p.company, vimeoId: id })
+    }
+
+    const industries = await payload.find({ collection: 'industries', limit: 100, depth: 0 })
+    for (const ind of industries.docs as any[]) {
+      const heroId = extractVimeoIdLocal(ind.heroVideoVimeoUrl)
+      if (heroId) rows.push({ section: 'industries.heroVideoVimeoUrl', context: ind.slug, cardTitle: `${ind.label} hero`, cardCompany: '', vimeoId: heroId })
+      for (const sc of ind.serviceCards ?? []) {
+        const id = extractVimeoIdLocal(sc.videoVimeoUrl)
+        if (id) rows.push({ section: 'industries.serviceCards', context: ind.slug, cardTitle: sc.title, cardCompany: '', vimeoId: id })
+      }
+      for (const vt of ind.videoTestimonials ?? []) {
+        const id = extractVimeoIdLocal(vt.videoVimeoUrl)
+        if (id) rows.push({ section: 'industries.videoTestimonials', context: ind.slug, cardTitle: vt.name, cardCompany: vt.company, vimeoId: id })
+      }
+    }
+
+    // clientShowcase + cinematicStatement are code-only (see normalize.ts
+    // -- never round-tripped through Payload), so read them from the
+    // static source file's own text via a lightweight regex scan rather
+    // than importing the file (this route is Node/edge-adjacent and the
+    // static file has client-side imports elsewhere in the app).
+    const fs = await import('fs/promises')
+    const path = await import('path')
+    const industriesSrc = await fs.readFile(path.join(process.cwd(), 'src/lib/industries.ts'), 'utf-8')
+    // Walk each `slug: '...'` industry block and pull clientShowcase video
+    // ids + cinematicStatement videoSrc within that block only, so a
+    // matched id is attributed to the right industry.
+    const blocks = industriesSrc.split(/\n  \{\n    id: '/).slice(1)
+    for (const block of blocks) {
+      const slugMatch = block.match(/slug:\s*'([a-z-]+)'/)
+      const slug = slugMatch ? slugMatch[1] : 'unknown'
+      const showcaseSection = block.match(/clientShowcase:\s*\[([\s\S]*?)\n\s{4}\],/)
+      if (showcaseSection) {
+        // Actual shape (confirmed by reading the file directly): { name,
+        // year, body, video } -- no separate title/company fields, just
+        // one `name`.
+        const entryRe = /\{\s*name:\s*'((?:[^'\\]|\\.)*)'[\s\S]*?video:\s*'((?:[^'\\]|\\.)*)'/g
+        let m
+        while ((m = entryRe.exec(showcaseSection[1]))) {
+          const id = extractVimeoIdLocal(m[2])
+          if (id) rows.push({ section: 'industries.ts clientShowcase', context: slug, cardTitle: m[1], cardCompany: '', vimeoId: id })
+        }
+      }
+      const cinematicMatch = block.match(/cinematicStatement:\s*\{[\s\S]*?videoSrc:\s*'((?:[^'\\]|\\.)*)'/)
+      if (cinematicMatch) {
+        const id = extractVimeoIdLocal(cinematicMatch[1])
+        if (id) rows.push({ section: 'industries.ts cinematicStatement', context: slug, cardTitle: `${slug} cinematic statement`, cardCompany: '', vimeoId: id })
+      }
+    }
+
+    // Fetch oEmbed metadata for every unique id, capped concurrency to
+    // avoid hammering Vimeo.
+    const uniqueIds = [...new Set(rows.map((r) => r.vimeoId))]
+    const metaById = new Map<string, { title: string; author: string } | null>()
+    const CONCURRENCY = 8
+    for (let i = 0; i < uniqueIds.length; i += CONCURRENCY) {
+      const batch = uniqueIds.slice(i, i + CONCURRENCY)
+      const results = await Promise.all(batch.map((id) => vimeoMeta(id)))
+      batch.forEach((id, j) => metaById.set(id, results[j]))
+    }
+
+    return NextResponse.json({
+      ok: true,
+      totalCards: rows.length,
+      uniqueVideos: uniqueIds.length,
+      rows: rows.map((r) => ({ ...r, vimeoTitle: metaById.get(r.vimeoId)?.title ?? null, vimeoAuthor: metaById.get(r.vimeoId)?.author ?? null })),
+    })
   }
 
   // TrustBanner.tsx (the industry-page credibility strip) was found fully
