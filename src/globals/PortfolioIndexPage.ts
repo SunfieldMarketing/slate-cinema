@@ -5,7 +5,19 @@ export const PortfolioIndexPage: GlobalConfig = {
   slug: 'portfolio-index-page',
   versions: { drafts: true },
   access: {
-    read: () => true,
+    // Public reads only ever see published content -- unpublished
+    // drafts must stay invisible to real visitors until explicitly
+    // published. Found 2026-08-24: this used to be a bare `() => true`
+    // (no status check at all), which combined with the Local API's
+    // default overrideAccess:true meant a saved-but-unpublished draft
+    // was visible on the live public site immediately -- see this
+    // session's e2eTest finding (journalPostLifecycle.hiddenWhileDraft
+    // came back false). payload-data.ts now threads overrideAccess:
+    // draft through every call so this constraint actually applies to
+    // ordinary (draft:false) visitors, while Live Preview (draft:true)
+    // passes overrideAccess:true and bypasses it entirely, same as an
+    // authenticated admin editing in /admin.
+    read: ({ req }) => Boolean(req.user) || { _status: { equals: 'published' } },
     update: ({ req }) => Boolean(req.user),
   },
   hooks: {

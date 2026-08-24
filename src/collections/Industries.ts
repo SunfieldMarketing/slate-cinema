@@ -16,23 +16,30 @@ const ICON_OPTIONS = [
 
 export const Industries: CollectionConfig = {
   slug: 'industries',
-  // Drafts + Live Preview added 2026-08-20. read: () => true below needs
-  // no change -- Payload only serves the published version on a plain
-  // read; draft content only comes back when the request explicitly asks
-  // for it (?draft=true), which is exactly what the admin preview iframe
-  // does and a normal site visitor never would.
+  // Drafts + Live Preview added 2026-08-20.
   versions: { drafts: true },
   admin: {
     useAsTitle: 'label',
     defaultColumns: ['label', 'slug', 'accent'],
   },
   access: {
-    // Public read (consumed by the frontend site) -- write operations
-    // require a logged-in user. Payload defaults every unset access
-    // function to "allow everyone," so create/update/delete must be
-    // explicit here or the public REST/GraphQL API can write to this
-    // collection with no auth at all.
-    read: () => true,
+    // Public reads only ever see published content -- unpublished drafts
+    // must stay invisible to real visitors until explicitly published.
+    // Corrected 2026-08-24: this used to be a bare `() => true` (no
+    // status check at all), which combined with the Local API's default
+    // overrideAccess:true meant a saved-but-unpublished draft was visible
+    // on the live public site immediately -- the opposite of what the
+    // comment removed above claimed. See this session's e2eTest finding
+    // (journalPostLifecycle.hiddenWhileDraft came back false).
+    // payload-data.ts now threads overrideAccess: draft through every
+    // call so this constraint actually applies to ordinary (draft:false)
+    // visitors, while Live Preview (draft:true) passes overrideAccess:
+    // true and bypasses it entirely, same as an authenticated admin
+    // editing in /admin. Write operations still require a logged-in user
+    // -- Payload defaults every unset access function to "allow
+    // everyone," so create/update/delete must be explicit here or the
+    // public REST/GraphQL API can write to this collection with no auth.
+    read: ({ req }) => Boolean(req.user) || { _status: { equals: 'published' } },
     create: ({ req }) => Boolean(req.user),
     update: ({ req }) => Boolean(req.user),
     delete: ({ req }) => Boolean(req.user),
