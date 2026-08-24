@@ -60,9 +60,16 @@ const Carousel = memo(
   }) => {
     const isSmall = useMediaQuery('(max-width: 640px)')
     const isMedium = useMediaQuery('(max-width: 1024px)')
-    const cylinderWidth = isSmall ? 1600 : isMedium ? 2400 : 3520
+    // Per-card width (not total ring width) — this is what the original
+    // fixed cylinderWidth constants (1600/2400/3520) actually meant when
+    // the reel had exactly 8 cards; dividing a fixed total by a growing
+    // faceCount silently squished every card as more projects were added.
+    // Scaling the ring's circumference with the card count instead keeps
+    // each card the same legible size regardless of how many are in it.
+    const baseFaceWidth = isSmall ? 200 : isMedium ? 300 : 440
     const faceCount = cards.length
-    const faceWidth = cylinderWidth / faceCount
+    const cylinderWidth = baseFaceWidth * faceCount
+    const faceWidth = baseFaceWidth
     const radius = cylinderWidth / (2 * Math.PI)
     const rotation = useMotionValue(0)
     // Scaled by cylinder width so the same physical drag distance always
