@@ -296,6 +296,21 @@ export async function GET(req: Request) {
     })
   }
 
+  // Client wants the full "2018-2021" back (not the abbreviated "2018–21"
+  // used in the previous fix) -- the actual wrap culprit was the label's
+  // tracking-widest letter-spacing (fixed in StatsBand.tsx alongside this),
+  // not the year range itself, so there's no more need to abbreviate it.
+  if (searchParams.get('fixAthleticsLabel') === '1') {
+    const found = await payload.find({ collection: 'industries', where: { slug: { equals: 'athletics' } }, limit: 1 })
+    if (!found.docs[0]) return NextResponse.json({ ok: false, error: 'athletics not found' }, { status: 404 })
+    const doc: any = found.docs[0]
+    const stats = (doc.stats ?? []).map((s: any, i: number) =>
+      i === 0 ? { value: 4, suffix: 'yrs', label: 'Kids of Courage Marathons, 2018–2021' } : { value: s.value, suffix: s.suffix, label: s.label }
+    )
+    await payload.update({ collection: 'industries', id: doc.id, data: { stats } as any })
+    return NextResponse.json({ ok: true, stats })
+  }
+
   // listIndustryStats confirmed the real DB bug: 8 of 9 industries store
   // the Google-rating stat as { value: 5, suffix: '', label: '.0 Google
   // Rating' } -- the ".0" belongs in `suffix` (rendered right next to the

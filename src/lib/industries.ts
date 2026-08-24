@@ -249,7 +249,7 @@ export const industries: IndustryData[] = [
     // client relationship, and shouldn't be implied without a current
     // project to back it up.
     stats: [
-      { value: 4, suffix: 'yrs', label: 'Kids of Courage Marathons, 2018–21' },
+      { value: 4, suffix: 'yrs', label: 'Kids of Courage Marathons, 2018–2021' },
       { value: 3, suffix: '', label: 'Named Athletics Clients' },
       { value: 174, suffix: '+', label: 'Projects Since 2023' },
       { value: 5, suffix: '.0', label: 'Google Rating' },

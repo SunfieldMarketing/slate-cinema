@@ -40,7 +40,16 @@ export default function StatsBand({ stats }: { stats: Stat[] }) {
                 <NumberTicker value={s.value} className="font-bold text-white" />
                 <span className="text-brand-blue">{s.suffix}</span>
               </div>
-              <div className="mt-3 font-mono text-[10px] sm:text-[11px] tracking-widest text-white/45 uppercase">{s.label}</div>
+              {/* whitespace-nowrap + tighter tracking/size than the rest
+                  of the site's label style: a long label (e.g. a stat
+                  with a year range baked in) needs real headroom to stay
+                  on one line in a narrow 4-col cell -- tracking-widest
+                  alone was wide enough to push "KIDS OF COURAGE
+                  MARATHONS, 2018-2021" into wrapping even after the
+                  number/suffix split fix. text-center means any residual
+                  overflow spills evenly into the gap on both sides
+                  rather than clipping or colliding with a neighbor. */}
+              <div className="mt-3 font-mono text-[9px] sm:text-[10px] tracking-wide text-white/45 uppercase whitespace-nowrap">{s.label}</div>
             </div>
           ))}
         </div>
