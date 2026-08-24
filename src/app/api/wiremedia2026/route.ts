@@ -279,6 +279,23 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: true, results })
   }
 
+  // Diagnostic: StatsBand reads industries' `stats` straight from the DB
+  // (normalize.ts: `doc.stats ?? []`) -- it never falls back to
+  // industries.ts's static array, so a fix made only to that static file
+  // (like the earlier Athletics "2,018-2021" edit) never actually reaches
+  // the live site. Need to see the real DB content before fixing it.
+  if (searchParams.get('listIndustryStats') === '1') {
+    const all = await payload.find({ collection: 'industries', limit: 100, depth: 0 })
+    return NextResponse.json({
+      ok: true,
+      count: all.totalDocs,
+      industries: all.docs.map((d: any) => ({
+        slug: d.slug,
+        stats: (d.stats ?? []).map((s: any) => ({ value: s.value, suffix: s.suffix, label: s.label })),
+      })),
+    })
+  }
+
   if (searchParams.get('listPortfolioOrder') === '1') {
     const all = await payload.find({ collection: 'portfolio-projects', limit: 100, sort: 'order', depth: 0 })
     return NextResponse.json({
