@@ -291,17 +291,23 @@ export async function GET(req: Request) {
   // Client asked to swap out one specific project from the featured
   // gallery slice ("A Place That Feels Like Home" / Waterview Nursing &
   // Rehabilitation, order 9) for something else. Rather than edit that
-  // project's own video, swap its `order` with an unfeatured one (Miami
-  // Arak "Our Mission", order 16, added by addPortfolioVariety3) -- moves
+  // project's own video, swap its `order` with an unfeatured one -- moves
   // Waterview out of the reel/gallery's 0-15 window entirely (still live
   // on its own project page) and pulls a fresh, previously-unfeatured
   // video into the gallery in its place.
+  //
+  // Originally targeted Miami Arak "Our Mission" (meant to be order 16,
+  // from addPortfolioVariety3) -- but that project was never actually
+  // created: addPortfolioVariety3's own dedup check matches on company
+  // name alone, and "Miami Arak" already existed as a company from an
+  // earlier swapSelectedWork run, so "Our Mission" got silently skipped
+  // as a false-positive duplicate. listPortfolioOrder confirmed order 16
+  // is genuinely missing. Retargeted to The Brownstone Tour (order 17,
+  // company "The Brownstone") -- real, distinct, and Real Estate isn't
+  // otherwise represented in the gallery's other 7 slots.
   if (searchParams.get('swapGalleryProject') === '1') {
     const outgoing = await payload.find({ collection: 'portfolio-projects', where: { company: { equals: 'Waterview Nursing & Rehabilitation' } }, limit: 1 })
-    // Miami Arak has two docs (an earlier one from swapSelectedWork plus
-    // this one from addPortfolioVariety3) -- filter on both fields so the
-    // right one (order 16, "Our Mission") is the one picked up.
-    const incoming = await payload.find({ collection: 'portfolio-projects', where: { and: [{ company: { equals: 'Miami Arak' } }, { title: { equals: 'Our Mission' } }] }, limit: 1 })
+    const incoming = await payload.find({ collection: 'portfolio-projects', where: { and: [{ company: { equals: 'The Brownstone' } }, { title: { equals: 'The Brownstone Tour' } }] }, limit: 1 })
     if (!outgoing.docs[0] || !incoming.docs[0]) {
       return NextResponse.json({ ok: false, error: 'one or both projects not found', outgoingFound: !!outgoing.docs[0], incomingFound: !!incoming.docs[0] }, { status: 404 })
     }
