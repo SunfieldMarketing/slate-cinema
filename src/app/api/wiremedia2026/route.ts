@@ -279,6 +279,15 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: true, results })
   }
 
+  if (searchParams.get('listPortfolioOrder') === '1') {
+    const all = await payload.find({ collection: 'portfolio-projects', limit: 100, sort: 'order', depth: 0 })
+    return NextResponse.json({
+      ok: true,
+      count: all.totalDocs,
+      projects: all.docs.map((d: any) => ({ order: d.order, title: d.title, company: d.company })),
+    })
+  }
+
   // Client asked to swap out one specific project from the featured
   // gallery slice ("A Place That Feels Like Home" / Waterview Nursing &
   // Rehabilitation, order 9) for something else. Rather than edit that
