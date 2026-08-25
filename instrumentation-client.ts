@@ -1,5 +1,38 @@
 import posthog from "posthog-js"
 
+// TEMPORARY DEBUG INSTRUMENTATION -- 2026-08-25, remove once the blank
+// /admin bug is root-caused. Guarding posthog.init() on the token being
+// present didn't fix it, so capturing whatever's actually failing
+// directly: this runs before anything else client-side (confirmed
+// instrumentation-client.ts fires ahead of PostHog init on every route),
+// installs global error/rejection listeners, and writes what it catches
+// to both sessionStorage (survives the page, readable via devtools/any
+// script) and document.title (visible at a glance, no devtools needed)
+// so a real crash during hydration -- which has produced zero console/
+// network/server-log signal so far -- becomes visible somewhere.
+if (typeof window !== "undefined") {
+  const report = (label: string, detail: string) => {
+    try {
+      const line = `[${new Date().toISOString()}] ${label}: ${detail}`
+      const prior = sessionStorage.getItem("__debug_errors__") || ""
+      sessionStorage.setItem("__debug_errors__", prior + line + "\n")
+      document.title = `ERR(${sessionStorage.getItem("__debug_errors__")!.split("\n").length - 1}): ${detail.slice(0, 60)}`
+    } catch {
+      // sessionStorage can throw in some contexts (private mode, quota) --
+      // fall back to title-only so at least one channel still works.
+      document.title = `ERR: ${detail.slice(0, 60)}`
+    }
+  }
+  window.addEventListener("error", (e) => {
+    report("error", `${e.message} @ ${e.filename}:${e.lineno}:${e.colno}\n${e.error?.stack ?? ""}`)
+  })
+  window.addEventListener("unhandledrejection", (e) => {
+    const reason = e.reason
+    const detail = reason instanceof Error ? `${reason.message}\n${reason.stack ?? ""}` : String(reason)
+    report("unhandledrejection", detail)
+  })
+}
+
 // Found 2026-08-25 while debugging a blank /admin page: this ran
 // unconditionally, so with NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN unset in
 // production (confirmed via checkEnvVars all session) it called
