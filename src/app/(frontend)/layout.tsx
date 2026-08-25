@@ -4,6 +4,7 @@ import "./globals.css";
 import SmoothScrolling from "@/components/SmoothScrolling";
 import ScrollRestoration from "@/components/ScrollRestoration";
 import RefreshRouteOnSave from "@/components/RefreshRouteOnSave";
+import LivePreviewClickToEdit from "@/components/LivePreviewClickToEdit";
 import PostHogInit from "@/components/PostHogInit";
 import GoogleAdsTag from "@/components/GoogleAdsTag";
 import { SiteDataProvider } from "@/lib/site-data-context";
@@ -128,6 +129,7 @@ export default async function RootLayout({
       </head>
       <body className="font-sans antialiased bg-ink text-foreground overflow-x-hidden">
         <RefreshRouteOnSave />
+        <LivePreviewClickToEdit />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}

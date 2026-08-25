@@ -69,7 +69,7 @@ export default function FinalCTA({ data }: { data?: FinalCta | null }) {
   }
 
   return (
-    <section ref={sectionRef} className="relative w-full pt-16 pb-28 md:pt-20 md:pb-32 px-6 flex items-center justify-center overflow-hidden" style={{ perspective: '1200px' }}>
+    <section ref={sectionRef} data-cms-global="final-cta" className="relative w-full pt-16 pb-28 md:pt-20 md:pb-32 px-6 flex items-center justify-center overflow-hidden" style={{ perspective: '1200px' }}>
       {/* Background Grid Pattern (matches calendar vibe) */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
 
@@ -81,26 +81,27 @@ export default function FinalCTA({ data }: { data?: FinalCta | null }) {
           {/* Subtle Ambient Light inside the card */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[100px] bg-[#00AEEF]/10 blur-[80px] pointer-events-none rounded-full" />
 
-          <span className="cta-fade font-mono text-xs md:text-sm text-white/50 tracking-[0.4em] uppercase mb-8">
+          <span data-cms-field="eyebrow" className="cta-fade font-mono text-xs md:text-sm text-white/50 tracking-[0.4em] uppercase mb-8">
             {eyebrow}
           </span>
 
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 leading-[1.1]">
-            <span className="block overflow-hidden"><span className="cta-line block">{headlineLine1}</span></span>
+            <span className="block overflow-hidden"><span data-cms-field="headlineLine1" className="cta-line block">{headlineLine1}</span></span>
             <span className="block overflow-hidden">
-              <span className="cta-line block text-transparent bg-clip-text bg-gradient-to-r from-white to-white/40 italic font-serif-accent">
+              <span data-cms-field="headlineLine2" className="cta-line block text-transparent bg-clip-text bg-gradient-to-r from-white to-white/40 italic font-serif-accent">
                 {headlineLine2}
               </span>
             </span>
           </h2>
 
-          <p className="cta-fade text-white/60 text-lg md:text-xl font-light mb-12 max-w-2xl">
+          <p data-cms-field="description" className="cta-fade text-white/60 text-lg md:text-xl font-light mb-12 max-w-2xl">
             {description}
           </p>
 
           <div className="cta-fade flex items-center justify-center gap-4 flex-wrap">
             <a
               href={buttonHref}
+              data-cms-field="buttonLabel"
               onMouseMove={handleMagneticMove}
               onMouseLeave={handleMagneticLeave}
               onClick={() => posthog.capture('book_call_clicked', { source: 'final_cta' })}
@@ -120,7 +121,7 @@ export default function FinalCTA({ data }: { data?: FinalCta | null }) {
                 in IndustryPageContent.tsx. */}
           </div>
 
-          <p className="cta-fade mt-8 font-mono text-[10px] tracking-[0.22em] uppercase text-white/55">
+          <p data-cms-field="trustNote" className="cta-fade mt-8 font-mono text-[10px] tracking-[0.22em] uppercase text-white/55">
             {trustNote}
           </p>
         </div>

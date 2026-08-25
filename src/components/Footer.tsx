@@ -83,7 +83,7 @@ export default function Footer() {
   const bottomBar = footer.bottomBar
 
   return (
-    <footer ref={footerRef} className="relative w-full bg-ink pt-14 pb-6 overflow-hidden" style={{ perspective: '1000px' }}>
+    <footer ref={footerRef} data-cms-global="footer" className="relative w-full bg-ink pt-14 pb-6 overflow-hidden" style={{ perspective: '1000px' }}>
 
       {/* Marquee */}
       <div className="w-full border-y border-white/10 py-3 mb-8 overflow-hidden flex whitespace-nowrap bg-[#00AEEF]/5">
@@ -127,10 +127,11 @@ export default function Footer() {
           {/* CTA + Newsletter */}
           <div className="w-full lg:max-w-md flex flex-col gap-6">
             <div>
-              <h3 className="text-xl font-bold text-white mb-3">{cta?.heading || 'Ready to create?'}</h3>
+              <h3 data-cms-field="cta.heading" className="text-xl font-bold text-white mb-3">{cta?.heading || 'Ready to create?'}</h3>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
                   href={cta?.buttonHref || '/contact'}
+                  data-cms-field="cta.buttonLabel"
                   onMouseMove={handleMagneticMove}
                   onMouseLeave={handleMagneticLeave}
                   className="footer-btn px-6 py-2.5 bg-[#00AEEF] text-[#030305] font-bold rounded-full hover:bg-white transition-colors text-center text-sm"
@@ -141,8 +142,8 @@ export default function Footer() {
             </div>
 
             <div>
-              <h4 className="text-sm font-semibold text-white mb-2">{newsletter?.heading || 'Subscribe to our Newsletter'}</h4>
-              <p className="text-white/45 text-xs font-light leading-relaxed mb-3 max-w-md">
+              <h4 data-cms-field="newsletter.heading" className="text-sm font-semibold text-white mb-2">{newsletter?.heading || 'Subscribe to our Newsletter'}</h4>
+              <p data-cms-field="newsletter.sentence" className="text-white/45 text-xs font-light leading-relaxed mb-3 max-w-md">
                 {newsletter?.sentence}
               </p>
               {newsletterSubmitted ? (
@@ -170,10 +171,12 @@ export default function Footer() {
                     type="email"
                     name="footer-email"
                     placeholder={newsletter?.placeholder || 'Your email address'}
+                    data-cms-field="newsletter.placeholder"
                     className="flex-1 bg-white/5 border border-white/10 border-r-0 rounded-l-full px-5 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#00AEEF] transition-colors"
                   />
                   <button
                     type="submit"
+                    data-cms-field="newsletter.buttonLabel"
                     className="bg-[#00AEEF] text-[#030305] font-bold px-6 py-2.5 text-sm rounded-r-full hover:bg-white transition-colors whitespace-nowrap"
                   >
                     {newsletter?.buttonLabel || 'Sign Up'}
@@ -189,20 +192,20 @@ export default function Footer() {
               in an oversized gap next to the CTA column. */}
           <div className="w-full lg:w-auto flex flex-col sm:flex-row justify-between lg:justify-end gap-8 lg:gap-24 pt-2 lg:pt-0">
             <div className="flex flex-col">
-              <h4 className="text-white font-bold mb-3 uppercase tracking-wider text-sm">{sitemap?.heading || 'Studio'}</h4>
+              <h4 data-cms-field="sitemapColumn.heading" className="text-white font-bold mb-3 uppercase tracking-wider text-sm">{sitemap?.heading || 'Studio'}</h4>
               <div className="flex flex-col gap-2.5">
-                {(sitemap?.links ?? []).map((link) => (
-                  <Link key={link.label} href={link.href} className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">
+                {(sitemap?.links ?? []).map((link, i) => (
+                  <Link key={link.label} href={link.href} data-cms-field={`sitemapColumn.links.${i}.label`} className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">
                     {link.label}
                   </Link>
                 ))}
                 <a href="/contact#get-started" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">
                   Support
                 </a>
-                <a href={bottomBar?.privacyHref || '/privacy-policy'} className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">
+                <a href={bottomBar?.privacyHref || '/privacy-policy'} data-cms-field="bottomBar.privacyHref" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">
                   Privacy Policy
                 </a>
-                <a href={bottomBar?.termsHref || '/terms-of-service'} className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">
+                <a href={bottomBar?.termsHref || '/terms-of-service'} data-cms-field="bottomBar.termsHref" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">
                   Terms of Service
                 </a>
               </div>
@@ -213,14 +216,14 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="w-full flex flex-col md:flex-row justify-between items-center mt-4 text-[10px] font-mono text-white/20 tracking-widest uppercase gap-4">
           <p>&copy; {new Date().getFullYear()} Slate Cinema</p>
-          <div className="flex items-center gap-2">
+          <div data-cms-field="bottomBar.craftedWithLoveText" className="flex items-center gap-2">
             {bottomBar?.craftedWithLoveText || 'Crafted with love by Slate Cinema'}
             <Heart size={12} className="text-[#00AEEF]" />
           </div>
           <div className="flex gap-4">
-            <a href={bottomBar?.privacyHref || '/privacy-policy'} className="hover:text-white transition-colors">Privacy</a>
-            <a href={bottomBar?.termsHref || '/terms-of-service'} className="hover:text-white transition-colors">Terms</a>
-            <a href={bottomBar?.clientPortalHref || 'https://my.slatecinema.com/'} target="_blank" rel="noopener noreferrer" className="hover:text-[#00AEEF] transition-colors">Client Portal</a>
+            <a href={bottomBar?.privacyHref || '/privacy-policy'} data-cms-field="bottomBar.privacyHref" className="hover:text-white transition-colors">Privacy</a>
+            <a href={bottomBar?.termsHref || '/terms-of-service'} data-cms-field="bottomBar.termsHref" className="hover:text-white transition-colors">Terms</a>
+            <a href={bottomBar?.clientPortalHref || 'https://my.slatecinema.com/'} target="_blank" rel="noopener noreferrer" data-cms-field="bottomBar.clientPortalHref" className="hover:text-[#00AEEF] transition-colors">Client Portal</a>
           </div>
         </div>
 

@@ -157,6 +157,12 @@ export default buildConfig({
         Logo: '/components/admin/AdminLogo#AdminLogo',
         Icon: '/components/admin/AdminIcon#AdminIcon',
       },
+      // Click-to-edit shortcut (2026-08-25) -- catches the postMessage
+      // sent by src/components/LivePreviewClickToEdit.tsx when an editor
+      // clicks tagged content inside the Live Preview iframe, and
+      // scrolls/focuses the matching field. See that provider's own
+      // comment for the full mechanism.
+      providers: ['/components/admin/LivePreviewClickToEditProvider#LivePreviewClickToEditProvider'],
     },
     // Live Preview -- added 2026-08-20 alongside drafts/versions on every
     // content collection/global. Needs the frontend to actually listen

@@ -61,7 +61,7 @@ export default function Nav() {
 
   return (
     <>
-      <nav ref={navRef} className="fixed top-0 left-0 w-full z-40">
+      <nav ref={navRef} data-cms-global="navigation" className="fixed top-0 left-0 w-full z-40">
         {/* Progress bar */}
         <div className="nav-progress absolute top-0 left-0 h-[2px] bg-[#00AEEF] w-full origin-left scale-x-0 z-50" />
         
@@ -129,6 +129,9 @@ export default function Nav() {
                           <Link
                             key={ind.id}
                             href={`/portfolio/${ind.slug}`}
+                            data-cms-collection="industries"
+                            data-cms-doc-id={ind.id}
+                            data-cms-field="label"
                             className="flex items-center gap-2.5 px-4 py-2 rounded-xl text-sm text-white/60 hover:text-white hover:bg-white/[0.06] transition-colors"
                           >
                             <Icon className="w-3.5 h-3.5 shrink-0" style={{ color: ind.accent }} />
@@ -142,10 +145,11 @@ export default function Nav() {
               )}
             </div>
 
-            {navLinks.slice(1).map((link) => (
+            {navLinks.slice(1).map((link, i) => (
               <Link
                 key={link.label}
                 href={link.href}
+                data-cms-field={`links.${i}.label`}
                 onMouseMove={handleLinkMove}
                 onMouseLeave={handleLinkLeave}
                 className="relative px-4 py-2 text-sm text-white/50 hover:text-white font-medium tracking-wide transition-colors block"
@@ -167,8 +171,8 @@ export default function Nav() {
                 Split the difference on that explicit, quantified feedback
                 rather than picking one instruction over the other: a grey
                 that's meaningfully brighter than /25, nowhere near white/80. */}
-            <a href={clientPortalHref} target="_blank" rel="noopener noreferrer" className="text-xs font-mono text-white/35 hover:text-white/55 transition-colors tracking-widest uppercase">Client Portal</a>
-            <Link href={ctaHref} className="relative px-5 py-2.5 rounded-full text-sm font-semibold text-[#030305] bg-white overflow-hidden group">
+            <a href={clientPortalHref} target="_blank" rel="noopener noreferrer" data-cms-field="clientPortalHref" className="text-xs font-mono text-white/35 hover:text-white/55 transition-colors tracking-widest uppercase">Client Portal</a>
+            <Link href={ctaHref} data-cms-field="ctaButton.label" className="relative px-5 py-2.5 rounded-full text-sm font-semibold text-[#030305] bg-white overflow-hidden group">
               <div className="absolute inset-0 bg-[#00AEEF] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
               <span className="relative group-hover:text-white transition-colors">{ctaLabel}</span>
             </Link>
@@ -183,7 +187,7 @@ export default function Nav() {
 
       {/* Mobile Overlay */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-30 bg-ink flex flex-col items-center justify-center gap-6 overflow-y-auto py-24">
+        <div data-cms-global="navigation" className="fixed inset-0 z-30 bg-ink flex flex-col items-center justify-center gap-6 overflow-y-auto py-24">
           <Link href="/"
             className="text-2xl font-bold text-white hover:text-[#00AEEF] transition-colors tracking-wider"
             onClick={() => setMobileMenuOpen(false)}>
@@ -204,7 +208,15 @@ export default function Nav() {
                   All Work
                 </Link>
                 {industries.map((ind) => (
-                  <Link key={ind.id} href={`/portfolio/${ind.slug}`} onClick={() => setMobileMenuOpen(false)} className="text-sm text-white/50 hover:text-[#00AEEF] transition-colors">
+                  <Link
+                    key={ind.id}
+                    href={`/portfolio/${ind.slug}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                    data-cms-collection="industries"
+                    data-cms-doc-id={ind.id}
+                    data-cms-field="label"
+                    className="text-sm text-white/50 hover:text-[#00AEEF] transition-colors"
+                  >
                     {ind.label}
                   </Link>
                 ))}
@@ -212,14 +224,15 @@ export default function Nav() {
             )}
           </div>
 
-          {navLinks.slice(1).map((link) => (
+          {navLinks.slice(1).map((link, i) => (
             <Link key={link.label} href={link.href}
+              data-cms-field={`links.${i}.label`}
               className="text-2xl font-bold text-white hover:text-[#00AEEF] transition-colors tracking-wider"
               onClick={() => setMobileMenuOpen(false)}>
               {link.label}
             </Link>
           ))}
-          <Link href={ctaHref} onClick={() => setMobileMenuOpen(false)} className="bg-[#00AEEF] text-white px-8 py-4 rounded-full text-lg font-semibold mt-4 shadow-[0_0_20px_rgba(0,174,239,0.3)]">
+          <Link href={ctaHref} data-cms-field="ctaButton.label" onClick={() => setMobileMenuOpen(false)} className="bg-[#00AEEF] text-white px-8 py-4 rounded-full text-lg font-semibold mt-4 shadow-[0_0_20px_rgba(0,174,239,0.3)]">
             {ctaLabel}
           </Link>
         </div>

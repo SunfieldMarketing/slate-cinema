@@ -23,6 +23,7 @@ import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { AdminIcon as AdminIcon_7be396d0766c6c490887ef074dd0ced4 } from '../../../components/admin/AdminIcon'
 import { AdminLogo as AdminLogo_27eed1898e8caadb2fd2266b54bb4509 } from '../../../components/admin/AdminLogo'
+import { LivePreviewClickToEditProvider as LivePreviewClickToEditProvider_a1c9f6d3e8b247058b6c9d0e4f7a2b81 } from '../../../components/admin/LivePreviewClickToEditProvider'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 import { VercelBlobClientUploadHandler as VercelBlobClientUploadHandler_63e344d347e7e4fcf0a0d68b19f79f9c } from '@payloadcms/storage-vercel-blob/client'
 import { S3ClientUploadHandler as S3ClientUploadHandler_e0e942ce9b8e70444e4c19c1e1cf1b31 } from '@payloadcms/storage-s3/client'
@@ -54,6 +55,7 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "/components/admin/AdminIcon#AdminIcon": AdminIcon_7be396d0766c6c490887ef074dd0ced4,
   "/components/admin/AdminLogo#AdminLogo": AdminLogo_27eed1898e8caadb2fd2266b54bb4509,
+  "/components/admin/LivePreviewClickToEditProvider#LivePreviewClickToEditProvider": LivePreviewClickToEditProvider_a1c9f6d3e8b247058b6c9d0e4f7a2b81,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1,
   "@payloadcms/storage-vercel-blob/client#VercelBlobClientUploadHandler": VercelBlobClientUploadHandler_63e344d347e7e4fcf0a0d68b19f79f9c,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_e0e942ce9b8e70444e4c19c1e1cf1b31
