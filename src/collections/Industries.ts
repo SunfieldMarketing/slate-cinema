@@ -39,7 +39,7 @@ export const Industries: CollectionConfig = {
     // -- Payload defaults every unset access function to "allow
     // everyone," so create/update/delete must be explicit here or the
     // public REST/GraphQL API can write to this collection with no auth.
-    read: ({ req }) => Boolean(req.user) || { _status: { equals: 'published' } },
+    read: ({ req }) => Boolean(req?.user) || { _status: { equals: 'published' } },
     create: ({ req }) => Boolean(req.user),
     update: ({ req }) => Boolean(req.user),
     delete: ({ req }) => Boolean(req.user),

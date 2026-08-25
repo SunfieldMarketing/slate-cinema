@@ -28,7 +28,7 @@ export const PortfolioProjects: CollectionConfig = {
     // ordinary (draft:false) visitors, while Live Preview (draft:true)
     // passes overrideAccess:true and bypasses it entirely, same as an
     // authenticated admin editing in /admin.
-    read: ({ req }) => Boolean(req.user) || { _status: { equals: 'published' } },
+    read: ({ req }) => Boolean(req?.user) || { _status: { equals: 'published' } },
     create: ({ req }) => Boolean(req.user),
     update: ({ req }) => Boolean(req.user),
     delete: ({ req }) => Boolean(req.user),

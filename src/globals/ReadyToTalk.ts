@@ -32,7 +32,7 @@ export const ReadyToTalk: GlobalConfig = {
     // ordinary (draft:false) visitors, while Live Preview (draft:true)
     // passes overrideAccess:true and bypasses it entirely, same as an
     // authenticated admin editing in /admin.
-    read: ({ req }) => Boolean(req.user) || { _status: { equals: 'published' } },
+    read: ({ req }) => Boolean(req?.user) || { _status: { equals: 'published' } },
     update: ({ req }) => Boolean(req.user),
   },
   fields: [
