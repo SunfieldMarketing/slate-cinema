@@ -16,7 +16,16 @@ export interface Stat {
 
 /* Reusable animated-counter stat strip (magicui NumberTicker) — drop
    different stat sets on any page. */
-export default function StatsBand({ stats }: { stats: Stat[] }) {
+export default function StatsBand({
+  stats,
+  fieldPathPrefix,
+}: {
+  stats: Stat[]
+  /** Click-to-edit field-path prefix for the array this data came from
+      (e.g. "statsBand") -- optional since this component is reused across
+      pages with different backing globals; omit if not yet wired up. */
+  fieldPathPrefix?: string
+}) {
   const ref = useRef<HTMLElement>(null)
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -29,7 +38,7 @@ export default function StatsBand({ stats }: { stats: Stat[] }) {
     <section ref={ref} className="relative w-full overflow-hidden py-20 md:py-24">
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-6">
-          {stats.map((s) => (
+          {stats.map((s, i) => (
             <div key={s.label} className="stat-col text-center">
               {/* whitespace-nowrap: the number+suffix must read as one
                   unit ("4yrs", "5.0") -- a value/suffix combination wide
@@ -49,7 +58,7 @@ export default function StatsBand({ stats }: { stats: Stat[] }) {
                   number/suffix split fix. text-center means any residual
                   overflow spills evenly into the gap on both sides
                   rather than clipping or colliding with a neighbor. */}
-              <div className="mt-3 font-mono text-[9px] sm:text-[10px] tracking-wide text-white/45 uppercase whitespace-nowrap">{s.label}</div>
+              <div data-cms-field={fieldPathPrefix ? `${fieldPathPrefix}.${i}.label` : undefined} className="mt-3 font-mono text-[9px] sm:text-[10px] tracking-wide text-white/45 uppercase whitespace-nowrap">{s.label}</div>
             </div>
           ))}
         </div>

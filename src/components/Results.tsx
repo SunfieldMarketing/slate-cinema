@@ -193,7 +193,7 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
           <div className="flex gap-12 md:gap-20 items-center text-white/90 text-xl md:text-3xl font-bold mb-10">
             <div className="flex items-center gap-3">
               <Eye className="w-6 h-6 md:w-10 md:h-10 text-[#00AEEF]" />
-              <span>{views > 0 ? reachPercent : '0%'}</span>
+              <span data-cms-field="results.reachPercent">{views > 0 ? reachPercent : '0%'}</span>
               <span className="text-xs text-white/40 font-normal ml-1">Reach</span>
             </div>
             <div className="flex items-center gap-3">
@@ -207,7 +207,7 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
           </div>
 
           {/* Description */}
-          <p className="text-white/50 text-base md:text-lg max-w-2xl text-center leading-relaxed font-light">
+          <p data-cms-field="results.description" className="text-white/50 text-base md:text-lg max-w-2xl text-center leading-relaxed font-light">
             {description}
           </p>
 
@@ -216,6 +216,7 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
             <a
               ref={buttonRef}
               href={ctaHref}
+              data-cms-field="results.ctaLabel"
               className="relative px-12 py-5 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full text-white font-medium text-lg overflow-hidden group cursor-pointer transition-all hover:bg-white hover:text-black hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] inline-flex"
             >
               <span ref={textRef} className="relative z-10 flex items-center gap-4 pointer-events-none">

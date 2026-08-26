@@ -89,11 +89,11 @@ export default function IndustryServices({ services, accent }: { services: Indus
             </div>
 
             <div className="relative p-6 md:p-8">
-              <div className="font-mono text-sm md:text-base font-bold tracking-tight mb-2" style={{ color: accent }}>
+              <div data-cms-field={`serviceCards.${services.indexOf(featured)}.outcome`} className="font-mono text-sm md:text-base font-bold tracking-tight mb-2" style={{ color: accent }}>
                 {featured.outcome}
               </div>
-              <h3 className="text-2xl md:text-3xl font-bold text-white mb-2.5">{featured.title}</h3>
-              <p className="text-sm text-white/60 leading-relaxed font-light max-w-md mb-5">{featured.description}</p>
+              <h3 data-cms-field={`serviceCards.${services.indexOf(featured)}.title`} className="text-2xl md:text-3xl font-bold text-white mb-2.5">{featured.title}</h3>
+              <p data-cms-field={`serviceCards.${services.indexOf(featured)}.description`} className="text-sm text-white/60 leading-relaxed font-light max-w-md mb-5">{featured.description}</p>
               <ul className="flex flex-wrap gap-x-5 gap-y-2 mb-6">
                 {featured.deliverables.map((d) => (
                   <li key={d} className="flex items-center gap-1.5 text-xs text-white/70">
@@ -127,11 +127,11 @@ export default function IndustryServices({ services, accent }: { services: Indus
               <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/60 to-ink/10" />
 
               <div className="relative p-5">
-                <div className="font-mono text-xs font-bold tracking-tight mb-1.5" style={{ color: accent }}>
+                <div data-cms-field={`serviceCards.${services.indexOf(s)}.outcome`} className="font-mono text-xs font-bold tracking-tight mb-1.5" style={{ color: accent }}>
                   {s.outcome}
                 </div>
-                <h3 className="text-lg font-bold text-white mb-1.5">{s.title}</h3>
-                <p className="text-xs text-white/55 leading-relaxed font-light mb-3">{s.description}</p>
+                <h3 data-cms-field={`serviceCards.${services.indexOf(s)}.title`} className="text-lg font-bold text-white mb-1.5">{s.title}</h3>
+                <p data-cms-field={`serviceCards.${services.indexOf(s)}.description`} className="text-xs text-white/55 leading-relaxed font-light mb-3">{s.description}</p>
 
                 {/* Always shown -- was a hover-triggered max-height expand
                     that grew/shrank the whole card on hover; removed per

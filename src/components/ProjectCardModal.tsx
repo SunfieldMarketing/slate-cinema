@@ -90,6 +90,8 @@ export default function ProjectCardModal({
 
       <div
         ref={cardRef}
+        data-cms-collection="portfolio-projects"
+        data-cms-doc-id={project.id}
         className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/12 bg-[#0a0f18] shadow-[0_40px_120px_rgba(0,0,0,0.7)]"
         style={{ transformStyle: 'preserve-3d' }}
       >
@@ -131,6 +133,7 @@ export default function ProjectCardModal({
             </>
           )}
           <span
+            data-cms-field="category"
             className="absolute top-4 left-4 font-mono text-[10px] tracking-[0.2em] uppercase px-3 py-1.5 rounded-full backdrop-blur-md border text-white pointer-events-none"
             style={{ borderColor: `${accent}55`, backgroundColor: 'rgba(5,7,12,0.7)' }}
           >
@@ -141,19 +144,19 @@ export default function ProjectCardModal({
         <div className="p-6 sm:p-8">
           <div className="flex items-start justify-between gap-6 flex-wrap mb-4">
             <div>
-              <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{project.title}</h3>
-              <div className="mt-1.5 font-mono text-[11px] tracking-[0.18em] uppercase text-white/55">{project.company}</div>
+              <h3 data-cms-field="title" className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{project.title}</h3>
+              <div data-cms-field="company" className="mt-1.5 font-mono text-[11px] tracking-[0.18em] uppercase text-white/55">{project.company}</div>
             </div>
           </div>
 
-          <p className="text-sm sm:text-base text-white/65 font-light leading-relaxed mb-7 max-w-xl">{project.copy}</p>
+          <p data-cms-field="copy" className="text-sm sm:text-base text-white/65 font-light leading-relaxed mb-7 max-w-xl">{project.copy}</p>
 
           {/* Metrics */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-            {project.metrics.map((m) => (
+            {project.metrics.map((m, i) => (
               <div key={m.label} className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3.5">
-                <div className="text-xl font-bold tracking-tight" style={{ color: accent }}>{m.value}</div>
-                <div className="mt-0.5 font-mono text-[9px] tracking-[0.18em] uppercase text-white/55">{m.label}</div>
+                <div data-cms-field={`metrics.${i}.value`} className="text-xl font-bold tracking-tight" style={{ color: accent }}>{m.value}</div>
+                <div data-cms-field={`metrics.${i}.label`} className="mt-0.5 font-mono text-[9px] tracking-[0.18em] uppercase text-white/55">{m.label}</div>
               </div>
             ))}
           </div>

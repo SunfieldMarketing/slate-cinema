@@ -37,14 +37,14 @@ export default function JournalPostContent({ post, allPosts }: { post: JournalPo
         <Nav />
 
         {/* Article hero */}
-        <section className="relative w-full pt-32 pb-10 md:pt-40 md:pb-14 overflow-hidden">
+        <section className="relative w-full pt-32 pb-10 md:pt-40 md:pb-14 overflow-hidden" data-cms-collection="journal-posts" data-cms-doc-id={post.id}>
           <div className="relative z-10 w-full max-w-3xl mx-auto px-5 sm:px-8 text-center">
-            <div className="jp-hero-in flex items-center justify-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-6" style={{ color: post.accent }}>
+            <div className="jp-hero-in flex items-center justify-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-6" style={{ color: post.accent }} data-cms-field="category">
               <span className="w-8 h-px" style={{ background: `${post.accent}66` }} />
               {post.category}
               <span className="w-8 h-px" style={{ background: `${post.accent}66` }} />
             </div>
-            <h1 className="jp-hero-in text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.08] mb-6">
+            <h1 data-cms-field="title" className="jp-hero-in text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.08] mb-6">
               {post.title}
             </h1>
             <div className="jp-hero-in flex items-center justify-center gap-3 font-mono text-[11px] text-white/45 uppercase tracking-wide">
@@ -69,8 +69,9 @@ export default function JournalPostContent({ post, allPosts }: { post: JournalPo
             Styled via arbitrary-child selectors instead of custom JSX
             converters, keyed to the post's own accent color for the
             blockquote/list markers via a CSS variable. */}
-        <section className="relative w-full max-w-2xl mx-auto px-5 sm:px-8 pb-20 md:pb-28">
+        <section className="relative w-full max-w-2xl mx-auto px-5 sm:px-8 pb-20 md:pb-28" data-cms-collection="journal-posts" data-cms-doc-id={post.id}>
           <div
+            data-cms-field="content"
             className="jp-in [&_h2]:text-2xl [&_h2]:sm:text-3xl [&_h2]:font-bold [&_h2]:tracking-tight [&_h2]:text-white [&_h2]:mt-12 [&_h2]:mb-5 [&_h2:first-child]:mt-0
                        [&_p]:text-white/65 [&_p]:font-light [&_p]:leading-relaxed [&_p]:mb-6 [&_p]:text-base [&_p]:sm:text-lg
                        [&_blockquote]:my-10 [&_blockquote]:pl-6 [&_blockquote]:border-l-2 [&_blockquote]:text-lg [&_blockquote]:sm:text-xl [&_blockquote]:font-light [&_blockquote]:text-white/80 [&_blockquote]:leading-relaxed [&_blockquote]:italic [&_blockquote]:[border-color:var(--post-accent)]
@@ -109,6 +110,8 @@ export default function JournalPostContent({ post, allPosts }: { post: JournalPo
                   <a
                     key={p.slug}
                     href={`/journal/${p.slug}`}
+                    data-cms-collection="journal-posts"
+                    data-cms-doc-id={p.id}
                     className="jp-related group relative rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02] hover:border-white/25 transition-colors duration-500"
                   >
                     <div className="relative aspect-[16/10] overflow-hidden">
@@ -121,7 +124,7 @@ export default function JournalPostContent({ post, allPosts }: { post: JournalPo
                       <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
                     </div>
                     <div className="p-5">
-                      <h3 className="text-white font-bold text-sm leading-snug mb-2 group-hover:text-[#00AEEF] transition-colors line-clamp-2">
+                      <h3 data-cms-field="title" className="text-white font-bold text-sm leading-snug mb-2 group-hover:text-[#00AEEF] transition-colors line-clamp-2">
                         {p.title}
                       </h3>
                       <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/60 group-hover:text-white transition-colors">

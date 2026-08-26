@@ -329,7 +329,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
 
             {/* SLATE CINEMA letters */}
             <div className="flex items-baseline gap-4 md:gap-6 mb-6">
-              <div className="flex">
+              <div className="flex" data-cms-field="hero.wordmarkPart1">
                 {slateLetters.map((letter, i) => (
                   <span
                     key={`s-${i}`}
@@ -340,7 +340,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
                   </span>
                 ))}
               </div>
-              <div className="flex">
+              <div className="flex" data-cms-field="hero.wordmarkPart2">
                 {cinemaLetters.map((letter, i) => (
                   <span
                     key={`c-${i}`}
@@ -354,7 +354,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
             </div>
 
             {/* Subtitle */}
-            <p className="hero-subtitle text-xs md:text-sm font-mono tracking-[0.4em] text-white/50 uppercase mb-12">
+            <p data-cms-field="hero.subtitle" className="hero-subtitle text-xs md:text-sm font-mono tracking-[0.4em] text-white/50 uppercase mb-12">
               {subtitle}
             </p>
 
@@ -392,6 +392,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
             <div className="flex flex-wrap items-center gap-4 justify-center pointer-events-auto mt-12 z-40 relative">
               <a
                 href={ctaHref}
+                data-cms-field="hero.ctaLabel"
                 className="hero-cta group relative px-7 py-3.5 rounded-full overflow-hidden bg-white"
               >
                 <div className="absolute inset-0 bg-[#00AEEF] scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
@@ -399,6 +400,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
               </a>
               <a
                 href={secondaryCtaHref}
+                data-cms-field="hero.secondaryCtaLabel"
                 className="hero-cta group relative px-6 py-3 rounded-full overflow-hidden border border-white/15 bg-white/[0.03]"
               >
                 <div className="absolute inset-0 bg-white/10 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />

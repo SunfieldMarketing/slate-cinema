@@ -326,15 +326,15 @@ export default function StoryboardHero({ eyebrow = 'The Process', title, subtitl
         {/* Intro — the ONLY thing visible at rest */}
         <div className="sb-text-outer absolute inset-0 z-40 flex flex-col items-center justify-center text-center px-4 pointer-events-none">
           <div className="sb-text-inner">
-            <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.35em] uppercase mb-6" style={{ color: accent }}>
-              <span className="w-8 h-px" style={{ background: `${accent}66` }} /> {eyebrow} <span className="w-8 h-px" style={{ background: `${accent}66` }} />
+            <span data-cms-global="how-it-works-page" className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.35em] uppercase mb-6" style={{ color: accent }}>
+              <span className="w-8 h-px" style={{ background: `${accent}66` }} /> <span data-cms-field="hero.eyebrow">{eyebrow}</span> <span className="w-8 h-px" style={{ background: `${accent}66` }} />
             </span>
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter text-white leading-[1.02]">
               {title.map((line, i) => (
-                <span key={i} className="block">{line}</span>
+                <span key={i} data-cms-field={i === 0 ? 'hero.title' : undefined} className="block">{line}</span>
               ))}
             </h1>
-            {subtitle && <p className="mt-6 text-white/55 text-base sm:text-lg font-light max-w-xl mx-auto leading-relaxed">{subtitle}</p>}
+            {subtitle && <p data-cms-field="hero.subtitle" className="mt-6 text-white/55 text-base sm:text-lg font-light max-w-xl mx-auto leading-relaxed">{subtitle}</p>}
             <div className="mt-10 flex flex-col items-center gap-2 opacity-60">
               <span className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/40">Scroll</span>
               <svg width="18" height="18" viewBox="0 0 20 20" fill="none" className="animate-bounce" style={{ color: `${accent}99` }}>
@@ -352,7 +352,7 @@ export default function StoryboardHero({ eyebrow = 'The Process', title, subtitl
           </p>
           {cta && (
             <div className="flex flex-col sm:flex-row gap-5">
-              <a href={cta.href} className="sb-cta-btn-primary px-8 py-4 rounded-full font-semibold text-sm text-black bg-white">
+              <a href={cta.href} data-cms-field="hero.ctaLabel" className="sb-cta-btn-primary px-8 py-4 rounded-full font-semibold text-sm text-black bg-white">
                 {cta.label}
               </a>
             </div>

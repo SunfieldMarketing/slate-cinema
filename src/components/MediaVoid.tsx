@@ -156,7 +156,7 @@ export default function MediaVoid({ data }: { data?: HomePage['mediaVoid'] }) {
       {/* Main text content */}
       <div className="mv-all-text absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 md:gap-4" style={{ transformStyle: 'preserve-3d' }}>
         {lines.map((line, i) => (
-          <div key={i} className="flex flex-wrap justify-center gap-x-4" style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}>
+          <div key={i} data-cms-field={`mediaVoid.lines.${i}.text`} className="flex flex-wrap justify-center gap-x-4" style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}>
             {line.text.split(' ').map((word, j) => (
               <span 
                 key={j} 

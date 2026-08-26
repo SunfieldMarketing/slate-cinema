@@ -138,28 +138,28 @@ export default function IndustryStandards({ data }: { data?: HomePage['industryS
         
         {/* Phase 1 */}
         <div className="phase-1 absolute flex flex-col items-center max-w-7xl">
-          <span className="font-mono text-[10px] md:text-xs text-[#00AEEF] tracking-[0.5em] uppercase mb-8">
+          <span data-cms-field="industryStandards.phase1.eyebrow" className="font-mono text-[10px] md:text-xs text-[#00AEEF] tracking-[0.5em] uppercase mb-8">
             {phase1.eyebrow}
           </span>
           <h2 className="text-6xl md:text-[8rem] font-light leading-none tracking-tighter">
-            {phase1.headlineLine1}
+            <span data-cms-field="industryStandards.phase1.headlineLine1">{phase1.headlineLine1}</span>
             <br />
-            <span className="font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-white/50 drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]">
+            <span data-cms-field="industryStandards.phase1.headlineLine2" className="font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-white/50 drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]">
               {phase1.headlineLine2}
             </span>
           </h2>
-          <p className="mt-8 text-white/60 max-w-2xl text-lg md:text-xl font-light leading-relaxed">
+          <p data-cms-field="industryStandards.phase1.description" className="mt-8 text-white/60 max-w-2xl text-lg md:text-xl font-light leading-relaxed">
             {phase1.description}
           </p>
         </div>
 
         {/* Phase 2 */}
         <div className="phase-2 absolute flex flex-col items-center opacity-0 pointer-events-none w-full max-w-7xl">
-          <span className="font-mono text-[10px] md:text-xs text-purple-400 tracking-[0.5em] uppercase mb-8">
+          <span data-cms-field="industryStandards.phase2.eyebrow" className="font-mono text-[10px] md:text-xs text-purple-400 tracking-[0.5em] uppercase mb-8">
             {phase2.eyebrow}
           </span>
           <h2 className="text-5xl md:text-[6rem] font-black leading-[0.9] tracking-tighter text-white">
-            {phase2.headline}
+            <span data-cms-field="industryStandards.phase2.headline">{phase2.headline}</span>
             <br />
             <span className="italic text-purple-400 font-serif font-light tracking-tight relative block h-[1.2em] w-full mt-2">
               <span className="morph-word-1 absolute left-1/2 -translate-x-1/2 w-full">{morphWords[0]}</span>
@@ -167,27 +167,27 @@ export default function IndustryStandards({ data }: { data?: HomePage['industryS
               <span className="morph-word-3 absolute left-1/2 -translate-x-1/2 w-full opacity-0">{morphWords[2]}</span>
             </span>
           </h2>
-          <p className="mt-8 text-white/60 max-w-xl text-lg font-light leading-relaxed">
+          <p data-cms-field="industryStandards.phase2.description" className="mt-8 text-white/60 max-w-xl text-lg font-light leading-relaxed">
             {phase2.description}
           </p>
         </div>
 
         {/* Phase 3 - DOMINATE YOUR MARKET */}
         <div className="phase-3 absolute flex flex-col items-center opacity-0 pointer-events-none w-[100vw]">
-          <span className="font-mono text-[10px] md:text-xs text-emerald-400 tracking-[0.5em] uppercase mb-6 filter drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]">
+          <span data-cms-field="industryStandards.phase3.eyebrow" className="font-mono text-[10px] md:text-xs text-emerald-400 tracking-[0.5em] uppercase mb-6 filter drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]">
             {phase3.eyebrow}
           </span>
 
           {/* MASSIVE SINGLE LINE TEXT */}
-          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-[6vw] font-black leading-[1.05] md:leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70 drop-shadow-[0_0_60px_rgba(16,185,129,0.5)] mb-8 md:whitespace-nowrap overflow-visible px-4">
+          <h2 data-cms-field="industryStandards.phase3.headline" className="text-4xl sm:text-5xl md:text-6xl lg:text-[6vw] font-black leading-[1.05] md:leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70 drop-shadow-[0_0_60px_rgba(16,185,129,0.5)] mb-8 md:whitespace-nowrap overflow-visible px-4">
             {phase3.headline}
           </h2>
 
-          <p className="text-white/80 w-full max-w-4xl text-base sm:text-lg md:text-xl lg:text-2xl font-light leading-relaxed mb-12 px-4 shadow-black drop-shadow-md text-center">
+          <p data-cms-field="industryStandards.phase3.description" className="text-white/80 w-full max-w-4xl text-base sm:text-lg md:text-xl lg:text-2xl font-light leading-relaxed mb-12 px-4 shadow-black drop-shadow-md text-center">
             {phase3.description}
           </p>
 
-          <a href={phase3.ctaHref} className="group inline-flex items-center justify-center px-10 py-5 bg-emerald-500 text-black font-bold text-lg rounded-full hover:bg-emerald-400 hover:scale-105 transition-all duration-300 pointer-events-auto shadow-[0_0_40px_rgba(16,185,129,0.5)]">
+          <a href={phase3.ctaHref} data-cms-field="industryStandards.phase3.ctaLabel" className="group inline-flex items-center justify-center px-10 py-5 bg-emerald-500 text-black font-bold text-lg rounded-full hover:bg-emerald-400 hover:scale-105 transition-all duration-300 pointer-events-auto shadow-[0_0_40px_rgba(16,185,129,0.5)]">
             {phase3.ctaLabel}
             <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform" />
           </a>

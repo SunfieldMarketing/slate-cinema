@@ -41,10 +41,10 @@ export default function HomePageContent({
       <Nav />
 
       <div className="relative z-10 w-full">
-        <div data-scroll-section="hero"><Hero data={homePage?.hero} /></div>
-        <div data-scroll-section="trust"><TrustSection data={homePage?.trustSection} /></div>
-        <div id="how" data-scroll-section="pipeline"><Pipeline categories={pipelineCategories} heading={pipelineHeading} /></div>
-        <div data-scroll-section="mediavoid"><MediaVoid data={homePage?.mediaVoid} /></div>
+        <div data-scroll-section="hero" data-cms-global="home-page"><Hero data={homePage?.hero} /></div>
+        <div data-scroll-section="trust" data-cms-global="home-page"><TrustSection data={homePage?.trustSection} /></div>
+        <div id="how" data-scroll-section="pipeline" data-cms-global="pipeline"><Pipeline categories={pipelineCategories} heading={pipelineHeading} /></div>
+        <div data-scroll-section="mediavoid" data-cms-global="home-page"><MediaVoid data={homePage?.mediaVoid} /></div>
         {/* Restored 2026-08-13 at Kauan's explicit request after being
             removed in the previous pass over the fake-stats audit finding
             -- the specific 120,000,000-views/98.2%-reach numbers below are
@@ -52,11 +52,11 @@ export default function HomePageContent({
             flagged in chat rather than silently swapped for something
             else. Update `viewsTarget`/`reachPercent` via the HomePage
             global once real numbers exist. */}
-        <div data-scroll-section="results"><Results data={homePage?.results} /></div>
-        <div data-scroll-section="standards"><IndustryStandards data={homePage?.industryStandards} /></div>
-        <div data-scroll-section="reviews"><Reviews data={homePage?.reviews} /></div>
+        <div data-scroll-section="results" data-cms-global="home-page"><Results data={homePage?.results} /></div>
+        <div data-scroll-section="standards" data-cms-global="home-page"><IndustryStandards data={homePage?.industryStandards} /></div>
+        <div data-scroll-section="reviews" data-cms-global="home-page"><Reviews data={homePage?.reviews} /></div>
         <div id="reel" data-scroll-section="portfolio"><PortfolioCarousel projects={portfolioProjects} /></div>
-        <div data-scroll-section="finalcta"><FinalCTA data={finalCta} /></div>
+        <div data-scroll-section="finalcta" data-cms-global="final-cta"><FinalCTA data={finalCta} /></div>
         <div data-scroll-section="footer"><Footer /></div>
       </div>
     </main>

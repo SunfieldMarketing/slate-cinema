@@ -66,12 +66,12 @@ export default function Pipeline({
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
         <div className="pipe-fade text-center mb-12 md:mb-16">
           <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase mb-5">
-            <span className="w-8 h-px bg-brand-blue/40" /> {eyebrow}
+            <span className="w-8 h-px bg-brand-blue/40" /> <span data-cms-field="heading.eyebrow">{eyebrow}</span>
           </span>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-[1.05]">
+          <h2 data-cms-field="heading.title" className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-[1.05]">
             {title}
           </h2>
-          <p className="mt-5 text-white/50 max-w-2xl mx-auto text-sm sm:text-base font-light leading-relaxed">
+          <p data-cms-field="heading.description" className="mt-5 text-white/50 max-w-2xl mx-auto text-sm sm:text-base font-light leading-relaxed">
             {description}
           </p>
         </div>
@@ -111,7 +111,7 @@ export default function Pipeline({
                     >
                       {String(i + 1).padStart(2, '0')}
                     </span>
-                    <span className={`text-xl sm:text-2xl font-semibold tracking-tight transition-colors duration-300 ${isOpen ? 'text-white' : 'text-white/55 group-hover:text-white/80'}`}>
+                    <span data-cms-field={`categories.${i}.title`} className={`text-xl sm:text-2xl font-semibold tracking-tight transition-colors duration-300 ${isOpen ? 'text-white' : 'text-white/55 group-hover:text-white/80'}`}>
                       {cat.title}
                     </span>
                   </span>
@@ -164,6 +164,7 @@ export default function Pipeline({
                                 key={s.name}
                                 onClick={() => setActiveService(si)}
                                 onMouseEnter={() => setActiveService(si)}
+                                data-cms-field={`categories.${i}.services.${si}.name`}
                                 className="px-4 py-2 rounded-lg border text-sm font-medium transition-all duration-300"
                                 style={{
                                   borderColor: isActive ? cat.color : 'rgba(255,255,255,0.15)',
@@ -188,12 +189,13 @@ export default function Pipeline({
                             className="rounded-xl border p-5 sm:p-6 transition-colors duration-300 flex-1"
                             style={{ borderColor: `${cat.color}30`, background: `${cat.color}0A` }}
                           >
-                            <h3 className="font-semibold text-white text-base mb-3">{active.name}</h3>
+                            <h3 data-cms-field={`categories.${i}.services.${activeService}.name`} className="font-semibold text-white text-base mb-3">{active.name}</h3>
                             {active.tags ? (
                               <div className="flex flex-wrap gap-2">
-                                {active.tags.map((t) => (
+                                {active.tags.map((t, ti) => (
                                   <span
                                     key={t}
+                                    data-cms-field={`categories.${i}.services.${activeService}.tags.${ti}.tag`}
                                     className="text-xs font-mono px-3 py-1.5 rounded-full border text-white/75"
                                     style={{ borderColor: `${cat.color}40`, background: `${cat.color}12` }}
                                   >
@@ -202,7 +204,7 @@ export default function Pipeline({
                                 ))}
                               </div>
                             ) : (
-                              <p className="text-white/60 text-sm font-light leading-relaxed">{active.desc}</p>
+                              <p data-cms-field={`categories.${i}.services.${activeService}.desc`} className="text-white/60 text-sm font-light leading-relaxed">{active.desc}</p>
                             )}
                           </div>
                         )}

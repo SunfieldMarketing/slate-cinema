@@ -169,6 +169,10 @@ export function normalizeIndustry(doc: Industry): IndustryData {
 }
 
 export interface PortfolioProjectLocal {
+  /** Real Payload document id, stringified -- see the matching comment on
+      IndustryData.id. Used by the click-to-edit shortcut to confirm a
+      click belongs to the doc currently open in the admin edit view. */
+  id: string
   title: string
   category: string
   company: string
@@ -182,6 +186,7 @@ export interface PortfolioProjectLocal {
 
 export function normalizePortfolioProject(doc: PayloadPortfolioProject): PortfolioProjectLocal {
   return {
+    id: String(doc.id),
     title: doc.title,
     category: doc.category,
     company: doc.company,
@@ -196,6 +201,10 @@ export function normalizePortfolioProject(doc: PayloadPortfolioProject): Portfol
 }
 
 export interface JournalPostLocal {
+  /** Real Payload document id, stringified -- see the matching comment on
+      IndustryData.id. Used by the click-to-edit shortcut to confirm a
+      click belongs to the doc currently open in the admin edit view. */
+  id: string
   slug: string
   title: string
   excerpt: string
@@ -210,6 +219,7 @@ export interface JournalPostLocal {
 
 export function normalizeJournalPost(doc: PayloadJournalPost): JournalPostLocal {
   return {
+    id: String(doc.id),
     slug: doc.slug,
     title: doc.title,
     excerpt: doc.excerpt,

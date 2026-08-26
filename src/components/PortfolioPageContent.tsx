@@ -57,16 +57,16 @@ function ReelCarousel({
   }))
 
   return (
-    <section ref={ref} className="relative w-full overflow-hidden py-20 md:py-24">
+    <section ref={ref} data-cms-global="portfolio-index-page" className="relative w-full overflow-hidden py-20 md:py-24">
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
         <div className="rc-head text-center mb-10 md:mb-12">
           <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#a855f7] uppercase mb-4">
-            <span className="w-8 h-px bg-[#a855f7]/40" /> {copy?.eyebrow || 'The Reel'} <span className="w-8 h-px bg-[#a855f7]/40" />
+            <span className="w-8 h-px bg-[#a855f7]/40" /> <span data-cms-field="reelCarousel.eyebrow">{copy?.eyebrow || 'The Reel'}</span> <span className="w-8 h-px bg-[#a855f7]/40" />
           </span>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05]">
+          <h2 data-cms-field="reelCarousel.headline" className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05]">
             {copy?.headline || 'Spin through the work'}
           </h2>
-          <p className="mt-4 text-white/50 text-sm font-mono">{copy?.subhead || 'Drag to spin the reel · click a frame to open it'}</p>
+          <p data-cms-field="reelCarousel.subhead" className="mt-4 text-white/50 text-sm font-mono">{copy?.subhead || 'Drag to spin the reel · click a frame to open it'}</p>
         </div>
 
         <div className="rc-carousel">
@@ -103,11 +103,11 @@ function Industries({
   }, { scope: ref })
 
   return (
-    <section ref={ref} className="relative w-full overflow-hidden py-20 md:py-24">
+    <section ref={ref} data-cms-global="portfolio-index-page" className="relative w-full overflow-hidden py-20 md:py-24">
       <div className="relative z-10 w-full max-w-5xl mx-auto px-5 sm:px-8">
         <div className="ind-head text-center mb-14 max-w-2xl mx-auto">
-          <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase block mb-4">{copy?.eyebrow || 'Who We Work With'}</span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.05]">
+          <span data-cms-field="industriesSection.eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase block mb-4">{copy?.eyebrow || 'Who We Work With'}</span>
+          <h2 data-cms-field="industriesSection.headline" className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.05]">
             {copy?.headline || 'Cinematic work for every industry'}
           </h2>
         </div>
@@ -157,13 +157,14 @@ export default function PortfolioPageContent({
           date={hero?.date || 'Selected Campaigns'}
           scrollToExpand={hero?.scrollToExpandLabel || 'Scroll To Explore'}
         >
-          <div className="max-w-2xl mx-auto text-center">
-            <p className="text-white/60 text-base sm:text-lg font-light leading-relaxed mb-8">
+          <div className="max-w-2xl mx-auto text-center" data-cms-global="portfolio-index-page">
+            <p data-cms-field="hero.description" className="text-white/60 text-base sm:text-lg font-light leading-relaxed mb-8">
               {hero?.description ||
                 "Discover a world of captivating storytelling. From immersive brand journeys to campaigns that dominate the feed — this is Slate Cinema's showcase."}
             </p>
             <a
               href={hero?.ctaHref || '/contact'}
+              data-cms-field="hero.ctaLabel"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-black font-semibold text-sm hover:bg-[#a855f7] hover:text-white transition-colors duration-300"
             >
               {hero?.ctaLabel || 'Get Started'}

@@ -60,7 +60,7 @@ export default function TrustSection({ data }: { data?: HomePage['trustSection']
   return (
     <section ref={sectionRef} className="relative w-full py-16 md:py-20 overflow-hidden">
       <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-8 text-center">
-        <span className="font-mono text-sm sm:text-base tracking-[0.2em] text-white/50 uppercase">
+        <span data-cms-field="trustSection.eyebrow" className="font-mono text-sm sm:text-base tracking-[0.2em] text-white/50 uppercase">
           {eyebrow}
         </span>
 
@@ -82,10 +82,10 @@ export default function TrustSection({ data }: { data?: HomePage['trustSection']
                 <Star key={i} className="w-3.5 h-3.5" fill="#00AEEF" stroke="#00AEEF" />
               ))}
             </div>
-            <span className="font-mono text-[11px] text-white/50 tracking-wide">{ratingText}</span>
+            <span data-cms-field="trustSection.ratingText" className="font-mono text-[11px] text-white/50 tracking-wide">{ratingText}</span>
           </div>
           <div className="hidden sm:block w-px h-4 bg-white/15" />
-          <span className="font-mono text-[10px] tracking-[0.3em] text-white/35 uppercase">{marqueeLabel}</span>
+          <span data-cms-field="trustSection.marqueeLabel" className="font-mono text-[10px] tracking-[0.3em] text-white/35 uppercase">{marqueeLabel}</span>
         </div>
       </div>
 

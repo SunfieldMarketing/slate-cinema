@@ -56,6 +56,8 @@ function JournalGrid({ journalPosts }: { journalPosts: JournalPostLocal[] }) {
             <a
               key={p.slug}
               href={`/journal/${p.slug}`}
+              data-cms-collection="journal-posts"
+              data-cms-doc-id={p.id}
               className="jn-card group relative rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02] hover:border-white/25 transition-colors duration-500 flex flex-col"
             >
               <div className="relative aspect-[16/10] overflow-hidden">
@@ -67,6 +69,7 @@ function JournalGrid({ journalPosts }: { journalPosts: JournalPostLocal[] }) {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
                 <span
+                  data-cms-field="category"
                   className="absolute top-4 left-4 font-mono text-[10px] tracking-widest uppercase px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/15"
                   style={{ color: p.accent }}
                 >
@@ -75,14 +78,14 @@ function JournalGrid({ journalPosts }: { journalPosts: JournalPostLocal[] }) {
               </div>
               <div className="flex-1 flex flex-col p-6">
                 <div className="flex items-center gap-3 font-mono text-[10px] tracking-widest text-white/40 uppercase mb-3">
-                  <span>{p.date}</span>
+                  <span data-cms-field="date">{p.date}</span>
                   <span className="w-1 h-1 rounded-full bg-white/30" />
-                  <span>{p.readTime}</span>
+                  <span data-cms-field="readTime">{p.readTime}</span>
                 </div>
-                <h3 className="text-white font-bold text-lg leading-snug mb-2 group-hover:text-[#00AEEF] transition-colors">
+                <h3 data-cms-field="title" className="text-white font-bold text-lg leading-snug mb-2 group-hover:text-[#00AEEF] transition-colors">
                   {p.title}
                 </h3>
-                <p className="text-white/50 text-sm font-light leading-relaxed line-clamp-3 flex-1">{p.excerpt}</p>
+                <p data-cms-field="excerpt" className="text-white/50 text-sm font-light leading-relaxed line-clamp-3 flex-1">{p.excerpt}</p>
                 <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white/80 group-hover:text-white transition-colors">
                   Read the piece
                   <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />

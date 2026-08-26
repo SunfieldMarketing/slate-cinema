@@ -122,17 +122,21 @@ export default function IndustryPageContent({
       <div className="relative z-10 w-full">
         <Nav />
 
-        <PageHero
-          eyebrow="Our Work"
-          title={[industry.label]}
-          subtitle={industry.blurb}
-          videoSrc={industry.heroVideo}
-          videoVimeoUrl={industry.heroVideoVimeoUrl}
-          accent={industry.accent}
-          stats={industry.stats}
-          cta={{ label: 'Get Started', href: '/contact' }}
-          trustNote="174+ projects since 2023 · Replies within minutes"
-        />
+        <div data-cms-collection="industries" data-cms-doc-id={industry.id}>
+          <PageHero
+            eyebrow="Our Work"
+            title={[industry.label]}
+            subtitle={industry.blurb}
+            videoSrc={industry.heroVideo}
+            videoVimeoUrl={industry.heroVideoVimeoUrl}
+            accent={industry.accent}
+            stats={industry.stats}
+            cta={{ label: 'Get Started', href: '/contact' }}
+            trustNote="174+ projects since 2023 · Replies within minutes"
+            titleFieldPaths={['label']}
+            subtitleFieldPath="blurb"
+          />
+        </div>
 
         <TrustBanner />
 
@@ -140,7 +144,11 @@ export default function IndustryPageContent({
           <IndustryClientShowcase clients={industry.clientShowcase} accent={industry.accent} />
         )}
 
-        {industry.serviceCards && <IndustryServices services={industry.serviceCards} accent={industry.accent} />}
+        {industry.serviceCards && (
+          <div data-cms-collection="industries" data-cms-doc-id={industry.id}>
+            <IndustryServices services={industry.serviceCards} accent={industry.accent} />
+          </div>
+        )}
 
         {industry.cinematicStatement && (
           <CinematicStatement
@@ -154,7 +162,11 @@ export default function IndustryPageContent({
 
         <MidCtaBand accent={industry.accent} />
 
-        {industry.process && <IndustryProcess steps={industry.process} accent={industry.accent} />}
+        {industry.process && (
+          <div data-cms-collection="industries" data-cms-doc-id={industry.id}>
+            <IndustryProcess steps={industry.process} accent={industry.accent} />
+          </div>
+        )}
 
         <div id="gallery">
           <Portfolio projects={portfolioProjects} />

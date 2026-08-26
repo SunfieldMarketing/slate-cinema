@@ -48,12 +48,12 @@ export default function GHLBookingWidget({ copy }: { copy?: ScheduleACallPage['c
 
   return (
     <section className="relative w-full pt-10 pb-20 md:pt-14 md:pb-24 overflow-hidden">
-      <div className="relative z-10 max-w-3xl mx-auto px-5 sm:px-6">
+      <div className="relative z-10 max-w-3xl mx-auto px-5 sm:px-6" data-cms-global="schedule-a-call-page">
         <div className="text-center mb-10">
-          <span className="font-mono text-[10px] text-[#00AEEF] tracking-[0.4em] uppercase block mb-4">{eyebrow}</span>
-          <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tight mb-3">{headline}</h2>
+          <span data-cms-field="calendar.eyebrow" className="font-mono text-[10px] text-[#00AEEF] tracking-[0.4em] uppercase block mb-4">{eyebrow}</span>
+          <h2 data-cms-field="calendar.headline" className="text-4xl md:text-6xl font-bold text-white tracking-tight mb-3">{headline}</h2>
           <p className="text-white/40 text-sm">
-            {sessionLabel} · {durationLabel}
+            <span data-cms-field="calendar.sessionLabel">{sessionLabel}</span> · <span data-cms-field="calendar.durationLabel">{durationLabel}</span>
           </p>
         </div>
 

@@ -72,13 +72,13 @@ function ProcessOverview({ copy }: { copy?: HowItWorksPage['processOverview'] })
   }, { scope: ref })
 
   return (
-    <section ref={ref} className="relative w-full overflow-hidden pt-16 pb-6 md:pt-20 md:pb-8">
+    <section ref={ref} data-cms-global="how-it-works-page" className="relative w-full overflow-hidden pt-16 pb-6 md:pt-20 md:pb-8">
       <div className="relative z-10 w-full max-w-5xl mx-auto px-5 sm:px-8">
         <div className="po-fade text-center mb-10 md:mb-12">
           <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase mb-3">
-            <span className="w-8 h-px bg-brand-blue/40" /> {eyebrow} <span className="w-8 h-px bg-brand-blue/40" />
+            <span className="w-8 h-px bg-brand-blue/40" /> <span data-cms-field="processOverview.eyebrow">{eyebrow}</span> <span className="w-8 h-px bg-brand-blue/40" />
           </span>
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white leading-[1.1]">
+          <h2 data-cms-field="processOverview.headline" className="text-2xl sm:text-3xl font-bold tracking-tight text-white leading-[1.1]">
             {headline}
           </h2>
         </div>
@@ -105,12 +105,12 @@ function ProcessOverview({ copy }: { copy?: HowItWorksPage['processOverview'] })
 
         {/* Labels + one-liners — kept to a single row, one line each */}
         <div className="po-fade grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-3">
-          {timelineSteps.map((s) => (
+          {timelineSteps.map((s, i) => (
             <div key={s.title} className="text-center px-1">
-              <div className="font-bold text-base sm:text-lg tracking-tight mb-1.5" style={{ color: s.color }}>
+              <div data-cms-field={`processOverview.timelineSteps.${i}.title`} className="font-bold text-base sm:text-lg tracking-tight mb-1.5" style={{ color: s.color }}>
                 {s.title}
               </div>
-              <p className="text-white/50 text-xs font-light leading-snug">{s.line}</p>
+              <p data-cms-field={`processOverview.timelineSteps.${i}.line`} className="text-white/50 text-xs font-light leading-snug">{s.line}</p>
             </div>
           ))}
         </div>
@@ -178,12 +178,12 @@ function ProcessWalkthrough({ copy }: { copy?: HowItWorksPage['processWalkthroug
   }, { scope: ref })
 
   return (
-    <section ref={ref} className="relative w-full overflow-hidden py-24 md:py-28">
+    <section ref={ref} data-cms-global="how-it-works-page" className="relative w-full overflow-hidden py-24 md:py-28">
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         <div className="pw-head text-center mb-14 max-w-2xl mx-auto">
-          <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase block mb-4">{eyebrow}</span>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-[1.05] mb-5">{headline}</h2>
-          <p className="text-white/55 text-sm sm:text-base font-light">{subhead}</p>
+          <span data-cms-field="processWalkthrough.eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase block mb-4">{eyebrow}</span>
+          <h2 data-cms-field="processWalkthrough.headline" className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-[1.05] mb-5">{headline}</h2>
+          <p data-cms-field="processWalkthrough.subhead" className="text-white/55 text-sm sm:text-base font-light">{subhead}</p>
         </div>
 
         <StickyScroll
@@ -236,12 +236,12 @@ function Guarantees({ items }: { items?: HowItWorksPage['guarantees'] }) {
         {guarantees.map((g, i) => {
           const Icon = resolveIcon(g.icon)
           return (
-            <div key={g.title} className="flex items-center gap-8 sm:gap-14">
+            <div key={g.title} className="flex items-center gap-8 sm:gap-14" data-cms-global="how-it-works-page">
               <div className="gt-badge flex items-center gap-3">
                 <Icon className="w-4 h-4 text-brand-blue shrink-0" />
                 <div>
-                  <div className="font-semibold text-sm text-white leading-tight">{g.title}</div>
-                  <div className="text-white/40 text-xs font-light leading-tight">{g.desc}</div>
+                  <div data-cms-field={`guarantees.${i}.title`} className="font-semibold text-sm text-white leading-tight">{g.title}</div>
+                  <div data-cms-field={`guarantees.${i}.desc`} className="text-white/40 text-xs font-light leading-tight">{g.desc}</div>
                 </div>
               </div>
               {i < guarantees.length - 1 && <div className="hidden sm:block w-px h-8 bg-white/10" />}
@@ -305,7 +305,7 @@ export default function HowItWorksPageContent({
 
         <ProcessWalkthrough copy={page?.processWalkthrough} />
 
-        <StatsBand stats={stats} />
+        <StatsBand stats={stats} fieldPathPrefix="statsBand" />
 
         <Guarantees items={page?.guarantees} />
 

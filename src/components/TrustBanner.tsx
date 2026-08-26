@@ -37,7 +37,7 @@ export default function TrustBanner() {
     : fallbackClients
 
   return (
-    <section className="relative w-full py-8 overflow-hidden">
+    <section className="relative w-full py-8 overflow-hidden" data-cms-global="site-settings">
       <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mb-5">
         <div className="flex items-center gap-2 shrink-0">
           <div className="flex">
@@ -45,10 +45,10 @@ export default function TrustBanner() {
               <Star key={i} className="w-3.5 h-3.5" fill="#00AEEF" stroke="#00AEEF" />
             ))}
           </div>
-          <span className="font-mono text-[11px] text-white/50 tracking-wide">{ratingText}</span>
+          <span data-cms-field="trustBanner.ratingText" className="font-mono text-[11px] text-white/50 tracking-wide">{ratingText}</span>
         </div>
         <div className="hidden sm:block w-px h-4 bg-white/15" />
-        <span className="font-mono text-[10px] tracking-[0.3em] text-white/35 uppercase">{marqueeLabel}</span>
+        <span data-cms-field="trustBanner.marqueeLabel" className="font-mono text-[10px] tracking-[0.3em] text-white/35 uppercase">{marqueeLabel}</span>
       </div>
 
       {/* Masked (not painted) edge fade — logos dissolve via alpha, so

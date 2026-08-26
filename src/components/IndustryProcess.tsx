@@ -104,11 +104,11 @@ export default function IndustryProcess({ steps, accent }: { steps: IndustryProc
                 >
                   <Icon className="w-[18px] h-[18px]" style={{ color: accent }} />
                 </div>
-                <div className="font-mono text-[9px] tracking-[0.2em] uppercase mb-2.5" style={{ color: accent }}>
+                <div data-cms-field={`process.${i}.week`} className="font-mono text-[9px] tracking-[0.2em] uppercase mb-2.5" style={{ color: accent }}>
                   Keyframe {String(i + 1).padStart(2, '0')} · {s.week}
                 </div>
-                <h3 className="text-sm font-semibold text-white mb-1.5">{s.title}</h3>
-                <p className="text-xs text-white/55 leading-relaxed font-light">{s.body}</p>
+                <h3 data-cms-field={`process.${i}.title`} className="text-sm font-semibold text-white mb-1.5">{s.title}</h3>
+                <p data-cms-field={`process.${i}.body`} className="text-xs text-white/55 leading-relaxed font-light">{s.body}</p>
               </div>
             )
           })}

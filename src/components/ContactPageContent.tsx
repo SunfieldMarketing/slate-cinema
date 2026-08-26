@@ -271,16 +271,16 @@ function StageRouter({ copy }: { copy?: ContactPage['stageRouter'] }) {
   }, { scope: ref })
 
   return (
-    <section ref={ref} id="get-started" className="relative w-full overflow-hidden py-16 md:py-20">
+    <section ref={ref} id="get-started" data-cms-global="contact-page" className="relative w-full overflow-hidden py-16 md:py-20">
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         <div className="sr-head text-center mb-10 max-w-2xl mx-auto">
-          <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{eyebrow}</span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1]">{headline}</h2>
-          <p className="mt-5 text-white/55 font-light text-sm sm:text-base">{subhead}</p>
+          <span data-cms-field="stageRouter.eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{eyebrow}</span>
+          <h2 data-cms-field="stageRouter.headline" className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1]">{headline}</h2>
+          <p data-cms-field="stageRouter.subhead" className="mt-5 text-white/55 font-light text-sm sm:text-base">{subhead}</p>
         </div>
 
         <div className="sr-grid grid grid-cols-1 md:grid-cols-3 gap-5">
-          {stages.map((s) => {
+          {stages.map((s, i) => {
             const Icon = resolveIcon(s.icon)
             const accentClass = { color: s.accent }
             return (
@@ -303,13 +303,14 @@ function StageRouter({ copy }: { copy?: ContactPage['stageRouter'] }) {
                         You Need") doesn't push its card's description and
                         button lower than the single-line titles either side. */}
                     <div className="flex items-center justify-center min-h-[3.75rem] sm:min-h-[4.75rem] mt-5 mb-3">
-                      <h3 className="text-white font-black text-2xl sm:text-3xl tracking-tight">{s.title}</h3>
+                      <h3 data-cms-field={`stageRouter.stages.${i}.title`} className="text-white font-black text-2xl sm:text-3xl tracking-tight">{s.title}</h3>
                     </div>
-                    <p className="text-white/55 text-sm font-light leading-relaxed mb-8 flex-1">{s.desc}</p>
+                    <p data-cms-field={`stageRouter.stages.${i}.desc`} className="text-white/55 text-sm font-light leading-relaxed mb-8 flex-1">{s.desc}</p>
                   </div>
                   {s.href.startsWith('#') ? (
                     <a
                       href={s.href}
+                      data-cms-field={`stageRouter.stages.${i}.ctaLabel`}
                       onClick={() => posthog.capture('stage_router_clicked', { stage: s.title, destination: s.href })}
                       className="group inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 rounded-full text-sm font-semibold text-black bg-white transition-colors duration-300"
                       onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = s.accent; e.currentTarget.style.color = '#fff' }}
@@ -321,6 +322,7 @@ function StageRouter({ copy }: { copy?: ContactPage['stageRouter'] }) {
                   ) : (
                     <Link
                       href={s.href}
+                      data-cms-field={`stageRouter.stages.${i}.ctaLabel`}
                       onClick={() => posthog.capture('stage_router_clicked', { stage: s.title, destination: s.href })}
                       className="group inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 rounded-full text-sm font-semibold text-black bg-white transition-colors duration-300"
                       onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = s.accent; e.currentTarget.style.color = '#fff' }}
@@ -407,17 +409,17 @@ function LeadForm({ copy }: { copy?: ContactPage['leadForm'] }) {
   }
 
   return (
-    <section ref={ref} id="lead-form" className="relative w-full overflow-hidden py-12 md:py-14 scroll-mt-24">
+    <section ref={ref} id="lead-form" data-cms-global="contact-page" className="relative w-full overflow-hidden py-12 md:py-14 scroll-mt-24">
       <div className="lf-inner relative z-10 w-full max-w-3xl mx-auto px-5 sm:px-8">
         <div className="text-center mb-8 md:mb-9">
           <div className="inline-flex items-center gap-4 mb-6">
             <div className="w-12 h-12 shrink-0 rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(0,174,239,0.2)]">
               {React.createElement(resolveIcon('HelpCircle'), { className: 'w-5 h-5 text-[#00AEEF]' })}
             </div>
-            <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase">{eyebrow}</span>
+            <span data-cms-field="leadForm.eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase">{eyebrow}</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1] mb-5">{headline}</h2>
-          <p className="text-white/55 font-light text-sm sm:text-base max-w-xl mx-auto mb-6">
+          <h2 data-cms-field="leadForm.headline" className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1] mb-5">{headline}</h2>
+          <p data-cms-field="leadForm.description" className="text-white/55 font-light text-sm sm:text-base max-w-xl mx-auto mb-6">
             {description}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
@@ -457,6 +459,7 @@ function LeadForm({ copy }: { copy?: ContactPage['leadForm'] }) {
               </div>
               <button
                 type="submit"
+                data-cms-field="leadForm.submitLabel"
                 className="group mt-2 inline-flex items-center justify-center gap-2.5 self-start px-8 py-4 rounded-full text-sm font-semibold text-black bg-white hover:bg-[#00AEEF] hover:text-white transition-colors duration-300"
               >
                 {submitLabel}
@@ -523,17 +526,17 @@ function ReadyToTalkSection({ copy }: { copy?: ReadyToTalkGlobal | null }) {
   }, { scope: ref })
 
   return (
-    <section ref={ref} id="ready-to-talk" className="relative w-full overflow-hidden py-12 md:py-14 scroll-mt-24">
+    <section ref={ref} id="ready-to-talk" data-cms-global="ready-to-talk" className="relative w-full overflow-hidden py-12 md:py-14 scroll-mt-24">
       <div className="rt-inner relative z-10 w-full max-w-3xl mx-auto px-5 sm:px-8">
         <div className="text-center mb-8 md:mb-9">
           <div className="inline-flex items-center gap-4 mb-6">
             <div className="w-12 h-12 shrink-0 rounded-full border border-emerald-400/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.25)]">
               <CalendarClock className="w-5 h-5 text-emerald-400" />
             </div>
-            <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-emerald-400 uppercase">{eyebrow}</span>
+            <span data-cms-field="eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-emerald-400 uppercase">{eyebrow}</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1] mb-5">{headline}</h2>
-          <p className="text-white/55 font-light text-sm sm:text-base max-w-xl mx-auto mb-6">
+          <h2 data-cms-field="headline" className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1] mb-5">{headline}</h2>
+          <p data-cms-field="description" className="text-white/55 font-light text-sm sm:text-base max-w-xl mx-auto mb-6">
             {description}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
@@ -544,15 +547,15 @@ function ReadyToTalkSection({ copy }: { copy?: ReadyToTalkGlobal | null }) {
         <div className="relative rounded-3xl border border-emerald-400/20 bg-white/[0.05] backdrop-blur-md p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-9">
-            {prepItems.map((p) => {
+            {prepItems.map((p, i) => {
               const Icon = resolveIcon(p.icon)
               return (
                 <div key={p.label} className="rounded-2xl border border-white/[0.12] bg-white/[0.03] p-5">
                   <div className="w-9 h-9 rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center mb-3.5 shadow-[0_0_20px_rgba(0,174,239,0.2)]">
                     <Icon className="w-4 h-4 text-[#00AEEF]" />
                   </div>
-                  <div className="text-white font-bold text-sm mb-1">{p.label}</div>
-                  <p className="text-white/50 text-xs font-light leading-relaxed">{p.desc}</p>
+                  <div data-cms-field={`prepItems.${i}.label`} className="text-white font-bold text-sm mb-1">{p.label}</div>
+                  <p data-cms-field={`prepItems.${i}.desc`} className="text-white/50 text-xs font-light leading-relaxed">{p.desc}</p>
                 </div>
               )
             })}
@@ -561,13 +564,14 @@ function ReadyToTalkSection({ copy }: { copy?: ReadyToTalkGlobal | null }) {
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <Link
               href={buttonHref}
+              data-cms-field="buttonLabel"
               onClick={() => posthog.capture('ready_to_talk_clicked', { source: 'contact_page' })}
               className="group inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full text-sm font-semibold text-black bg-white hover:bg-[#00AEEF] hover:text-white transition-colors duration-300"
             >
               {buttonLabel}
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
-            <span className="text-white/40 text-xs font-light">{note}</span>
+            <span data-cms-field="note" className="text-white/40 text-xs font-light">{note}</span>
           </div>
         </div>
       </div>
@@ -602,15 +606,15 @@ function WhatHappensNext({ copy }: { copy?: ContactPage['whatHappensNext'] }) {
   }, { scope: ref })
 
   return (
-    <section ref={ref} className="relative w-full overflow-hidden mt-6 md:mt-12 pt-28 md:pt-40 pb-16 md:pb-20">
+    <section ref={ref} data-cms-global="contact-page" className="relative w-full overflow-hidden mt-6 md:mt-12 pt-28 md:pt-40 pb-16 md:pb-20">
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
         <div className="whn-head text-center mb-12 max-w-2xl mx-auto">
-          <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{eyebrow}</span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1]">{headline}</h2>
-          <p className="mt-5 text-white/55 font-light text-sm sm:text-base">
+          <span data-cms-field="whatHappensNext.eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{eyebrow}</span>
+          <h2 data-cms-field="whatHappensNext.headline" className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1]">{headline}</h2>
+          <p data-cms-field="whatHappensNext.subhead" className="mt-5 text-white/55 font-light text-sm sm:text-base">
             {subhead}
           </p>
-          <p className="mt-2 font-mono text-[11px] tracking-[0.15em] text-[#00AEEF] uppercase">
+          <p data-cms-field="whatHappensNext.formPrompt" className="mt-2 font-mono text-[11px] tracking-[0.15em] text-[#00AEEF] uppercase">
             {formPrompt}
           </p>
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
@@ -620,7 +624,7 @@ function WhatHappensNext({ copy }: { copy?: ContactPage['whatHappensNext'] }) {
         <div className="whn-grid relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {/* connecting line on desktop */}
           <div className="whn-line hidden lg:block absolute top-7 left-[12%] right-[12%] h-px bg-gradient-to-r from-[#00AEEF]/50 via-white/20 to-[#00AEEF]/50" />
-          {nextSteps.map((s) => {
+          {nextSteps.map((s, i) => {
             const Icon = resolveIcon(s.icon)
             return (
               <div key={s.step} className="whn-step relative text-center">
@@ -628,8 +632,8 @@ function WhatHappensNext({ copy }: { copy?: ContactPage['whatHappensNext'] }) {
                   <Icon className="w-6 h-6 text-[#00AEEF]" />
                 </div>
                 <div className="font-mono text-[10px] tracking-widest text-white/30 mb-2">{s.step}</div>
-                <h3 className="text-white font-bold text-lg mb-2">{s.title}</h3>
-                <p className="text-white/50 text-sm font-light leading-relaxed max-w-[240px] mx-auto">{s.desc}</p>
+                <h3 data-cms-field={`whatHappensNext.steps.${i}.title`} className="text-white font-bold text-lg mb-2">{s.title}</h3>
+                <p data-cms-field={`whatHappensNext.steps.${i}.desc`} className="text-white/50 text-sm font-light leading-relaxed max-w-[240px] mx-auto">{s.desc}</p>
               </div>
             )
           })}
@@ -684,26 +688,26 @@ function StudioLocation({ copy }: { copy?: ContactPage['studioLocation'] }) {
           </div>
 
           {/* Studio details */}
-          <div className="relative flex flex-col justify-center rounded-3xl border border-white/[0.14] bg-white/[0.05] backdrop-blur-md p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden">
+          <div data-cms-global="contact-page" className="relative flex flex-col justify-center rounded-3xl border border-white/[0.14] bg-white/[0.05] backdrop-blur-md p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#22d3ee] to-transparent" />
-            <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#22d3ee] uppercase mb-4">{eyebrow}</span>
-            <h2 className="text-3xl sm:text-4xl font-black tracking-tighter text-white mb-5">{headlineLine1}<br />{headlineLine2}</h2>
+            <span data-cms-field="studioLocation.eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#22d3ee] uppercase mb-4">{eyebrow}</span>
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tighter text-white mb-5"><span data-cms-field="studioLocation.headlineLine1">{headlineLine1}</span><br /><span data-cms-field="studioLocation.headlineLine2">{headlineLine2}</span></h2>
             <div className="mb-6 flex flex-wrap gap-3">
               <TrustBadge icon={Navigation} label="On-Location Nationwide" accent="#22d3ee" />
               <TrustBadge icon={Clock} label={hours} accent="#22d3ee" />
             </div>
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-5" data-cms-global="site-settings">
               <div className="flex items-start gap-4">
                 <MapPin className="w-5 h-5 text-[#22d3ee] mt-0.5 shrink-0" />
-                <div><div className="text-white font-medium text-sm">{studioName}</div><div className="text-white/50 text-sm">{city}, {state}</div></div>
+                <div><div data-cms-field="contact.studioName" className="text-white font-medium text-sm">{studioName}</div><div className="text-white/50 text-sm">{city}, {state}</div></div>
               </div>
               <div className="flex items-start gap-4">
                 <Clock className="w-5 h-5 text-[#22d3ee] mt-0.5 shrink-0" />
-                <div><div className="text-white font-medium text-sm">Studio Hours</div><div className="text-white/50 text-sm">{hours}</div></div>
+                <div><div className="text-white font-medium text-sm">Studio Hours</div><div data-cms-field="contact.hours" className="text-white/50 text-sm">{hours}</div></div>
               </div>
               <div className="flex items-start gap-4">
                 <Mail className="w-5 h-5 text-[#22d3ee] mt-0.5 shrink-0" />
-                <a href={`mailto:${email}`} className="text-white/70 text-sm hover:text-[#22d3ee] transition-colors">{email}</a>
+                <a href={`mailto:${email}`} data-cms-field="contact.email" className="text-white/70 text-sm hover:text-[#22d3ee] transition-colors">{email}</a>
               </div>
             </div>
           </div>
@@ -740,14 +744,14 @@ function ContactMethods({ copy }: { copy?: ContactPage['contactMethods'] }) {
   }, { scope: ref })
 
   return (
-    <section ref={ref} className="relative w-full overflow-hidden mt-8 md:mt-20 pt-16 md:pt-24 pb-14 md:pb-16">
+    <section ref={ref} data-cms-global="contact-page" className="relative w-full overflow-hidden mt-8 md:mt-20 pt-16 md:pt-24 pb-14 md:pb-16">
       <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-8">
         <div className="cm-head text-center mb-10 max-w-xl mx-auto">
           <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#fbbf24] uppercase mb-4">
-            <span className="w-8 h-px bg-[#fbbf24]/40" /> {eyebrow} <span className="w-8 h-px bg-[#fbbf24]/40" />
+            <span className="w-8 h-px bg-[#fbbf24]/40" /> <span data-cms-field="contactMethods.eyebrow">{eyebrow}</span> <span className="w-8 h-px bg-[#fbbf24]/40" />
           </span>
-          <h2 className="text-3xl sm:text-4xl font-black tracking-tighter text-white leading-[1.1] mb-4">{headline}</h2>
-          <p className="text-white/55 font-light text-sm sm:text-base max-w-lg mx-auto">
+          <h2 data-cms-field="contactMethods.headline" className="text-3xl sm:text-4xl font-black tracking-tighter text-white leading-[1.1] mb-4">{headline}</h2>
+          <p data-cms-field="contactMethods.description" className="text-white/55 font-light text-sm sm:text-base max-w-lg mx-auto">
             {description}
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
@@ -796,12 +800,17 @@ export default function ContactPageContent({ page, readyToTalk }: { page: Contac
         <div className="relative" ref={backdropRootRef}>
           <PageBackdrop rootRef={backdropRootRef} />
 
-          <PageHero
-            eyebrow={hero?.eyebrow || 'Get Started'}
-            title={[hero?.titleLine1 || "Let's get", hero?.titleLine2 || 'you started']}
-            subtitle={hero?.subtitle || "Tell us where you're at and we'll point you to the right next step. We reply within minutes."}
-            accent="#00AEEF"
-          />
+          <div data-cms-global="contact-page">
+            <PageHero
+              eyebrow={hero?.eyebrow || 'Get Started'}
+              title={[hero?.titleLine1 || "Let's get", hero?.titleLine2 || 'you started']}
+              subtitle={hero?.subtitle || "Tell us where you're at and we'll point you to the right next step. We reply within minutes."}
+              accent="#00AEEF"
+              titleFieldPaths={['hero.titleLine1', 'hero.titleLine2']}
+              eyebrowFieldPath="hero.eyebrow"
+              subtitleFieldPath="hero.subtitle"
+            />
+          </div>
 
           <div data-glow-color="#00AEEF" data-glow-size="32" data-glow-opacity="0.12">
             <WhatHappensNext copy={page?.whatHappensNext} />

@@ -199,15 +199,15 @@ export default function Reviews({ data }: { data?: HomePage['reviews'] }) {
         {/* Header */}
         <div className="rv-head text-center mb-12 md:mb-14">
           <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase mb-5">
-            <span className="w-8 h-px bg-[#00AEEF]/40" /> {eyebrow} <span className="w-8 h-px bg-[#00AEEF]/40" />
+            <span className="w-8 h-px bg-[#00AEEF]/40" /> <span data-cms-field="reviews.eyebrow">{eyebrow}</span> <span className="w-8 h-px bg-[#00AEEF]/40" />
           </span>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05]">
-            {headlineLine1}
-            <br className="hidden sm:block" /> {headlineLine2}
+            <span data-cms-field="reviews.headlineLine1">{headlineLine1}</span>
+            <br className="hidden sm:block" /> <span data-cms-field="reviews.headlineLine2">{headlineLine2}</span>
           </h2>
           <div className="mt-6 inline-flex items-center gap-3 text-white/50 text-sm">
             <StarRow n={5} />
-            <span className="font-mono">{ratingText}</span>
+            <span data-cms-field="reviews.ratingText" className="font-mono">{ratingText}</span>
           </div>
         </div>
 
@@ -234,7 +234,7 @@ export default function Reviews({ data }: { data?: HomePage['reviews'] }) {
 
         {/* Google reviews */}
         <div className="text-center mb-6">
-          <span className="font-mono text-[10px] tracking-[0.25em] text-white/40 uppercase">{googleReviewsLabel}</span>
+          <span data-cms-field="reviews.googleReviewsLabel" className="font-mono text-[10px] tracking-[0.25em] text-white/40 uppercase">{googleReviewsLabel}</span>
         </div>
         <div className="rv-grid grid grid-cols-1 md:grid-cols-3 gap-5">
           {testimonials.map((t, i) => (
@@ -253,7 +253,7 @@ export default function Reviews({ data }: { data?: HomePage['reviews'] }) {
                   <StarRow n={t.rating} />
                 </div>
 
-                <p className="text-[15px] text-white/80 font-light leading-relaxed mb-6 flex-1">
+                <p data-cms-field={`reviews.testimonials.${i}.quote`} className="text-[15px] text-white/80 font-light leading-relaxed mb-6 flex-1">
                   &ldquo;{t.quote}&rdquo;
                 </p>
 
@@ -262,8 +262,8 @@ export default function Reviews({ data }: { data?: HomePage['reviews'] }) {
                     <span className="font-mono text-xs font-bold text-[#00AEEF]">{initials(t.name)}</span>
                   </div>
                   <div className="min-w-0">
-                    <div className="text-white font-semibold text-sm truncate">{t.name}</div>
-                    <div className="text-white/40 text-xs truncate">{t.role} · {t.company}</div>
+                    <div data-cms-field={`reviews.testimonials.${i}.name`} className="text-white font-semibold text-sm truncate">{t.name}</div>
+                    <div className="text-white/40 text-xs truncate"><span data-cms-field={`reviews.testimonials.${i}.role`}>{t.role}</span> · <span data-cms-field={`reviews.testimonials.${i}.company`}>{t.company}</span></div>
                   </div>
                 </div>
               </article>

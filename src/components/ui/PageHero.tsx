@@ -43,6 +43,18 @@ interface Props {
       of the same hero (e.g. a hidden alternate breakpoint) to avoid two
       "highest priority" fetches competing with each other. */
   priority?: boolean
+  /** Click-to-edit field paths (see LivePreviewClickToEdit.tsx) -- optional
+      so callers that don't have a CMS-backed hero (or haven't been wired up
+      yet) can omit them with no effect; React drops a data-* attribute
+      entirely when its value is undefined. */
+  eyebrowFieldPath?: string
+  /** One entry per title line, matched by index against `title` when it's
+      an array. */
+  titleFieldPaths?: string[]
+  subtitleFieldPath?: string
+  ctaFieldPath?: string
+  secondaryCtaFieldPath?: string
+  trustNoteFieldPath?: string
 }
 
 export default function PageHero({
@@ -58,6 +70,12 @@ export default function PageHero({
   trustNote,
   priority = true,
   stats,
+  eyebrowFieldPath,
+  titleFieldPaths,
+  subtitleFieldPath,
+  ctaFieldPath,
+  secondaryCtaFieldPath,
+  trustNoteFieldPath,
 }: Props) {
   const ref = useRef<HTMLElement>(null)
 
@@ -106,6 +124,7 @@ export default function PageHero({
       <div className="relative z-10 flex-1 flex items-center justify-center w-full max-w-4xl mx-auto px-5 sm:px-8 text-center pt-24 pb-8">
         <div className="w-full">
           <span
+            data-cms-field={eyebrowFieldPath}
             className="ph-fade inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.35em] uppercase mb-6"
             style={{ color: accent }}
           >
@@ -119,14 +138,14 @@ export default function PageHero({
               Array.isArray(title) ? title : [title],
               (child, i) => (
                 <span key={i} className="block overflow-hidden">
-                  <span className="ph-line block">{child}</span>
+                  <span data-cms-field={titleFieldPaths?.[i]} className="ph-line block">{child}</span>
                 </span>
               )
             )}
           </h1>
 
           {subtitle && (
-            <p className="ph-fade mt-6 md:mt-8 text-white/55 text-base sm:text-lg font-light max-w-2xl mx-auto leading-relaxed">
+            <p data-cms-field={subtitleFieldPath} className="ph-fade mt-6 md:mt-8 text-white/55 text-base sm:text-lg font-light max-w-2xl mx-auto leading-relaxed">
               {subtitle}
             </p>
           )}
@@ -136,6 +155,7 @@ export default function PageHero({
               {cta && (
                 <a
                   href={cta.href}
+                  data-cms-field={ctaFieldPath}
                   className="group inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-sm text-black bg-white hover:text-white transition-colors duration-300 shadow-[0_0_30px_rgba(255,255,255,0.15)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
                   style={{ ['--acc' as string]: accent }}
                 >
@@ -146,6 +166,7 @@ export default function PageHero({
               {secondaryCta && (
                 <a
                   href={secondaryCta.href}
+                  data-cms-field={secondaryCtaFieldPath}
                   className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full font-semibold text-sm text-white border border-white/25 bg-white/[0.04] backdrop-blur-md hover:border-white/60 transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
                 >
                   <span className="w-2 h-2 rounded-full" style={{ background: accent }} />
@@ -156,7 +177,7 @@ export default function PageHero({
           )}
 
           {trustNote && (
-            <p className="ph-fade mt-6 font-mono text-[10px] tracking-[0.2em] uppercase text-white/55">
+            <p data-cms-field={trustNoteFieldPath} className="ph-fade mt-6 font-mono text-[10px] tracking-[0.2em] uppercase text-white/55">
               {trustNote}
             </p>
           )}
