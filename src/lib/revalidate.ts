@@ -24,8 +24,23 @@ import type { CollectionAfterChangeHook, CollectionAfterDeleteHook, GlobalAfterC
   correct.
 */
 function revalidateSite(reason: string) {
-  revalidatePath('/', 'layout')
-  console.info(`[revalidate] ${reason} -- full site cache invalidated`)
+  try {
+    revalidatePath('/', 'layout')
+    console.info(`[revalidate] ${reason} -- full site cache invalidated`)
+  } catch (e) {
+    // Found 2026-08-26: a data-population migration's payload.updateGlobal()
+    // call hit this hook and threw "Invariant: static generation store
+    // missing in revalidatePath /", aborting the whole migration.
+    // revalidatePath only works inside an active Next.js request context
+    // (API route, Server Action, Server Component render) -- a plain
+    // `node .../bin.js migrate` run has no such context. Real admin saves
+    // always run inside one, so this is never expected to actually catch
+    // anything there; it's specifically for Local API callers outside
+    // Next's runtime, where skipping a revalidation that the very next
+    // deploy's build will make moot anyway is harmless, but aborting the
+    // caller's actual write isn't.
+    console.warn(`[revalidate] ${reason} -- skipped (not in a Next.js request context): ${e instanceof Error ? e.message : String(e)}`)
+  }
 }
 
 export const revalidateGlobalAfterChange: GlobalAfterChangeHook = ({ global, doc }) => {
