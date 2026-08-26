@@ -27,6 +27,10 @@ export interface CarouselCard {
   image: string
   title: string
   subtitle: string
+  /** Real Payload document id -- optional so this component stays usable
+      with any card source; when present, enables the click-to-edit
+      shortcut (see LivePreviewClickToEdit.tsx) on the card face. */
+  id?: string
 }
 
 /*
@@ -170,6 +174,9 @@ const Carousel = memo(
             <motion.div
               key={`${card.title}-${i}`}
               data-card-index={i}
+              data-cms-collection={card.id ? 'portfolio-projects' : undefined}
+              data-cms-doc-id={card.id}
+              data-cms-field={card.id ? 'title' : undefined}
               className="group absolute flex h-full origin-center items-center justify-center p-3"
               style={{ width: `${faceWidth}px`, transform: `rotateY(${i * (360 / faceCount)}deg) translateZ(${radius}px)` }}
               onClick={() => onSelect(i)}

@@ -39,6 +39,7 @@ export default function PortfolioCarousel({ projects }: { projects: PortfolioPro
     image: p.url,
     title: p.title,
     subtitle: `${p.category} · ${p.company}`,
+    id: p.id,
   }))
 
   return (

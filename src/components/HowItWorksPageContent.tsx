@@ -187,10 +187,12 @@ function ProcessWalkthrough({ copy }: { copy?: HowItWorksPage['processWalkthroug
         </div>
 
         <StickyScroll
-          content={processPhases.map((p) => ({
+          content={processPhases.map((p, i) => ({
             title: p.title,
             description: p.description,
             color: p.color,
+            titleFieldPath: `processWalkthrough.phases.${i}.title`,
+            descriptionFieldPath: `processWalkthrough.phases.${i}.description`,
             content: (
               <SmartVideo
                 key={p.video}

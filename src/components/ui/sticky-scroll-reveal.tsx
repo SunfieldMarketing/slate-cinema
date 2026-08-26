@@ -12,6 +12,12 @@ export const StickyScroll = ({
     description: string;
     color?: string;
     content?: React.ReactNode | any;
+    /** Click-to-edit field paths (see LivePreviewClickToEdit.tsx) for this
+        item's title/description -- optional so callers without a CMS-backed
+        source for this content can omit them with no effect; React drops a
+        data-* attribute entirely when its value is undefined. */
+    titleFieldPath?: string;
+    descriptionFieldPath?: string;
   }[];
   contentClassName?: string;
 }) => {
@@ -74,6 +80,7 @@ export const StickyScroll = ({
           {content.map((item, index) => (
             <div key={item.title + index} className="my-44 sm:my-56 first:mt-0">
               <motion.h2
+                data-cms-field={item.titleFieldPath}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: activeCard === index ? 1 : 0.3 }}
                 transition={{ duration: 0.6, ease: "easeInOut" }}
@@ -82,6 +89,7 @@ export const StickyScroll = ({
                 {item.title}
               </motion.h2>
               <motion.p
+                data-cms-field={item.descriptionFieldPath}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: activeCard === index ? 1 : 0.3 }}
                 transition={{ duration: 0.6, ease: "easeInOut" }}
