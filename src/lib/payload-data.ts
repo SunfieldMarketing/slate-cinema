@@ -88,6 +88,26 @@ export const getScheduleACallPageGlobal = cache(async (draft = false) => {
   return payload.findGlobal({ slug: 'schedule-a-call-page', draft, overrideAccess: draft })
 })
 
+export const getPrivacyPolicyPageGlobal = cache(async (draft = false) => {
+  const payload = await getClient()
+  return payload.findGlobal({ slug: 'privacy-policy-page', draft, overrideAccess: draft })
+})
+
+export const getTermsOfServicePageGlobal = cache(async (draft = false) => {
+  const payload = await getClient()
+  return payload.findGlobal({ slug: 'terms-of-service-page', draft, overrideAccess: draft })
+})
+
+export const getThankYouPageGlobal = cache(async (draft = false) => {
+  const payload = await getClient()
+  return payload.findGlobal({ slug: 'thank-you-page', draft, overrideAccess: draft })
+})
+
+export const getSocialMediaManagementPageGlobal = cache(async (draft = false) => {
+  const payload = await getClient()
+  return payload.findGlobal({ slug: 'social-media-management-page', draft, overrideAccess: draft })
+})
+
 export const getIndustriesCollection = cache(async (draft = false) => {
   const payload = await getClient()
   const result = await payload.find({ collection: 'industries', limit: 100, depth: 2, draft, overrideAccess: draft })

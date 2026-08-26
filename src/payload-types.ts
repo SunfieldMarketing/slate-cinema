@@ -109,6 +109,10 @@ export interface Config {
     'portfolio-index-page': PortfolioIndexPage;
     'contact-page': ContactPage;
     'schedule-a-call-page': ScheduleACallPage;
+    'privacy-policy-page': PrivacyPolicyPage;
+    'terms-of-service-page': TermsOfServicePage;
+    'thank-you-page': ThankYouPage;
+    'social-media-management-page': SocialMediaManagementPage;
   };
   globalsSelect: {
     navigation: NavigationSelect<false> | NavigationSelect<true>;
@@ -122,6 +126,10 @@ export interface Config {
     'portfolio-index-page': PortfolioIndexPageSelect<false> | PortfolioIndexPageSelect<true>;
     'contact-page': ContactPageSelect<false> | ContactPageSelect<true>;
     'schedule-a-call-page': ScheduleACallPageSelect<false> | ScheduleACallPageSelect<true>;
+    'privacy-policy-page': PrivacyPolicyPageSelect<false> | PrivacyPolicyPageSelect<true>;
+    'terms-of-service-page': TermsOfServicePageSelect<false> | TermsOfServicePageSelect<true>;
+    'thank-you-page': ThankYouPageSelect<false> | ThankYouPageSelect<true>;
+    'social-media-management-page': SocialMediaManagementPageSelect<false> | SocialMediaManagementPageSelect<true>;
   };
   locale: null;
   widgets: {
@@ -1828,6 +1836,175 @@ export interface ScheduleACallPage {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "privacy-policy-page".
+ */
+export interface PrivacyPolicyPage {
+  id: number;
+  title: string;
+  dateline: string;
+  /**
+   * The full policy -- headings, paragraphs, lists, and links all live here as one document.
+   */
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "terms-of-service-page".
+ */
+export interface TermsOfServicePage {
+  id: number;
+  title: string;
+  dateline: string;
+  /**
+   * The full terms -- headings, paragraphs, and links all live here as one document.
+   */
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "thank-you-page".
+ */
+export interface ThankYouPage {
+  id: number;
+  hero: {
+    eyebrow?: string | null;
+    titleLine1: string;
+    titleLine2: string;
+    subtitle?: string | null;
+  };
+  confirmedLabel?: string | null;
+  nextSteps?:
+    | {
+        icon: 'Mail' | 'Clock3' | 'PlayCircle';
+        title: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  primaryCtaLabel?: string | null;
+  primaryCtaHref?: string | null;
+  secondaryCtaLabel?: string | null;
+  secondaryCtaHref?: string | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "social-media-management-page".
+ */
+export interface SocialMediaManagementPage {
+  id: number;
+  hero: {
+    eyebrow?: string | null;
+    headlineText: string;
+    /**
+     * Rendered as the emphasized/colored run at the end of the headline.
+     */
+    headlineEmphasis: string;
+    lede: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+  };
+  howItWorks?: {
+    heading?: string | null;
+    /**
+     * Numbered 01, 02, 03... automatically by position -- no separate number field needed.
+     */
+    steps?:
+      | {
+          title: string;
+          body: {
+            root: {
+              type: string;
+              children: {
+                type: any;
+                version: number;
+                [k: string]: unknown;
+              }[];
+              direction: ('ltr' | 'rtl') | null;
+              format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+              indent: number;
+              version: number;
+            };
+            [k: string]: unknown;
+          };
+          id?: string | null;
+        }[]
+      | null;
+  };
+  included?: {
+    heading?: string | null;
+    items?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  cta?: {
+    monoTag?: string | null;
+    heading?: string | null;
+    body?: string | null;
+    buttonLabel?: string | null;
+    buttonHref?: string | null;
+    /**
+     * Prefix shown before the email address, which is pulled from Site Settings > Contact.
+     */
+    altText?: string | null;
+  };
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "navigation_select".
  */
 export interface NavigationSelect<T extends boolean = true> {
@@ -2396,6 +2573,114 @@ export interface ScheduleACallPageSelect<T extends boolean = true> {
         selectTimeLabel?: T;
         confirmLabel?: T;
         confirmedLabel?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "privacy-policy-page_select".
+ */
+export interface PrivacyPolicyPageSelect<T extends boolean = true> {
+  title?: T;
+  dateline?: T;
+  body?: T;
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "terms-of-service-page_select".
+ */
+export interface TermsOfServicePageSelect<T extends boolean = true> {
+  title?: T;
+  dateline?: T;
+  body?: T;
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "thank-you-page_select".
+ */
+export interface ThankYouPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        titleLine1?: T;
+        titleLine2?: T;
+        subtitle?: T;
+      };
+  confirmedLabel?: T;
+  nextSteps?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  primaryCtaLabel?: T;
+  primaryCtaHref?: T;
+  secondaryCtaLabel?: T;
+  secondaryCtaHref?: T;
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "social-media-management-page_select".
+ */
+export interface SocialMediaManagementPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        headlineText?: T;
+        headlineEmphasis?: T;
+        lede?: T;
+      };
+  howItWorks?:
+    | T
+    | {
+        heading?: T;
+        steps?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+              id?: T;
+            };
+      };
+  included?:
+    | T
+    | {
+        heading?: T;
+        items?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+      };
+  cta?:
+    | T
+    | {
+        monoTag?: T;
+        heading?: T;
+        body?: T;
+        buttonLabel?: T;
+        buttonHref?: T;
+        altText?: T;
       };
   _status?: T;
   updatedAt?: T;

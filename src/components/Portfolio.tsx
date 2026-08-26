@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useRef, useState } from 'react'
+import Link from 'next/link'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -184,7 +185,7 @@ export default function Portfolio({
 
         {/* CTA */}
         <div className="flex justify-center mt-12">
-          <a
+          <Link
             href="/portfolio"
             className="group relative inline-flex items-center gap-2 px-8 py-4 rounded-full overflow-hidden border border-white/20 bg-white/5 backdrop-blur-md"
           >
@@ -193,7 +194,7 @@ export default function Portfolio({
               View Full Portfolio
             </span>
             <ArrowUpRight className="relative w-4 h-4 text-white group-hover:text-black transition-colors" />
-          </a>
+          </Link>
         </div>
       </div>
 

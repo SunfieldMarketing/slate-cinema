@@ -25,6 +25,10 @@ import { HowItWorksPage } from './globals/HowItWorksPage'
 import { PortfolioIndexPage } from './globals/PortfolioIndexPage'
 import { ContactPage } from './globals/ContactPage'
 import { ScheduleACallPage } from './globals/ScheduleACallPage'
+import { PrivacyPolicyPage } from './globals/PrivacyPolicyPage'
+import { TermsOfServicePage } from './globals/TermsOfServicePage'
+import { ThankYouPage } from './globals/ThankYouPage'
+import { SocialMediaManagementPage } from './globals/SocialMediaManagementPage'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -119,6 +123,14 @@ const livePreviewURL = ({
         return appendDraft(`${base}/how-it-works`)
       case 'portfolio-index-page':
         return appendDraft(`${base}/portfolio`)
+      case 'privacy-policy-page':
+        return appendDraft(`${base}/privacy-policy`)
+      case 'terms-of-service-page':
+        return appendDraft(`${base}/terms-of-service`)
+      case 'thank-you-page':
+        return appendDraft(`${base}/thank-you`)
+      case 'social-media-management-page':
+        return appendDraft(`${base}/social-media-management`)
       default:
         // Navigation/Footer/SiteSettings/Pipeline/FinalCTA/ReadyToTalk
         // render on every page -- home is the most representative single
@@ -192,6 +204,10 @@ export default buildConfig({
     PortfolioIndexPage,
     ContactPage,
     ScheduleACallPage,
+    PrivacyPolicyPage,
+    TermsOfServicePage,
+    ThankYouPage,
+    SocialMediaManagementPage,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

@@ -1,32 +1,23 @@
 import type { Metadata } from 'next'
+import { draftMode } from 'next/headers'
+import { RichText } from '@payloadcms/richtext-lexical/react'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
+import { getSocialMediaManagementPageGlobal, getSiteSettings } from '@/lib/payload-data'
 
 /*
-  Ported verbatim (design + copy) from the finished HTML Jake sent
-  (social-media-management.html) per the TikTok Content Posting API
-  build brief -- this page's existence and reachability from the
-  homepage/top nav is itself a platform-approval requirement, and the
-  copy is legally reviewed to ship as-is, not paraphrased.
+  Brought into the CMS 2026-08-26 (see src/globals/SocialMediaManagementPage.ts
+  for the full field-shape rationale) -- previously fully hardcoded, ported
+  verbatim from the finished HTML per the TikTok Content Posting API build
+  brief. Design/CSS untouched; only the copy now comes from the CMS, with
+  the exact original text as every field's fallback so a never-published
+  or not-yet-migrated global still renders identically to before.
 
-  Two things intentionally dropped from the raw file since they're
-  already handled globally by the app rather than needing to be
-  redeclared per page: the external Google Fonts <link> (Bebas Neue /
-  Courier Prime / Fraunces are already loaded via next/font in the root
-  layout) and the page-level favicon <link> (already set site-wide in
-  (frontend)/layout.tsx's generateMetadata). PostHog tracking and the
-  JSON-LD organization schema are also already global via
-  instrumentation-client.ts and the root layout respectively -- nothing
-  extra to add for those either, just by virtue of this being a real
-  route inside the (frontend) app.
-
-  Header switched to the real, shared <Nav /> 2026-08-13 -- the
-  hand-rolled header (kept per "keep the page design exactly how it is
-  in the html") had drifted into a visibly different navbar/mobile-menu
-  than the rest of the site, which Kauan flagged directly. Nav is
-  `position:fixed`, so the first section below carries extra top
-  padding to clear it (see the .hero rule's padding-top). Only the
-  header changed; the legally-reviewed copy below it is untouched.
+  cta.altText's email address is deliberately NOT a CMS field on this
+  global -- it's pulled from Site Settings > Contact, the single existing
+  source of truth for that address (matches how ContactPageContent.tsx's
+  StudioLocation/ContactMethods sections already do it), so it can't drift
+  out of sync with the real contact email if that ever changes.
 */
 
 export const metadata: Metadata = {
@@ -34,7 +25,37 @@ export const metadata: Metadata = {
     "We run social media for businesses that need to focus on operations. Slate Cinema plans, produces, schedules and publishes social content for client businesses across Instagram, Facebook, TikTok, YouTube and X — from one calendar, with one approval step, on the client's own accounts.",
 }
 
-export default function SocialMediaManagementPage() {
+export default async function SocialMediaManagementPage() {
+  const draft = (await draftMode()).isEnabled
+  const [page, settings] = await Promise.all([
+    getSocialMediaManagementPageGlobal(draft),
+    getSiteSettings(draft),
+  ])
+
+  const hero = page?.hero
+  const howItWorks = page?.howItWorks
+  const included = page?.included
+  const cta = page?.cta
+  const email = settings?.contact?.email || 'info@slatecinema.com'
+
+  const fallbackSteps = [
+    { title: 'Your workspace', body: 'Every client business gets its own workspace: its own calendar, its own content library, its own approvals.' },
+    { title: 'Your accounts stay yours', body: "You connect your own social accounts through each platform's official authorization screen. You own the accounts, the audience and the content. You can disconnect at any time, and access ends immediately." },
+    { title: 'We build the calendar', body: 'We plan the month, produce or edit the content, write the captions, and load everything into your calendar with the dates and times we recommend.' },
+    { title: 'You approve — final cut is yours', body: 'Nothing publishes until someone at your business approves it. Every published post traces back to a named approval.' },
+    { title: 'It publishes, and you see what happened', body: 'Approved posts go out automatically at the scheduled time, to every platform you selected. Views, reach, engagement and follower growth come back into the same dashboard.' },
+  ]
+  const steps = howItWorks?.steps?.length ? howItWorks.steps : null
+
+  const fallbackIncluded = [
+    'Content calendar across Instagram, Facebook, TikTok, YouTube and X',
+    'Post production and editing, or scheduling of content you supply',
+    'Captions, hashtags and posting-time strategy',
+    'An approval gate before anything goes live',
+    'Performance reporting in one place, updated automatically',
+  ]
+  const includedItems = included?.items?.length ? included.items.map((i) => i.text) : fallbackIncluded
+
   return (
     <>
       <style>{`
@@ -47,35 +68,21 @@ export default function SocialMediaManagementPage() {
   .smm-page { background:var(--ink); -webkit-font-smoothing:antialiased; }
   .smm-page .mono { font-family:'Courier Prime',Courier,monospace; }
   .smm-page .wrap { max-width:1100px; margin:0 auto; padding:0 28px; }
-  /* Scoped to .wrap (body copy), not the bare page -- a bare ".smm-page a"
-     rule was leaking into the real <Nav />'s own links (also nested
-     inside .smm-page), turning them blue instead of their normal
-     white/50 styling. That was the "its blue" bug Kauan flagged. */
   .smm-page .wrap a { color:var(--blue); }
-  /* color/font scoped to the ported content only (.hero + section), not
-     the bare .smm-page -- that was the same leak as the link-color bug
-     above, but for typography: it was cascading into the real shared
-     <Footer /> (also nested inside .smm-page), giving it a different
-     typeface/size than every other page's footer. */
   .smm-page .hero, .smm-page section { color:var(--text);
          font:16.5px/1.7 -apple-system,'Segoe UI',system-ui,sans-serif; }
 
-  /* hero -- padding-top cleared for the fixed shared Nav (see header comment) */
   .smm-page .hero { padding:168px 0 64px; border-bottom:1px solid var(--line); position:relative; overflow:hidden; }
   .smm-page .eyebrow { font-family:'Courier Prime',monospace; color:var(--orange); font-size:13px;
              letter-spacing:.5em; text-transform:uppercase; margin-bottom:22px; }
   .smm-page h1 { font-family:'Bebas Neue',sans-serif; font-weight:400; letter-spacing:.015em;
        font-size:clamp(46px,7.5vw,88px); line-height:.98; margin:0 0 24px; }
-  /* white-space:nowrap keeps "focus on operations." from breaking mid-
-     phrase across lines -- it now wraps as one unit or not at all,
-     instead of "focus on" landing on one line and "operations." on
-     the next. */
   .smm-page h1 em { font-style:normal; color:var(--blue); white-space:nowrap; }
   .smm-page .lede { font-family:'Fraunces',Georgia,serif; font-size:clamp(17px,2.1vw,21px);
           color:var(--muted); max-width:62ch; margin:0; }
+  .smm-page .lede p { margin: 0; }
   .smm-page .lede strong { color:var(--text); font-weight:500; }
 
-  /* film sprocket strip, like the how-it-works panels */
   .smm-page .sprockets { position:absolute; top:0; bottom:0; right:0; width:26px; opacity:.5;
     background-image:repeating-linear-gradient(to bottom, transparent 0 10px, var(--line) 10px 24px);
     background-size:14px 34px; background-repeat:repeat-y; background-position:center; }
@@ -85,7 +92,6 @@ export default function SocialMediaManagementPage() {
   .smm-page section { padding:64px 0; }
   .smm-page section + section { border-top:1px solid var(--line); }
 
-  /* numbered steps — 01..05 like the Distribution accordion */
   .smm-page .steps { display:flex; flex-direction:column; }
   .smm-page .step { display:grid; grid-template-columns:86px 1fr; gap:22px; padding:26px 0;
           border-bottom:1px solid var(--line); }
@@ -120,67 +126,66 @@ export default function SocialMediaManagementPage() {
       <div className="smm-page">
         <Nav />
 
-        <div className="hero">
+        <div className="hero" data-cms-global="social-media-management-page">
           <div className="sprockets" aria-hidden="true" />
           <div className="wrap">
-            <div className="eyebrow">Distribution&nbsp;·&nbsp;Always&nbsp;On</div>
-            <h1>We run social media for businesses that need to <em>focus on operations.</em></h1>
-            <p className="lede">Slate Cinema plans, produces, schedules and publishes social content for client
-            businesses across Instagram, Facebook, TikTok, YouTube and X — from one calendar, with one
-            approval step, <strong>on the client&apos;s own accounts</strong>. The same crew that shoots your
-            story keeps it on screen, week after week.</p>
+            <div className="eyebrow" data-cms-field="hero.eyebrow">{hero?.eyebrow || 'Distribution · Always On'}</div>
+            <h1>
+              <span data-cms-field="hero.headlineText">{hero?.headlineText || 'We run social media for businesses that need to'}</span>{' '}
+              <em data-cms-field="hero.headlineEmphasis">{hero?.headlineEmphasis || 'focus on operations.'}</em>
+            </h1>
+            <div className="lede" data-cms-field="hero.lede">
+              {hero?.lede ? (
+                <RichText data={hero.lede} />
+              ) : (
+                <p>Slate Cinema plans, produces, schedules and publishes social content for client
+                businesses across Instagram, Facebook, TikTok, YouTube and X — from one calendar, with one
+                approval step, <strong>on the client&apos;s own accounts</strong>. The same crew that shoots your
+                story keeps it on screen, week after week.</p>
+              )}
+            </div>
           </div>
         </div>
 
-        <section>
+        <section data-cms-global="social-media-management-page">
           <div className="wrap">
-            <h2 className="slate">How it works</h2>
+            <h2 className="slate" data-cms-field="howItWorks.heading">{howItWorks?.heading || 'How it works'}</h2>
             <div className="steps">
-              <div className="step"><div className="num mono">01</div>
-                <div><h3>Your workspace</h3>
-                <p>Every client business gets its own workspace: its own calendar, its own content library,
-                its own approvals.</p></div></div>
-              <div className="step"><div className="num mono">02</div>
-                <div><h3>Your accounts stay yours</h3>
-                <p>You connect your own social accounts through each platform&apos;s official authorization
-                screen. <strong>You own the accounts, the audience and the content.</strong> You can
-                disconnect at any time, and access ends immediately.</p></div></div>
-              <div className="step"><div className="num mono">03</div>
-                <div><h3>We build the calendar</h3>
-                <p>We plan the month, produce or edit the content, write the captions, and load everything
-                into your calendar with the dates and times we recommend.</p></div></div>
-              <div className="step"><div className="num mono">04</div>
-                <div><h3>You approve — final cut is yours</h3>
-                <p>Nothing publishes until someone at your business approves it. Every published post
-                traces back to a named approval.</p></div></div>
-              <div className="step"><div className="num mono">05</div>
-                <div><h3>It publishes, and you see what happened</h3>
-                <p>Approved posts go out automatically at the scheduled time, to every platform you
-                selected. Views, reach, engagement and follower growth come back into the same
-                dashboard.</p></div></div>
+              {(steps || fallbackSteps).map((s, i) => (
+                <div className="step" key={s.title}>
+                  <div className="num mono">{String(i + 1).padStart(2, '0')}</div>
+                  <div>
+                    <h3 data-cms-field={`howItWorks.steps.${i}.title`}>{s.title}</h3>
+                    <div data-cms-field={`howItWorks.steps.${i}.body`}>
+                      {steps && 'body' in s && typeof s.body === 'object' ? (
+                        <RichText data={s.body} />
+                      ) : (
+                        <p>{typeof s.body === 'string' ? s.body : ''}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
-        <section>
+        <section data-cms-global="social-media-management-page">
           <div className="wrap twocol">
             <div>
-              <h2 className="slate">What&apos;s included</h2>
+              <h2 className="slate" data-cms-field="included.heading">{included?.heading || "What's included"}</h2>
               <ul className="incl">
-                <li>Content calendar across Instagram, Facebook, TikTok, YouTube and X</li>
-                <li>Post production and editing, or scheduling of content you supply</li>
-                <li>Captions, hashtags and posting-time strategy</li>
-                <li>An approval gate before anything goes live</li>
-                <li>Performance reporting in one place, updated automatically</li>
+                {includedItems.map((text, i) => (
+                  <li key={text} data-cms-field={`included.items.${i}.text`}>{text}</li>
+                ))}
               </ul>
             </div>
             <div className="cta">
-              <div className="mono-tag">Now scheduling</div>
-              <h3>One calendar. One approval. Action.</h3>
-              <p>Tell us about your business and what you want your social to do — we&apos;ll get back to you
-              with a plan.</p>
-              <a className="go" href="/schedule-a-call">Schedule a call</a>
-              <span className="alt">Or email <a href="mailto:info@slatecinema.com">info@slatecinema.com</a></span>
+              <div className="mono-tag" data-cms-field="cta.monoTag">{cta?.monoTag || 'Now scheduling'}</div>
+              <h3 data-cms-field="cta.heading">{cta?.heading || 'One calendar. One approval. Action.'}</h3>
+              <p data-cms-field="cta.body">{cta?.body || "Tell us about your business and what you want your social to do — we'll get back to you with a plan."}</p>
+              <a className="go" href={cta?.buttonHref || '/schedule-a-call'} data-cms-field="cta.buttonLabel">{cta?.buttonLabel || 'Schedule a call'}</a>
+              <span className="alt"><span data-cms-field="cta.altText">{cta?.altText || 'Or email'}</span> <a href={`mailto:${email}`}>{email}</a></span>
             </div>
           </div>
         </section>

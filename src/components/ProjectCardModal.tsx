@@ -33,10 +33,17 @@ export default function ProjectCardModal({
   // thumbnail, and chrome all load after the iframe request completes.
   // With nothing shown in that window it reads as "stuck" rather than
   // loading. Track it per-project so a spinner covers exactly that gap.
+  // Reset during render (React's documented pattern for "adjusting state
+  // when a prop changes") rather than in an effect -- avoids the extra
+  // render-then-effect-then-rerender round trip an effect-based reset
+  // causes, and the flash of the previous project's loaded state that
+  // briefly rendered before it.
   const [videoLoaded, setVideoLoaded] = useState(false)
-  useEffect(() => {
+  const [trackedProject, setTrackedProject] = useState(project)
+  if (project !== trackedProject) {
+    setTrackedProject(project)
     setVideoLoaded(false)
-  }, [project])
+  }
 
   useEffect(() => {
     if (!project) return
