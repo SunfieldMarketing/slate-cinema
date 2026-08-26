@@ -109,7 +109,7 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
       setRotation(dragStartRotation.current + deltaX * 0.2); 
     };
 
-    const handlePointerUp = (e: React.PointerEvent) => {
+    const handlePointerUp = () => {
       setIsDragging(false);
       // Removed releasePointerCapture
     };

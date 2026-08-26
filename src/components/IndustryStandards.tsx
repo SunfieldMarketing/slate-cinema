@@ -1,10 +1,10 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-import { ArrowRight, TrendingUp, Users, Activity } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import type { HomePage } from '@/payload-types'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -79,9 +79,6 @@ export default function IndustryStandards({ data }: { data?: HomePage['industryS
         pin: true,
         scrub: 1,
         anticipatePin: 1,
-        onUpdate: (self) => {
-          // Play morphing continuously without pausing
-        }
       }
     })
 

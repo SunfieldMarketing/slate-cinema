@@ -4,7 +4,7 @@ import { Component, forwardRef, Suspense, useEffect, useImperativeHandle, useMem
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useAnimations, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
-import { INTRO_EXIT, MODELS, SCENE_ENTERS, SCENE_EXITS, CTA_ENTER, SCENES, TOTAL_UNITS } from './config'
+import { INTRO_EXIT, MODELS, SCENE_ENTERS, SCENE_EXITS, CTA_ENTER, SCENES } from './config'
 
 /*
   One persistent WebGL stage for the whole hero journey — the same
@@ -319,7 +319,7 @@ function StageObject({
 
   const framesRef = useRef(0)
 
-  useFrame(({ clock }, delta) => {
+  useFrame(({ clock }) => {
     framesRef.current++
     const group = groupRef.current
     if (!group) return
