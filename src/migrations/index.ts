@@ -6,6 +6,7 @@ import * as migration_20260821_214210_add_s3_media_prefix from './20260821_21421
 import * as migration_20260822_062619_add_vimeo_hookups from './20260822_062619_add_vimeo_hookups';
 import * as migration_20260824_000000_add_trust_banner from './20260824_000000_add_trust_banner';
 import * as migration_20260826_130000_add_privacy_terms_thankyou_smm_pages from './20260826_130000_add_privacy_terms_thankyou_smm_pages';
+import * as migration_20260826_140000_publish_new_pages from './20260826_140000_publish_new_pages';
 
 export const migrations = [
   {
@@ -47,5 +48,10 @@ export const migrations = [
     up: migration_20260826_130000_add_privacy_terms_thankyou_smm_pages.up,
     down: migration_20260826_130000_add_privacy_terms_thankyou_smm_pages.down,
     name: '20260826_130000_add_privacy_terms_thankyou_smm_pages',
+  },
+  {
+    up: migration_20260826_140000_publish_new_pages.up,
+    down: migration_20260826_140000_publish_new_pages.down,
+    name: '20260826_140000_publish_new_pages',
   },
 ];
