@@ -401,12 +401,6 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
             <div className="camera-ui absolute bottom-12 left-12 w-16 h-16 border-b-2 border-l-2 border-white/30 z-30 pointer-events-none" />
             <div className="camera-ui absolute bottom-12 right-12 w-16 h-16 border-b-2 border-r-2 border-white/30 z-30 pointer-events-none" />
 
-            {/* Crosshair */}
-            <div className="camera-ui absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 z-30 pointer-events-none opacity-20">
-              <div className="absolute top-0 bottom-0 left-1/2 w-px bg-white -translate-x-1/2" />
-              <div className="absolute left-0 right-0 top-1/2 h-px bg-white -translate-y-1/2" />
-            </div>
-
             {/* CTA Buttons — Get Started leads, Watch Our Reel is the one secondary option */}
             <div className="flex flex-wrap items-center gap-4 justify-center pointer-events-auto mt-12 z-40 relative">
               <a
