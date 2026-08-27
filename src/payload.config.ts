@@ -110,23 +110,40 @@ const livePreviewURL = ({
   collectionConfig?: { slug: string }
   globalConfig?: { slug: string }
 }) => {
-  // Found 2026-08-26 while investigating "Live Preview / click-to-edit
-  // doesn't work" -- this function runs entirely client-side inside the
-  // admin bundle (Payload serializes `admin.livePreview.url` into the
-  // browser app), so if NEXT_PUBLIC_SERVER_URL isn't set at BUILD time on
-  // Vercel, this fell back to 'http://localhost:3000' for every real
-  // visitor to https://www.slatecinema.com/admin -- the iframe would try
-  // to load a localhost URL that doesn't exist from their machine's
-  // perspective, so it never renders anything, and the click-to-edit
-  // shortcut (LivePreviewClickToEdit.tsx) never gets a chance to mount
-  // because its own page never loads inside the frame. The CORS/CSRF
-  // allow-list above already learned this exact lesson on 2026-08-17
-  // (hardcoded real domains rather than trusting one env var alone) --
-  // this applies the same fix here, matching wavecare.io's own
-  // buildPreviewURL, which uses the identical NODE_ENV-based fallback.
+  // Root-caused 2026-08-26 by reading @payloadcms/ui's own LivePreview
+  // provider directly (node_modules/@payloadcms/ui/dist/providers/
+  // LivePreview/index.js): after the iframe loads and posts its
+  // { type: 'payload-live-preview', ready: true } handshake (see
+  // RefreshRouteOnSave.tsx), Payload only calls setAppIsReady(true) if
+  // `url?.startsWith(event.origin)` -- i.e. the exact string this
+  // function returns must be a *prefix* of the iframe's real origin
+  // after it finishes loading/redirecting. Until the "localhost
+  // fallback" fix earlier today, an unset NEXT_PUBLIC_SERVER_URL could
+  // explain a blank iframe -- but this site legitimately serves from
+  // TWO origins (the CORS list above exists specifically because
+  // "the bare domain redirects to https://www.slatecinema.com"), so
+  // *any* single hardcoded/env-configured base -- bare or www -- will
+  // silently mismatch the other one and fail that startsWith check
+  // forever, even while the iframe visibly renders the real page. That
+  // silent mismatch, not a blank iframe, is what "still doesn't have
+  // anything" actually was: the ready handshake never completes, so
+  // Payload never considers the preview live.
+  //
+  // Since this function is only ever evaluated in the browser (Payload
+  // calls it from the admin's client-side LivePreview provider --
+  // confirmed by its params being data-only, no request/headers, same
+  // shape as wavecare.io's own client-only buildPreviewURL), the one
+  // value that's *guaranteed* to match the iframe's eventual origin
+  // exactly, on every domain this ever gets viewed from (www, bare --
+  // if it's ever not auto-redirected for an authed session --, a
+  // *.vercel.app preview alias, or localhost in local dev) is the
+  // admin page's own origin. No env var, no hardcoded domain, nothing
+  // that can drift out of sync with reality.
   const base =
-    process.env.NEXT_PUBLIC_SERVER_URL ||
-    (process.env.NODE_ENV === 'production' ? 'https://www.slatecinema.com' : 'http://localhost:3000')
+    typeof window !== 'undefined'
+      ? window.location.origin
+      : process.env.NEXT_PUBLIC_SERVER_URL ||
+        (process.env.NODE_ENV === 'production' ? 'https://www.slatecinema.com' : 'http://localhost:3000')
   if (globalConfig) {
     switch (globalConfig.slug) {
       case 'home-page':
@@ -170,6 +187,18 @@ const livePreviewURL = ({
 }
 
 export default buildConfig({
+  // Found 2026-08-26 alongside the Live Preview investigation: this was
+  // never set at all, so Payload's own internal absolute-URL default
+  // (used for the admin's og:image/twitter:image meta tags, and
+  // anywhere else Payload itself needs one -- verification/reset-
+  // password email links, for instance) is a hardcoded
+  // 'http://localhost:3000' baked into @payloadcms/next -- confirmed
+  // directly on the live site's own server-rendered admin HTML, not
+  // assumed. Separate mechanism from admin.livePreview.url above (that
+  // one's evaluated client-side for the preview iframe specifically),
+  // but the same underlying gap: nothing told Payload what this site's
+  // real address is.
+  serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'https://www.slatecinema.com',
   admin: {
     user: Users.slug,
     importMap: {
