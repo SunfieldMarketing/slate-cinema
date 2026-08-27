@@ -80,8 +80,21 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
       const naturalH = Math.max(vh, (vw * 9) / 16)
       const oversize = Math.max(naturalW / vw, naturalH / vh)
       const scale = oversize > MAX_OVERSIZE ? MAX_OVERSIZE / oversize : 1
-      el.style.width = `${naturalW * scale}px`
-      el.style.height = `${naturalH * scale}px`
+      // min-width/min-height ALWAYS win over width/height when larger --
+      // that's the exact mechanism the uncapped fallback classes below
+      // rely on (w-[100vw] + min-w-[177.78vh], etc). Setting inline
+      // width/height alone can raise the box's size but can never SHRINK
+      // it back down below whatever those classes' min-width/min-height
+      // still specify, so scaling below the natural (uncapped) size
+      // requires overriding min-width/min-height inline too -- an inline
+      // style always beats a class for the same property regardless of
+      // which one is more specific-looking.
+      const w = naturalW * scale
+      const h = naturalH * scale
+      el.style.width = `${w}px`
+      el.style.height = `${h}px`
+      el.style.minWidth = `${w}px`
+      el.style.minHeight = `${h}px`
     }
     apply()
     window.addEventListener('resize', apply)
