@@ -134,7 +134,12 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
     // ImageBitmaps live on the GPU side so drawImage() is near-zero cost.
     // Canvas is sized to the actual viewport (not a fixed 1920x1080) so
     // nothing is ever zoomed in.
-    const renderFrame = (index: number) => {
+    // zoom: 1 = full cover fit (the "just scrolled into view" start state),
+    // 0 = full contain fit (nothing cropped, the "normal viewing" end
+    // state) -- interpolated between the two as the user scrolls, see the
+    // paired scrollTl tween below. Only meaningful in portrait; ignored on
+    // desktop/landscape, which always renders a plain cover fit.
+    const renderFrame = (index: number, zoom: number = 1) => {
       currentFrameRef.current = index
       const bmp = bitmapsRef.current[index]
       if (!bmp) return
@@ -200,7 +205,16 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
         // the canvas, the smaller one has room on both sides, filled by
         // the blurred backdrop showing through underneath rather than
         // empty/transparent canvas.
-        const fgScale = Math.min(pw / bmp.width, ph / bmp.height)
+        //
+        // Same-day follow-up: "starts off full scaled and then zooms out
+        // as you scroll... becomes the normal viewing for full sized
+        // video." zoom=1 (scroll not yet reached this section, or just
+        // arrived) resolves to coverScale -- the tight, fully-scaled-in
+        // fit; zoom=0 (scrolled through) resolves to containScale -- the
+        // complete, uncropped fit above. Linear blend between the two,
+        // driven by the paired tween on playhead.zoom below.
+        const containScale = Math.min(pw / bmp.width, ph / bmp.height)
+        const fgScale = containScale + (coverScale - containScale) * zoom
         ctx.drawImage(
           bmp,
           (pw - bmp.width * fgScale) / 2,
@@ -249,7 +263,11 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
       )
 
       // --- 2. SCROLL ANIMATION ---
-      const playhead = { frame: 0 }
+      // zoom starts at 1 (full scaled/cover, matching the very first
+      // renderFrame(0) call's default) and animates to 0 (full contain,
+      // "normal viewing") in lockstep with the frame sequence itself --
+      // see the paired scrollTl tween below and renderFrame's zoom param.
+      const playhead = { frame: 0, zoom: 1 }
 
       // Once the user has scrolled halfway through the frame sequence,
       // finish the ride for them — auto-advance the rest of the way so
@@ -322,10 +340,11 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
         playhead,
         {
           frame: FRAME_COUNT - 1,
+          zoom: 0,
           snap: 'frame',
           ease: 'power2.in',
           duration: 0.82,
-          onUpdate: () => renderFrame(Math.round(playhead.frame)),
+          onUpdate: () => renderFrame(Math.round(playhead.frame), playhead.zoom),
         },
         0.18
       )
