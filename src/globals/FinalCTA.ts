@@ -7,6 +7,7 @@ import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 */
 export const FinalCTA: GlobalConfig = {
   slug: 'final-cta',
+  admin: { group: 'Shared Sections' },
   versions: { drafts: true },
   access: {
     // Public reads only ever see published content -- unpublished

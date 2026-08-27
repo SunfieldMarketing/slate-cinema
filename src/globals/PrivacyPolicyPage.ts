@@ -18,6 +18,7 @@ import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 */
 export const PrivacyPolicyPage: GlobalConfig = {
   slug: 'privacy-policy-page',
+  admin: { group: 'Pages' },
   versions: { drafts: true },
   access: {
     // Same pattern as every other global -- see Industries.ts for the

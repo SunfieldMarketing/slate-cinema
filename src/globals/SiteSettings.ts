@@ -8,6 +8,7 @@ import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 */
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
+  admin: { group: 'Site Settings' },
   versions: { drafts: true },
   access: {
     // Public reads only ever see published content -- unpublished

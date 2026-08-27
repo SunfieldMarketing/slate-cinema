@@ -110,7 +110,23 @@ const livePreviewURL = ({
   collectionConfig?: { slug: string }
   globalConfig?: { slug: string }
 }) => {
-  const base = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+  // Found 2026-08-26 while investigating "Live Preview / click-to-edit
+  // doesn't work" -- this function runs entirely client-side inside the
+  // admin bundle (Payload serializes `admin.livePreview.url` into the
+  // browser app), so if NEXT_PUBLIC_SERVER_URL isn't set at BUILD time on
+  // Vercel, this fell back to 'http://localhost:3000' for every real
+  // visitor to https://www.slatecinema.com/admin -- the iframe would try
+  // to load a localhost URL that doesn't exist from their machine's
+  // perspective, so it never renders anything, and the click-to-edit
+  // shortcut (LivePreviewClickToEdit.tsx) never gets a chance to mount
+  // because its own page never loads inside the frame. The CORS/CSRF
+  // allow-list above already learned this exact lesson on 2026-08-17
+  // (hardcoded real domains rather than trusting one env var alone) --
+  // this applies the same fix here, matching wavecare.io's own
+  // buildPreviewURL, which uses the identical NODE_ENV-based fallback.
+  const base =
+    process.env.NEXT_PUBLIC_SERVER_URL ||
+    (process.env.NODE_ENV === 'production' ? 'https://www.slatecinema.com' : 'http://localhost:3000')
   if (globalConfig) {
     switch (globalConfig.slug) {
       case 'home-page':

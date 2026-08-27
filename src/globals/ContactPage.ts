@@ -14,6 +14,7 @@ const CONTACT_ICONS = [
 
 export const ContactPage: GlobalConfig = {
   slug: 'contact-page',
+  admin: { group: 'Pages' },
   versions: { drafts: true },
   access: {
     // Public reads only ever see published content -- unpublished

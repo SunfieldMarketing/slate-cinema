@@ -3,6 +3,7 @@ import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 
 export const Footer: GlobalConfig = {
   slug: 'footer',
+  admin: { group: 'Site Settings' },
   versions: { drafts: true },
   access: {
     // Public reads only ever see published content -- unpublished

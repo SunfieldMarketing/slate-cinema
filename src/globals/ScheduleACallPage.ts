@@ -9,6 +9,7 @@ import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 */
 export const ScheduleACallPage: GlobalConfig = {
   slug: 'schedule-a-call-page',
+  admin: { group: 'Pages' },
   versions: { drafts: true },
   access: {
     // Public reads only ever see published content -- unpublished

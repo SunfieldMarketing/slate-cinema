@@ -15,6 +15,7 @@ const ICONS = ['Clock3', 'Users', 'ShieldCheck', 'Target', 'Wallet', 'Sparkles',
 */
 export const ReadyToTalk: GlobalConfig = {
   slug: 'ready-to-talk',
+  admin: { group: 'Shared Sections' },
   versions: { drafts: true },
   hooks: {
     afterChange: [revalidateGlobalAfterChange],

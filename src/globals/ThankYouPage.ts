@@ -15,6 +15,7 @@ const ICON_OPTIONS = ['Mail', 'Clock3', 'PlayCircle'].map((v) => ({ label: v, va
 */
 export const ThankYouPage: GlobalConfig = {
   slug: 'thank-you-page',
+  admin: { group: 'Pages' },
   versions: { drafts: true },
   access: {
     read: ({ req }) => Boolean(req?.user) || { _status: { equals: 'published' } },

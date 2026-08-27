@@ -10,6 +10,7 @@ import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 */
 export const TermsOfServicePage: GlobalConfig = {
   slug: 'terms-of-service-page',
+  admin: { group: 'Pages' },
   versions: { drafts: true },
   access: {
     read: ({ req }) => Boolean(req?.user) || { _status: { equals: 'published' } },

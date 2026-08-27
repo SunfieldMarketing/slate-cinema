@@ -9,6 +9,7 @@ import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 */
 export const Navigation: GlobalConfig = {
   slug: 'navigation',
+  admin: { group: 'Site Settings' },
   versions: { drafts: true },
   access: {
     // Public reads only ever see published content -- unpublished

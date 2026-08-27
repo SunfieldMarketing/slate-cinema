@@ -21,6 +21,7 @@ import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 */
 export const SocialMediaManagementPage: GlobalConfig = {
   slug: 'social-media-management-page',
+  admin: { group: 'Pages' },
   versions: { drafts: true },
   access: {
     read: ({ req }) => Boolean(req?.user) || { _status: { equals: 'published' } },

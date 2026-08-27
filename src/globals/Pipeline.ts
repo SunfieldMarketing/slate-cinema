@@ -9,6 +9,7 @@ import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 */
 export const Pipeline: GlobalConfig = {
   slug: 'pipeline',
+  admin: { group: 'Shared Sections' },
   versions: { drafts: true },
   access: {
     // Public reads only ever see published content -- unpublished

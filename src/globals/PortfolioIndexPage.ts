@@ -3,6 +3,7 @@ import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 
 export const PortfolioIndexPage: GlobalConfig = {
   slug: 'portfolio-index-page',
+  admin: { group: 'Pages' },
   versions: { drafts: true },
   access: {
     // Public reads only ever see published content -- unpublished

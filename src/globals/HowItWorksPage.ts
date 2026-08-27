@@ -11,6 +11,7 @@ const GUARANTEE_ICONS = ['Clock', 'ShieldCheck', 'RefreshCw', 'Handshake'].map((
 */
 export const HowItWorksPage: GlobalConfig = {
   slug: 'how-it-works-page',
+  admin: { group: 'Pages' },
   versions: { drafts: true },
   access: {
     // Public reads only ever see published content -- unpublished
