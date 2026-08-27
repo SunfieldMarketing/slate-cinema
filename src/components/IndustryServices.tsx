@@ -88,7 +88,21 @@ export default function IndustryServices({ services, accent }: { services: Indus
               </span>
             </div>
 
-            <div className="relative p-6 md:p-8">
+            {/* pt-14 (not just p-6's own 24px) -- found 2026-08-26 mobile
+                audit: with longer industry copy (this card's real content
+                measured ~416px tall, nearly the full 420px card height on
+                its own), this block started only ~3px below the card's
+                top edge, directly under the "Most booked" badge above --
+                confirmed via getBoundingClientRect on both elements (17px
+                of real vertical overlap). The badge is absolutely
+                positioned (top-4, ~27.5px tall) so it takes no space in
+                this flex layout on its own; nothing stopped content from
+                starting underneath it whenever a given industry's copy
+                ran long enough. Reserving the badge's own clearance here
+                fixes this for every industry's content length, not just
+                this one -- md:pt-8 keeps the original spacing where the
+                card is much larger/wider and this was never a risk. */}
+            <div className="relative p-6 pt-14 md:p-8">
               <div data-cms-field={`serviceCards.${services.indexOf(featured)}.outcome`} className="font-mono text-sm md:text-base font-bold tracking-tight mb-2" style={{ color: accent }}>
                 {featured.outcome}
               </div>

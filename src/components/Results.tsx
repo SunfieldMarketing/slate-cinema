@@ -189,8 +189,15 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-[2px] bg-[#00AEEF] shadow-[0_0_10px_rgba(0,174,239,0.8)]" />
           </div>
 
-          {/* Engagement Row (3D comments and likes elements brought back) */}
-          <div className="flex gap-12 md:gap-20 items-center text-white/90 text-xl md:text-3xl font-bold mb-10">
+          {/* Engagement Row (3D comments and likes elements brought back) --
+              found 2026-08-26 mobile audit: with no flex-wrap and a flat
+              gap-12 (unlike the views-counter row above, which already
+              wraps), 3 items + 2x 48px gaps just barely exceeded a 375px
+              viewport -- the section's own overflow-hidden clipped the
+              3rd stat (comments) off the right edge invisibly rather than
+              causing a scrollbar, so it never showed up in a page-width
+              overflow check, only in an actual screenshot. */}
+          <div className="flex flex-wrap gap-6 sm:gap-12 md:gap-20 items-center justify-center text-white/90 text-xl md:text-3xl font-bold mb-10">
             <div className="flex items-center gap-3">
               <Eye className="w-6 h-6 md:w-10 md:h-10 text-[#00AEEF]" />
               <span data-cms-field="results.reachPercent">{views > 0 ? reachPercent : '0%'}</span>
