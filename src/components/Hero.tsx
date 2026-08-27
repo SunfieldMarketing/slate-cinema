@@ -189,7 +189,18 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
         )
         ctx.filter = 'none'
 
-        const fgScale = coverScale * 0.62
+        // 2026-08-27: "more zoomed out so it's displayed in normal
+        // complete size" -- the 0.62x-off-cover reduction above still
+        // cropped some of the image (any factor derived from cover-fit
+        // does, unless it happens to cross fully into contain territory)
+        // while also not filling either dimension exactly, an odd
+        // in-between. A true contain fit (min, not max, of the two
+        // ratios) is the actual "show the whole thing, nothing cropped"
+        // fit -- the image's larger-relative dimension exactly matches
+        // the canvas, the smaller one has room on both sides, filled by
+        // the blurred backdrop showing through underneath rather than
+        // empty/transparent canvas.
+        const fgScale = Math.min(pw / bmp.width, ph / bmp.height)
         ctx.drawImage(
           bmp,
           (pw - bmp.width * fgScale) / 2,
