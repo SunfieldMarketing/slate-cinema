@@ -173,6 +173,12 @@ export default function Reviews({ data }: { data?: HomePage['reviews'] }) {
   // (only the flagship industry does today) rather than hardcoding a slug —
   // stays correct regardless of which industry that ends up being.
   const videoTestimonials = industries.find((i) => i.videoTestimonials?.length)?.videoTestimonials?.slice(0, 3) ?? []
+  // Mirrors the `false &&` gate below that hides the .rv-video/.rv-video-row
+  // JSX entirely -- kept as one named condition so the GSAP setup and the
+  // markup it targets can never drift out of sync again (see the bug this
+  // fixed: the animation below used to run unconditionally regardless of
+  // this flag).
+  const showVideoTestimonials = false && videoTestimonials.length > 0
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -180,17 +186,34 @@ export default function Reviews({ data }: { data?: HomePage['reviews'] }) {
         y: 0, opacity: 1, duration: 0.8, ease: 'power3.out',
         scrollTrigger: { trigger: sectionRef.current, start: 'top 80%', once: true },
       })
-      gsap.fromTo('.rv-video', { y: 40, opacity: 0 }, {
-        y: 0, opacity: 1, stagger: 0.1, duration: 0.6, ease: 'back.out(1.3)',
-        scrollTrigger: { trigger: '.rv-video-row', start: 'top 88%', once: true },
-      })
+      // Found 2026-08-26: this ran unconditionally even while the
+      // .rv-video/.rv-video-row markup below is disabled (`{false && ...}`),
+      // so GSAP was creating a ScrollTrigger against a `trigger` selector
+      // that matches nothing in the DOM ("Element not found: .rv-video-row"
+      // in the console) every time this section mounted. On cleanup,
+      // gsap.context(...).revert() then threw an uncaught NotFoundError
+      // trying to tear down that phantom trigger's internal DOM
+      // bookkeeping -- and since ScrollTrigger recalculates every pinned
+      // section on the page in one shared refresh batch, that uncaught
+      // throw mid-cleanup was corrupting Hero's own pin-spacer height,
+      // which is what let TrustSection's logo marquee render into the same
+      // vertical space as the hero text (reported live, with a screenshot
+      // and full console trace, 2026-08-26). Guarding this exactly like
+      // the JSX it targets means GSAP only ever sets up an animation for
+      // selectors that actually exist.
+      if (showVideoTestimonials) {
+        gsap.fromTo('.rv-video', { y: 40, opacity: 0 }, {
+          y: 0, opacity: 1, stagger: 0.1, duration: 0.6, ease: 'back.out(1.3)',
+          scrollTrigger: { trigger: '.rv-video-row', start: 'top 88%', once: true },
+        })
+      }
       gsap.fromTo('.rv-card', { scale: 0.9, opacity: 0 }, {
         scale: 1, opacity: 1, stagger: 0.08, duration: 0.6, ease: 'back.out(1.4)',
         scrollTrigger: { trigger: '.rv-grid', start: 'top 90%', once: true },
       })
     }, sectionRef)
     return () => ctx.revert()
-  }, { scope: sectionRef })
+  }, { scope: sectionRef, dependencies: [showVideoTestimonials] })
 
   return (
     <section ref={sectionRef} className="relative w-full overflow-hidden flex flex-col justify-center py-20 md:py-24">
@@ -218,8 +241,11 @@ export default function Reviews({ data }: { data?: HomePage['reviews'] }) {
             Ruiz — invented people, still sitting in the "ai" industry's
             DB record; no DB write access this session to clear it at
             the source). Re-enable once real client video testimonials
-            replace it: delete the `false &&` below. */}
-        {false && videoTestimonials.length > 0 && (
+            replace it: delete the `false &&` in showVideoTestimonials
+            above -- that's now the only place this is gated, so the
+            GSAP animation targeting .rv-video/.rv-video-row above
+            re-enables itself automatically at the same time. */}
+        {showVideoTestimonials && (
           <div className="mb-14 md:mb-16">
             <div className="text-center mb-6">
               <span className="font-mono text-[10px] tracking-[0.25em] text-white/40 uppercase">{videoTestimonialsLabel}</span>
