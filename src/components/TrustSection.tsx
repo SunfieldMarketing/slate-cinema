@@ -37,7 +37,7 @@ const fallbackClients = [
 
 export default function TrustSection({ data }: { data?: HomePage['trustSection'] }) {
   const sectionRef = useRef<HTMLElement>(null)
-  const eyebrow = data?.eyebrow || 'Join the leaders that worked with Slate Cinema'
+  const eyebrow = data?.eyebrow || 'Join the leaders who worked with Slate Cinema'
   const ratingText = data?.ratingText || '5.0/5 · 44 Google reviews'
   const marqueeLabel = data?.marqueeLabel || 'More collaborations & partnerships'
   const flagship = data?.flagshipLogos?.length
@@ -64,15 +64,32 @@ export default function TrustSection({ data }: { data?: HomePage['trustSection']
           {eyebrow}
         </span>
 
+        {/* Mobile: the first logo (Meta) gets its own full-width row so it
+            can't share a line with whichever of the rest happens to fit --
+            natural flex-wrap put Meta+Alo on row 1 and B&H alone on row 2,
+            not the Meta-alone/Alo+B&H split requested. sm:contents drops
+            the wrapper from layout entirely at the sm breakpoint, so
+            desktop's existing single-row appearance (all three together)
+            is completely unchanged. */}
         <div className="mt-10 flex flex-wrap items-center justify-center gap-x-16 gap-y-8 sm:gap-x-24">
-          {flagship.map((f) => (
-            <img
-              key={f.name}
-              src={f.src}
-              alt={f.name}
-              className="fc-mark h-16 sm:h-20 w-auto opacity-70 hover:opacity-100 transition-opacity duration-500 [filter:brightness(0)_invert(1)]"
-            />
-          ))}
+          {flagship.map((f, i) =>
+            i === 0 ? (
+              <span key={f.name} className="w-full flex justify-center sm:contents">
+                <img
+                  src={f.src}
+                  alt={f.name}
+                  className="fc-mark h-16 sm:h-20 w-auto opacity-70 hover:opacity-100 transition-opacity duration-500 [filter:brightness(0)_invert(1)]"
+                />
+              </span>
+            ) : (
+              <img
+                key={f.name}
+                src={f.src}
+                alt={f.name}
+                className="fc-mark h-16 sm:h-20 w-auto opacity-70 hover:opacity-100 transition-opacity duration-500 [filter:brightness(0)_invert(1)]"
+              />
+            )
+          )}
         </div>
 
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
