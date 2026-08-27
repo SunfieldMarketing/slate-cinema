@@ -340,10 +340,31 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
         playhead,
         {
           frame: FRAME_COUNT - 1,
-          zoom: 0,
           snap: 'frame',
           ease: 'power2.in',
           duration: 0.82,
+          onUpdate: () => renderFrame(Math.round(playhead.frame), playhead.zoom),
+        },
+        0.18
+      )
+
+      // C2. Zoom-out — a separate, much faster tween on the same object
+      // than the frame advance above. 2026-08-27 follow-up: "after like
+      // 10% into second video it needs to be fully zoomed out" -- sharing
+      // one tween/ease with the frame advance (as it did originally) made
+      // zoom trail the slow start of power2.in, so it was still mostly
+      // scaled-in well past 10% of the sequence. This completes on its
+      // own, independent schedule: zoom reaches 0 after just 10% of the
+      // frame sequence's own duration (0.82 * 0.1), fast and front-
+      // loaded (power2.out), while the frame advance above keeps playing
+      // out over its full original duration untouched. Same start point
+      // (0.18) as the frame tween so both begin together.
+      scrollTl.to(
+        playhead,
+        {
+          zoom: 0,
+          ease: 'power2.out',
+          duration: 0.82 * 0.1,
           onUpdate: () => renderFrame(Math.round(playhead.frame), playhead.zoom),
         },
         0.18
