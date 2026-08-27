@@ -105,85 +105,80 @@ const livePreviewURL = ({
   data,
   collectionConfig,
   globalConfig,
+  req,
 }: {
   data: Record<string, unknown>
   collectionConfig?: { slug: string }
   globalConfig?: { slug: string }
+  req?: { headers?: { get?: (name: string) => string | null } }
 }) => {
-  // Root-caused 2026-08-26 by reading @payloadcms/ui's own LivePreview
-  // provider directly (node_modules/@payloadcms/ui/dist/providers/
-  // LivePreview/index.js): after the iframe loads and posts its
-  // { type: 'payload-live-preview', ready: true } handshake (see
-  // RefreshRouteOnSave.tsx), Payload only calls setAppIsReady(true) if
-  // `url?.startsWith(event.origin)` -- i.e. the exact string this
-  // function returns must be a *prefix* of the iframe's real origin
-  // after it finishes loading/redirecting. Until the "localhost
-  // fallback" fix earlier today, an unset NEXT_PUBLIC_SERVER_URL could
-  // explain a blank iframe -- but this site legitimately serves from
-  // TWO origins (the CORS list above exists specifically because
-  // "the bare domain redirects to https://www.slatecinema.com"), so
-  // *any* single hardcoded/env-configured base -- bare or www -- will
-  // silently mismatch the other one and fail that startsWith check
-  // forever, even while the iframe visibly renders the real page. That
-  // silent mismatch, not a blank iframe, is what "still doesn't have
-  // anything" actually was: the ready handshake never completes, so
-  // Payload never considers the preview live.
+  // Corrected 2026-08-26: this function is actually invoked SERVER-SIDE,
+  // during SSR of the admin document view (@payloadcms/next's Document
+  // view calls @payloadcms/ui's handleLivePreview(), which awaits
+  // livePreviewConfig.url({ ..., req }) on the server -- confirmed by
+  // reading that function directly, not assumed). An earlier version of
+  // this comment claimed it ran client-side and switched on
+  // `typeof window` for that reason; that branch never once executed in
+  // production since `window` is never defined in that context, so it
+  // silently fell through to the fallback below every time regardless.
   //
-  // Since this function is only ever evaluated in the browser (Payload
-  // calls it from the admin's client-side LivePreview provider --
-  // confirmed by its params being data-only, no request/headers, same
-  // shape as wavecare.io's own client-only buildPreviewURL), the one
-  // value that's *guaranteed* to match the iframe's eventual origin
-  // exactly, on every domain this ever gets viewed from (www, bare --
-  // if it's ever not auto-redirected for an authed session --, a
-  // *.vercel.app preview alias, or localhost in local dev) is the
-  // admin page's own origin. No env var, no hardcoded domain, nothing
-  // that can drift out of sync with reality.
+  // Since a real `req` IS available here, the exact-origin problem (this
+  // site legitimately serves from both slatecinema.com and
+  // www.slatecinema.com -- see the CORS allow-list comment above, and
+  // Payload's own `url?.startsWith(event.origin)` ready-handshake check
+  // in @payloadcms/ui/dist/providers/LivePreview/index.js) is solved
+  // properly: read the Host header of the actual admin request, which
+  // always matches whatever domain the admin was reached through --
+  // www, bare (on the rare request that isn't redirected), a
+  // *.vercel.app preview alias, or localhost -- with zero env var or
+  // hardcoded-domain dependency to drift out of sync with reality.
+  const host = req?.headers?.get?.('host')
+  const proto = req?.headers?.get?.('x-forwarded-proto') || (process.env.NODE_ENV === 'production' ? 'https' : 'http')
   const base =
-    typeof window !== 'undefined'
-      ? window.location.origin
-      : process.env.NEXT_PUBLIC_SERVER_URL ||
-        (process.env.NODE_ENV === 'production' ? 'https://www.slatecinema.com' : 'http://localhost:3000')
+    host ||
+    process.env.NEXT_PUBLIC_SERVER_URL ||
+    (process.env.NODE_ENV === 'production' ? 'https://www.slatecinema.com' : 'http://localhost:3000')
+  const baseWithProto = base.startsWith('http') ? base : `${proto}://${base}`
   if (globalConfig) {
     switch (globalConfig.slug) {
       case 'home-page':
-        return appendDraft(base)
+        return appendDraft(baseWithProto)
       case 'contact-page':
-        return appendDraft(`${base}/contact`)
+        return appendDraft(`${baseWithProto}/contact`)
       case 'schedule-a-call-page':
-        return appendDraft(`${base}/schedule-a-call`)
+        return appendDraft(`${baseWithProto}/schedule-a-call`)
       case 'how-it-works-page':
-        return appendDraft(`${base}/how-it-works`)
+        return appendDraft(`${baseWithProto}/how-it-works`)
       case 'portfolio-index-page':
-        return appendDraft(`${base}/portfolio`)
+        return appendDraft(`${baseWithProto}/portfolio`)
       case 'privacy-policy-page':
-        return appendDraft(`${base}/privacy-policy`)
+        return appendDraft(`${baseWithProto}/privacy-policy`)
       case 'terms-of-service-page':
-        return appendDraft(`${base}/terms-of-service`)
+        return appendDraft(`${baseWithProto}/terms-of-service`)
       case 'thank-you-page':
-        return appendDraft(`${base}/thank-you`)
+        return appendDraft(`${baseWithProto}/thank-you`)
       case 'social-media-management-page':
-        return appendDraft(`${base}/social-media-management`)
+        return appendDraft(`${baseWithProto}/social-media-management`)
       default:
         // Navigation/Footer/SiteSettings/Pipeline/FinalCTA/ReadyToTalk
         // render on every page -- home is the most representative single
         // preview target for these shared/site-wide globals.
-        return appendDraft(base)
+        return appendDraft(baseWithProto)
     }
   }
   if (collectionConfig) {
     switch (collectionConfig.slug) {
       case 'industries':
-        return appendDraft(`${base}/portfolio/${data.slug}`)
+        return appendDraft(`${baseWithProto}/portfolio/${data.slug}`)
       case 'journal-posts':
-        return appendDraft(`${base}/journal/${data.slug}`)
+        return appendDraft(`${baseWithProto}/journal/${data.slug}`)
       case 'portfolio-projects':
-        return appendDraft(`${base}/portfolio`)
+        return appendDraft(`${baseWithProto}/portfolio`)
       default:
-        return appendDraft(base)
+        return appendDraft(baseWithProto)
     }
   }
-  return appendDraft(base)
+  return appendDraft(baseWithProto)
 }
 
 export default buildConfig({
@@ -234,6 +229,39 @@ export default buildConfig({
         { label: 'Desktop', name: 'desktop', width: 1440, height: 900 },
       ],
       url: livePreviewURL,
+      // THE actual root cause (found 2026-08-26 by reading
+      // @payloadcms/ui/dist/utilities/handleLivePreview.js directly):
+      // setting admin.livePreview at the root only supplies shared
+      // defaults (breakpoints, the url function above) -- it does NOT
+      // implicitly turn the feature on anywhere. Payload's own
+      // isLivePreviewEnabled() only returns true for a global/collection
+      // whose slug appears in the arrays below (or that sets its own
+      // admin.livePreview directly). Neither existed here, so
+      // handleLivePreview() early-returned {} -- livePreviewURL was
+      // always undefined, for every document, and the Live Preview
+      // toggle button (@payloadcms/ui's LivePreviewToggler renders null
+      // when its url prop is falsy) has never appeared at all since the
+      // feature was first added on 2026-08-20. Every fix made earlier
+      // today was a real bug, but none of them mattered until this one:
+      // the url function was never even being called.
+      globals: [
+        Navigation.slug,
+        Footer.slug,
+        SiteSettings.slug,
+        Pipeline.slug,
+        FinalCTA.slug,
+        ReadyToTalk.slug,
+        HomePage.slug,
+        HowItWorksPage.slug,
+        PortfolioIndexPage.slug,
+        ContactPage.slug,
+        ScheduleACallPage.slug,
+        PrivacyPolicyPage.slug,
+        TermsOfServicePage.slug,
+        ThankYouPage.slug,
+        SocialMediaManagementPage.slug,
+      ],
+      collections: [Industries.slug, PortfolioProjects.slug, JournalPosts.slug],
     },
   },
   collections: [Users, Media, Industries, PortfolioProjects, JournalPosts],
