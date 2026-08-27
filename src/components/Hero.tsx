@@ -20,6 +20,61 @@ gsap.registerPlugin(ScrollTrigger)
 
 const FRAME_COUNT = 291
 
+// 2026-08-27: "keyframe it so main focus of video on mobile moves
+// throughout or through timestamps of video so it can be fully zoomed
+// into fit display area." Replaces the old scroll-tied zoom-blend (which
+// sat at a flat full-contain fit for ~90% of the sequence -- the "loses
+// immersion" complaint) with a per-FRAME pan+scale, hand-placed against
+// the actual footage instead of guessed.
+//
+// Surveyed real frame content (frames 1, 60, 130, 150, 190, 230, 270,
+// 290) to find where the subject actually sits in each shot:
+//   frame 1:   the "SLATE CINEMA" screen-replica text, dead center --
+//              this has to match Video 1's plain centered crop exactly,
+//              or the crossfade between the two videos visibly jumps.
+//   1 -> 130:  camera pulls back, the (still-legible, still text-
+//              matched) screen drifts right across the frame as it does.
+//   ~150:      the screen goes out of frame entirely -- subject becomes
+//              the lens/G-badge, hard-left.
+//   190 -> 290: settles into one static wide "hero" composition (the
+//              source footage itself barely moves here), center-left.
+// x/y are 0-1 fractions of how far the crop window has traveled across
+// its available pan range (0 = leftmost/topmost, 1 = rightmost/bottom-
+// most, 0.5 = centered -- see getFocus below). scale is a fraction of
+// full cover-fit -- 1 is fully zoomed/filled with zero gap, lower values
+// ease slightly toward contain (backdrop bleeds through at the edges,
+// same mechanism the old zoom blend used) for a gentle pull-back on the
+// final reveal. Every value here stays far closer to 1 (fully zoomed)
+// than the old code's resting state (a flat 0 = pure contain), which is
+// the actual fix for "loses immersion."
+const FOCUS_KEYFRAMES: { frame: number; x: number; y: number; scale: number }[] = [
+  { frame: 0, x: 0.5, y: 0.5, scale: 1.0 }, // matches Video 1's centered crop
+  { frame: 40, x: 0.58, y: 0.52, scale: 0.95 },
+  { frame: 90, x: 0.7, y: 0.56, scale: 0.9 },
+  { frame: 130, x: 0.78, y: 0.58, scale: 0.9 }, // screen at its most off-center, last moment it reads
+  { frame: 150, x: 0.3, y: 0.48, scale: 0.85 }, // hard swing -- screen's gone, lens/badge is now the subject
+  { frame: 190, x: 0.22, y: 0.5, scale: 0.85 },
+  { frame: 230, x: 0.38, y: 0.46, scale: 0.78 }, // easing into the final wide composition
+  { frame: FRAME_COUNT - 1, x: 0.42, y: 0.45, scale: 0.72 }, // held reveal, still nowhere near full letterbox
+]
+
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t
+const smoothstep = (t: number) => t * t * (3 - 2 * t)
+
+function getFocus(frameIndex: number) {
+  const kfs = FOCUS_KEYFRAMES
+  if (frameIndex <= kfs[0].frame) return kfs[0]
+  for (let i = 0; i < kfs.length - 1; i++) {
+    const a = kfs[i]
+    const b = kfs[i + 1]
+    if (frameIndex >= a.frame && frameIndex <= b.frame) {
+      const t = smoothstep((frameIndex - a.frame) / (b.frame - a.frame))
+      return { x: lerp(a.x, b.x, t), y: lerp(a.y, b.y, t), scale: lerp(a.scale, b.scale, t) }
+    }
+  }
+  return kfs[kfs.length - 1]
+}
+
 export default function Hero({ data }: { data?: HomePage['hero'] }) {
   const wordmarkPart1 = data?.wordmarkPart1 || 'SLATE'
   const wordmarkPart2 = data?.wordmarkPart2 || 'CINEMA'
@@ -134,12 +189,11 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
     // ImageBitmaps live on the GPU side so drawImage() is near-zero cost.
     // Canvas is sized to the actual viewport (not a fixed 1920x1080) so
     // nothing is ever zoomed in.
-    // zoom: 1 = full cover fit (the "just scrolled into view" start state),
-    // 0 = full contain fit (nothing cropped, the "normal viewing" end
-    // state) -- interpolated between the two as the user scrolls, see the
-    // paired scrollTl tween below. Only meaningful in portrait; ignored on
-    // desktop/landscape, which always renders a plain cover fit.
-    const renderFrame = (index: number, zoom: number = 1) => {
+    // Portrait pan/scale is driven entirely by frame index via
+    // getFocus/FOCUS_KEYFRAMES above -- see the big comment there. Only
+    // meaningful in portrait; ignored on desktop/landscape, which always
+    // renders a plain cover fit.
+    const renderFrame = (index: number) => {
       currentFrameRef.current = index
       const bmp = bitmapsRef.current[index]
       if (!bmp) return
@@ -194,34 +248,30 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
         )
         ctx.filter = 'none'
 
-        // 2026-08-27: "more zoomed out so it's displayed in normal
-        // complete size" -- the 0.62x-off-cover reduction above still
-        // cropped some of the image (any factor derived from cover-fit
-        // does, unless it happens to cross fully into contain territory)
-        // while also not filling either dimension exactly, an odd
-        // in-between. A true contain fit (min, not max, of the two
-        // ratios) is the actual "show the whole thing, nothing cropped"
-        // fit -- the image's larger-relative dimension exactly matches
-        // the canvas, the smaller one has room on both sides, filled by
-        // the blurred backdrop showing through underneath rather than
-        // empty/transparent canvas.
-        //
-        // Same-day follow-up: "starts off full scaled and then zooms out
-        // as you scroll... becomes the normal viewing for full sized
-        // video." zoom=1 (scroll not yet reached this section, or just
-        // arrived) resolves to coverScale -- the tight, fully-scaled-in
-        // fit; zoom=0 (scrolled through) resolves to containScale -- the
-        // complete, uncropped fit above. Linear blend between the two,
-        // driven by the paired tween on playhead.zoom below.
-        const containScale = Math.min(pw / bmp.width, ph / bmp.height)
-        const fgScale = containScale + (coverScale - containScale) * zoom
-        ctx.drawImage(
-          bmp,
-          (pw - bmp.width * fgScale) / 2,
-          (ph - bmp.height * fgScale) / 2,
-          bmp.width * fgScale,
-          bmp.height * fgScale
-        )
+        // 2026-08-27 follow-up -- "keyframe it so main focus of video
+        // moves throughout... so it can be fully zoomed into fit display
+        // area": rather than blending toward a single flat contain-fit
+        // (which meant this sat *small and letterboxed* for ~90% of the
+        // sequence -- the "loses immersion" complaint), scale and crop
+        // position now both come from getFocus(index), hand-placed
+        // against what's actually in frame at that point in the footage
+        // (see FOCUS_KEYFRAMES above). scale of 1 = tight cover, no gap;
+        // lower values ease slightly toward contain, same "blurred
+        // backdrop shows through the edges" mechanism as before, just
+        // driven by frame content instead of scroll progress.
+        const { x: focusX, y: focusY, scale: focusScale } = getFocus(index)
+        const fgScale = coverScale * focusScale
+        const drawW = bmp.width * fgScale
+        const drawH = bmp.height * fgScale
+        // How much room the crop window has to travel before it would
+        // reveal empty canvas on that axis. When there's no room (this
+        // scale doesn't fully cover that axis), fall back to centering --
+        // same as the plain cover draw below, just per-axis.
+        const xSlack = drawW - pw
+        const ySlack = drawH - ph
+        const dx = xSlack > 0 ? -xSlack * focusX : (pw - drawW) / 2
+        const dy = ySlack > 0 ? -ySlack * focusY : (ph - drawH) / 2
+        ctx.drawImage(bmp, dx, dy, drawW, drawH)
       } else {
         // Landscape/desktop untouched -- never needed this treatment.
         ctx.drawImage(
@@ -263,11 +313,10 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
       )
 
       // --- 2. SCROLL ANIMATION ---
-      // zoom starts at 1 (full scaled/cover, matching the very first
-      // renderFrame(0) call's default) and animates to 0 (full contain,
-      // "normal viewing") in lockstep with the frame sequence itself --
-      // see the paired scrollTl tween below and renderFrame's zoom param.
-      const playhead = { frame: 0, zoom: 1 }
+      // Pan/scale no longer live on playhead -- they're derived straight
+      // from the frame index every draw (getFocus, see above), so this
+      // only needs to drive the frame itself.
+      const playhead = { frame: 0 }
 
       // Once the user has scrolled halfway through the frame sequence,
       // finish the ride for them — auto-advance the rest of the way so
@@ -343,33 +392,10 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
           snap: 'frame',
           ease: 'power2.in',
           duration: 0.82,
-          onUpdate: () => renderFrame(Math.round(playhead.frame), playhead.zoom),
+          onUpdate: () => renderFrame(Math.round(playhead.frame)),
         },
         0.18
       )
-
-      // C2. Zoom-out — a separate, much faster tween on the same object
-      // than the frame advance above. 2026-08-27 follow-up: "after like
-      // 10% into second video it needs to be fully zoomed out" -- sharing
-      // one tween/ease with the frame advance (as it did originally) made
-      // zoom trail the slow start of power2.in, so it was still mostly
-      // scaled-in well past 10% of the sequence. This completes on its
-      // own, independent schedule: zoom reaches 0 after just 10% of the
-      // frame sequence's own duration (0.82 * 0.1), fast and front-
-      // loaded (power2.out), while the frame advance above keeps playing
-      // out over its full original duration untouched. Same start point
-      // (0.18) as the frame tween so both begin together.
-      scrollTl.to(
-        playhead,
-        {
-          zoom: 0,
-          ease: 'power2.out',
-          duration: 0.82 * 0.1,
-          onUpdate: () => renderFrame(Math.round(playhead.frame), playhead.zoom),
-        },
-        0.18
-      )
-
 
     }, containerRef)
 
