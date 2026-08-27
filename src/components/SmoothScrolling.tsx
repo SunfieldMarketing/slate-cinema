@@ -50,7 +50,30 @@ export default function SmoothScrolling({ children }: { children: React.ReactNod
   }, [])
 
   return (
-    <ReactLenis ref={lenisRef} autoRaf={false} root options={{ lerp: 0.1, smoothWheel: true, syncTouch: true }}>
+    <ReactLenis
+      ref={lenisRef}
+      autoRaf={false}
+      root
+      options={{
+        lerp: 0.1,
+        smoothWheel: true,
+        syncTouch: true,
+        // 2026-08-27, "mobile scroll wheel timing is too fast": syncTouch
+        // makes touch scrolling track the finger closely rather than
+        // applying the same smoothing as mouse-wheel input, which is what
+        // was making it feel raw/fast on phones. touchMultiplier scales
+        // how much scroll distance a given swipe produces (Lenis default
+        // 1); syncTouchLerp is the easing used specifically while
+        // syncTouch is active (Lenis default 0.075, i.e. very close to
+        // instant) -- raising it smooths out how quickly scroll position
+        // catches up to the finger, without turning touch scroll back
+        // into the janky/laggy feel syncTouch exists to avoid. Both are
+        // real, tunable values -- flag if this reads as still too fast
+        // or now too slow and it's a one-line adjustment either way.
+        touchMultiplier: 0.7,
+        syncTouchLerp: 0.15,
+      }}
+    >
       {children as any}
     </ReactLenis>
   )

@@ -180,11 +180,63 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
         canvas.height = ph
       }
 
-      // Object-cover: scale the bitmap to fill the canvas while maintaining aspect ratio
-      const scale = Math.max(pw / bmp.width, ph / bmp.height)
-      const dx = (pw - bmp.width * scale) / 2
-      const dy = (ph - bmp.height * scale) / 2
-      ctx.drawImage(bmp, dx, dy, bmp.width * scale, bmp.height * scale)
+      // Object-cover: scale the bitmap to fill the canvas while maintaining aspect ratio.
+      // 2026-08-27: on a portrait/narrow viewport, a straight cover-fit crops
+      // this frame sequence's actual subject (someone holding/operating a
+      // camera) down to an unrecognizable close-up on the gear -- same
+      // "cover on the wrong aspect ratio" problem the hero video had, just
+      // in a canvas instead of a video box. Zooming out from a tight cover
+      // fit (rather than switching to a full contain fit, which would
+      // letterbox) shows enough of the actual subject to read clearly while
+      // still filling most of the frame. Landscape/desktop is untouched --
+      // this was never cropped tight there in the first place.
+      const isPortrait = pw / ph < 16 / 9
+      const coverScale = Math.max(pw / bmp.width, ph / bmp.height)
+      ctx.clearRect(0, 0, pw, ph)
+
+      if (isPortrait) {
+        // 2026-08-27: on request, this now fills the entire canvas AND
+        // shows the full subject clearly -- two things that directly
+        // trade off for a single layer (filling more of a portrait
+        // screen with a fixed-ratio image only ever means cropping more
+        // of it). Resolved with two draws instead of one: a blurred,
+        // full-cover copy fills the whole canvas as backdrop (satisfies
+        // "fills the display"), then the same bitmap is drawn again,
+        // crisp and zoomed out from a tight cover fit, on top of it
+        // (satisfies "let me see the whole subject"). Same bitmap both
+        // times -- no extra decode or network cost, this is cheap.
+        ctx.filter = 'blur(24px)'
+        // Oversized slightly (1.15x) beyond a plain cover fit so the
+        // blur radius never reveals a sliver of empty canvas at the
+        // edges.
+        const bgScale = coverScale * 1.15
+        ctx.drawImage(
+          bmp,
+          (pw - bmp.width * bgScale) / 2,
+          (ph - bmp.height * bgScale) / 2,
+          bmp.width * bgScale,
+          bmp.height * bgScale
+        )
+        ctx.filter = 'none'
+
+        const fgScale = coverScale * 0.62
+        ctx.drawImage(
+          bmp,
+          (pw - bmp.width * fgScale) / 2,
+          (ph - bmp.height * fgScale) / 2,
+          bmp.width * fgScale,
+          bmp.height * fgScale
+        )
+      } else {
+        // Landscape/desktop untouched -- never needed this treatment.
+        ctx.drawImage(
+          bmp,
+          (pw - bmp.width * coverScale) / 2,
+          (ph - bmp.height * coverScale) / 2,
+          bmp.width * coverScale,
+          bmp.height * coverScale
+        )
+      }
     }
 
     // Try to draw first frame immediately (it will retry onUpdate if not loaded yet)
@@ -347,14 +399,66 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
                 h-screen sizing); the portrait box just needs its own
                 natural zero-crop height (width x 9/16), anchored to the
                 top instead of centered, since it's deliberately not
-                trying to fill the whole section anymore. */}
+                trying to fill the whole section anymore. 2026-08-27: the
+                zero-crop version read as too thin/minor against the
+                section -- bumped the banner to a fixed 42vh (up from
+                ~26vh at zero crop) and centered it horizontally instead
+                of left-aligned, so it fills noticeably more of the hero
+                while keeping real 16:9 proportions (42vh tall x 74.67vh
+                wide, the same ratio, just bigger and overflowing the
+                sides symmetrically -- the outer wrapper's overflow-hidden
+                clips it). That's a real, deliberate crop again (~38% of
+                the frame's width now, not 0%) -- a considered middle
+                ground between "shows the whole shot" and "reads as a
+                real hero banner," not the original 74% crop this was
+                built to fix. */}
+            {/* Blurred full-bleed backdrop, portrait only -- added
+                2026-08-27 on request: "fills the entire display area"
+                AND "shows the whole shot" are two things that directly
+                trade off for a single video layer (filling more of a
+                portrait screen only ever means cropping the sides more).
+                Resolved with two layers instead of one, like the canvas
+                sequence below gets: this backdrop is a second Vimeo
+                embed of the same video, sized with the same always-cover
+                math the desktop version uses (so it fills the entire
+                section, edge to edge, top to bottom), blurred so its own
+                heavy crop is never legible -- it's reading as color/
+                motion, not a competing crisp version of the shot. The
+                crisp, low-crop banner (unchanged, still built for "see
+                the whole shot") sits on top of it. This is a second live
+                embed of the same video, not a free CSS trick -- it's a
+                real, if modest, extra bit of bandwidth on the Vimeo
+                account for mobile visitors specifically, worth knowing
+                about. */}
+            {isPortraitBanner && (
+              <div
+                className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-w-[177.78vh] min-h-[100vh] -translate-x-1/2 -translate-y-1/2 opacity-40 mix-blend-screen"
+                style={{ filter: 'blur(40px)' }}
+              >
+                <SmartVideo
+                  src="/videos/hero.mp4"
+                  vimeo={HERO_MASTER_REEL_VIMEO_ID}
+                  variant="background"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
             <div
               ref={videoBoxRef}
               className={
                 isPortraitBanner
-                  ? 'absolute top-0 left-0 w-full h-[56.25vw]'
+                  ? 'absolute top-0 left-1/2 w-[74.67vh] h-[42vh] -translate-x-1/2'
                   : 'absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-w-[177.78vh] min-h-[100vh] -translate-x-1/2 -translate-y-1/2'
               }
+              // Fades the crisp banner's own bottom edge to transparent so
+              // it dissolves into the blurred backdrop behind it instead
+              // of cutting off hard -- replaced a flat "fade to solid
+              // bg-ink" div (which would paint over the backdrop and
+              // undo the point of adding it) once the backdrop above made
+              // this a real gradient blend instead of a hard edge to
+              // hide. Landscape/desktop has no backdrop layer, so no mask
+              // there either.
+              style={isPortraitBanner ? { maskImage: 'linear-gradient(to bottom, black 0%, black 65%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 65%, transparent 100%)' } : undefined}
             >
               <SmartVideo
                 src="/videos/hero.mp4"
@@ -364,15 +468,6 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
                 className="w-full h-full object-cover"
               />
             </div>
-            {/* Fades the banner's own bottom edge into bg-ink so it reads
-                as an intentional header treatment rather than a hard-
-                edged inserted card (the mistake in the reverted
-                2026-08-26 attempt) -- sized to the banner's own height,
-                not the section's, so it always meets the video's actual
-                bottom edge regardless of viewport width. */}
-            {isPortraitBanner && (
-              <div className="absolute top-0 left-0 w-full h-[56.25vw] bg-gradient-to-b from-transparent via-transparent to-ink pointer-events-none" />
-            )}
           </div>
           {!isPortraitBanner && (
             <div className="absolute inset-0 z-0 bg-gradient-to-b from-ink/80 via-transparent to-ink/80 pointer-events-none" />
