@@ -130,8 +130,21 @@ export default function MediaVoid({ data }: { data?: HomePage['mediaVoid'] }) {
         </svg>
       </div>
 
-      {/* Floating media thumbnails at different depths */}
-      <div className="absolute inset-0 z-0" style={{ transformStyle: 'preserve-3d' }}>
+      {/* Floating media thumbnails at different depths -- hidden below md
+          (found 2026-08-26 mobile audit, confirmed by a real screenshot):
+          each thumbnail is a fixed pixel width (144-208px) positioned by
+          percentage offset, sized for a wide desktop canvas where there's
+          room to float around the centered text without touching it. On
+          a 375px phone, e.g. left-[10%] (37.5px) + w-44 (176px) reaches
+          x=213.5 -- deep into the same centered column the text occupies
+          -- and since the text layer has no solid background (just
+          colored words), it renders directly overlapping a busy photo
+          instead of floating clear of it. There's no room on a phone-
+          width screen to reposition four of these without the same
+          collision recurring in some other arrangement, so this
+          decorative flourish is desktop-only; the text-assembly effect
+          itself (the actual message) still plays in full on mobile. */}
+      <div className="hidden md:block absolute inset-0 z-0" style={{ transformStyle: 'preserve-3d' }}>
         {[
           { src: '/images/mediavoid_team_bright.webp', cls: 'top-[15%] left-[10%] w-44 h-28' },
           { src: '/images/mediavoid_creative_bright.webp', cls: 'top-[55%] right-[12%] w-52 h-32' },
