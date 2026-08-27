@@ -198,10 +198,11 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
       // --- 2. SCROLL ANIMATION ---
       const playhead = { frame: 0 }
 
-      // Once the user has scrolled roughly two-thirds of the way through the
-      // frame sequence, finish the ride for them — auto-advance the rest of
-      // the way so the last third flows straight into the next section
-      // instead of demanding more manual scrolling. Debounced: real wheel
+      // Once the user has scrolled halfway through the frame sequence,
+      // finish the ride for them — auto-advance the rest of the way so
+      // the back half flows straight into the next section instead of
+      // demanding more manual scrolling (lowered from two-thirds to half
+      // per 2026-08-27 request). Debounced: real wheel
       // input fires onUpdate continuously while the user is actively
       // scrolling, and each of those ticks would otherwise re-target Lenis'
       // own wheel-driven scroll and cancel a scrollTo call made mid-gesture.
@@ -224,7 +225,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
           anticipatePin: 1,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
-            if (self.progress < 0.65) {
+            if (self.progress < 0.5) {
               autoAdvanced = false
               if (autoAdvanceTimer) {
                 clearTimeout(autoAdvanceTimer)
@@ -363,7 +364,16 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
             </div>
 
             {/* Subtitle */}
-            <p data-cms-field="hero.subtitle" className="hero-subtitle text-xs md:text-sm font-mono tracking-[0.4em] text-white/50 uppercase mb-12">
+            {/* text-center added 2026-08-27: on mobile this wraps to 2
+                lines (its own max-content width, at 0.4em letter-tracking,
+                exceeds a phone viewport), and without an explicit
+                text-align the paragraph's auto-width flex sizing clamps
+                to the full available width once wrapping starts -- so
+                each wrapped line defaulted to flush-left inside that
+                full-width box instead of centering under the wordmark
+                above it (confirmed live: computed text-align was "start",
+                not "center"). */}
+            <p data-cms-field="hero.subtitle" className="hero-subtitle text-xs md:text-sm font-mono tracking-[0.4em] text-white/50 uppercase mb-12 text-center">
               {subtitle}
             </p>
 

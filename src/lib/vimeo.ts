@@ -38,7 +38,22 @@ export function extractVimeoId(input?: string | null): string | null {
 export function vimeoEmbedUrl(id: string, variant: 'background' | 'player' = 'background') {
   const params =
     variant === 'background'
-      ? 'background=1&autoplay=1&loop=1&muted=1&byline=0&title=0&portrait=0'
+      // quality=1080p -- added 2026-08-27 per "video looks blurry, not
+      // crisp 1080p" report. This is a real, documented Vimeo Player
+      // parameter, but Vimeo's own docs note it's only honored for Pro/
+      // Business/Premium accounts -- this uploader's account is Plus
+      // (confirmed via the oEmbed API: "account_type":"plus"), one tier
+      // below where Vimeo guarantees it takes effect, so this may be a
+      // no-op depending on how Vimeo treats Plus specifically. Harmless
+      // either way -- Vimeo ignores parameters it doesn't act on -- and
+      // is the only lever available here: the actual resolution/bitrate
+      // Vimeo's player decides to serve for a muted background=1 embed
+      // can't be inspected from this app (cross-origin iframe -- the
+      // player's own network requests aren't visible to us), and the
+      // video's own opacity-40 + mix-blend-screen treatment (see
+      // Hero.tsx) makes any footage look softer/hazier by design,
+      // independent of its actual encoded resolution.
+      ? 'background=1&autoplay=1&loop=1&muted=1&byline=0&title=0&portrait=0&quality=1080p'
       : 'byline=0&title=0&portrait=0&dnt=1'
   return `https://player.vimeo.com/video/${id}?${params}`
 }
