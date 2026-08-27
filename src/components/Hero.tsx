@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -32,11 +32,6 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const scrollHintRef = useRef<HTMLDivElement>(null)
   const timecodeRef = useRef<HTMLSpanElement>(null)
-  const videoBoxRef = useRef<HTMLDivElement>(null)
-  // True on any viewport taller/narrower than the video's native 16:9
-  // (effectively every phone, and most tablets in portrait). See the
-  // effect below for why this exists and what it changes.
-  const [isPortraitBanner, setIsPortraitBanner] = useState(false)
 
   // No preload() call for /videos/hero.mp4 here -- that file is only the
   // SmartVideo fallback for if HERO_MASTER_REEL_VIMEO_ID above is ever
@@ -52,31 +47,6 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
-
-  // 2026-08-26: a capped/centered version of this video was tried to
-  // reduce mobile crop, but it read as a broken, disconnected video
-  // "card" floating above the hero text and was reverted. 2026-08-27:
-  // a real phone screenshot showed why the crop itself still needed
-  // fixing -- on a 390x844 phone, always-cover against a 16:9 source
-  // needs the video to be ~3.85x the viewport's own width, meaning only
-  // ~26% of the frame's width is ever visible (confirmed by measuring
-  // the previous attempt's numbers the same way). This time: rather
-  // than shrinking the video into a smaller box floating mid-section
-  // (that's what read as "broken" before), it becomes a full-width
-  // photo-banner pinned to the TOP of the hero at its natural,
-  // zero-crop height (width x 9/16) -- the entire frame is visible,
-  // edge to edge horizontally -- and fades into the section's own
-  // bg-ink via the gradient added below, so it reads as an intentional
-  // header treatment rather than an inserted card. Desktop/landscape
-  // (ratio >= 16/9, where the current always-cover approach never
-  // needed much crop in the first place) is completely untouched.
-  useEffect(() => {
-    const check = () => setIsPortraitBanner(window.innerWidth / window.innerHeight < 16 / 9)
-    check()
-    window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
-  }, [])
-
 
   // Fade scroll hint arrow out as user scrolls
   useEffect(() => {
@@ -378,100 +348,39 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
         <div className="hero-html-content absolute inset-0 z-20">
 
           {/* Background video -- real master reel, falls back to the
-              local file if the Vimeo ID is ever cleared. Two modes:
-              - Landscape/desktop (default): full-bleed "cover", dimmed
-                to opacity-40 + mix-blend-screen as ambient depth behind
-                the bold overlaid text -- unchanged from before.
-              - Portrait (isPortraitBanner, effectively every phone):
-                shown at full visibility/clarity as a top-anchored,
-                zero-horizontal-crop banner instead -- see the effect
-                above for why. Not dimmed here, since it's no longer
-                sharing space with overlaid text the way the full-bleed
-                version does; the hero text sits below it in the plain
-                bg-ink area instead. */}
-          <div className={`absolute inset-0 z-0 pointer-events-none overflow-hidden ${isPortraitBanner ? '' : 'mix-blend-screen opacity-40'}`}>
+              local file if the Vimeo ID is ever cleared. 2026-08-27:
+              reverted to one plain, unconditional treatment on every
+              viewport, same as desktop always had -- full-bleed "cover",
+              dimmed to opacity-40 + mix-blend-screen as ambient depth
+              behind the bold overlaid text. Mobile went through several
+              different treatments today (zero-crop top banner, then a
+              bigger banner, then a blurred-backdrop+crisp-foreground
+              version) chasing "show the whole shot" vs. "fill the
+              screen" -- explicitly reverted per request in favor of
+              keeping this video simple everywhere and putting the
+              blurred-backdrop treatment on the canvas frame-sequence
+              below instead, where it's free (same bitmap drawn twice)
+              rather than a second live Vimeo embed. */}
+          <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden mix-blend-screen opacity-40">
             {/* object-cover alone doesn't do anything on the Vimeo iframe
                 path -- object-fit only affects replaced elements like
                 <video>/<img>, not iframe content, so the video was
-                letterboxing inside its box instead of filling it. The
-                landscape box uses the standard vw/vh "oversize" cover
-                technique (assumes a 16:9 source, matching this section's
-                h-screen sizing); the portrait box just needs its own
-                natural zero-crop height (width x 9/16), anchored to the
-                top instead of centered, since it's deliberately not
-                trying to fill the whole section anymore. 2026-08-27: the
-                zero-crop version read as too thin/minor against the
-                section -- bumped the banner to a fixed 42vh (up from
-                ~26vh at zero crop) and centered it horizontally instead
-                of left-aligned, so it fills noticeably more of the hero
-                while keeping real 16:9 proportions (42vh tall x 74.67vh
-                wide, the same ratio, just bigger and overflowing the
-                sides symmetrically -- the outer wrapper's overflow-hidden
-                clips it). That's a real, deliberate crop again (~38% of
-                the frame's width now, not 0%) -- a considered middle
-                ground between "shows the whole shot" and "reads as a
-                real hero banner," not the original 74% crop this was
-                built to fix. */}
-            {/* Blurred full-bleed backdrop, portrait only -- added
-                2026-08-27 on request: "fills the entire display area"
-                AND "shows the whole shot" are two things that directly
-                trade off for a single video layer (filling more of a
-                portrait screen only ever means cropping the sides more).
-                Resolved with two layers instead of one, like the canvas
-                sequence below gets: this backdrop is a second Vimeo
-                embed of the same video, sized with the same always-cover
-                math the desktop version uses (so it fills the entire
-                section, edge to edge, top to bottom), blurred so its own
-                heavy crop is never legible -- it's reading as color/
-                motion, not a competing crisp version of the shot. The
-                crisp, low-crop banner (unchanged, still built for "see
-                the whole shot") sits on top of it. This is a second live
-                embed of the same video, not a free CSS trick -- it's a
-                real, if modest, extra bit of bandwidth on the Vimeo
-                account for mobile visitors specifically, worth knowing
-                about. */}
-            {isPortraitBanner && (
-              <div
-                className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-w-[177.78vh] min-h-[100vh] -translate-x-1/2 -translate-y-1/2 opacity-40 mix-blend-screen"
-                style={{ filter: 'blur(40px)' }}
-              >
-                <SmartVideo
-                  src="/videos/hero.mp4"
-                  vimeo={HERO_MASTER_REEL_VIMEO_ID}
-                  variant="background"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
-            <div
-              ref={videoBoxRef}
-              className={
-                isPortraitBanner
-                  ? 'absolute top-0 left-1/2 w-[74.67vh] h-[42vh] -translate-x-1/2'
-                  : 'absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-w-[177.78vh] min-h-[100vh] -translate-x-1/2 -translate-y-1/2'
-              }
-              // Fades the crisp banner's own bottom edge to transparent so
-              // it dissolves into the blurred backdrop behind it instead
-              // of cutting off hard -- replaced a flat "fade to solid
-              // bg-ink" div (which would paint over the backdrop and
-              // undo the point of adding it) once the backdrop above made
-              // this a real gradient blend instead of a hard edge to
-              // hide. Landscape/desktop has no backdrop layer, so no mask
-              // there either.
-              style={isPortraitBanner ? { maskImage: 'linear-gradient(to bottom, black 0%, black 65%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 65%, transparent 100%)' } : undefined}
-            >
-              <SmartVideo
-                src="/videos/hero.mp4"
-                vimeo={HERO_MASTER_REEL_VIMEO_ID}
-                variant="background"
-                priority
-                className="w-full h-full object-cover"
-              />
-            </div>
+                letterboxing inside its box instead of filling it. Fixed
+                with the standard vw/vh "oversize" cover technique (safe
+                for the <video> fallback too -- object-cover still crops
+                it correctly regardless of the box's exact size). Assumes
+                a 16:9 source, the standard ratio for this kind of reel;
+                this section is h-screen so vw/vh here really does match
+                the container, not just the viewport coincidentally. */}
+            <SmartVideo
+              src="/videos/hero.mp4"
+              vimeo={HERO_MASTER_REEL_VIMEO_ID}
+              variant="background"
+              priority
+              className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-w-[177.78vh] min-h-[100vh] object-cover -translate-x-1/2 -translate-y-1/2"
+            />
           </div>
-          {!isPortraitBanner && (
-            <div className="absolute inset-0 z-0 bg-gradient-to-b from-ink/80 via-transparent to-ink/80 pointer-events-none" />
-          )}
+          <div className="absolute inset-0 z-0 bg-gradient-to-b from-ink/80 via-transparent to-ink/80 pointer-events-none" />
 
           {/* Main content — centered hero text and CTAs */}
           <div className="hero-content absolute inset-0 z-10 flex flex-col items-center justify-center">
