@@ -32,7 +32,6 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const scrollHintRef = useRef<HTMLDivElement>(null)
   const timecodeRef = useRef<HTMLSpanElement>(null)
-  const videoBoxRef = useRef<HTMLDivElement>(null)
 
   // No preload() call for /videos/hero.mp4 here -- that file is only the
   // SmartVideo fallback for if HERO_MASTER_REEL_VIMEO_ID above is ever
@@ -49,57 +48,14 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
     window.scrollTo(0, 0)
   }, [])
 
-  // Caps how far the background video is allowed to oversize past the
-  // viewport in order to "cover" it with zero letterbox, given its real
-  // ~16:9 source (confirmed via Vimeo's own oEmbed for
-  // HERO_MASTER_REEL_VIMEO_ID: 426x240 = 1.775, essentially exactly
-  // 16:9). Uncapped, that guarantee needs the box to be up to ~3.85x the
-  // viewport's own width on a typical mobile-portrait screen (375x812) --
-  // i.e. cropping away 74% of the frame horizontally on every phone
-  // visit, which is what "the hero video seems too zoomed in" (reported
-  // 2026-08-26) actually was: not a sizing bug, just how aggressive
-  // "always cover, never letterbox" gets once a 16:9 source meets a much
-  // taller viewport. Past this cap, a modest letterbox band is accepted
-  // instead of cropping further -- it reads as the video sitting in a
-  // defined band rather than as broken bars, since it's already dimmed
-  // to opacity-40 and screen-blended over this section's near-black
-  // bg-ink background (see the wrapping div's className below), and the
-  // existing top/bottom gradient overlay already softens the transition.
-  // Typical desktop/laptop aspect ratios (16:9, 16:10, 3:2) never need
-  // anywhere near this much oversize in the first place, so they're
-  // completely unaffected -- this only ever engages on unusually
-  // tall/narrow viewports.
-  useEffect(() => {
-    const el = videoBoxRef.current
-    if (!el) return
-    const MAX_OVERSIZE = 1.6
-    const apply = () => {
-      const vw = window.innerWidth
-      const vh = window.innerHeight
-      const naturalW = Math.max(vw, (vh * 16) / 9)
-      const naturalH = Math.max(vh, (vw * 9) / 16)
-      const oversize = Math.max(naturalW / vw, naturalH / vh)
-      const scale = oversize > MAX_OVERSIZE ? MAX_OVERSIZE / oversize : 1
-      // min-width/min-height ALWAYS win over width/height when larger --
-      // that's the exact mechanism the uncapped fallback classes below
-      // rely on (w-[100vw] + min-w-[177.78vh], etc). Setting inline
-      // width/height alone can raise the box's size but can never SHRINK
-      // it back down below whatever those classes' min-width/min-height
-      // still specify, so scaling below the natural (uncapped) size
-      // requires overriding min-width/min-height inline too -- an inline
-      // style always beats a class for the same property regardless of
-      // which one is more specific-looking.
-      const w = naturalW * scale
-      const h = naturalH * scale
-      el.style.width = `${w}px`
-      el.style.height = `${h}px`
-      el.style.minWidth = `${w}px`
-      el.style.minHeight = `${h}px`
-    }
-    apply()
-    window.addEventListener('resize', apply)
-    return () => window.removeEventListener('resize', apply)
-  }, [])
+  // Reverted 2026-08-26 -- a capped/letterboxed version of this video was
+  // shipped briefly to reduce mobile crop (see git history), but real
+  // feedback with a screenshot showed it reads as a broken, cropped
+  // insert (a visible rectangular video "card" sitting above the hero
+  // text) rather than an intentional band -- full-bleed cover, even with
+  // its inherent crop on very tall/narrow viewports, looks correct where
+  // letterboxing does not for this design. Back to always-cover,
+  // zero-letterbox via the wrapper's own vw/vh classes below.
 
 
   // Fade scroll hint arrow out as user scrolls
@@ -351,31 +307,24 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
           {/* Background video at low opacity for visual depth -- real
               master reel, falls back to the local file if the Vimeo ID
               is ever cleared */}
-          <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden mix-blend-screen opacity-40 bg-ink">
+          <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden mix-blend-screen opacity-40">
             {/* object-cover alone doesn't do anything on the Vimeo iframe
                 path -- object-fit only affects replaced elements like
                 <video>/<img>, not iframe content, so the video was
                 letterboxing inside its box instead of filling it. Fixed
                 with the standard vw/vh "oversize" cover technique (safe
                 for the <video> fallback too -- object-cover still crops
-                it correctly regardless of the box's exact size). The
-                Tailwind classes here are the pre-hydration/SSR fallback
-                (uncapped -- matches this section's h-screen exactly, so
-                vw/vh really does match the container on first paint);
-                the videoBoxRef effect above overrides width/height with
-                the capped values once mounted, and on every resize. */}
-            <div
-              ref={videoBoxRef}
-              className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-w-[177.78vh] min-h-[100vh] -translate-x-1/2 -translate-y-1/2"
-            >
-              <SmartVideo
-                src="/videos/hero.mp4"
-                vimeo={HERO_MASTER_REEL_VIMEO_ID}
-                variant="background"
-                priority
-                className="w-full h-full object-cover"
-              />
-            </div>
+                it correctly regardless of the box's exact size). Assumes
+                a 16:9 source, the standard ratio for this kind of reel;
+                this section is h-screen so vw/vh here really does match
+                the container, not just the viewport coincidentally. */}
+            <SmartVideo
+              src="/videos/hero.mp4"
+              vimeo={HERO_MASTER_REEL_VIMEO_ID}
+              variant="background"
+              priority
+              className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-w-[177.78vh] min-h-[100vh] object-cover -translate-x-1/2 -translate-y-1/2"
+            />
           </div>
           <div className="absolute inset-0 z-0 bg-gradient-to-b from-ink/80 via-transparent to-ink/80 pointer-events-none" />
 
