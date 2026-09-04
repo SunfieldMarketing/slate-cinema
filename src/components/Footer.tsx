@@ -195,17 +195,17 @@ export default function Footer() {
               <h4 data-cms-field="sitemapColumn.heading" className="text-white font-bold mb-3 uppercase tracking-wider text-sm">{sitemap?.heading || 'Studio'}</h4>
               <div className="flex flex-col gap-2.5">
                 {(sitemap?.links ?? []).map((link, i) => (
-                  <Link key={link.label} href={link.href} data-cms-field={`sitemapColumn.links.${i}.label`} className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">
+                  <Link key={link.label} href={link.href} data-cms-field={`sitemapColumn.links.${i}.label`} className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm py-1.5 -my-1.5">
                     {link.label}
                   </Link>
                 ))}
-                <a href="/contact#get-started" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">
+                <a href="/contact#get-started" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm py-1.5 -my-1.5">
                   Support
                 </a>
-                <a href={bottomBar?.privacyHref || '/privacy-policy'} data-cms-field="bottomBar.privacyHref" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">
+                <a href={bottomBar?.privacyHref || '/privacy-policy'} data-cms-field="bottomBar.privacyHref" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm py-1.5 -my-1.5">
                   Privacy Policy
                 </a>
-                <a href={bottomBar?.termsHref || '/terms-of-service'} data-cms-field="bottomBar.termsHref" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm">
+                <a href={bottomBar?.termsHref || '/terms-of-service'} data-cms-field="bottomBar.termsHref" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm py-1.5 -my-1.5">
                   Terms of Service
                 </a>
               </div>

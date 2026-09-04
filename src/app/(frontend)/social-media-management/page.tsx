@@ -20,7 +20,15 @@ import { getSocialMediaManagementPageGlobal, getSiteSettings } from '@/lib/paylo
   out of sync with the real contact email if that ever changes.
 */
 
+// 2026-09-04 mobile audit: this page (and privacy-policy, terms-of-service --
+// all three brought into the CMS on the same 2026-08-26 pass) had no `title`
+// in its exported metadata, so Next fell back to the root layout's generic
+// "Slate Cinema" for the browser tab / bookmarks / search results, unlike
+// every other page in the app. No CMS field holds an SEO title for this
+// global, so a plain static string here (matching the nav label) is the
+// right fix -- no need for generateMetadata/CMS wiring for this one.
 export const metadata: Metadata = {
+  title: 'Social Media Management | Slate Cinema',
   description:
     "We run social media for businesses that need to focus on operations. Slate Cinema plans, produces, schedules and publishes social content for client businesses across Instagram, Facebook, TikTok, YouTube and X — from one calendar, with one approval step, on the client's own accounts.",
 }

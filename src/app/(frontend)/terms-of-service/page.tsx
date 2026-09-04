@@ -11,9 +11,18 @@ import { getTermsOfServicePageGlobal } from '@/lib/payload-data'
   rationale; same pattern here.
 */
 
-export const metadata: Metadata = {
-  description:
-    'Terms governing use of the Slate Cinema social media management service and the publishing platform that supports it.',
+// 2026-09-04 mobile audit -- see PrivacyPolicyPage's matching comment
+// (src/app/(frontend)/privacy-policy/page.tsx) for the full rationale;
+// same missing-title bug, same fix.
+export async function generateMetadata(): Promise<Metadata> {
+  const draft = (await draftMode()).isEnabled
+  const page = await getTermsOfServicePageGlobal(draft)
+  const title = page?.title || 'Terms of Service'
+  return {
+    title: `${title} | Slate Cinema`,
+    description:
+      'Terms governing use of the Slate Cinema social media management service and the publishing platform that supports it.',
+  }
 }
 
 export default async function TermsOfServicePage() {

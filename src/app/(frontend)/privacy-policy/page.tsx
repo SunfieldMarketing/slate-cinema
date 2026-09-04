@@ -16,9 +16,22 @@ import { getPrivacyPolicyPageGlobal } from '@/lib/payload-data'
   selectors this stylesheet already targets.
 */
 
-export const metadata: Metadata = {
-  description:
-    'How Slate Cinema collects, uses, stores and protects data as part of its social media management service and publishing platform.',
+// 2026-09-04 mobile audit: was a static `metadata` export with no `title`,
+// so the browser tab / bookmarks / search results fell back to the root
+// layout's generic "Slate Cinema" -- meanwhile the page body below already
+// computes a CMS-driven `title` (with the same fallback) for the on-page
+// heading, it just was never connected to the metadata tag. Switched to
+// generateMetadata so both read the same source, matching the pattern
+// journal/[slug] and portfolio/[industry] already use.
+export async function generateMetadata(): Promise<Metadata> {
+  const draft = (await draftMode()).isEnabled
+  const page = await getPrivacyPolicyPageGlobal(draft)
+  const title = page?.title || 'Privacy Policy'
+  return {
+    title: `${title} | Slate Cinema`,
+    description:
+      'How Slate Cinema collects, uses, stores and protects data as part of its social media management service and publishing platform.',
+  }
 }
 
 export default async function PrivacyPolicyPage() {

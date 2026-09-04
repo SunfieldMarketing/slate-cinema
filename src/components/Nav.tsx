@@ -178,8 +178,10 @@ export default function Nav() {
             </Link>
           </div>
 
-          {/* Mobile */}
-          <button className="md:hidden text-white z-50 relative" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          {/* Mobile -- 2026-09-04 mobile audit: p-3 around the 20px icon
+              brings the real tap target to ~44x44, the standard minimum
+              (was a bare 20x20 icon with no hit-area padding at all). */}
+          <button className="md:hidden text-white z-50 relative p-3 -m-3" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
