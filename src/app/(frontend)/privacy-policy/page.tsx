@@ -23,12 +23,16 @@ import { getPrivacyPolicyPageGlobal } from '@/lib/payload-data'
 // heading, it just was never connected to the metadata tag. Switched to
 // generateMetadata so both read the same source, matching the pattern
 // journal/[slug] and portfolio/[industry] already use.
+// NOTE: bare title, no manual "| Slate Cinema" suffix -- the root layout's
+// `template: "%s | Slate Cinema"` already appends that (confirmed live:
+// an earlier version of this fix that included the suffix here rendered
+// as a doubled "Privacy Policy | Slate Cinema | Slate Cinema").
 export async function generateMetadata(): Promise<Metadata> {
   const draft = (await draftMode()).isEnabled
   const page = await getPrivacyPolicyPageGlobal(draft)
   const title = page?.title || 'Privacy Policy'
   return {
-    title: `${title} | Slate Cinema`,
+    title,
     description:
       'How Slate Cinema collects, uses, stores and protects data as part of its social media management service and publishing platform.',
   }
