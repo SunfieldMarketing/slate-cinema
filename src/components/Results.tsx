@@ -11,10 +11,19 @@ gsap.registerPlugin(ScrollTrigger)
 
 export default function Results({ data }: { data?: HomePage['results'] }) {
   const containerRef = useRef<HTMLElement>(null)
-  const viewsTarget = data?.viewsTarget ?? 120000
-  const likesTarget = data?.likesTarget ?? 14352
-  const commentsTarget = data?.commentsTarget ?? 1670
-  const reachPercent = data?.reachPercent || '98.2%'
+  // 2026-09-11: lowered per request -- live CMS values had drifted to
+  // unrealistically inflated figures (130,000,000 views, 17.6M reach,
+  // 1,682,410 likes, 101,187 comments) that read as fake. Both the
+  // fallbacks here and the live CMS data (updated via the API, verified
+  // before/after) now match the requested, more believable numbers.
+  // reachPercent switched from a raw number to a qualitative "Across 4
+  // Platforms" -- the description below already says "Instagram,
+  // Facebook, TikTok and YouTube combined", so this stays consistent
+  // with it (4 platforms) instead of re-inflating a reach figure.
+  const viewsTarget = data?.viewsTarget ?? 130000
+  const likesTarget = data?.likesTarget ?? 16821
+  const commentsTarget = data?.commentsTarget ?? 1001
+  const reachPercent = data?.reachPercent || 'Across 4 Platforms'
   const description =
     data?.description ||
     'Slate Cinema creates content built for the platforms where attention is won or lost in seconds. Every frame, hook, cut, and caption is meticulously shaped to make audiences stop scrolling.'
@@ -200,7 +209,14 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
           <div className="flex flex-wrap gap-6 sm:gap-12 md:gap-20 items-center justify-center text-white/90 text-xl md:text-3xl font-bold mb-10">
             <div className="flex items-center gap-3">
               <Eye className="w-6 h-6 md:w-10 md:h-10 text-[#00AEEF]" />
-              <span data-cms-field="results.reachPercent">{views > 0 ? reachPercent : '0%'}</span>
+              {/* 2026-09-11: the views>0 ? reachPercent : '0%' placeholder
+                  only made sense while reachPercent held an actual
+                  percentage -- it stood in a neutral "0%" until the counter
+                  animation finished. Now that it's a qualitative phrase
+                  ("Across 4 Platforms"), gating it behind the counter would
+                  flash a mismatched "0% Reach" right before it, so this
+                  just renders it directly. */}
+              <span data-cms-field="results.reachPercent">{reachPercent}</span>
               <span className="text-xs text-white/40 font-normal ml-1">Reach</span>
             </div>
             <div className="flex items-center gap-3">
