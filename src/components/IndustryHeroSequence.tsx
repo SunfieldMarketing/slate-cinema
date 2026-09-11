@@ -40,21 +40,32 @@ export default function IndustryHeroSequence({
 
   useEffect(() => {
     let cancelled = false
+    // Captured once -- see Hero.tsx's matching comment: this array's
+    // identity never changes for the component's life (only elements are
+    // mutated in place), so reading it here rather than via
+    // bitmapsRef.current inside the cleanup satisfies the exhaustive-deps
+    // ref-in-cleanup rule without changing behavior.
+    const bitmaps = bitmapsRef.current
     const loadFrame = async (i: number) => {
-      if (cancelled || bitmapsRef.current[i]) return
+      if (cancelled || bitmaps[i]) return
       try {
         const resp = await fetch(`${basePath}${i.toString().padStart(4, '0')}.webp`)
         if (cancelled) return
         const blob = await resp.blob()
         if (cancelled) return
         const bmp = await createImageBitmap(blob)
-        if (!cancelled) {
-          bitmapsRef.current[i] = bmp
-          // First-loaded frame won't have been painted yet — the initial
-          // render attempt fires before this fetch resolves, so re-render
-          // as soon as the bitmap the current playhead needs is ready.
-          if (i === currentFrameRef.current) renderRef.current?.(i)
+        if (cancelled) {
+          // Unmounted (navigated off this industry page) while this
+          // decode was in flight -- close it rather than dropping the
+          // reference, see the cleanup comment below for why.
+          bmp.close()
+          return
         }
+        bitmaps[i] = bmp
+        // First-loaded frame won't have been painted yet — the initial
+        // render attempt fires before this fetch resolves, so re-render
+        // as soon as the bitmap the current playhead needs is ready.
+        if (i === currentFrameRef.current) renderRef.current?.(i)
       } catch {}
     }
 
@@ -71,7 +82,19 @@ export default function IndustryHeroSequence({
       }
     }
     loadAll()
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+      // 2026-09-11 -- same fix as Hero.tsx's matching cleanup, see that
+      // comment for the full rationale: every decoded ImageBitmap here
+      // holds real backing pixel memory that a dropped JS reference alone
+      // doesn't promptly release. This mounts fresh on every industry page
+      // (9 of them, 169 frames each) -- clicking through a few of them
+      // without this compounded the leak even faster than just revisiting
+      // Home, and matches Levi's "crashes when you keep trying to go
+      // through the site" report.
+      for (const bmp of bitmaps) bmp?.close()
+      bitmaps.fill(null)
+    }
   }, [basePath, frameCount])
 
   useEffect(() => {

@@ -137,19 +137,30 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
 
   useEffect(() => {
     let cancelled = false
+    // Captured once -- this array's identity never changes for the life of
+    // the component (only its elements are mutated in place), so reading
+    // it here rather than via bitmapsRef.current inside the cleanup below
+    // satisfies the exhaustive-deps ref-in-cleanup rule without changing
+    // any actual behavior.
+    const bitmaps = bitmapsRef.current
 
     const loadFrame = async (i: number) => {
-      if (cancelled || bitmapsRef.current[i]) return
+      if (cancelled || bitmaps[i]) return
       try {
         const resp = await fetch(`/videos/frames/frame_${i.toString().padStart(4, '0')}.webp`)
         if (cancelled) return
         const blob = await resp.blob()
         if (cancelled) return
         const bmp = await createImageBitmap(blob)
-        if (!cancelled) {
-          bitmapsRef.current[i] = bmp
-          loadedCountRef.current++
+        if (cancelled) {
+          // Unmounted while this decode was in flight -- close it rather
+          // than dropping the reference, see the cleanup comment below for
+          // why a bare dropped reference isn't good enough here.
+          bmp.close()
+          return
         }
+        bitmaps[i] = bmp
+        loadedCountRef.current++
       } catch {}
     }
 
@@ -175,7 +186,24 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
       }
     }
     loadAll()
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+      // 2026-09-11 -- Levi reported the site "crashing when you keep
+      // trying to go through the site" on mobile. Root cause: each decoded
+      // ImageBitmap holds real backing pixel memory (~3MB for one of these
+      // 1280x588 frames, ~870MB for the full 291-frame sequence) that a
+      // bare JS reference going out of scope does NOT reliably/promptly
+      // release -- ImageBitmap needs an explicit close() to free its
+      // backing store immediately rather than waiting on GC, which mobile
+      // Safari/Chrome (much lower memory ceiling before a tab gets killed)
+      // may not run before the next allocation. Without this, every time
+      // Hero remounted (navigate away from Home and back) it decoded a
+      // fresh ~870MB set on top of whatever the previous mount's bitmaps
+      // hadn't been collected yet -- a few round trips through the site
+      // and mobile Safari kills the tab.
+      for (const bmp of bitmaps) bmp?.close()
+      bitmaps.fill(null)
+    }
   }, [])
 
   useGSAP(() => {
