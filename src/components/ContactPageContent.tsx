@@ -707,7 +707,11 @@ function StudioLocation({ copy }: { copy?: ContactPage['studioLocation'] }) {
               </div>
               <div className="flex items-start gap-4">
                 <Mail className="w-5 h-5 text-[#22d3ee] mt-0.5 shrink-0" />
-                <a href={`mailto:${email}`} data-cms-field="contact.email" className="text-white/70 text-sm hover:text-[#22d3ee] transition-colors">{email}</a>
+                {/* 2026-09-11 audit: py-1.5 -my-1.5 expands the tap target
+                    to ~32px tall without shifting layout, same trick used
+                    on the footer links (was 150x20, below the ~44/32px
+                    comfortable-tap guideline). */}
+                <a href={`mailto:${email}`} data-cms-field="contact.email" className="text-white/70 text-sm hover:text-[#22d3ee] transition-colors py-1.5 -my-1.5">{email}</a>
               </div>
             </div>
           </div>

@@ -220,10 +220,15 @@ export default function Footer() {
             {bottomBar?.craftedWithLoveText || 'Crafted with love by Slate Cinema'}
             <Heart size={12} className="text-[#00AEEF]" />
           </div>
+          {/* 2026-09-11 audit follow-up: this bottom-bar row has its own
+              separate links from the sitemap column above (different
+              className, missed by that earlier tap-target fix) -- same
+              padding + matching negative margin trick, same reasoning:
+              10px/uppercase text rendered these at only 15px tall. */}
           <div className="flex gap-4">
-            <a href={bottomBar?.privacyHref || '/privacy-policy'} data-cms-field="bottomBar.privacyHref" className="hover:text-white transition-colors">Privacy</a>
-            <a href={bottomBar?.termsHref || '/terms-of-service'} data-cms-field="bottomBar.termsHref" className="hover:text-white transition-colors">Terms</a>
-            <a href={bottomBar?.clientPortalHref || 'https://my.slatecinema.com/'} target="_blank" rel="noopener noreferrer" data-cms-field="bottomBar.clientPortalHref" className="hover:text-[#00AEEF] transition-colors">Client Portal</a>
+            <a href={bottomBar?.privacyHref || '/privacy-policy'} data-cms-field="bottomBar.privacyHref" className="py-1.5 -my-1.5 hover:text-white transition-colors">Privacy</a>
+            <a href={bottomBar?.termsHref || '/terms-of-service'} data-cms-field="bottomBar.termsHref" className="py-1.5 -my-1.5 hover:text-white transition-colors">Terms</a>
+            <a href={bottomBar?.clientPortalHref || 'https://my.slatecinema.com/'} target="_blank" rel="noopener noreferrer" data-cms-field="bottomBar.clientPortalHref" className="py-1.5 -my-1.5 hover:text-[#00AEEF] transition-colors">Client Portal</a>
           </div>
         </div>
 

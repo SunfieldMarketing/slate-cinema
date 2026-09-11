@@ -197,7 +197,11 @@ export default async function SocialMediaManagementPage() {
               <h3 data-cms-field="cta.heading">{cta?.heading || 'One calendar. One approval. Action.'}</h3>
               <p data-cms-field="cta.body">{cta?.body || "Tell us about your business and what you want your social to do — we'll get back to you with a plan."}</p>
               <a className="go" href={cta?.buttonHref || '/schedule-a-call'} data-cms-field="cta.buttonLabel">{cta?.buttonLabel || 'Schedule a call'}</a>
-              <span className="alt"><span data-cms-field="cta.altText">{cta?.altText || 'Or email'}</span> <a href={`mailto:${email}`}>{email}</a></span>
+              {/* 2026-09-11 audit: py-1.5 -my-1.5 expands the email link's
+                  tap target (was 145x20) without disturbing this inline
+                  text's line flow, same trick used elsewhere for these
+                  small utility links. */}
+              <span className="alt"><span data-cms-field="cta.altText">{cta?.altText || 'Or email'}</span> <a href={`mailto:${email}`} className="py-1.5 -my-1.5">{email}</a></span>
             </div>
           </div>
         </section>
