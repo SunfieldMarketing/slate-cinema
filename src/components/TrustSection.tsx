@@ -8,6 +8,7 @@ import { Star } from 'lucide-react'
 import { Marquee } from '@/components/ui/marquee'
 import type { HomePage } from '@/payload-types'
 import { mediaUrl } from '@/lib/media-url'
+import { mobileMediaUrl } from '@/lib/mobile-media'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -34,6 +35,26 @@ const fallbackClients = [
   { src: '/images/clients/lucida-testimonials.webp', alt: 'Lucida', width: 1948, height: 132 },
   { src: '/images/clients/workplace-realty.webp', alt: 'Workplace Realty', width: 1953, height: 114 },
 ]
+
+// Phones get the ~800px sibling of each flagship logo (the originals are up
+// to 3717px wide for a mark drawn ~80px tall). <picture>/<source media> is
+// resolved by the browser before it fetches anything, so unlike a JS swap it
+// can never download the big one first. Jake, 2026-09-18.
+function FlagshipLogo({ name, src }: { name: string; src: string }) {
+  const mobile = mobileMediaUrl(src)
+  return (
+    <picture>
+      {mobile && <source media="(max-width: 767px)" srcSet={mobile} />}
+      <img
+        src={src}
+        alt={name}
+        loading="lazy"
+        decoding="async"
+        className="fc-mark h-16 sm:h-20 w-auto opacity-70 hover:opacity-100 transition-opacity duration-500 [filter:brightness(0)_invert(1)]"
+      />
+    </picture>
+  )
+}
 
 export default function TrustSection({ data }: { data?: HomePage['trustSection'] }) {
   const sectionRef = useRef<HTMLElement>(null)
@@ -75,19 +96,10 @@ export default function TrustSection({ data }: { data?: HomePage['trustSection']
           {flagship.map((f, i) =>
             i === 0 ? (
               <span key={f.name} className="w-full flex justify-center sm:contents">
-                <img
-                  src={f.src}
-                  alt={f.name}
-                  className="fc-mark h-16 sm:h-20 w-auto opacity-70 hover:opacity-100 transition-opacity duration-500 [filter:brightness(0)_invert(1)]"
-                />
+                <FlagshipLogo name={f.name} src={f.src} />
               </span>
             ) : (
-              <img
-                key={f.name}
-                src={f.src}
-                alt={f.name}
-                className="fc-mark h-16 sm:h-20 w-auto opacity-70 hover:opacity-100 transition-opacity duration-500 [filter:brightness(0)_invert(1)]"
-              />
+              <FlagshipLogo key={f.name} name={f.name} src={f.src} />
             )
           )}
         </div>
@@ -111,17 +123,19 @@ export default function TrustSection({ data }: { data?: HomePage['trustSection']
       <div className="mt-8 [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
         <Marquee pauseOnHover className="[--duration:38s] [--gap:4rem]">
           {clients.map((c) => (
-            // eslint-disable-next-line @next/next/no-img-element -- plain
-            // <img>, matching every other image on the site (see
+            // Plain <img>, matching every other image on the site (see
             // TrustBanner.tsx for the matching fix + why: next/image's
             // /_next/image optimizer route was missing its handler file
             // in the deployed Vercel function, 2026-08-20).
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               key={c.src}
               src={c.src}
               alt={c.alt}
               width={c.width}
               height={c.height}
+              loading="lazy"
+              decoding="async"
               className="h-10 sm:h-14 w-auto shrink-0 grayscale opacity-90 hover:opacity-100 hover:grayscale-0 transition-all duration-500"
             />
           ))}

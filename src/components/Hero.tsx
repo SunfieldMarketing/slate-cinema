@@ -7,6 +7,7 @@ import { useGSAP } from '@gsap/react'
 import { scrollState, toTimecode, scrollToY } from '@/lib/scroll'
 import type { HomePage } from '@/payload-types'
 import SmartVideo from '@/components/ui/SmartVideo'
+import { useIsMobile, HERO_MOBILE_VIDEO, HERO_MOBILE_POSTER } from '@/lib/mobile-media'
 
 // Real master reel, per the "CLAUDE INPUT 8/12 -- HOMEPAGE" doc note:
 // "HERO: keep 'Video Marketing At Your Fingertips'. Visual: ... from the
@@ -83,6 +84,11 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
   const ctaHref = data?.ctaHref || '/contact'
   const secondaryCtaLabel = data?.secondaryCtaLabel || 'Watch Our Reel'
   const secondaryCtaHref = data?.secondaryCtaHref || '#reel'
+  // true on phones (<=767px), false otherwise, null until the client knows.
+  // Phones get ONE small <video> instead of the canvas + 291-frame WebP
+  // sequence (see src/lib/mobile-media.ts for why); desktop and tablet are
+  // exactly as before.
+  const isMobile = useIsMobile()
   const containerRef = useRef<HTMLElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const scrollHintRef = useRef<HTMLDivElement>(null)
@@ -142,6 +148,10 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
   const syncWindowRef = useRef<((center: number) => void) | null>(null)
 
   useEffect(() => {
+    // Phones (and the pre-hydration null state) must never touch the frame
+    // sequence -- not one /videos/frames/* request, not one decoded bitmap.
+    // Jake, 2026-09-18: "/videos/frames/* must not be fetched on mobile."
+    if (isMobile !== false) return
     let cancelled = false
     // Captured once -- this array's identity never changes for the life of
     // the component (only its elements are mutated in place), so reading
@@ -264,14 +274,21 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
       for (const bmp of bitmaps) bmp?.close()
       bitmaps.fill(null)
     }
-  }, [])
+  }, [isMobile])
 
   useGSAP(() => {
-    if (!containerRef.current || !canvasRef.current) return
+    // Wait until we know phone vs. not: building the timeline once (instead
+    // of once as "unknown" and again as the real answer) keeps the entrance
+    // animation from replaying.
+    if (isMobile === null) return
+    const mobile = isMobile === true
+    if (!containerRef.current) return
 
+    // On phones there is no canvas -- a <video> takes its place, so none of
+    // the frame-drawing below ever runs (see renderFrame's guard).
     const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
+    const ctx = canvas ? canvas.getContext('2d') : null
+    if (!mobile && (!canvas || !ctx)) return
 
     // Apple-style renderFrame: draw from pre-decoded ImageBitmap.
     // ImageBitmaps live on the GPU side so drawImage() is near-zero cost.
@@ -288,6 +305,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
     const bgCtx = bgCanvas.getContext('2d')
 
     const renderFrame = (index: number) => {
+      if (!canvas || !ctx) return // phones: no canvas, never called
       currentFrameRef.current = index
       // Slide the decoded window to the playhead (phones only, no-op on
       // desktop) -- see the loader effect above.
@@ -407,7 +425,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
     }
 
     // Try to draw first frame immediately (it will retry onUpdate if not loaded yet)
-    renderFrame(0)
+    if (!mobile) renderFrame(0)
 
     const gsapCtx = gsap.context(() => {
       // --- 1. ENTRANCE ANIMATION ---
@@ -497,27 +515,32 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
         0
       )
 
-      // B. Canvas fades in simultaneously, overlapping the video dissolve
-      scrollTl.to(
-        '.camera-canvas-container',
-        { opacity: 1, ease: 'power2.out', duration: 0.35 },
-        0
-      )
+      // Phones: the <video> layer is already fully visible behind the HTML
+      // layer (see the JSX), so the dissolve above simply reveals it -- no
+      // canvas crossfade and no frame sequence to drive.
+      if (!mobile) {
+        // B. Canvas fades in simultaneously, overlapping the video dissolve
+        scrollTl.to(
+          '.camera-canvas-container',
+          { opacity: 1, ease: 'power2.out', duration: 0.35 },
+          0
+        )
 
-      // C. Frame sequence — starts after crossfade is well underway.
-      // Uses power2.in so the very first frames advance slowly (cinematic hold)
-      // before picking up speed through the rest of the sequence.
-      scrollTl.to(
-        playhead,
-        {
-          frame: FRAME_COUNT - 1,
-          snap: 'frame',
-          ease: 'power2.in',
-          duration: 0.82,
-          onUpdate: () => renderFrame(Math.round(playhead.frame)),
-        },
-        0.18
-      )
+        // C. Frame sequence — starts after crossfade is well underway.
+        // Uses power2.in so the very first frames advance slowly (cinematic hold)
+        // before picking up speed through the rest of the sequence.
+        scrollTl.to(
+          playhead,
+          {
+            frame: FRAME_COUNT - 1,
+            snap: 'frame',
+            ease: 'power2.in',
+            duration: 0.82,
+            onUpdate: () => renderFrame(Math.round(playhead.frame)),
+          },
+          0.18
+        )
+      }
 
     }, containerRef)
 
@@ -525,7 +548,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
     ScrollTrigger.refresh()
 
     return () => gsapCtx.revert()
-  }, { scope: containerRef })
+  }, { scope: containerRef, dependencies: [isMobile], revertOnUpdate: true })
 
   const slateLetters = wordmarkPart1.split('')
   const cinemaLetters = wordmarkPart2.split('')
@@ -536,11 +559,29 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
       <div className="absolute inset-0 w-full h-full overflow-hidden" style={{ perspective: '2000px' }}>
 
         {/* 1. Canvas image-sequence layer (fades in on scroll) */}
-        <div className="camera-canvas-container absolute inset-0 z-10 opacity-0 pointer-events-none flex items-center justify-center bg-ink">
-          <canvas
-            ref={canvasRef}
-            className="w-full h-full object-cover"
-          />
+        {/* On phones this layer is a single ~1MB <video> that's visible from
+            the start (the HTML layer above it just dissolves away on scroll,
+            revealing it) -- no canvas, no frame sequence. */}
+        <div
+          className={`camera-canvas-container absolute inset-0 z-10 ${isMobile ? '' : 'opacity-0'} pointer-events-none flex items-center justify-center bg-ink`}
+        >
+          {isMobile ? (
+            <video
+              src={HERO_MOBILE_VIDEO}
+              poster={HERO_MOBILE_POSTER}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <canvas
+              ref={canvasRef}
+              className="w-full h-full object-cover"
+            />
+          )}
         </div>
 
         {/* 2. HTML UI layer (fades out on scroll, no scale change) */}
@@ -571,14 +612,25 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
                 a 16:9 source, the standard ratio for this kind of reel;
                 this section is h-screen so vw/vh here really does match
                 the container, not just the viewport coincidentally. */}
-            <SmartVideo
-              src="/videos/hero.mp4"
-              vimeo={HERO_MASTER_REEL_VIMEO_ID}
-              variant="background"
-              priority
-              className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-w-[177.78vh] min-h-[100vh] object-cover -translate-x-1/2 -translate-y-1/2"
-            />
+            {/* Only mount the Vimeo background once we know this ISN'T a
+                phone: on phones that autoplaying 1080p iframe is the
+                other heavy thing on the page, and the <video> layer above
+                replaces it. Waiting for `false` (not just "not true") also
+                keeps it out of the server HTML, so a phone never starts
+                loading it before hydration can say no. */}
+            {isMobile === false && (
+              <SmartVideo
+                src="/videos/hero.mp4"
+                vimeo={HERO_MASTER_REEL_VIMEO_ID}
+                variant="background"
+                priority
+                className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-w-[177.78vh] min-h-[100vh] object-cover -translate-x-1/2 -translate-y-1/2"
+              />
+            )}
           </div>
+          {/* Phones: dim the (now un-blended) video behind the wordmark so the
+              text stays legible; it dissolves with this layer on scroll. */}
+          {isMobile && <div className="absolute inset-0 z-0 bg-ink/50 pointer-events-none" />}
           <div className="absolute inset-0 z-0 bg-gradient-to-b from-ink/80 via-transparent to-ink/80 pointer-events-none" />
 
           {/* Main content — centered hero text and CTAs */}

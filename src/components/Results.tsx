@@ -6,10 +6,12 @@ import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { ArrowRight, Eye, ThumbsUp, MessageSquare } from 'lucide-react'
 import type { HomePage } from '@/payload-types'
+import { useIsMobile, REEL_MOBILE_VIDEO, REEL_MOBILE_POSTER } from '@/lib/mobile-media'
 
 gsap.registerPlugin(ScrollTrigger)
 
 export default function Results({ data }: { data?: HomePage['results'] }) {
+  const isMobile = useIsMobile()
   const containerRef = useRef<HTMLElement>(null)
   // 2026-09-11: lowered per request -- live CMS values had drifted to
   // unrealistically inflated figures (130,000,000 views, 17.6M reach,
@@ -154,14 +156,18 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
 
       {/* Background Local Video — src withheld until in view, see videoInView above */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        {videoInView && (
+        {/* isMobile !== null: never guess desktop on a phone and start the
+            4MB file -- phones get the ~1MB reel + poster (Jake, 2026-09-18). */}
+        {videoInView && isMobile !== null && (
           <video
             autoPlay
             loop
             muted
             playsInline
+            preload={isMobile ? 'metadata' : undefined}
+            poster={isMobile ? REEL_MOBILE_POSTER : undefined}
             className="absolute w-full h-full object-cover top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-70"
-            src="/videos/performance.mp4"
+            src={isMobile ? REEL_MOBILE_VIDEO : '/videos/performance.mp4'}
           />
         )}
         <div className="absolute inset-0 bg-ink/60 mix-blend-multiply" />

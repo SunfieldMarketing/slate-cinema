@@ -3,6 +3,7 @@
 import { memo, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { motion, useAnimation, useMotionValue, type LegacyAnimationControls } from 'motion/react'
 import { PLACEHOLDER_IMAGE } from '@/lib/media-url'
+import { mobileMediaUrl, useIsMobile } from '@/lib/mobile-media'
 
 export const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
@@ -64,6 +65,11 @@ const Carousel = memo(
   }) => {
     const isSmall = useMediaQuery('(max-width: 640px)')
     const isMedium = useMediaQuery('(max-width: 1024px)')
+    // Phones get lighter siblings of the heaviest cards (e.g. the 1.5MB /
+    // 4672px hotel photo -> a 92KB webp). null = not known yet: for a card
+    // that HAS a phone version, set no src until we know, so a phone never
+    // starts the big download first. Jake, 2026-09-18.
+    const isPhone = useIsMobile()
     // Per-card width (not total ring width) — this is what the original
     // fixed cylinderWidth constants (1600/2400/3520) actually meant when
     // the reel had exactly 8 cards; dividing a fixed total by a growing
@@ -183,8 +189,14 @@ const Carousel = memo(
             >
               <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-ink cursor-pointer transition-colors duration-300 group-hover:border-[#00AEEF]/50 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
                 <motion.img
-                  src={card.image}
+                  src={(() => {
+                    const light = mobileMediaUrl(card.image)
+                    if (!light) return card.image
+                    return isPhone === null ? undefined : isPhone ? light : card.image
+                  })()}
                   alt={card.title}
+                  loading="lazy"
+                  decoding="async"
                   draggable={false}
                   onError={(e) => {
                     if (e.currentTarget.src !== PLACEHOLDER_IMAGE) e.currentTarget.src = PLACEHOLDER_IMAGE

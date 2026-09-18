@@ -18,6 +18,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import posthog from 'posthog-js'
+import { useIsMobile, REEL_MOBILE_VIDEO, REEL_MOBILE_POSTER } from '@/lib/mobile-media'
 import { pushConversion } from '@/lib/analytics'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
@@ -102,6 +103,7 @@ function useGlowChain(rootRef: React.RefObject<HTMLDivElement | null>) {
 
 function PageBackdrop({ rootRef }: { rootRef: React.RefObject<HTMLDivElement | null> }) {
   const glowChain = useGlowChain(rootRef)
+  const isMobile = useIsMobile()
   return (
     <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
       {/* Hero backdrop video — capped to exactly one viewport height so it
@@ -110,18 +112,25 @@ function PageBackdrop({ rootRef }: { rootRef: React.RefObject<HTMLDivElement | n
           rather than a hard-edged rectangle by the time you hit the
           bottom. Sits underneath those layers so the color and texture
           stay fully visible over it, never washed out. */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute top-0 inset-x-0 h-screen w-full object-cover opacity-[0.18]"
-        style={{
-          maskImage: 'linear-gradient(to bottom, black 0, black 75vh, transparent 100vh)',
-          WebkitMaskImage: 'linear-gradient(to bottom, black 0, black 75vh, transparent 100vh)',
-        }}
-        src="/videos/performance.mp4"
-      />
+      {/* Same highlight reel as the homepage's Results section: phones get
+          the ~1MB version (Jake, 2026-09-18), and nothing is fetched until
+          we know which one this is. */}
+      {isMobile !== null && (
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload={isMobile ? 'metadata' : undefined}
+          poster={isMobile ? REEL_MOBILE_POSTER : undefined}
+          className="absolute top-0 inset-x-0 h-screen w-full object-cover opacity-[0.18]"
+          style={{
+            maskImage: 'linear-gradient(to bottom, black 0, black 75vh, transparent 100vh)',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 0, black 75vh, transparent 100vh)',
+          }}
+          src={isMobile ? REEL_MOBILE_VIDEO : '/videos/performance.mp4'}
+        />
+      )}
       {/* Color-grade wash on the video itself — a blue duotone rather than
           a flat darken, so the hero reads as graded footage instead of a
           washed-out clip with a black rectangle over it. */}

@@ -1,7 +1,8 @@
 'use client'
 
-import type { CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { extractVimeoId, vimeoEmbedUrl } from '@/lib/vimeo'
+import { mobileMediaUrl, useIsMobile } from '@/lib/mobile-media'
 
 /*
   Drop-in replacement for a raw <video> tag that can also point at a
@@ -72,6 +73,50 @@ export default function SmartVideo({
 }: SmartVideoProps) {
   const vimeoId = extractVimeoId(vimeo)
 
+  // Mobile swap (Jake, 2026-09-18): some of the files that flow through here
+  // (the pipeline loops: 5-28MB each) have ~1MB phone-sized siblings on S3.
+  // On a phone we (a) point at the small file, (b) don't set any src until we
+  // KNOW whether this is a phone -- a `src` in the server HTML would start
+  // the big download before hydration could correct it -- and (c) only keep
+  // the file attached while the video is actually near the viewport, so at
+  // most one decoder is alive at a time. Files with no mobile sibling behave
+  // exactly as before.
+  const isMobile = useIsMobile()
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [inView, setInView] = useState(false)
+  const mobileSrc = src ? mobileMediaUrl(src) : undefined
+  const swappable = !!mobileSrc
+  const resolvedSrc = swappable
+    ? isMobile === null
+      ? undefined
+      : isMobile
+        ? inView
+          ? mobileSrc
+          : undefined
+        : src
+    : src
+
+  useEffect(() => {
+    const el = videoRef.current
+    if (!swappable || isMobile !== true || !el) return
+    const io = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), {
+      rootMargin: '200px 0px',
+    })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [swappable, isMobile])
+
+  useEffect(() => {
+    const el = videoRef.current
+    // Out of view (or not yet decided): release the file and its decoder
+    // rather than leaving a paused-but-loaded video sitting in memory.
+    if (el && swappable && !resolvedSrc) {
+      el.pause()
+      el.removeAttribute('src')
+      el.load()
+    }
+  }, [swappable, resolvedSrc])
+
   if (vimeoId) {
     // CSS object-fit only affects replaced elements (<video>/<img>), never
     // an <iframe>'s content -- a plain w-full/h-full className just
@@ -113,7 +158,8 @@ export default function SmartVideo({
     // native <video> element can).
     return (
       <video
-        src={src}
+        ref={videoRef}
+        src={resolvedSrc}
         poster={poster}
         autoPlay
         loop
@@ -122,7 +168,7 @@ export default function SmartVideo({
         controls={variant === 'player'}
         className={className}
         onLoadedData={onLoadedData}
-        preload={priority ? 'auto' : undefined}
+        preload={priority ? 'auto' : swappable && isMobile ? 'metadata' : undefined}
         // @ts-expect-error -- same as the iframe path above.
         fetchpriority={priority ? 'high' : undefined}
       />
