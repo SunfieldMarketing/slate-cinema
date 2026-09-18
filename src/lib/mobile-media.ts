@@ -15,8 +15,18 @@ export const MOBILE_QUERY = '(max-width: 767px)'
 
 const S3 = 'https://s3.us-east-1.amazonaws.com/slate-cinema-media/slate/'
 
-export const HERO_MOBILE_VIDEO = `${S3}hero-mobile-1mb.mp4`
-export const HERO_MOBILE_POSTER = `${S3}hero-poster-mobile.webp`
+// The phone hero. Jake's spec named hero-mobile-1mb.mp4 (480x270, 0.97MB) --
+// but a portrait phone fills its HEIGHT with a 16:9 clip, so only the center
+// ~26% of the frame's width is ever visible: that file leaves ~125 real
+// pixels across the screen, which is why it looked smeared ("video was
+// blurry"). This is the SAME 68s reel (public/videos/hero.mp4, the 1080p
+// master) pre-cropped to that center window and encoded at 400x866 -- same
+// framing, every visible pixel real, 3.3MB. Served from the site's own
+// static files. Jake's S3 version stays as the constant below if we ever
+// want to compare or fall back.
+export const HERO_MOBILE_VIDEO = '/videos/hero-mobile-portrait.mp4'
+export const HERO_MOBILE_POSTER = '/videos/hero-mobile-portrait-poster.webp'
+export const HERO_MOBILE_VIDEO_1MB = `${S3}hero-mobile-1mb.mp4`
 export const REEL_MOBILE_VIDEO = `${S3}reel-mobile-1mb.mp4`
 export const REEL_MOBILE_POSTER = `${S3}reel-poster-mobile.webp`
 

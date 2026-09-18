@@ -89,6 +89,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
   // sequence (see src/lib/mobile-media.ts for why); desktop and tablet are
   // exactly as before.
   const isMobile = useIsMobile()
+  const mobileVideoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const scrollHintRef = useRef<HTMLDivElement>(null)
@@ -108,6 +109,26 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
+
+  // Phones: `autoplay` is a request, not a guarantee -- iOS Low Power Mode
+  // and some in-app browsers block it, which leaves a frozen poster (reads
+  // as "the hero video isn't playing"). Try play() explicitly, and retry on
+  // the first touch/scroll, which counts as a user gesture.
+  useEffect(() => {
+    if (!isMobile) return
+    const v = mobileVideoRef.current
+    if (!v) return
+    const tryPlay = () => {
+      if (v.paused) v.play().catch(() => {})
+    }
+    tryPlay()
+    window.addEventListener('touchstart', tryPlay, { passive: true, once: true })
+    window.addEventListener('scroll', tryPlay, { passive: true, once: true })
+    return () => {
+      window.removeEventListener('touchstart', tryPlay)
+      window.removeEventListener('scroll', tryPlay)
+    }
+  }, [isMobile])
 
   // Fade scroll hint arrow out as user scrolls
   useEffect(() => {
@@ -567,6 +588,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
         >
           {isMobile ? (
             <video
+              ref={mobileVideoRef}
               src={HERO_MOBILE_VIDEO}
               poster={HERO_MOBILE_POSTER}
               autoPlay
