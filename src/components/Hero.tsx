@@ -134,6 +134,12 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
   // available immediately when the scroll position hits it.
   const bitmapsRef = useRef<(ImageBitmap | null)[]>(Array(FRAME_COUNT + 1).fill(null))
   const loadedCountRef = useRef(0)
+  // Compressed frame files (~28KB each, 8MB for all 291) -- kept around on
+  // small screens so frames can be decoded on demand and re-decoded later.
+  const blobsRef = useRef<(Blob | null)[]>(Array(FRAME_COUNT + 1).fill(null))
+  // Set by the loader effect below; renderFrame calls it so the decoded
+  // window follows the playhead (no-op on desktop, which keeps everything).
+  const syncWindowRef = useRef<((center: number) => void) | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -143,14 +149,64 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
     // satisfies the exhaustive-deps ref-in-cleanup rule without changing
     // any actual behavior.
     const bitmaps = bitmapsRef.current
+    const blobs = blobsRef.current
+
+    // 2026-09-18, Jake: "mobile is still crashing" after the unmount-leak
+    // fix. That fix stopped memory piling up *across* visits, but the peak
+    // within a single visit was still every one of the 291 frames decoded
+    // at once (~3MB each => ~870MB resident) -- far past what a phone tab
+    // survives (iOS Safari kills tabs at a few hundred MB). The compressed
+    // files are tiny (8MB total), it's only the decoded bitmaps that are
+    // huge, so on phones/tablets we keep the compressed blobs and decode
+    // just a window of frames around the playhead, closing the rest.
+    // Desktop keeps the original decode-everything behavior.
+    const lowMem = window.innerWidth < 1024
+    const AHEAD = 24
+    const BEHIND = 6
+    const KEEP_AHEAD = 40
+    const KEEP_BEHIND = 14
+    const decoding = new Set<number>()
+
+    const syncWindow = (center: number) => {
+      if (!lowMem || cancelled) return
+      const c = Math.max(1, Math.round(center))
+      for (let i = Math.max(1, c - BEHIND); i <= Math.min(FRAME_COUNT, c + AHEAD); i++) {
+        const blob = blobs[i]
+        if (!blob || bitmaps[i] || decoding.has(i)) continue
+        decoding.add(i)
+        createImageBitmap(blob)
+          .then((bmp) => {
+            decoding.delete(i)
+            const now = Math.max(1, currentFrameRef.current)
+            if (cancelled || i < now - KEEP_BEHIND || i > now + KEEP_AHEAD) {
+              bmp.close()
+              return
+            }
+            bitmaps[i] = bmp
+          })
+          .catch(() => decoding.delete(i))
+      }
+      for (let i = 1; i <= FRAME_COUNT; i++) {
+        const bmp = bitmaps[i]
+        if (bmp && (i < c - KEEP_BEHIND || i > c + KEEP_AHEAD)) {
+          bmp.close()
+          bitmaps[i] = null
+        }
+      }
+    }
+    syncWindowRef.current = syncWindow
 
     const loadFrame = async (i: number) => {
-      if (cancelled || bitmaps[i]) return
+      if (cancelled || bitmaps[i] || blobs[i]) return
       try {
         const resp = await fetch(`/videos/frames/frame_${i.toString().padStart(4, '0')}.webp`)
         if (cancelled) return
         const blob = await resp.blob()
         if (cancelled) return
+        if (lowMem) {
+          blobs[i] = blob // decoded lazily by syncWindow
+          return
+        }
         const bmp = await createImageBitmap(blob)
         if (cancelled) {
           // Unmounted while this decode was in flight -- close it rather
@@ -177,17 +233,21 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
       const priority = []
       for (let i = 1; i <= Math.min(30, FRAME_COUNT); i++) priority.push(loadFrame(i))
       await Promise.all(priority)
+      syncWindow(currentFrameRef.current)
       // Rest of the frames, in parallel batches
       for (let start = 31; start <= FRAME_COUNT; start += BATCH_SIZE) {
         if (cancelled) break
         const batch = []
         for (let i = start; i < start + BATCH_SIZE && i <= FRAME_COUNT; i++) batch.push(loadFrame(i))
         await Promise.all(batch)
+        syncWindow(currentFrameRef.current)
       }
     }
     loadAll()
     return () => {
       cancelled = true
+      syncWindowRef.current = null
+      blobs.fill(null)
       // 2026-09-11 -- Levi reported the site "crashing when you keep
       // trying to go through the site" on mobile. Root cause: each decoded
       // ImageBitmap holds real backing pixel memory (~3MB for one of these
@@ -221,12 +281,32 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
     // getFocus/FOCUS_KEYFRAMES above -- see the big comment there. Only
     // meaningful in portrait; ignored on desktop/landscape, which always
     // renders a plain cover fit.
+    // Tiny offscreen canvas used to fake the portrait backdrop blur cheaply
+    // (see the isPortrait branch) instead of ctx.filter = 'blur(24px)' on a
+    // full-size canvas every frame.
+    const bgCanvas = document.createElement('canvas')
+    const bgCtx = bgCanvas.getContext('2d')
+
     const renderFrame = (index: number) => {
       currentFrameRef.current = index
-      const bmp = bitmapsRef.current[index]
+      // Slide the decoded window to the playhead (phones only, no-op on
+      // desktop) -- see the loader effect above.
+      syncWindowRef.current?.(index)
+      let bmp = bitmapsRef.current[index]
+      if (!bmp) {
+        // Not decoded yet (window still catching up on a fast scroll, or
+        // index 0 which has no file): show the nearest decoded frame
+        // instead of freezing on whatever was drawn last.
+        for (let d = 1; d <= 12 && !bmp; d++) {
+          bmp = bitmapsRef.current[index - d] || bitmapsRef.current[index + d] || null
+        }
+      }
       if (!bmp) return
 
-      const dpr = window.devicePixelRatio || 1
+      // Cap backing-store density: a 3x phone at full DPR is a ~2.7MP canvas
+      // redrawn (twice) every scroll tick -- the "hero animation doesn't
+      // really work so well" jank -- and 2x is visually identical here.
+      const dpr = Math.min(window.devicePixelRatio || 1, 2)
       const w = window.innerWidth
       const h = window.innerHeight
       const pw = Math.round(w * dpr)
@@ -262,19 +342,33 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
         // crisp and zoomed out from a tight cover fit, on top of it
         // (satisfies "let me see the whole subject"). Same bitmap both
         // times -- no extra decode or network cost, this is cheap.
-        ctx.filter = 'blur(24px)'
+        // 2026-09-18: was ctx.filter = 'blur(24px)' on the full canvas,
+        // every scroll tick -- a huge GPU cost on phones (and iOS Safari
+        // ignores ctx.filter entirely, so it paid nothing visible there).
+        // Same look for a fraction of the cost: shrink the frame to a
+        // ~48px-wide offscreen canvas, then stretch that back up with
+        // smoothing -- the bilinear upscale IS the blur.
         // Oversized slightly (1.15x) beyond a plain cover fit so the
-        // blur radius never reveals a sliver of empty canvas at the
-        // edges.
+        // edges never show a sliver of empty canvas.
         const bgScale = coverScale * 1.15
-        ctx.drawImage(
-          bmp,
-          (pw - bmp.width * bgScale) / 2,
-          (ph - bmp.height * bgScale) / 2,
-          bmp.width * bgScale,
-          bmp.height * bgScale
-        )
-        ctx.filter = 'none'
+        if (bgCtx) {
+          const bw = 48
+          const bh = Math.max(1, Math.round((bmp.height / bmp.width) * bw))
+          if (bgCanvas.width !== bw || bgCanvas.height !== bh) {
+            bgCanvas.width = bw
+            bgCanvas.height = bh
+          }
+          bgCtx.drawImage(bmp, 0, 0, bw, bh)
+          ctx.imageSmoothingEnabled = true
+          ctx.imageSmoothingQuality = 'high'
+          ctx.drawImage(
+            bgCanvas,
+            (pw - bmp.width * bgScale) / 2,
+            (ph - bmp.height * bgScale) / 2,
+            bmp.width * bgScale,
+            bmp.height * bgScale
+          )
+        }
 
         // 2026-08-27 follow-up -- "keyframe it so main focus of video
         // moves throughout... so it can be fully zoomed into fit display

@@ -274,6 +274,15 @@ function StageObject({
   // once on mount. It stays paused until the object becomes visible.
   useEffect(() => {
     if (!screen) return
+    // 2026-09-18 mobile-crash fix: these screens use /videos/post-production.mp4
+    // (3840x2160, 33MB) and dj-vinyl.mp4 as live VideoTextures, preloaded
+    // 'auto' on mount. Phones have a small, hard cap on concurrent hardware
+    // video decoders and a low tab-memory ceiling (iOS Safari especially) --
+    // a 4K decode stacked on top of a WebGL context + the GLB models is
+    // enough to kill the tab, matching "site crashes on mobile". Skip the
+    // video textures below tablet width: the 3D scene itself is unchanged,
+    // the screen meshes just keep their original static material.
+    if (typeof window !== 'undefined' && window.innerWidth < 768) return
     const video = document.createElement('video')
     video.muted = true
     video.playsInline = true
