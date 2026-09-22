@@ -519,6 +519,30 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
       )
 
       // --- 2. SCROLL ANIMATION ---
+      // 2026-09-22: this whole pin+dissolve+auto-advance system exists to
+      // give the 291-frame scroll-scrubbed sequence (desktop/tablet only,
+      // see the frame-loader effect's `isMobile !== false` guard) room to
+      // play out -- 1.6 viewport-heights of pinned scroll, auto-completing
+      // once you're past halfway. On phones there's no frame sequence
+      // anymore (just one already-playing <video>, see the JSX), but this
+      // was STILL running unconditionally: the section pinned for the
+      // exact same 1.6 viewport-heights with nothing new happening in
+      // most of it (only the tiny 0.3-duration text fade), then
+      // auto-scrolled the visitor the rest of the way regardless. Reported
+      // live: "scrolling to the camera video isn't working... like
+      // before" (a real, working description of that dead pinned zone +
+      // unmotivated auto-jump) AND a section-overlap bug further down the
+      // page ("The content we create" bleeding into the Pipeline
+      // accordion) -- a pin sized for content that no longer exists is
+      // exactly the kind of thing that leaves ScrollTrigger's height/
+      // position bookkeeping for every section after it wrong. Phones now
+      // skip this system entirely: the hero is a normal (unpinned)
+      // h-screen section, the video plays, and the page scrolls past it
+      // like any other section -- no jack, no dead zone, no auto-advance.
+      // Desktop/tablet keep the exact pin+dissolve+auto-advance behavior,
+      // untouched.
+      if (mobile) return
+
       // Pan/scale no longer live on playhead -- they're derived straight
       // from the frame index every draw (getFocus, see above), so this
       // only needs to drive the frame itself.
@@ -581,32 +605,27 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
         0
       )
 
-      // Phones: the <video> layer is already fully visible behind the HTML
-      // layer (see the JSX), so the dissolve above simply reveals it -- no
-      // canvas crossfade and no frame sequence to drive.
-      if (!mobile) {
-        // B. Canvas fades in simultaneously, overlapping the video dissolve
-        scrollTl.to(
-          '.camera-canvas-container',
-          { opacity: 1, ease: 'power2.out', duration: 0.35 },
-          0
-        )
+      // B. Canvas fades in simultaneously, overlapping the video dissolve
+      scrollTl.to(
+        '.camera-canvas-container',
+        { opacity: 1, ease: 'power2.out', duration: 0.35 },
+        0
+      )
 
-        // C. Frame sequence — starts after crossfade is well underway.
-        // Uses power2.in so the very first frames advance slowly (cinematic hold)
-        // before picking up speed through the rest of the sequence.
-        scrollTl.to(
-          playhead,
-          {
-            frame: FRAME_COUNT - 1,
-            snap: 'frame',
-            ease: 'power2.in',
-            duration: 0.82,
-            onUpdate: () => renderFrame(Math.round(playhead.frame)),
-          },
-          0.18
-        )
-      }
+      // C. Frame sequence — starts after crossfade is well underway.
+      // Uses power2.in so the very first frames advance slowly (cinematic hold)
+      // before picking up speed through the rest of the sequence.
+      scrollTl.to(
+        playhead,
+        {
+          frame: FRAME_COUNT - 1,
+          snap: 'frame',
+          ease: 'power2.in',
+          duration: 0.82,
+          onUpdate: () => renderFrame(Math.round(playhead.frame)),
+        },
+        0.18
+      )
 
     }, containerRef)
 
