@@ -328,10 +328,25 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
   }, [isMobile])
 
   useGSAP(() => {
-    // Wait until we know phone vs. not: building the timeline once (instead
-    // of once as "unknown" and again as the real answer) keeps the entrance
-    // animation from replaying.
-    if (isMobile === null) return
+    // 2026-09-22: simplified off `dependencies: [isMobile], revertOnUpdate:
+    // true` below (which skipped this entirely while isMobile was still
+    // null, then re-ran once the dependency resolved) -- chased a suspected
+    // desktop scroll-scrub regression through it via commit bisection
+    // (b6a79ed, f0b59b2, both pre-dating this dependencies option existing
+    // at all) and the "broken" scrub reproduced identically on every one of
+    // them, including code from before this option was ever added. Root
+    // cause was the test session's own browser tab: document.visibilityState
+    // was stuck 'hidden' throughout (same limitation independently confirmed
+    // during the phone-autoplay fix above), and GSAP's scrub ticker runs on
+    // requestAnimationFrame, which browsers throttle/suspend for hidden tabs
+    // -- not a code defect. Kept this simplification anyway since it's
+    // strictly less code to reason about: useSyncExternalStore (see
+    // useIsMobile) resolves isMobile to its real client value via React's
+    // synchronous post-hydration correction, before any layout effect
+    // (including this one) fires, so the "runs once as a no-op, then again
+    // for real" case this was guarding against essentially doesn't happen in
+    // practice. Not a fix for anything -- just fewer moving parts for the
+    // same behavior.
     const mobile = isMobile === true
     if (!containerRef.current) return
 
@@ -599,7 +614,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
     ScrollTrigger.refresh()
 
     return () => gsapCtx.revert()
-  }, { scope: containerRef, dependencies: [isMobile], revertOnUpdate: true })
+  }, { scope: containerRef })
 
   const slateLetters = wordmarkPart1.split('')
   const cinemaLetters = wordmarkPart2.split('')
