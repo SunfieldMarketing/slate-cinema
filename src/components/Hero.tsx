@@ -7,7 +7,12 @@ import { useGSAP } from '@gsap/react'
 import { scrollState, toTimecode, scrollToY } from '@/lib/scroll'
 import type { HomePage } from '@/payload-types'
 import SmartVideo from '@/components/ui/SmartVideo'
-import { useIsMobile, HERO_MOBILE_VIDEO, HERO_MOBILE_POSTER } from '@/lib/mobile-media'
+import {
+  useIsMobile,
+  HERO_MOBILE_VIDEO,
+  HERO_MOBILE_POSTER,
+  HERO_MOBILE_CAMERA_VIDEO,
+} from '@/lib/mobile-media'
 
 // Real master reel, per the "CLAUDE INPUT 8/12 -- HOMEPAGE" doc note:
 // "HERO: keep 'Video Marketing At Your Fingertips'. Visual: ... from the
@@ -76,6 +81,85 @@ function getFocus(frameIndex: number) {
   return kfs[kfs.length - 1]
 }
 
+// Mobile's camera-reveal <video> re-plays the exact same FOCUS_KEYFRAMES
+// pan/zoom as a CSS transform instead of a canvas redraw (see
+// HERO_MOBILE_CAMERA_VIDEO's comment in mobile-media.ts for why). A canvas
+// can draw a frame smaller than a tight cover fit (focusScale down to 0.72)
+// and paper over the gap with a blurred backdrop copy; a CSS transform on a
+// plain object-cover <video> has no such backdrop, so scale must never drop
+// below 1 or the video edge shows through as a bare gap. This remaps
+// FOCUS_KEYFRAMES' 0.72-1.0 range onto a CSS scale that stays safely over
+// 1 throughout (1.15-1.5) and derives how far it can pan from how much
+// overscan that scale leaves.
+const MOBILE_CAMERA_SCALE_MIN = 1.15
+const MOBILE_CAMERA_SCALE_MAX = 1.5
+
+function mobileCameraTransform(frameIndex: number): string {
+  const { x, y, scale } = getFocus(frameIndex)
+  const t = (scale - 0.72) / (1.0 - 0.72)
+  const cssScale =
+    MOBILE_CAMERA_SCALE_MIN + Math.max(0, Math.min(1, t)) * (MOBILE_CAMERA_SCALE_MAX - MOBILE_CAMERA_SCALE_MIN)
+  // % of the element's own box the overscan leaves free to pan on each axis
+  // before the edge would show, translated in the same 0(left/top)-1(right/
+  // bottom) convention FOCUS_KEYFRAMES already uses.
+  const maxPanPct = ((cssScale - 1) / cssScale) * 50
+  const tx = (0.5 - x) * 2 * maxPanPct
+  const ty = (0.5 - y) * 2 * maxPanPct
+  return `scale(${cssScale.toFixed(3)}) translate(${tx.toFixed(2)}%, ${ty.toFixed(2)}%)`
+}
+
+// Shared by both mobile <video> layers (module scope, not a hook, so it's
+// safe to call from inside a plain ref-callback -- the lint rule that
+// forbids reading a ref during render only cares about the render pass
+// itself, not a callback React invokes later at commit/attach time).
+// Fires play() the instant the node attaches (synchronously in the commit
+// -- no effect-timing race) plus 'canplay'/'loadedmetadata' listeners
+// (retry once real data exists) and a gesture fallback for anything that
+// still blocks it (iOS Low Power Mode, some in-app browsers). `onFrame`,
+// when given, gets rAF-ticked with the element for as long as it's
+// attached -- the camera-reveal video uses this to keep its Ken Burns
+// transform in sync with real playback instead of ever writing to
+// currentTime (see attachCameraVideo's comment for why).
+function attachAutoplayVideo(
+  el: HTMLVideoElement | null,
+  targetRef: React.RefObject<HTMLVideoElement | null>,
+  cleanupRef: React.RefObject<(() => void) | null>,
+  onFrame?: (el: HTMLVideoElement) => void
+) {
+  targetRef.current = el
+  cleanupRef.current?.()
+  cleanupRef.current = null
+  if (!el) return
+  const tryPlay = () => {
+    if (el.paused) el.play().catch(() => {})
+  }
+  tryPlay()
+  el.addEventListener('loadedmetadata', tryPlay)
+  el.addEventListener('canplay', tryPlay)
+  window.addEventListener('touchstart', tryPlay, { passive: true, once: true })
+  window.addEventListener('scroll', tryPlay, { passive: true, once: true })
+  // Browsers correctly auto-pause background video when the tab isn't
+  // visible (backgrounding the app, switching tabs) -- resume when the
+  // visitor comes back rather than leaving them on a frozen frame.
+  document.addEventListener('visibilitychange', tryPlay)
+  let rafId: number | null = null
+  if (onFrame) {
+    const tick = () => {
+      onFrame(el)
+      rafId = requestAnimationFrame(tick)
+    }
+    rafId = requestAnimationFrame(tick)
+  }
+  cleanupRef.current = () => {
+    el.removeEventListener('loadedmetadata', tryPlay)
+    el.removeEventListener('canplay', tryPlay)
+    document.removeEventListener('visibilitychange', tryPlay)
+    window.removeEventListener('touchstart', tryPlay)
+    window.removeEventListener('scroll', tryPlay)
+    if (rafId != null) cancelAnimationFrame(rafId)
+  }
+}
+
 export default function Hero({ data }: { data?: HomePage['hero'] }) {
   const wordmarkPart1 = data?.wordmarkPart1 || 'SLATE'
   const wordmarkPart2 = data?.wordmarkPart2 || 'CINEMA'
@@ -90,6 +174,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
   // exactly as before.
   const isMobile = useIsMobile()
   const mobileVideoRef = useRef<HTMLVideoElement>(null)
+  const mobileCameraVideoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const scrollHintRef = useRef<HTMLDivElement>(null)
@@ -134,30 +219,30 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
   // each time. mobileCleanupRef holds the exact listener references so
   // the detach call (`el === null`) can remove precisely what was added.
   const mobileCleanupRef = useRef<(() => void) | null>(null)
+  const cameraCleanupRef = useRef<(() => void) | null>(null)
   const attachMobileVideo = useCallback((el: HTMLVideoElement | null) => {
-    mobileVideoRef.current = el
-    mobileCleanupRef.current?.()
-    mobileCleanupRef.current = null
-    if (!el) return
-    const tryPlay = () => {
-      if (el.paused) el.play().catch(() => {})
-    }
-    tryPlay()
-    el.addEventListener('loadedmetadata', tryPlay)
-    el.addEventListener('canplay', tryPlay)
-    window.addEventListener('touchstart', tryPlay, { passive: true, once: true })
-    window.addEventListener('scroll', tryPlay, { passive: true, once: true })
-    // Browsers correctly auto-pause background video when the tab isn't
-    // visible (backgrounding the app, switching tabs) -- resume when the
-    // visitor comes back rather than leaving them on a frozen frame.
-    document.addEventListener('visibilitychange', tryPlay)
-    mobileCleanupRef.current = () => {
-      el.removeEventListener('loadedmetadata', tryPlay)
-      el.removeEventListener('canplay', tryPlay)
-      document.removeEventListener('visibilitychange', tryPlay)
-      window.removeEventListener('touchstart', tryPlay)
-      window.removeEventListener('scroll', tryPlay)
-    }
+    attachAutoplayVideo(el, mobileVideoRef, mobileCleanupRef)
+  }, [])
+  // 2026-09-22: this used to be scrubbed by hand -- a GSAP tween writing
+  // frame-mapped values to cameraVideo.currentTime as the user scrolled, to
+  // frame-match desktop's canvas scrub exactly. Tested live: the browser
+  // reported every state correctly (readyState 4, seeking false, currentTime
+  // at the exact target, no error) but never actually painted a frame for a
+  // video that's paused and only ever seeked, not played -- a real
+  // reliability gap on top of engines (older iOS Safari especially) that
+  // are known to be flaky about seeking a video that's never been played.
+  // Autoplay+loop is the one mechanism already proven reliable here (see
+  // attachMobileVideo/attachAutoplayVideo above) -- so this video actually
+  // plays, same as the first one, and the Ken Burns pan/zoom below just
+  // READS its real currentTime every rAF tick instead of writing to it.
+  // Loses exact frame-to-scroll-pixel locking; keeps the one thing that has
+  // to work.
+  const attachCameraVideo = useCallback((el: HTMLVideoElement | null) => {
+    attachAutoplayVideo(el, mobileCameraVideoRef, cameraCleanupRef, (video) => {
+      const duration = video.duration || 9.7
+      const index = Math.round((video.currentTime / duration) * (FRAME_COUNT - 1))
+      video.style.transform = mobileCameraTransform(index)
+    })
   }, [])
 
   // Fade scroll hint arrow out as user scrolls
@@ -328,25 +413,34 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
   }, [isMobile])
 
   useGSAP(() => {
-    // 2026-09-22: simplified off `dependencies: [isMobile], revertOnUpdate:
-    // true` below (which skipped this entirely while isMobile was still
-    // null, then re-ran once the dependency resolved) -- chased a suspected
-    // desktop scroll-scrub regression through it via commit bisection
-    // (b6a79ed, f0b59b2, both pre-dating this dependencies option existing
-    // at all) and the "broken" scrub reproduced identically on every one of
-    // them, including code from before this option was ever added. Root
-    // cause was the test session's own browser tab: document.visibilityState
-    // was stuck 'hidden' throughout (same limitation independently confirmed
-    // during the phone-autoplay fix above), and GSAP's scrub ticker runs on
-    // requestAnimationFrame, which browsers throttle/suspend for hidden tabs
-    // -- not a code defect. Kept this simplification anyway since it's
-    // strictly less code to reason about: useSyncExternalStore (see
-    // useIsMobile) resolves isMobile to its real client value via React's
-    // synchronous post-hydration correction, before any layout effect
-    // (including this one) fires, so the "runs once as a no-op, then again
-    // for real" case this was guarding against essentially doesn't happen in
-    // practice. Not a fix for anything -- just fewer moving parts for the
-    // same behavior.
+    // 2026-09-22: `dependencies: [isMobile], revertOnUpdate: true` below
+    // (see the bottom of this hook) was removed once, then put back the
+    // same day. It had been removed on the theory that useSyncExternalStore
+    // (see useIsMobile) resolves isMobile to its real client value via
+    // React's synchronous post-hydration correction before any layout
+    // effect fires -- which would make the "runs once while isMobile is
+    // still null, never runs again for the real value" case this dependency
+    // guards against a non-issue in practice. That theory does not hold up:
+    // once this hook actually started branching real behavior on `mobile`
+    // (the camera-reveal video below), it measurably ran with `mobile` still
+    // false and canvasRef.current still null, hit the early
+    // `!mobile && (!canvas || !ctx)` return just below, and never ran again
+    // -- confirmed live via a console.log inside the mobile branch that
+    // never once fired. Restoring the dependency alone wasn't enough,
+    // though: that FIRST, stale (isMobile still null) run isn't a no-op --
+    // at that instant the JSX still renders the canvas branch too (null is
+    // falsy), so canvasRef.current is real and the guard below doesn't stop
+    // it, and it goes on to build the full desktop scrollTl, including a
+    // `.to('.camera-canvas-container', { opacity: 1 })` tween. GSAP sets
+    // that tween's from-state (opacity 0) as a real inline style on the
+    // wrapper immediately. `revertOnUpdate` kills that stale ScrollTrigger
+    // before the second, real run, but confirmed live: it left the wrapper
+    // stuck at inline `opacity: 0` regardless -- which is exactly why the
+    // camera-reveal video rendered as solid black even though every one of
+    // its own properties (opacity 1, playing, currentTime advancing) read
+    // back correct: its parent was invisible. Cheapest correct fix is to
+    // never let that stale run touch the DOM at all.
+    if (isMobile === null) return
     const mobile = isMobile === true
     if (!containerRef.current) return
 
@@ -519,29 +613,63 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
       )
 
       // --- 2. SCROLL ANIMATION ---
-      // 2026-09-22: this whole pin+dissolve+auto-advance system exists to
-      // give the 291-frame scroll-scrubbed sequence (desktop/tablet only,
-      // see the frame-loader effect's `isMobile !== false` guard) room to
-      // play out -- 1.6 viewport-heights of pinned scroll, auto-completing
-      // once you're past halfway. On phones there's no frame sequence
-      // anymore (just one already-playing <video>, see the JSX), but this
-      // was STILL running unconditionally: the section pinned for the
-      // exact same 1.6 viewport-heights with nothing new happening in
-      // most of it (only the tiny 0.3-duration text fade), then
-      // auto-scrolled the visitor the rest of the way regardless. Reported
-      // live: "scrolling to the camera video isn't working... like
-      // before" (a real, working description of that dead pinned zone +
-      // unmotivated auto-jump) AND a section-overlap bug further down the
-      // page ("The content we create" bleeding into the Pipeline
-      // accordion) -- a pin sized for content that no longer exists is
-      // exactly the kind of thing that leaves ScrollTrigger's height/
-      // position bookkeeping for every section after it wrong. Phones now
-      // skip this system entirely: the hero is a normal (unpinned)
-      // h-screen section, the video plays, and the page scrolls past it
-      // like any other section -- no jack, no dead zone, no auto-advance.
-      // Desktop/tablet keep the exact pin+dissolve+auto-advance behavior,
-      // untouched.
-      if (mobile) return
+      // 2026-09-22: this pin+dissolve+auto-advance system exists to give a
+      // scroll-triggered reveal of the rotating-camera Ken Burns shot room
+      // to play out -- 1.6 viewport-heights of pinned scroll, auto-
+      // completing once you're past halfway. A same-day earlier pass had
+      // this running unconditionally on mobile with NOTHING left to reveal
+      // there (mobile had been reduced to one plain looping video, no
+      // second stage) -- the section pinned for a long dead zone, then
+      // force-scrolled the visitor past it. That's now fixed properly:
+      // mobile gets its own branch below that crossfades in a second
+      // <video> (HERO_MOBILE_CAMERA_VIDEO, same footage as FOCUS_KEYFRAMES/
+      // FRAME_COUNT's frame sequence, just autoplaying as one small
+      // hardware-decoded video instead of 291 bitmaps -- see
+      // attachCameraVideo above for why it plays rather than being scrubbed)
+      // through the same pin+auto-advance shape desktop uses -- restoring
+      // "scroll reveals the camera shot" without the OOM the original
+      // all-frames-on-mobile version caused.
+      if (mobile) {
+        const cameraVideo = mobileCameraVideoRef.current
+        if (!cameraVideo) return
+
+        let mobileAutoAdvanced = false
+        let mobileAutoAdvanceTimer: ReturnType<typeof setTimeout> | null = null
+
+        const mobileScrollTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: 'top top',
+            end: () => `+=${window.innerHeight * 1.6}`,
+            scrub: 1,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              if (self.progress < 0.5) {
+                mobileAutoAdvanced = false
+                if (mobileAutoAdvanceTimer) {
+                  clearTimeout(mobileAutoAdvanceTimer)
+                  mobileAutoAdvanceTimer = null
+                }
+                return
+              }
+              if (mobileAutoAdvanced || self.direction !== 1 || self.progress >= 0.99) return
+              if (mobileAutoAdvanceTimer) clearTimeout(mobileAutoAdvanceTimer)
+              mobileAutoAdvanceTimer = setTimeout(() => {
+                mobileAutoAdvanced = true
+                scrollToY(self.end, 1.4)
+              }, 140)
+            },
+          },
+        })
+
+        mobileScrollTl.to('.hero-html-content', { opacity: 0, ease: 'power2.in', duration: 0.3 }, 0)
+        mobileScrollTl.to('.camera-ui', { opacity: 0, ease: 'power2.in', duration: 0.3 }, 0)
+        mobileScrollTl.to(cameraVideo, { opacity: 1, ease: 'power2.out', duration: 0.35 }, 0)
+
+        return
+      }
 
       // Pan/scale no longer live on playhead -- they're derived straight
       // from the frame index every draw (getFocus, see above), so this
@@ -633,7 +761,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
     ScrollTrigger.refresh()
 
     return () => gsapCtx.revert()
-  }, { scope: containerRef })
+  }, { scope: containerRef, dependencies: [isMobile], revertOnUpdate: true })
 
   const slateLetters = wordmarkPart1.split('')
   const cinemaLetters = wordmarkPart2.split('')
@@ -651,23 +779,44 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
           className={`camera-canvas-container absolute inset-0 z-10 ${isMobile ? '' : 'opacity-0'} pointer-events-none flex items-center justify-center bg-ink`}
         >
           {isMobile ? (
-            <video
-              ref={attachMobileVideo}
-              src={HERO_MOBILE_VIDEO}
-              poster={HERO_MOBILE_POSTER}
-              autoPlay
-              loop
-              muted
-              playsInline
-              // 'auto' (was 'metadata'): this IS the hero -- start buffering
-              // immediately so it plays as soon as the poster shows.
-              preload="auto"
-              controls={false}
-              disablePictureInPicture
-              disableRemotePlayback
-              controlsList="nodownload nofullscreen noremoteplayback"
-              className="bg-video w-full h-full object-cover"
-            />
+            <>
+              <video
+                ref={attachMobileVideo}
+                src={HERO_MOBILE_VIDEO}
+                poster={HERO_MOBILE_POSTER}
+                autoPlay
+                loop
+                muted
+                playsInline
+                // 'auto' (was 'metadata'): this IS the hero -- start buffering
+                // immediately so it plays as soon as the poster shows.
+                preload="auto"
+                controls={false}
+                disablePictureInPicture
+                disableRemotePlayback
+                controlsList="nodownload nofullscreen noremoteplayback"
+                className="bg-video w-full h-full object-cover"
+              />
+              {/* "Second video" -- the rotating-camera Ken Burns reveal.
+                  Autoplaying + looping from the start same as the video
+                  above (invisible until the useGSAP mobile branch
+                  crossfades it in on scroll); see attachCameraVideo for why
+                  this actually plays instead of being scroll-scrubbed. */}
+              <video
+                ref={attachCameraVideo}
+                src={HERO_MOBILE_CAMERA_VIDEO}
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="auto"
+                controls={false}
+                disablePictureInPicture
+                disableRemotePlayback
+                controlsList="nodownload nofullscreen noremoteplayback"
+                className="bg-video absolute inset-0 w-full h-full object-cover opacity-0"
+              />
+            </>
           ) : (
             <canvas
               ref={canvasRef}
