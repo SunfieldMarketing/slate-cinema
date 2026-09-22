@@ -174,3 +174,23 @@ body {
   --sidebar-border: rgba(255, 255, 255, 0.1);
   --sidebar-ring: rgba(0, 174, 239, 0.5);
 }
+/*
+  Ambient background videos (hero, highlight reel, page backdrops) must never
+  show native player UI. When a phone blocks autoplay (iOS Low Power Mode,
+  some in-app browsers) WebKit paints a big play button over the video --
+  the "pause button or anything" that shouldn't be there. These videos are
+  decoration, not players, so hide every native control on them. 2026-09-18.
+*/
+video.bg-video::-webkit-media-controls,
+video.bg-video::-webkit-media-controls-enclosure,
+video.bg-video::-webkit-media-controls-panel,
+video.bg-video::-webkit-media-controls-overlay-play-button,
+video.bg-video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  -webkit-appearance: none;
+  opacity: 0;
+  pointer-events: none;
+}
+video.bg-video {
+  pointer-events: none;
+}

@@ -24,8 +24,13 @@ const S3 = 'https://s3.us-east-1.amazonaws.com/slate-cinema-media/slate/'
 // framing, every visible pixel real, 3.3MB. Served from the site's own
 // static files. Jake's S3 version stays as the constant below if we ever
 // want to compare or fall back.
-export const HERO_MOBILE_VIDEO = '/videos/hero-mobile-portrait.mp4'
-export const HERO_MOBILE_POSTER = '/videos/hero-mobile-portrait-poster.webp'
+// 2026-09-18 follow-up ("make it full res, not blurry"): the first cut was
+// downscaled to 400px wide to match CSS pixels, but phones are 3x -- a
+// 375pt-wide iPhone screen is 1125 real pixels, so 400 still looked soft.
+// The master's visible window is natively 500x1080, the most real detail
+// that exists in the source, so this is that window UNSCALED (8.3MB).
+export const HERO_MOBILE_VIDEO = '/videos/hero-mobile-hq.mp4'
+export const HERO_MOBILE_POSTER = '/videos/hero-mobile-hq-poster.webp'
 export const HERO_MOBILE_VIDEO_1MB = `${S3}hero-mobile-1mb.mp4`
 export const REEL_MOBILE_VIDEO = `${S3}reel-mobile-1mb.mp4`
 export const REEL_MOBILE_POSTER = `${S3}reel-poster-mobile.webp`

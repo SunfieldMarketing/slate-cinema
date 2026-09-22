@@ -166,7 +166,9 @@ export default function SmartVideo({
         muted
         playsInline
         controls={variant === 'player'}
-        className={className}
+        // Ambient (background) videos get the .bg-video class, which hides
+        // any native play button WebKit paints when autoplay is blocked.
+        className={variant === 'player' ? className : `bg-video ${className ?? ''}`}
         onLoadedData={onLoadedData}
         preload={priority ? 'auto' : swappable && isMobile ? 'metadata' : undefined}
         // @ts-expect-error -- same as the iframe path above.

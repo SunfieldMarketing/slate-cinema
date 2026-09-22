@@ -123,7 +123,10 @@ function PageBackdrop({ rootRef }: { rootRef: React.RefObject<HTMLDivElement | n
           playsInline
           preload={isMobile ? 'metadata' : undefined}
           poster={isMobile ? REEL_MOBILE_POSTER : undefined}
-          className="absolute top-0 inset-x-0 h-screen w-full object-cover opacity-[0.18]"
+          controls={false}
+          disablePictureInPicture
+          disableRemotePlayback
+          className="bg-video absolute top-0 inset-x-0 h-screen w-full object-cover opacity-[0.18]"
           style={{
             maskImage: 'linear-gradient(to bottom, black 0, black 75vh, transparent 100vh)',
             WebkitMaskImage: 'linear-gradient(to bottom, black 0, black 75vh, transparent 100vh)',

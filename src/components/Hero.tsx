@@ -595,8 +595,14 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
               loop
               muted
               playsInline
-              preload="metadata"
-              className="w-full h-full object-cover"
+              // 'auto' (was 'metadata'): this IS the hero -- start buffering
+              // immediately so it plays as soon as the poster shows.
+              preload="auto"
+              controls={false}
+              disablePictureInPicture
+              disableRemotePlayback
+              controlsList="nodownload nofullscreen noremoteplayback"
+              className="bg-video w-full h-full object-cover"
             />
           ) : (
             <canvas

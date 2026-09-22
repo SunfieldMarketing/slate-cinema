@@ -166,7 +166,10 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
             playsInline
             preload={isMobile ? 'metadata' : undefined}
             poster={isMobile ? REEL_MOBILE_POSTER : undefined}
-            className="absolute w-full h-full object-cover top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-70"
+            controls={false}
+            disablePictureInPicture
+            disableRemotePlayback
+            className="bg-video absolute w-full h-full object-cover top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-70"
             src={isMobile ? REEL_MOBILE_VIDEO : '/videos/performance.mp4'}
           />
         )}
@@ -191,7 +194,11 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
             Our Clients This Month
           </span>
           <div className="flex items-baseline gap-4 md:gap-8 justify-center flex-wrap">
-            <div className="text-[5rem] md:text-[8rem] lg:text-[11rem] font-bold text-white tracking-tighter leading-none" style={{ textShadow: '0 0 100px rgba(0,174,239,0.25), 0 10px 40px rgba(0,0,0,0.5)' }}>
+            {/* clamp(): a fixed 5rem overflowed a 375px phone once the count
+                reached 9 digits (118,077,000 clipped off both edges). 14vw
+                keeps the widest value inside the screen at any phone width;
+                whitespace-nowrap stops it wrapping mid-number. md+ unchanged. */}
+            <div className="text-[clamp(2.5rem,14vw,5rem)] md:text-[8rem] lg:text-[11rem] font-bold text-white tracking-tighter leading-none whitespace-nowrap" style={{ textShadow: '0 0 100px rgba(0,174,239,0.25), 0 10px 40px rgba(0,0,0,0.5)' }}>
               {views.toLocaleString()}
             </div>
             <div className="text-3xl md:text-5xl lg:text-7xl font-light text-white/90 uppercase tracking-widest">
