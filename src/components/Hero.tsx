@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useCallback } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -110,25 +110,55 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
     window.scrollTo(0, 0)
   }, [])
 
-  // Phones: `autoplay` is a request, not a guarantee -- iOS Low Power Mode
-  // and some in-app browsers block it, which leaves a frozen poster (reads
-  // as "the hero video isn't playing"). Try play() explicitly, and retry on
-  // the first touch/scroll, which counts as a user gesture.
-  useEffect(() => {
-    if (!isMobile) return
-    const v = mobileVideoRef.current
-    if (!v) return
+  // Phones: verified live that a plain useEffect([isMobile]) calling
+  // play() once on mount was NOT reliably starting playback (confirmed:
+  // video loaded fine -- readyState 4, correct src -- but sat paused at
+  // currentTime 0; a manual play() from the console started it instantly
+  // with no rejection, which rules out an autoplay-POLICY block). Root
+  // cause: this <video> doesn't exist in the server-rendered HTML at all
+  // -- isMobile is null during SSR (see useIsMobile's server snapshot),
+  // so the canvas branch renders first and React only swaps in the
+  // <video> after hydration determines this is a phone. A video element
+  // created by client JS after the fact is autoplayed far less reliably
+  // by mobile browsers than one present in the parsed HTML, and a single
+  // mount-time effect can race ahead of the element actually having any
+  // data. Fixed with a callback ref (fires play() the instant the node
+  // attaches, synchronously in the commit -- no effect-timing race) plus
+  // 'canplay'/'loadedmetadata' listeners (retry once real data exists)
+  // and the same gesture fallback as before for anything that still
+  // blocks it (iOS Low Power Mode, some in-app browsers).
+  // useCallback with [] so this keeps ONE stable identity for the
+  // component's life -- a callback ref that gets a new function on every
+  // render makes React detach+reattach (null, then the element again) on
+  // every single re-render, re-running all of this and stacking listeners
+  // each time. mobileCleanupRef holds the exact listener references so
+  // the detach call (`el === null`) can remove precisely what was added.
+  const mobileCleanupRef = useRef<(() => void) | null>(null)
+  const attachMobileVideo = useCallback((el: HTMLVideoElement | null) => {
+    mobileVideoRef.current = el
+    mobileCleanupRef.current?.()
+    mobileCleanupRef.current = null
+    if (!el) return
     const tryPlay = () => {
-      if (v.paused) v.play().catch(() => {})
+      if (el.paused) el.play().catch(() => {})
     }
     tryPlay()
+    el.addEventListener('loadedmetadata', tryPlay)
+    el.addEventListener('canplay', tryPlay)
     window.addEventListener('touchstart', tryPlay, { passive: true, once: true })
     window.addEventListener('scroll', tryPlay, { passive: true, once: true })
-    return () => {
+    // Browsers correctly auto-pause background video when the tab isn't
+    // visible (backgrounding the app, switching tabs) -- resume when the
+    // visitor comes back rather than leaving them on a frozen frame.
+    document.addEventListener('visibilitychange', tryPlay)
+    mobileCleanupRef.current = () => {
+      el.removeEventListener('loadedmetadata', tryPlay)
+      el.removeEventListener('canplay', tryPlay)
+      document.removeEventListener('visibilitychange', tryPlay)
       window.removeEventListener('touchstart', tryPlay)
       window.removeEventListener('scroll', tryPlay)
     }
-  }, [isMobile])
+  }, [])
 
   // Fade scroll hint arrow out as user scrolls
   useEffect(() => {
@@ -588,7 +618,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
         >
           {isMobile ? (
             <video
-              ref={mobileVideoRef}
+              ref={attachMobileVideo}
               src={HERO_MOBILE_VIDEO}
               poster={HERO_MOBILE_POSTER}
               autoPlay
