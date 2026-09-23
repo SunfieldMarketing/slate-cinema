@@ -625,13 +625,48 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
         let mobileAutoAdvanced = false
         let mobileAutoAdvanceTimer: ReturnType<typeof setTimeout> | null = null
         const mobilePlayhead = { frame: 0 }
-        // Skip re-seeking the video when the scrub tween re-fires onUpdate
-        // without the rounded frame actually changing (scrub interpolates
-        // continuously, onUpdate fires far more often than the frame index
-        // advances) -- currentTime writes are real decode/seek work, unlike
-        // a canvas drawImage(), so this cuts seek volume to roughly one per
-        // frame actually crossed instead of one per scrub tick.
-        let lastSeekedFrame = -1
+
+        // Real mobile Safari seeks a paused <video> far slower than desktop
+        // Chromium, and firing a new currentTime write while a previous
+        // seek is still in flight INTERRUPTS it rather than queueing --
+        // fire-and-forget seeking on every scrub tick can leave the video
+        // stuck re-starting a seek it never finishes, which reads as "not
+        // scroll driven" (frozen) even though the transform/opacity tweens
+        // around it are updating fine. This queues at most one seek at a
+        // time and always converges on the LATEST requested frame once the
+        // current one resolves, instead of chasing every intermediate tick.
+        let seekInFlight = false
+        let pendingFrame: number | null = null
+        const runSeek = () => {
+          if (pendingFrame === null) return
+          const target = pendingFrame
+          pendingFrame = null
+          seekInFlight = true
+          const duration = cameraVideo.duration || 9.7
+          cameraVideo.currentTime = (target / (FRAME_COUNT - 1)) * duration
+          // Registered fresh for THIS seek every time, not just the first
+          // -- a `{once:true}` listener set up once outside this function
+          // would remove itself after the first seek and leave every
+          // later re-entrant seek (fired from inside this very handler)
+          // with nothing to ever clear seekInFlight, permanently wedging
+          // the queue after one cycle.
+          let settled = false
+          const advance = () => {
+            if (settled) return
+            settled = true
+            seekInFlight = false
+            if (pendingFrame !== null) runSeek()
+          }
+          cameraVideo.addEventListener('seeked', advance, { once: true })
+          // Safety net: if 'seeked' never fires on some real device/edge
+          // case, don't wedge the queue forever -- move on after 250ms so
+          // the next scroll-driven frame still gets through.
+          setTimeout(advance, 250)
+        }
+        const requestSeek = (index: number) => {
+          pendingFrame = index
+          if (!seekInFlight) runSeek()
+        }
 
         cameraVideo.style.transform = mobileCameraTransform(0)
 
@@ -640,12 +675,12 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
             trigger: containerRef.current,
             start: 'top top',
             end: () => `+=${window.innerHeight * 1.6}`,
-            // Lower than desktop's scrub: 1 -- on a touch screen, input IS
-            // the finger on the glass, and a full second of catch-up lag
-            // reads as broken/laggy in a way it doesn't on a mouse wheel.
-            // 0.15 keeps just enough smoothing to not look stuttery while
-            // tracking a scroll gesture almost immediately.
-            scrub: 0.15,
+            // 2026-09-22, tightened again same day: "way faster." A touch
+            // scroll is direct-manipulation input -- 0.05 is close enough
+            // to zero lag to feel 1:1 with the finger while still smoothing
+            // out raw per-touchmove jitter (true scrub:true was tried and
+            // looked stuttery on fast flicks).
+            scrub: 0.05,
             pin: true,
             anticipatePin: 1,
             invalidateOnRefresh: true,
@@ -668,38 +703,30 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
           },
         })
 
-        // A/B: near-instant crossfade -- the wordmark dissolves and the
-        // camera video is fully revealed within the first ~15% of this
-        // timeline (roughly the first quarter-viewport of actual scroll),
-        // rather than the slower ~30-35% desktop uses. "As soon as someone
-        // scrolls it almost instantly transitions" -- desktop's pacing felt
-        // right there because a mouse wheel tick already covers a good
-        // chunk of that window; a touch scroll's first few pixels should
-        // feel the same on a phone.
-        mobileScrollTl.to('.hero-html-content', { opacity: 0, ease: 'power2.in', duration: 0.15 }, 0)
-        mobileScrollTl.to('.camera-ui', { opacity: 0, ease: 'power2.in', duration: 0.15 }, 0)
-        mobileScrollTl.to(cameraVideo, { opacity: 1, ease: 'power2.out', duration: 0.18 }, 0)
+        // A/B: "the first video needs to disappear near instantly" -- the
+        // wordmark/HTML layer and camera-video reveal both complete within
+        // the first ~6% of this timeline, a handful of scrolled pixels.
+        mobileScrollTl.to('.hero-html-content', { opacity: 0, ease: 'power1.in', duration: 0.06 }, 0)
+        mobileScrollTl.to('.camera-ui', { opacity: 0, ease: 'power1.in', duration: 0.06 }, 0)
+        mobileScrollTl.to(cameraVideo, { opacity: 1, ease: 'power1.out', duration: 0.06 }, 0)
         // C: the Ken Burns scrub itself -- same FOCUS_KEYFRAMES-driven pan/
-        // zoom as desktop, just reading video.currentTime instead of a
-        // decoded bitmap. Starts right as the crossfade wraps up and runs
-        // the rest of the pin's distance.
+        // zoom as desktop, just reading video.currentTime (via requestSeek
+        // above) instead of a decoded bitmap. Starts right as the crossfade
+        // wraps up and runs the rest of the pin's distance.
         mobileScrollTl.to(
           mobilePlayhead,
           {
             frame: FRAME_COUNT - 1,
             snap: 'frame',
             ease: 'power2.in',
-            duration: 0.85,
+            duration: 0.94,
             onUpdate: () => {
               const index = Math.round(mobilePlayhead.frame)
               cameraVideo.style.transform = mobileCameraTransform(index)
-              if (index === lastSeekedFrame) return
-              lastSeekedFrame = index
-              const duration = cameraVideo.duration || 9.7
-              cameraVideo.currentTime = (index / (FRAME_COUNT - 1)) * duration
+              requestSeek(index)
             },
           },
-          0.15
+          0.06
         )
 
         return
