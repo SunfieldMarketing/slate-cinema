@@ -33,19 +33,6 @@ export const HERO_MOBILE_VIDEO = '/videos/hero-mobile-hq.mp4'
 export const HERO_MOBILE_POSTER = '/videos/hero-mobile-hq-poster.webp'
 export const HERO_MOBILE_VIDEO_1MB = `${S3}hero-mobile-1mb.mp4`
 
-// 2026-09-22: the "second video" -- scrolling past the hero used to reveal
-// a rotating-camera Ken Burns shot (desktop still does this today, via a
-// canvas drawing 291 decoded WebP bitmaps -- see FRAME_COUNT/FOCUS_KEYFRAMES
-// in Hero.tsx). That per-frame bitmap decode is exactly what was OOM-ing
-// phones (see the header comment above), so f0b59b2 dropped it from mobile
-// entirely rather than re-tune it. Same source footage
-// (public/videos/hero-camera.mp4, 291 frames @ 30fps, 9.7s -- the frame
-// sequence's literal source file), re-encoded once with a tight keyframe
-// interval (-g 5) instead of decoded into 291 separate bitmaps: Hero.tsx
-// scrubs it via video.currentTime as the user scrolls (one small hardware
-// video decoder, not ~870MB of resident bitmaps) and reapplies the same
-// getFocus() pan/zoom as a CSS transform. Same visual idea, memory-safe.
-export const HERO_MOBILE_CAMERA_VIDEO = '/videos/hero-camera-mobile.mp4'
 export const REEL_MOBILE_VIDEO = `${S3}reel-mobile-1mb.mp4`
 export const REEL_MOBILE_POSTER = `${S3}reel-poster-mobile.webp`
 

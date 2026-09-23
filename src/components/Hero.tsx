@@ -7,12 +7,7 @@ import { useGSAP } from '@gsap/react'
 import { scrollState, toTimecode, scrollToY } from '@/lib/scroll'
 import type { HomePage } from '@/payload-types'
 import SmartVideo from '@/components/ui/SmartVideo'
-import {
-  useIsMobile,
-  HERO_MOBILE_VIDEO,
-  HERO_MOBILE_POSTER,
-  HERO_MOBILE_CAMERA_VIDEO,
-} from '@/lib/mobile-media'
+import { useIsMobile, HERO_MOBILE_VIDEO, HERO_MOBILE_POSTER } from '@/lib/mobile-media'
 
 // Real master reel, per the "CLAUDE INPUT 8/12 -- HOMEPAGE" doc note:
 // "HERO: keep 'Video Marketing At Your Fingertips'. Visual: ... from the
@@ -25,6 +20,29 @@ const HERO_MASTER_REEL_VIMEO_ID = '937380835'
 gsap.registerPlugin(ScrollTrigger)
 
 const FRAME_COUNT = 291
+
+// Mobile's own frame sequence -- "frame by frame like Apple's style," the
+// same canvas-drawImage technique desktop uses, not a scrubbed <video>
+// (video.currentTime seeking is asynchronous and can't guarantee a frame
+// lands exactly when scroll says it should; a decoded ImageBitmap draws
+// synchronously, zero latency, every tick). The reason mobile never had
+// this already is memory: decoding all 291 full-res (1280x588) frames at
+// once is ~870MB and is what actually crashed phones (see the loader
+// effect below). This sidesteps that instead of reintroducing it -- every
+// 5th frame (public/videos/frames-mobile/, extracted from the same
+// hero-camera.mp4 the full sequence comes from), downscaled to 640x294.
+// 59 frames x ~0.72MB decoded each = ~42MB peak, decoded eagerly with no
+// windowing needed -- about 20x under the crash threshold, and well under
+// even desktop's own windowed tablet cap (~162MB). getFocus() below still
+// interpolates pan/zoom continuously off the exact scroll-driven frame
+// index regardless of which of the 59 stills is actually on screen, so
+// the camera movement stays smooth even though the photo underneath it
+// only changes every 5 original frames.
+const MOBILE_FRAME_COUNT = 59
+const MOBILE_FRAME_STEP = 5
+function mobileFrameSlot(index: number): number {
+  return Math.max(0, Math.min(MOBILE_FRAME_COUNT - 1, Math.round(index / MOBILE_FRAME_STEP)))
+}
 
 // 2026-08-27: "keyframe it so main focus of video on mobile moves
 // throughout or through timestamps of video so it can be fully zoomed
@@ -81,43 +99,15 @@ function getFocus(frameIndex: number) {
   return kfs[kfs.length - 1]
 }
 
-// Mobile's camera-reveal <video> re-plays the exact same FOCUS_KEYFRAMES
-// pan/zoom as a CSS transform instead of a canvas redraw (see
-// HERO_MOBILE_CAMERA_VIDEO's comment in mobile-media.ts for why). A canvas
-// can draw a frame smaller than a tight cover fit (focusScale down to 0.72)
-// and paper over the gap with a blurred backdrop copy; a CSS transform on a
-// plain object-cover <video> has no such backdrop, so scale must never drop
-// below 1 or the video edge shows through as a bare gap. This remaps
-// FOCUS_KEYFRAMES' 0.72-1.0 range onto a CSS scale that stays safely over
-// 1 throughout (1.15-1.5) and derives how far it can pan from how much
-// overscan that scale leaves.
-const MOBILE_CAMERA_SCALE_MIN = 1.15
-const MOBILE_CAMERA_SCALE_MAX = 1.5
-
-function mobileCameraTransform(frameIndex: number): string {
-  const { x, y, scale } = getFocus(frameIndex)
-  const t = (scale - 0.72) / (1.0 - 0.72)
-  const cssScale =
-    MOBILE_CAMERA_SCALE_MIN + Math.max(0, Math.min(1, t)) * (MOBILE_CAMERA_SCALE_MAX - MOBILE_CAMERA_SCALE_MIN)
-  // % of the element's own box the overscan leaves free to pan on each axis
-  // before the edge would show, translated in the same 0(left/top)-1(right/
-  // bottom) convention FOCUS_KEYFRAMES already uses.
-  const maxPanPct = ((cssScale - 1) / cssScale) * 50
-  const tx = (0.5 - x) * 2 * maxPanPct
-  const ty = (0.5 - y) * 2 * maxPanPct
-  return `scale(${cssScale.toFixed(3)}) translate(${tx.toFixed(2)}%, ${ty.toFixed(2)}%)`
-}
-
-// The first mobile <video> layer only (the ambient, always-playing hero
-// loop) -- module scope, not a hook, so it's safe to call from inside a
-// plain ref-callback (the lint rule that forbids reading a ref during
-// render only cares about the render pass itself, not a callback React
-// invokes later at commit/attach time). Fires play() the instant the node
-// attaches (synchronously in the commit -- no effect-timing race) plus
-// 'canplay'/'loadedmetadata' listeners (retry once real data exists) and a
-// gesture fallback for anything that still blocks it (iOS Low Power Mode,
-// some in-app browsers). The camera-reveal video is NOT autoplaying --
-// scroll drives it -- so it uses its own attacher below instead of this one.
+// The mobile <video> layer -- the ambient, always-playing hero loop behind
+// the frame sequence (see the JSX). Module scope, not a hook, so it's safe
+// to call from inside a plain ref-callback (the lint rule that forbids
+// reading a ref during render only cares about the render pass itself, not
+// a callback React invokes later at commit/attach time). Fires play() the
+// instant the node attaches (synchronously in the commit -- no effect-
+// timing race) plus 'canplay'/'loadedmetadata' listeners (retry once real
+// data exists) and a gesture fallback for anything that still blocks it
+// (iOS Low Power Mode, some in-app browsers).
 function attachAutoplayVideo(
   el: HTMLVideoElement | null,
   targetRef: React.RefObject<HTMLVideoElement | null>,
@@ -162,7 +152,6 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
   // exactly as before.
   const isMobile = useIsMobile()
   const mobileVideoRef = useRef<HTMLVideoElement>(null)
-  const mobileCameraVideoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const scrollHintRef = useRef<HTMLDivElement>(null)
@@ -207,36 +196,8 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
   // each time. mobileCleanupRef holds the exact listener references so
   // the detach call (`el === null`) can remove precisely what was added.
   const mobileCleanupRef = useRef<(() => void) | null>(null)
-  const cameraCleanupRef = useRef<(() => void) | null>(null)
   const attachMobileVideo = useCallback((el: HTMLVideoElement | null) => {
     attachAutoplayVideo(el, mobileVideoRef, mobileCleanupRef)
-  }, [])
-  // 2026-09-22, reverted same day: briefly switched this to autoplay+loop
-  // (reading currentTime instead of writing it) after a scrub test in this
-  // session's own automated browser pane showed every property correct
-  // (readyState 4, seeking false, currentTime at target) but no painted
-  // frame. Live feedback was clear that lost the actual point -- scrolling
-  // has to visibly drive this video, matching desktop's frame-scrub, not
-  // just crossfade in an ambiently-looping clip. Restored real scrubbing.
-  // The one real risk (some engines, older iOS Safari especially, seek
-  // unreliably on a video that's never played) gets a cheap, standard
-  // mitigation instead of abandoning the technique: play() then instantly
-  // pause() the moment metadata is ready, warming up the decoder without
-  // ever being visible (opacity 0 until scroll crossfades it in), so every
-  // later seek lands on a decoder that has already produced a real frame.
-  const attachCameraVideo = useCallback((el: HTMLVideoElement | null) => {
-    mobileCameraVideoRef.current = el
-    cameraCleanupRef.current?.()
-    cameraCleanupRef.current = null
-    if (!el) return
-    const warm = () => {
-      el.play()
-        .then(() => el.pause())
-        .catch(() => {})
-    }
-    if (el.readyState >= 1) warm()
-    else el.addEventListener('loadedmetadata', warm, { once: true })
-    cameraCleanupRef.current = () => el.removeEventListener('loadedmetadata', warm)
   }, [])
 
   // Fade scroll hint arrow out as user scrolls
@@ -274,15 +235,54 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
   // small screens so frames can be decoded on demand and re-decoded later.
   const blobsRef = useRef<(Blob | null)[]>(Array(FRAME_COUNT + 1).fill(null))
   // Set by the loader effect below; renderFrame calls it so the decoded
-  // window follows the playhead (no-op on desktop, which keeps everything).
+  // window follows the playhead (no-op on desktop, which keeps everything,
+  // and on mobile, which decodes its whole small set upfront -- see below).
   const syncWindowRef = useRef<((center: number) => void) | null>(null)
+  // Mobile's own, much smaller frame set -- see MOBILE_FRAME_COUNT's
+  // comment above for the memory math.
+  const mobileBitmapsRef = useRef<(ImageBitmap | null)[]>(Array(MOBILE_FRAME_COUNT + 1).fill(null))
 
   useEffect(() => {
-    // Phones (and the pre-hydration null state) must never touch the frame
-    // sequence -- not one /videos/frames/* request, not one decoded bitmap.
-    // Jake, 2026-09-18: "/videos/frames/* must not be fetched on mobile."
-    if (isMobile !== false) return
+    if (isMobile === null) return
     let cancelled = false
+
+    if (isMobile) {
+      // Small enough (59 frames, ~0.72MB decoded each) to just decode the
+      // whole set eagerly -- no windowing, no on-demand decode/close dance,
+      // unlike desktop's lowMem path below. That complexity exists there to
+      // manage hundreds of megabytes; this whole set tops out around 42MB.
+      const mobileBitmaps = mobileBitmapsRef.current
+      const loadMobileFrame = async (i: number) => {
+        if (cancelled || mobileBitmaps[i]) return
+        try {
+          const resp = await fetch(`/videos/frames-mobile/frame_${i.toString().padStart(4, '0')}.webp`)
+          if (cancelled) return
+          const blob = await resp.blob()
+          if (cancelled) return
+          const bmp = await createImageBitmap(blob)
+          if (cancelled) {
+            bmp.close()
+            return
+          }
+          mobileBitmaps[i] = bmp
+        } catch {}
+      }
+      const loadAllMobile = async () => {
+        const batch = []
+        for (let i = 1; i <= MOBILE_FRAME_COUNT; i++) batch.push(loadMobileFrame(i))
+        await Promise.all(batch)
+      }
+      loadAllMobile()
+      return () => {
+        cancelled = true
+        // Same reasoning as desktop's cleanup below -- close() releases the
+        // backing store immediately instead of waiting on GC, which matters
+        // most on exactly the devices running this branch.
+        for (const bmp of mobileBitmaps) bmp?.close()
+        mobileBitmaps.fill(null)
+      }
+    }
+
     // Captured once -- this array's identity never changes for the life of
     // the component (only its elements are mutated in place), so reading
     // it here rather than via bitmapsRef.current inside the cleanup below
@@ -407,42 +407,26 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
   }, [isMobile])
 
   useGSAP(() => {
-    // 2026-09-22: `dependencies: [isMobile], revertOnUpdate: true` below
-    // (see the bottom of this hook) was removed once, then put back the
-    // same day. It had been removed on the theory that useSyncExternalStore
-    // (see useIsMobile) resolves isMobile to its real client value via
-    // React's synchronous post-hydration correction before any layout
-    // effect fires -- which would make the "runs once while isMobile is
-    // still null, never runs again for the real value" case this dependency
-    // guards against a non-issue in practice. That theory does not hold up:
-    // once this hook actually started branching real behavior on `mobile`
-    // (the camera-reveal video below), it measurably ran with `mobile` still
-    // false and canvasRef.current still null, hit the early
-    // `!mobile && (!canvas || !ctx)` return just below, and never ran again
-    // -- confirmed live via a console.log inside the mobile branch that
-    // never once fired. Restoring the dependency alone wasn't enough,
-    // though: that FIRST, stale (isMobile still null) run isn't a no-op --
-    // at that instant the JSX still renders the canvas branch too (null is
-    // falsy), so canvasRef.current is real and the guard below doesn't stop
-    // it, and it goes on to build the full desktop scrollTl, including a
-    // `.to('.camera-canvas-container', { opacity: 1 })` tween. GSAP sets
-    // that tween's from-state (opacity 0) as a real inline style on the
-    // wrapper immediately. `revertOnUpdate` kills that stale ScrollTrigger
-    // before the second, real run, but confirmed live: it left the wrapper
-    // stuck at inline `opacity: 0` regardless -- which is exactly why the
-    // camera-reveal video rendered as solid black even though every one of
-    // its own properties (opacity 1, playing, currentTime advancing) read
-    // back correct: its parent was invisible. Cheapest correct fix is to
-    // never let that stale run touch the DOM at all.
+    // isMobile is null until the client resolves it (see useIsMobile), and
+    // useGSAP only runs once by default -- without `dependencies: [isMobile]`
+    // below, this hook permanently commits to whatever `mobile` was on that
+    // first, still-null run and never re-evaluates it for the real value.
+    // The null run itself has to be a hard no-op too, not just skip the
+    // scroll animation: confirmed live that letting it build a real
+    // ScrollTrigger/timeline against a wrong `mobile` value left stray
+    // inline styles (an opacity stuck at 0) on shared elements that
+    // `revertOnUpdate`'s cleanup didn't undo before the second, real run --
+    // so bail before touching the DOM at all while isMobile is still null.
     if (isMobile === null) return
     const mobile = isMobile === true
     if (!containerRef.current) return
 
-    // On phones there is no canvas -- a <video> takes its place, so none of
-    // the frame-drawing below ever runs (see renderFrame's guard).
+    // Both mobile and desktop draw into this canvas now (see MOBILE_FRAME_COUNT
+    // above for why mobile gets its own much smaller frame set instead of
+    // the video it used to be scrubbed as).
     const canvas = canvasRef.current
     const ctx = canvas ? canvas.getContext('2d') : null
-    if (!mobile && (!canvas || !ctx)) return
+    if (!canvas || !ctx) return
 
     // Apple-style renderFrame: draw from pre-decoded ImageBitmap.
     // ImageBitmaps live on the GPU side so drawImage() is near-zero cost.
@@ -459,18 +443,27 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
     const bgCtx = bgCanvas.getContext('2d')
 
     const renderFrame = (index: number) => {
-      if (!canvas || !ctx) return // phones: no canvas, never called
+      if (!canvas || !ctx) return
       currentFrameRef.current = index
-      // Slide the decoded window to the playhead (phones only, no-op on
-      // desktop) -- see the loader effect above.
-      syncWindowRef.current?.(index)
-      let bmp = bitmapsRef.current[index]
-      if (!bmp) {
-        // Not decoded yet (window still catching up on a fast scroll, or
-        // index 0 which has no file): show the nearest decoded frame
-        // instead of freezing on whatever was drawn last.
-        for (let d = 1; d <= 12 && !bmp; d++) {
-          bmp = bitmapsRef.current[index - d] || bitmapsRef.current[index + d] || null
+      let bmp: ImageBitmap | null
+      if (mobile) {
+        // Mobile's whole (small) set is decoded eagerly upfront -- see the
+        // loader effect above -- so there's no windowing/fallback-search
+        // needed, just map the continuous frame index to its nearest
+        // available still.
+        bmp = mobileBitmapsRef.current[mobileFrameSlot(index) + 1] || null
+      } else {
+        // Slide the decoded window to the playhead (tablets only, no-op on
+        // real desktop, which keeps everything) -- see the loader effect above.
+        syncWindowRef.current?.(index)
+        bmp = bitmapsRef.current[index]
+        if (!bmp) {
+          // Not decoded yet (window still catching up on a fast scroll, or
+          // index 0 which has no file): show the nearest decoded frame
+          // instead of freezing on whatever was drawn last.
+          for (let d = 1; d <= 12 && !bmp; d++) {
+            bmp = bitmapsRef.current[index - d] || bitmapsRef.current[index + d] || null
+          }
         }
       }
       if (!bmp) return
@@ -579,7 +572,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
     }
 
     // Try to draw first frame immediately (it will retry onUpdate if not loaded yet)
-    if (!mobile) renderFrame(0)
+    renderFrame(0)
 
     const gsapCtx = gsap.context(() => {
       // --- 1. ENTRANCE ANIMATION ---
@@ -610,76 +603,29 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
       // This pin+dissolve+auto-advance system exists to give a scroll-
       // scrubbed reveal of the rotating-camera Ken Burns shot room to play
       // out -- 1.6 viewport-heights of pinned scroll, auto-completing once
-      // you're past halfway. Mobile gets its own branch below that
-      // crossfades in and SCRUBS a second <video> (HERO_MOBILE_CAMERA_VIDEO,
-      // the same footage FOCUS_KEYFRAMES/FRAME_COUNT's frame sequence is
-      // extracted from, one small hardware-decoded video instead of 291
-      // bitmaps) frame-for-frame against scroll position, through the same
-      // pin+scrub+auto-advance shape desktop uses -- restoring "scrolling
-      // visibly drives the camera video" without the OOM the original
-      // all-291-frames-decoded-on-mobile version caused.
+      // you're past halfway. Mobile gets its own branch below with its own
+      // (much faster) timing, but the actual frame reveal is now the exact
+      // same mechanism as desktop's: renderFrame() drawing a pre-decoded
+      // ImageBitmap into the shared canvas, driven straight off the scrub
+      // tween's frame index -- "frame by frame like Apple's style," not a
+      // scrubbed <video> (a video's currentTime seek is asynchronous and
+      // can't guarantee landing exactly on the frame scroll says it should;
+      // a canvas draw is synchronous, every tick, zero latency). See
+      // MOBILE_FRAME_COUNT above for how this stays memory-safe.
       if (mobile) {
-        const cameraVideo = mobileCameraVideoRef.current
-        if (!cameraVideo) return
-
         let mobileAutoAdvanced = false
         let mobileAutoAdvanceTimer: ReturnType<typeof setTimeout> | null = null
         const mobilePlayhead = { frame: 0 }
-
-        // Real mobile Safari seeks a paused <video> far slower than desktop
-        // Chromium, and firing a new currentTime write while a previous
-        // seek is still in flight INTERRUPTS it rather than queueing --
-        // fire-and-forget seeking on every scrub tick can leave the video
-        // stuck re-starting a seek it never finishes, which reads as "not
-        // scroll driven" (frozen) even though the transform/opacity tweens
-        // around it are updating fine. This queues at most one seek at a
-        // time and always converges on the LATEST requested frame once the
-        // current one resolves, instead of chasing every intermediate tick.
-        let seekInFlight = false
-        let pendingFrame: number | null = null
-        const runSeek = () => {
-          if (pendingFrame === null) return
-          const target = pendingFrame
-          pendingFrame = null
-          seekInFlight = true
-          const duration = cameraVideo.duration || 9.7
-          cameraVideo.currentTime = (target / (FRAME_COUNT - 1)) * duration
-          // Registered fresh for THIS seek every time, not just the first
-          // -- a `{once:true}` listener set up once outside this function
-          // would remove itself after the first seek and leave every
-          // later re-entrant seek (fired from inside this very handler)
-          // with nothing to ever clear seekInFlight, permanently wedging
-          // the queue after one cycle.
-          let settled = false
-          const advance = () => {
-            if (settled) return
-            settled = true
-            seekInFlight = false
-            if (pendingFrame !== null) runSeek()
-          }
-          cameraVideo.addEventListener('seeked', advance, { once: true })
-          // Safety net: if 'seeked' never fires on some real device/edge
-          // case, don't wedge the queue forever -- move on after 250ms so
-          // the next scroll-driven frame still gets through.
-          setTimeout(advance, 250)
-        }
-        const requestSeek = (index: number) => {
-          pendingFrame = index
-          if (!seekInFlight) runSeek()
-        }
-
-        cameraVideo.style.transform = mobileCameraTransform(0)
 
         const mobileScrollTl = gsap.timeline({
           scrollTrigger: {
             trigger: containerRef.current,
             start: 'top top',
             end: () => `+=${window.innerHeight * 1.6}`,
-            // 2026-09-22, tightened again same day: "way faster." A touch
-            // scroll is direct-manipulation input -- 0.05 is close enough
-            // to zero lag to feel 1:1 with the finger while still smoothing
-            // out raw per-touchmove jitter (true scrub:true was tried and
-            // looked stuttery on fast flicks).
+            // Far below desktop's scrub: 1 -- on a touch screen, input IS
+            // the finger on the glass, and any real catch-up lag reads as
+            // broken. 0.05 is close enough to zero to feel 1:1 while still
+            // smoothing out raw per-touchmove jitter.
             scrub: 0.05,
             pin: true,
             anticipatePin: 1,
@@ -704,15 +650,15 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
         })
 
         // A/B: "the first video needs to disappear near instantly" -- the
-        // wordmark/HTML layer and camera-video reveal both complete within
-        // the first ~6% of this timeline, a handful of scrolled pixels.
+        // wordmark/HTML layer dissolves and the canvas reveal completes
+        // within the first ~6% of this timeline, a handful of scrolled
+        // pixels, not a gradual fade.
         mobileScrollTl.to('.hero-html-content', { opacity: 0, ease: 'power1.in', duration: 0.06 }, 0)
         mobileScrollTl.to('.camera-ui', { opacity: 0, ease: 'power1.in', duration: 0.06 }, 0)
-        mobileScrollTl.to(cameraVideo, { opacity: 1, ease: 'power1.out', duration: 0.06 }, 0)
-        // C: the Ken Burns scrub itself -- same FOCUS_KEYFRAMES-driven pan/
-        // zoom as desktop, just reading video.currentTime (via requestSeek
-        // above) instead of a decoded bitmap. Starts right as the crossfade
-        // wraps up and runs the rest of the pin's distance.
+        mobileScrollTl.to(canvas, { opacity: 1, ease: 'power1.out', duration: 0.06 }, 0)
+        // C: the Ken Burns scrub itself -- identical call to desktop's own
+        // C-tween below, just with mobile's faster pacing and (via
+        // renderFrame's `mobile` branch) mobile's own smaller frame set.
         mobileScrollTl.to(
           mobilePlayhead,
           {
@@ -720,11 +666,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
             snap: 'frame',
             ease: 'power2.in',
             duration: 0.94,
-            onUpdate: () => {
-              const index = Math.round(mobilePlayhead.frame)
-              cameraVideo.style.transform = mobileCameraTransform(index)
-              requestSeek(index)
-            },
+            onUpdate: () => renderFrame(Math.round(mobilePlayhead.frame)),
           },
           0.06
         )
@@ -795,11 +737,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
       )
 
       // B. Canvas fades in simultaneously, overlapping the video dissolve
-      scrollTl.to(
-        '.camera-canvas-container',
-        { opacity: 1, ease: 'power2.out', duration: 0.35 },
-        0
-      )
+      scrollTl.to(canvas, { opacity: 1, ease: 'power2.out', duration: 0.35 }, 0)
 
       // C. Frame sequence — starts after crossfade is well underway.
       // Uses power2.in so the very first frames advance slowly (cinematic hold)
@@ -832,57 +770,32 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
       {/* Inner wrapper — overflow hidden so pinned canvas never bleeds out */}
       <div className="absolute inset-0 w-full h-full overflow-hidden" style={{ perspective: '2000px' }}>
 
-        {/* 1. Canvas image-sequence layer (fades in on scroll) */}
-        {/* On phones this layer is a single ~1MB <video> that's visible from
-            the start (the HTML layer above it just dissolves away on scroll,
-            revealing it) -- no canvas, no frame sequence. */}
-        <div
-          className={`camera-canvas-container absolute inset-0 z-10 ${isMobile ? '' : 'opacity-0'} pointer-events-none flex items-center justify-center bg-ink`}
-        >
-          {isMobile ? (
-            <>
-              <video
-                ref={attachMobileVideo}
-                src={HERO_MOBILE_VIDEO}
-                poster={HERO_MOBILE_POSTER}
-                autoPlay
-                loop
-                muted
-                playsInline
-                // 'auto' (was 'metadata'): this IS the hero -- start buffering
-                // immediately so it plays as soon as the poster shows.
-                preload="auto"
-                controls={false}
-                disablePictureInPicture
-                disableRemotePlayback
-                controlsList="nodownload nofullscreen noremoteplayback"
-                className="bg-video w-full h-full object-cover"
-              />
-              {/* "Second video" -- the rotating-camera Ken Burns reveal.
-                  Paused and scroll-scrubbed (see the useGSAP mobile branch
-                  below): no autoPlay/loop, currentTime is driven by scroll
-                  position exactly like desktop's frame sequence. Starts
-                  invisible; attachCameraVideo warms up the decoder so the
-                  first real seek doesn't land on an unplayed video. */}
-              <video
-                ref={attachCameraVideo}
-                src={HERO_MOBILE_CAMERA_VIDEO}
-                muted
-                playsInline
-                preload="auto"
-                controls={false}
-                disablePictureInPicture
-                disableRemotePlayback
-                controlsList="nodownload nofullscreen noremoteplayback"
-                className="bg-video absolute inset-0 w-full h-full object-cover opacity-0"
-              />
-            </>
-          ) : (
-            <canvas
-              ref={canvasRef}
-              className="w-full h-full object-cover"
+        {/* 1. Canvas image-sequence layer. The wrapper itself is always
+            visible now (on phones the ambient video below needs to show
+            from the start) -- the canvas is what starts invisible and
+            fades in on scroll, on both mobile and desktop (see the B tween
+            in each useGSAP branch, which targets the canvas ref directly). */}
+        <div className="camera-canvas-container absolute inset-0 z-10 pointer-events-none flex items-center justify-center bg-ink">
+          {isMobile && (
+            <video
+              ref={attachMobileVideo}
+              src={HERO_MOBILE_VIDEO}
+              poster={HERO_MOBILE_POSTER}
+              autoPlay
+              loop
+              muted
+              playsInline
+              // 'auto' (was 'metadata'): this IS the hero -- start buffering
+              // immediately so it plays as soon as the poster shows.
+              preload="auto"
+              controls={false}
+              disablePictureInPicture
+              disableRemotePlayback
+              controlsList="nodownload nofullscreen noremoteplayback"
+              className="bg-video absolute inset-0 w-full h-full object-cover"
             />
           )}
+          <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover opacity-0" />
         </div>
 
         {/* 2. HTML UI layer (fades out on scroll, no scale change) */}
