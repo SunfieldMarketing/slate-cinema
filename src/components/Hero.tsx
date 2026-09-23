@@ -108,23 +108,20 @@ function mobileCameraTransform(frameIndex: number): string {
   return `scale(${cssScale.toFixed(3)}) translate(${tx.toFixed(2)}%, ${ty.toFixed(2)}%)`
 }
 
-// Shared by both mobile <video> layers (module scope, not a hook, so it's
-// safe to call from inside a plain ref-callback -- the lint rule that
-// forbids reading a ref during render only cares about the render pass
-// itself, not a callback React invokes later at commit/attach time).
-// Fires play() the instant the node attaches (synchronously in the commit
-// -- no effect-timing race) plus 'canplay'/'loadedmetadata' listeners
-// (retry once real data exists) and a gesture fallback for anything that
-// still blocks it (iOS Low Power Mode, some in-app browsers). `onFrame`,
-// when given, gets rAF-ticked with the element for as long as it's
-// attached -- the camera-reveal video uses this to keep its Ken Burns
-// transform in sync with real playback instead of ever writing to
-// currentTime (see attachCameraVideo's comment for why).
+// The first mobile <video> layer only (the ambient, always-playing hero
+// loop) -- module scope, not a hook, so it's safe to call from inside a
+// plain ref-callback (the lint rule that forbids reading a ref during
+// render only cares about the render pass itself, not a callback React
+// invokes later at commit/attach time). Fires play() the instant the node
+// attaches (synchronously in the commit -- no effect-timing race) plus
+// 'canplay'/'loadedmetadata' listeners (retry once real data exists) and a
+// gesture fallback for anything that still blocks it (iOS Low Power Mode,
+// some in-app browsers). The camera-reveal video is NOT autoplaying --
+// scroll drives it -- so it uses its own attacher below instead of this one.
 function attachAutoplayVideo(
   el: HTMLVideoElement | null,
   targetRef: React.RefObject<HTMLVideoElement | null>,
-  cleanupRef: React.RefObject<(() => void) | null>,
-  onFrame?: (el: HTMLVideoElement) => void
+  cleanupRef: React.RefObject<(() => void) | null>
 ) {
   targetRef.current = el
   cleanupRef.current?.()
@@ -142,21 +139,12 @@ function attachAutoplayVideo(
   // visible (backgrounding the app, switching tabs) -- resume when the
   // visitor comes back rather than leaving them on a frozen frame.
   document.addEventListener('visibilitychange', tryPlay)
-  let rafId: number | null = null
-  if (onFrame) {
-    const tick = () => {
-      onFrame(el)
-      rafId = requestAnimationFrame(tick)
-    }
-    rafId = requestAnimationFrame(tick)
-  }
   cleanupRef.current = () => {
     el.removeEventListener('loadedmetadata', tryPlay)
     el.removeEventListener('canplay', tryPlay)
     document.removeEventListener('visibilitychange', tryPlay)
     window.removeEventListener('touchstart', tryPlay)
     window.removeEventListener('scroll', tryPlay)
-    if (rafId != null) cancelAnimationFrame(rafId)
   }
 }
 
@@ -223,26 +211,32 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
   const attachMobileVideo = useCallback((el: HTMLVideoElement | null) => {
     attachAutoplayVideo(el, mobileVideoRef, mobileCleanupRef)
   }, [])
-  // 2026-09-22: this used to be scrubbed by hand -- a GSAP tween writing
-  // frame-mapped values to cameraVideo.currentTime as the user scrolled, to
-  // frame-match desktop's canvas scrub exactly. Tested live: the browser
-  // reported every state correctly (readyState 4, seeking false, currentTime
-  // at the exact target, no error) but never actually painted a frame for a
-  // video that's paused and only ever seeked, not played -- a real
-  // reliability gap on top of engines (older iOS Safari especially) that
-  // are known to be flaky about seeking a video that's never been played.
-  // Autoplay+loop is the one mechanism already proven reliable here (see
-  // attachMobileVideo/attachAutoplayVideo above) -- so this video actually
-  // plays, same as the first one, and the Ken Burns pan/zoom below just
-  // READS its real currentTime every rAF tick instead of writing to it.
-  // Loses exact frame-to-scroll-pixel locking; keeps the one thing that has
-  // to work.
+  // 2026-09-22, reverted same day: briefly switched this to autoplay+loop
+  // (reading currentTime instead of writing it) after a scrub test in this
+  // session's own automated browser pane showed every property correct
+  // (readyState 4, seeking false, currentTime at target) but no painted
+  // frame. Live feedback was clear that lost the actual point -- scrolling
+  // has to visibly drive this video, matching desktop's frame-scrub, not
+  // just crossfade in an ambiently-looping clip. Restored real scrubbing.
+  // The one real risk (some engines, older iOS Safari especially, seek
+  // unreliably on a video that's never played) gets a cheap, standard
+  // mitigation instead of abandoning the technique: play() then instantly
+  // pause() the moment metadata is ready, warming up the decoder without
+  // ever being visible (opacity 0 until scroll crossfades it in), so every
+  // later seek lands on a decoder that has already produced a real frame.
   const attachCameraVideo = useCallback((el: HTMLVideoElement | null) => {
-    attachAutoplayVideo(el, mobileCameraVideoRef, cameraCleanupRef, (video) => {
-      const duration = video.duration || 9.7
-      const index = Math.round((video.currentTime / duration) * (FRAME_COUNT - 1))
-      video.style.transform = mobileCameraTransform(index)
-    })
+    mobileCameraVideoRef.current = el
+    cameraCleanupRef.current?.()
+    cameraCleanupRef.current = null
+    if (!el) return
+    const warm = () => {
+      el.play()
+        .then(() => el.pause())
+        .catch(() => {})
+    }
+    if (el.readyState >= 1) warm()
+    else el.addEventListener('loadedmetadata', warm, { once: true })
+    cameraCleanupRef.current = () => el.removeEventListener('loadedmetadata', warm)
   }, [])
 
   // Fade scroll hint arrow out as user scrolls
@@ -613,28 +607,26 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
       )
 
       // --- 2. SCROLL ANIMATION ---
-      // 2026-09-22: this pin+dissolve+auto-advance system exists to give a
-      // scroll-triggered reveal of the rotating-camera Ken Burns shot room
-      // to play out -- 1.6 viewport-heights of pinned scroll, auto-
-      // completing once you're past halfway. A same-day earlier pass had
-      // this running unconditionally on mobile with NOTHING left to reveal
-      // there (mobile had been reduced to one plain looping video, no
-      // second stage) -- the section pinned for a long dead zone, then
-      // force-scrolled the visitor past it. That's now fixed properly:
-      // mobile gets its own branch below that crossfades in a second
-      // <video> (HERO_MOBILE_CAMERA_VIDEO, same footage as FOCUS_KEYFRAMES/
-      // FRAME_COUNT's frame sequence, just autoplaying as one small
-      // hardware-decoded video instead of 291 bitmaps -- see
-      // attachCameraVideo above for why it plays rather than being scrubbed)
-      // through the same pin+auto-advance shape desktop uses -- restoring
-      // "scroll reveals the camera shot" without the OOM the original
-      // all-frames-on-mobile version caused.
+      // This pin+dissolve+auto-advance system exists to give a scroll-
+      // scrubbed reveal of the rotating-camera Ken Burns shot room to play
+      // out -- 1.6 viewport-heights of pinned scroll, auto-completing once
+      // you're past halfway. Mobile gets its own branch below that
+      // crossfades in and SCRUBS a second <video> (HERO_MOBILE_CAMERA_VIDEO,
+      // the same footage FOCUS_KEYFRAMES/FRAME_COUNT's frame sequence is
+      // extracted from, one small hardware-decoded video instead of 291
+      // bitmaps) frame-for-frame against scroll position, through the same
+      // pin+scrub+auto-advance shape desktop uses -- restoring "scrolling
+      // visibly drives the camera video" without the OOM the original
+      // all-291-frames-decoded-on-mobile version caused.
       if (mobile) {
         const cameraVideo = mobileCameraVideoRef.current
         if (!cameraVideo) return
 
         let mobileAutoAdvanced = false
         let mobileAutoAdvanceTimer: ReturnType<typeof setTimeout> | null = null
+        const mobilePlayhead = { frame: 0 }
+
+        cameraVideo.style.transform = mobileCameraTransform(0)
 
         const mobileScrollTl = gsap.timeline({
           scrollTrigger: {
@@ -667,6 +659,22 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
         mobileScrollTl.to('.hero-html-content', { opacity: 0, ease: 'power2.in', duration: 0.3 }, 0)
         mobileScrollTl.to('.camera-ui', { opacity: 0, ease: 'power2.in', duration: 0.3 }, 0)
         mobileScrollTl.to(cameraVideo, { opacity: 1, ease: 'power2.out', duration: 0.35 }, 0)
+        mobileScrollTl.to(
+          mobilePlayhead,
+          {
+            frame: FRAME_COUNT - 1,
+            snap: 'frame',
+            ease: 'power2.in',
+            duration: 0.82,
+            onUpdate: () => {
+              const index = Math.round(mobilePlayhead.frame)
+              const duration = cameraVideo.duration || 9.7
+              cameraVideo.currentTime = (index / (FRAME_COUNT - 1)) * duration
+              cameraVideo.style.transform = mobileCameraTransform(index)
+            },
+          },
+          0.18
+        )
 
         return
       }
@@ -798,15 +806,14 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
                 className="bg-video w-full h-full object-cover"
               />
               {/* "Second video" -- the rotating-camera Ken Burns reveal.
-                  Autoplaying + looping from the start same as the video
-                  above (invisible until the useGSAP mobile branch
-                  crossfades it in on scroll); see attachCameraVideo for why
-                  this actually plays instead of being scroll-scrubbed. */}
+                  Paused and scroll-scrubbed (see the useGSAP mobile branch
+                  below): no autoPlay/loop, currentTime is driven by scroll
+                  position exactly like desktop's frame sequence. Starts
+                  invisible; attachCameraVideo warms up the decoder so the
+                  first real seek doesn't land on an unplayed video. */}
               <video
                 ref={attachCameraVideo}
                 src={HERO_MOBILE_CAMERA_VIDEO}
-                autoPlay
-                loop
                 muted
                 playsInline
                 preload="auto"
