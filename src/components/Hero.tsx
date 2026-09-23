@@ -625,6 +625,13 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
         let mobileAutoAdvanced = false
         let mobileAutoAdvanceTimer: ReturnType<typeof setTimeout> | null = null
         const mobilePlayhead = { frame: 0 }
+        // Skip re-seeking the video when the scrub tween re-fires onUpdate
+        // without the rounded frame actually changing (scrub interpolates
+        // continuously, onUpdate fires far more often than the frame index
+        // advances) -- currentTime writes are real decode/seek work, unlike
+        // a canvas drawImage(), so this cuts seek volume to roughly one per
+        // frame actually crossed instead of one per scrub tick.
+        let lastSeekedFrame = -1
 
         cameraVideo.style.transform = mobileCameraTransform(0)
 
@@ -633,7 +640,12 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
             trigger: containerRef.current,
             start: 'top top',
             end: () => `+=${window.innerHeight * 1.6}`,
-            scrub: 1,
+            // Lower than desktop's scrub: 1 -- on a touch screen, input IS
+            // the finger on the glass, and a full second of catch-up lag
+            // reads as broken/laggy in a way it doesn't on a mouse wheel.
+            // 0.15 keeps just enough smoothing to not look stuttery while
+            // tracking a scroll gesture almost immediately.
+            scrub: 0.15,
             pin: true,
             anticipatePin: 1,
             invalidateOnRefresh: true,
@@ -656,24 +668,38 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
           },
         })
 
-        mobileScrollTl.to('.hero-html-content', { opacity: 0, ease: 'power2.in', duration: 0.3 }, 0)
-        mobileScrollTl.to('.camera-ui', { opacity: 0, ease: 'power2.in', duration: 0.3 }, 0)
-        mobileScrollTl.to(cameraVideo, { opacity: 1, ease: 'power2.out', duration: 0.35 }, 0)
+        // A/B: near-instant crossfade -- the wordmark dissolves and the
+        // camera video is fully revealed within the first ~15% of this
+        // timeline (roughly the first quarter-viewport of actual scroll),
+        // rather than the slower ~30-35% desktop uses. "As soon as someone
+        // scrolls it almost instantly transitions" -- desktop's pacing felt
+        // right there because a mouse wheel tick already covers a good
+        // chunk of that window; a touch scroll's first few pixels should
+        // feel the same on a phone.
+        mobileScrollTl.to('.hero-html-content', { opacity: 0, ease: 'power2.in', duration: 0.15 }, 0)
+        mobileScrollTl.to('.camera-ui', { opacity: 0, ease: 'power2.in', duration: 0.15 }, 0)
+        mobileScrollTl.to(cameraVideo, { opacity: 1, ease: 'power2.out', duration: 0.18 }, 0)
+        // C: the Ken Burns scrub itself -- same FOCUS_KEYFRAMES-driven pan/
+        // zoom as desktop, just reading video.currentTime instead of a
+        // decoded bitmap. Starts right as the crossfade wraps up and runs
+        // the rest of the pin's distance.
         mobileScrollTl.to(
           mobilePlayhead,
           {
             frame: FRAME_COUNT - 1,
             snap: 'frame',
             ease: 'power2.in',
-            duration: 0.82,
+            duration: 0.85,
             onUpdate: () => {
               const index = Math.round(mobilePlayhead.frame)
+              cameraVideo.style.transform = mobileCameraTransform(index)
+              if (index === lastSeekedFrame) return
+              lastSeekedFrame = index
               const duration = cameraVideo.duration || 9.7
               cameraVideo.currentTime = (index / (FRAME_COUNT - 1)) * duration
-              cameraVideo.style.transform = mobileCameraTransform(index)
             },
           },
-          0.18
+          0.15
         )
 
         return
