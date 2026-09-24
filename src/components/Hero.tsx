@@ -630,6 +630,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
             pin: true,
             anticipatePin: 1,
             invalidateOnRefresh: true,
+            refreshPriority: 1,
             onUpdate: (self) => {
               if (self.progress < 0.5) {
                 mobileAutoAdvanced = false
@@ -705,6 +706,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
           pin: true,
           anticipatePin: 1,
           invalidateOnRefresh: true,
+          refreshPriority: 1,
           onUpdate: (self) => {
             if (self.progress < 0.5) {
               autoAdvanced = false
@@ -756,7 +758,15 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
 
     }, containerRef)
 
-    // Refresh ScrollTrigger to lock in the layout
+    // This hook waits for isMobile to resolve, so the hero's pin is created
+    // AFTER every pinned section below it (MediaVoid, Results, ...), and
+    // ScrollTrigger measures in creation order -- those sections were
+    // computing their start positions without the hero's 1.6-viewport
+    // pin-spacer, pinning ~1.6 screens early and painting over whatever was
+    // still on screen (MediaVoid's text over the Pipeline accordion).
+    // refreshPriority: 1 on the triggers above + sort() makes the hero
+    // measure first regardless of creation order.
+    ScrollTrigger.sort()
     ScrollTrigger.refresh()
 
     return () => gsapCtx.revert()
