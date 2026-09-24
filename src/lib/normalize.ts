@@ -22,6 +22,7 @@ import {
   getJournalPostsCollection,
 } from '@/lib/payload-data'
 import type { Category as PipelineCategory } from '@/lib/pipeline-data'
+import { categories as defaultPipelineCategories } from '@/lib/pipeline-data'
 import {
   industries as staticIndustries,
   type IndustryData as StaticIndustryData,
@@ -238,6 +239,16 @@ export function normalizeJournalPost(doc: PayloadJournalPost): JournalPostLocal 
    objects and `id` as `categoryId`; unwrap back to the plain shape
    Pipeline.tsx already expects (src/lib/pipeline-data.ts's Category). */
 export function normalizePipeline(doc: PayloadPipeline | null): PipelineCategory[] {
+  // An empty CMS list (a fresh/local database, or every phase deleted in
+  // /admin) used to render the section as a bare heading with nothing under
+  // it. Fall back to the built-in phases -- same text as the published CMS
+  // content -- with the same S3 clips production uses.
+  if (!doc?.categories?.filter(Boolean).length) {
+    return defaultPipelineCategories.map((c) => ({
+      ...c,
+      video: `https://s3.us-east-1.amazonaws.com/slate-cinema-media/slate/pipeline-${c.id}.mp4`,
+    }))
+  }
   // Filter(Boolean) before mapping, both here and on the nested services
   // array -- guards against a sparse/malformed array (a hole, or a row
   // Payload returns as null/undefined) crashing the whole page render with
