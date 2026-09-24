@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { Menu, X, ChevronDown } from 'lucide-react'
 import gsap from 'gsap'
@@ -8,6 +8,7 @@ import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { useSiteData } from '@/lib/site-data-context'
 import { resolveIcon } from '@/lib/icon-map'
+import { pauseLenis, resumeLenis } from '@/lib/scroll'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -22,6 +23,20 @@ export default function Nav() {
   const [mobilePortfolioOpen, setMobilePortfolioOpen] = useState(false)
   const [portfolioDropdownOpen, setPortfolioDropdownOpen] = useState(false)
   const navRef = useRef<HTMLElement>(null)
+
+  // Lenis runs with syncTouch, so it owns touch scrolling for the whole
+  // window -- without this, swiping on the open menu scrolled the page
+  // underneath it instead of the menu.
+  useEffect(() => {
+    if (!mobileMenuOpen) return
+    pauseLenis()
+    const prevOverflow = document.documentElement.style.overflow
+    document.documentElement.style.overflow = 'hidden'
+    return () => {
+      document.documentElement.style.overflow = prevOverflow
+      resumeLenis()
+    }
+  }, [mobileMenuOpen])
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -181,7 +196,12 @@ export default function Nav() {
           {/* Mobile -- 2026-09-04 mobile audit: p-3 around the 20px icon
               brings the real tap target to ~44x44, the standard minimum
               (was a bare 20x20 icon with no hit-area padding at all). */}
-          <button className="md:hidden text-white z-50 relative p-3 -m-3" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          <button
+            className="md:hidden text-white z-50 relative p-3 -m-3"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileMenuOpen}
+          >
             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
@@ -189,7 +209,13 @@ export default function Nav() {
 
       {/* Mobile Overlay */}
       {mobileMenuOpen && (
-        <div data-cms-global="navigation" className="fixed inset-0 z-30 bg-ink flex flex-col items-center justify-center gap-6 overflow-y-auto py-24">
+        // Centered via my-auto on an inner wrapper, not justify-center on the
+        // scroll container: justify-center overflows both ends once the menu
+        // is taller than the screen (Portfolio expanded on a short phone),
+        // and the top items become unreachable -- my-auto centers when there's
+        // room and scrolls normally from the top when there isn't.
+        <div data-cms-global="navigation" data-lenis-prevent className="fixed inset-0 z-30 bg-ink flex flex-col overflow-y-auto overscroll-contain py-24">
+          <div className="my-auto flex flex-col items-center gap-6">
           <Link href="/"
             className="text-2xl font-bold text-white hover:text-[#00AEEF] transition-colors tracking-wider"
             onClick={() => setMobileMenuOpen(false)}>
@@ -237,6 +263,17 @@ export default function Nav() {
           <Link href={ctaHref} data-cms-field="ctaButton.label" onClick={() => setMobileMenuOpen(false)} className="bg-[#00AEEF] text-white px-8 py-4 rounded-full text-lg font-semibold mt-4 shadow-[0_0_20px_rgba(0,174,239,0.3)]">
             {ctaLabel}
           </Link>
+          <a
+            href={clientPortalHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-cms-field="clientPortalHref"
+            onClick={() => setMobileMenuOpen(false)}
+            className="py-2 text-xs font-mono text-white/45 hover:text-white/70 transition-colors tracking-widest uppercase"
+          >
+            Client Portal
+          </a>
+          </div>
         </div>
       )}
     </>

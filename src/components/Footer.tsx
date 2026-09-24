@@ -120,7 +120,10 @@ export default function Footer() {
       </div>
 
       {/* Footer Content Grid - layered OVER the wordmark via negative margin */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 -mt-16 lg:-mt-20">
+      {/* Phones: no overlap -- at 9vw the wordmark is only ~35px tall, so
+          pulling the content up 64px put "Ready to create?" squarely on
+          top of it instead of layering over its lower edge. */}
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 mt-0 md:-mt-10 lg:-mt-20">
 
         <div className="w-full flex flex-col lg:flex-row justify-between items-start border-b border-white/10 pb-8 mb-8 gap-8 lg:gap-8">
 

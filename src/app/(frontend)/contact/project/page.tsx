@@ -21,8 +21,8 @@ export default function ProjectIntakePage() {
           IntakeFrame (not a plain <iframe>) mirrors each submission into
           the CMS without touching intake.html itself -- see its own
           comment for how. */}
-      <div className="pt-28 pb-16 px-4 sm:px-6">
-        <div className="max-w-4xl mx-auto rounded-2xl overflow-hidden border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.4)]">
+      <div className="pt-20 pb-4 px-2 sm:pt-28 sm:pb-16 sm:px-6">
+        <div className="max-w-4xl mx-auto rounded-xl sm:rounded-2xl overflow-hidden border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.4)]">
           <IntakeFrame />
         </div>
       </div>

@@ -67,7 +67,13 @@ export default function IntakeFrame() {
       ref={iframeRef}
       src="/intake.html"
       title="Slate Cinema project intake brief"
-      className="block w-full h-[75vh] border-0"
+      // Phones: fill the screen under the nav (the page's own padding in
+      // contact/project/page.tsx is sized to match) so the intake's own
+      // internal scroll is the only scroll. As a 75vh box inside a page
+      // that also scrolled, its Continue/Back buttons sat ~330px below the
+      // box's bottom edge on a 390x844 phone -- reachable only by scrolling
+      // inside the small box, which read as the buttons being missing.
+      className="block w-full h-[calc(100dvh-6rem-2px)] sm:h-[75vh] border-0"
     />
   )
 }

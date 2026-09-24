@@ -640,9 +640,17 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
                 }
                 return
               }
+              if (mobileAutoAdvanceTimer) {
+                clearTimeout(mobileAutoAdvanceTimer)
+                mobileAutoAdvanceTimer = null
+              }
               if (mobileAutoAdvanced || self.direction !== 1 || self.progress >= 0.99) return
-              if (mobileAutoAdvanceTimer) clearTimeout(mobileAutoAdvanceTimer)
               mobileAutoAdvanceTimer = setTimeout(() => {
+                mobileAutoAdvanceTimer = null
+                // Re-check live: a fast flick can carry the page past the
+                // hero (or the visitor can reverse) inside these 140ms, and
+                // advancing then would yank them back UP to the hero's end.
+                if (!self.isActive || self.direction !== 1 || window.scrollY >= self.end - 2) return
                 mobileAutoAdvanced = true
                 scrollToY(self.end, 1.4)
               }, 140)
@@ -716,9 +724,16 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
               }
               return
             }
+            if (autoAdvanceTimer) {
+              clearTimeout(autoAdvanceTimer)
+              autoAdvanceTimer = null
+            }
             if (autoAdvanced || self.direction !== 1 || self.progress >= 0.99) return
-            if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer)
             autoAdvanceTimer = setTimeout(() => {
+              autoAdvanceTimer = null
+              // See the mobile branch: never advance once the visitor has
+              // already scrolled past the end or reversed direction.
+              if (!self.isActive || self.direction !== 1 || window.scrollY >= self.end - 2) return
               autoAdvanced = true
               scrollToY(self.end, 1.4)
             }, 140)

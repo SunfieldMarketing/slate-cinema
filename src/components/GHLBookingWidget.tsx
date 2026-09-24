@@ -58,8 +58,14 @@ export default function GHLBookingWidget({ copy }: { copy?: ScheduleACallPage['c
         </div>
 
         {/* !important beats form_embed.js's inline style.height rewrites
-            -- see the header comment above for why a normal rule can't. */}
-        <style>{`#${CALENDAR_ID} { height: ${WIDGET_HEIGHT_PX}px !important; }`}</style>
+            -- see the header comment above for why a normal rule can't.
+            Desktop only: on a phone the widget stacks the calendar above
+            the time list, and after picking a date it needs ~1400px --
+            the 1080px lock cut off the later slots and the continue
+            button with no way to scroll to them (scrolling="no"). Phones
+            get the plain rule instead, which form_embed.js's inline
+            height overrides, so the widget sizes itself to its content. */}
+        <style>{`#${CALENDAR_ID} { height: ${WIDGET_HEIGHT_PX}px; } @media (min-width: 768px) { #${CALENDAR_ID} { height: ${WIDGET_HEIGHT_PX}px !important; } }`}</style>
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-md p-2 sm:p-4">
           <iframe
             src={`https://api.leadconnectorhq.com/widget/booking/${CALENDAR_ID}`}

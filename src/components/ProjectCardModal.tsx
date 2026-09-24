@@ -99,7 +99,8 @@ export default function ProjectCardModal({
         ref={cardRef}
         data-cms-collection="portfolio-projects"
         data-cms-doc-id={project.id}
-        className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/12 bg-[#0a0f18] shadow-[0_40px_120px_rgba(0,0,0,0.7)]"
+        data-lenis-prevent
+        className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto overscroll-contain rounded-3xl border border-white/12 bg-[#0a0f18] shadow-[0_40px_120px_rgba(0,0,0,0.7)]"
         style={{ transformStyle: 'preserve-3d' }}
       >
         <button

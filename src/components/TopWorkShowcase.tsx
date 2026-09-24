@@ -106,7 +106,8 @@ export default function TopWorkShowcase() {
               exit={{ opacity: 0, scale: 0.96, y: 10 }}
               transition={{ duration: 0.3, ease: 'easeOut' }}
               onClick={(e) => e.stopPropagation()}
-              className="relative z-10 w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-3xl border border-white/10 bg-ink shadow-[0_0_80px_rgba(0,0,0,0.6)]"
+              data-lenis-prevent
+              className="relative z-10 w-full max-w-4xl max-h-[85vh] overflow-y-auto overscroll-contain rounded-3xl border border-white/10 bg-ink shadow-[0_0_80px_rgba(0,0,0,0.6)]"
             >
               <button
                 onClick={() => setExpanded(null)}

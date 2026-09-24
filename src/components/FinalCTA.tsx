@@ -105,7 +105,7 @@ export default function FinalCTA({ data }: { data?: FinalCta | null }) {
               onMouseMove={handleMagneticMove}
               onMouseLeave={handleMagneticLeave}
               onClick={() => posthog.capture('book_call_clicked', { source: 'final_cta' })}
-              className="group relative px-10 py-5 bg-[#00AEEF] text-black font-semibold rounded-full overflow-hidden transition-shadow duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80 shadow-[0_0_40px_rgba(0,174,239,0.35)] hover:shadow-[0_0_56px_rgba(0,174,239,0.55)]"
+              className="group relative px-7 py-4 sm:px-10 sm:py-5 whitespace-nowrap bg-[#00AEEF] text-black font-semibold rounded-full overflow-hidden transition-shadow duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80 shadow-[0_0_40px_rgba(0,174,239,0.35)] hover:shadow-[0_0_56px_rgba(0,174,239,0.55)]"
             >
               <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <span className="relative z-10 flex items-center transition-colors">
