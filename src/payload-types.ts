@@ -72,6 +72,7 @@ export interface Config {
     industries: Industry;
     'portfolio-projects': PortfolioProject;
     'journal-posts': JournalPost;
+    changelog: Changelog;
     forms: Form;
     'form-submissions': FormSubmission;
     'payload-kv': PayloadKv;
@@ -86,6 +87,7 @@ export interface Config {
     industries: IndustriesSelect<false> | IndustriesSelect<true>;
     'portfolio-projects': PortfolioProjectsSelect<false> | PortfolioProjectsSelect<true>;
     'journal-posts': JournalPostsSelect<false> | JournalPostsSelect<true>;
+    changelog: ChangelogSelect<false> | ChangelogSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -456,6 +458,47 @@ export interface JournalPost {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Every change made through the CMS, newest first -- who made it, when, and which fields changed. Entries are recorded automatically and cannot be edited. To roll a page back, open it and use its Versions tab.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "changelog".
+ */
+export interface Changelog {
+  id: number;
+  summary?: string | null;
+  action?: ('created' | 'updated' | 'published' | 'draft' | 'deleted') | null;
+  targetLabel?: string | null;
+  targetType?: ('global' | 'collection') | null;
+  targetSlug?: string | null;
+  docId?: string | null;
+  docTitle?: string | null;
+  userName?: string | null;
+  user?: (number | null) | User;
+  changedFields?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Each changed field with its value before and after this save (long values are shortened).
+   */
+  changes?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "forms".
  */
@@ -680,6 +723,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'journal-posts';
         value: number | JournalPost;
+      } | null)
+    | ({
+        relationTo: 'changelog';
+        value: number | Changelog;
       } | null)
     | ({
         relationTo: 'forms';
@@ -948,6 +995,25 @@ export interface JournalPostsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "changelog_select".
+ */
+export interface ChangelogSelect<T extends boolean = true> {
+  summary?: T;
+  action?: T;
+  targetLabel?: T;
+  targetType?: T;
+  targetSlug?: T;
+  docId?: T;
+  docTitle?: T;
+  userName?: T;
+  user?: T;
+  changedFields?: T;
+  changes?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

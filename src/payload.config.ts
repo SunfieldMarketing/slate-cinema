@@ -29,6 +29,8 @@ import { PrivacyPolicyPage } from './globals/PrivacyPolicyPage'
 import { TermsOfServicePage } from './globals/TermsOfServicePage'
 import { ThankYouPage } from './globals/ThankYouPage'
 import { SocialMediaManagementPage } from './globals/SocialMediaManagementPage'
+import { Changelog } from './collections/Changelog'
+import { withCollectionChangelog, withGlobalChangelog } from './lib/changelog'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -264,7 +266,14 @@ export default buildConfig({
       collections: [Industries.slug, PortfolioProjects.slug, JournalPosts.slug],
     },
   },
-  collections: [Users, Media, Industries, PortfolioProjects, JournalPosts],
+  // Every content collection and global records its saves into the
+  // Changelog collection (see src/lib/changelog.ts). Form submissions
+  // (added by formBuilderPlugin below) are deliberately not logged -- they're
+  // visitor data, not site edits, and would bury real changes.
+  collections: [
+    ...[Users, Media, Industries, PortfolioProjects, JournalPosts].map(withCollectionChangelog),
+    Changelog,
+  ],
   globals: [
     Navigation,
     Footer,
@@ -281,7 +290,7 @@ export default buildConfig({
     TermsOfServicePage,
     ThankYouPage,
     SocialMediaManagementPage,
-  ],
+  ].map(withGlobalChangelog),
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
