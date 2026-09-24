@@ -45,29 +45,6 @@ export default function Pipeline({
     return () => io.disconnect()
   }, [])
 
-  // Opening a phase changes this section's height (each phase has a
-  // different amount of content), which shifts every pinned section below
-  // it -- MediaVoid pins at 'top top', so a stale measurement makes it pin
-  // early and paint over this accordion. Re-measure once the height settles.
-  useEffect(() => {
-    const el = sectionRef.current
-    if (!el) return
-    let timer: ReturnType<typeof setTimeout> | null = null
-    let lastHeight = el.offsetHeight
-    const ro = new ResizeObserver(() => {
-      const h = el.offsetHeight
-      if (h === lastHeight) return
-      lastHeight = h
-      if (timer) clearTimeout(timer)
-      timer = setTimeout(() => ScrollTrigger.refresh(), 150)
-    })
-    ro.observe(el)
-    return () => {
-      ro.disconnect()
-      if (timer) clearTimeout(timer)
-    }
-  }, [])
-
   useGSAP(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo('.pipe-fade', { y: 30, opacity: 0 }, {

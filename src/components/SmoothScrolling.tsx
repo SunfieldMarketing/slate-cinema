@@ -49,6 +49,52 @@ export default function SmoothScrolling({ children }: { children: React.ReactNod
     }
   }, [])
 
+  // Pinned sections (hero, MediaVoid, Results, IndustryStandards) compute
+  // their start/end positions once; anything that changes the page's height
+  // afterward -- an accordion opening, late content, fonts swapping in, a
+  // rotation -- leaves them pinning at stale positions, which is how
+  // MediaVoid's "The content we create..." ended up painted over the
+  // sections above it. GSAP's own resize refresh can't be relied on here: it
+  // defers until scrolling "ends" (detected on its rAF ticker) and ignores
+  // content-height changes entirely. So: re-measure on a plain timer whenever
+  // the document height or the window WIDTH changes. Height-only window
+  // resizes are left alone on purpose -- that's the mobile address bar
+  // showing/hiding, and re-measuring on it makes pinned sections jump.
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | null = null
+    let lastHeight = document.body.scrollHeight
+    let lastWidth = window.innerWidth
+    const schedule = () => {
+      if (timer) clearTimeout(timer)
+      timer = setTimeout(() => {
+        timer = null
+        ScrollTrigger.refresh()
+        lastHeight = document.body.scrollHeight
+      }, 200)
+    }
+    const ro = new ResizeObserver(() => {
+      const h = document.body.scrollHeight
+      if (Math.abs(h - lastHeight) < 2) return
+      lastHeight = h
+      schedule()
+    })
+    ro.observe(document.body)
+    const onResize = () => {
+      if (window.innerWidth === lastWidth) return
+      lastWidth = window.innerWidth
+      schedule()
+    }
+    window.addEventListener('resize', onResize)
+    window.addEventListener('orientationchange', schedule)
+    document.fonts?.ready.then(schedule)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', onResize)
+      window.removeEventListener('orientationchange', schedule)
+      if (timer) clearTimeout(timer)
+    }
+  }, [])
+
   return (
     <ReactLenis
       ref={lenisRef}
