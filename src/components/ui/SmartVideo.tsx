@@ -117,6 +117,31 @@ export default function SmartVideo({
     }
   }, [swappable, resolvedSrc])
 
+  // 2026-10-01, "photos and videos aren't loading or take forever": every
+  // ambient video used to start loading the moment its page did, wherever it
+  // sat -- an industry page booted six 1080p Vimeo players at once (hero,
+  // four client cards, the statement), all fighting the hero and the page's
+  // photos for bandwidth. Background media below the fold now waits until
+  // it's about to scroll into view; the hero (`priority`) and click-to-play
+  // players still load immediately.
+  const [nearView, setNearView] = useState(priority || variant === 'player')
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+  useEffect(() => {
+    if (nearView) return
+    const el = vimeoId ? iframeRef.current : videoRef.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return
+        setNearView(true)
+        io.disconnect()
+      },
+      { rootMargin: '400px 0px' },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [nearView, vimeoId, src])
+
   if (vimeoId) {
     // CSS object-fit only affects replaced elements (<video>/<img>), never
     // an <iframe>'s content -- a plain w-full/h-full className just
@@ -131,12 +156,18 @@ export default function SmartVideo({
       : { border: 0 }
     return (
       <iframe
-        src={vimeoEmbedUrl(vimeoId, variant)}
+        ref={iframeRef}
+        // No src until it's near the viewport (see nearView above). The
+        // element itself stays the same, so scroll animations aimed at it
+        // (CinematicStatement's parallax) keep working once it loads. Only
+        // the hero forces 1080p; smaller embeds (client cards, the
+        // statement) let Vimeo pick a size that fits the box.
+        src={nearView ? vimeoEmbedUrl(vimeoId, variant, { hd: priority }) : undefined}
         className={className}
         style={coverStyle}
         allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
         allowFullScreen
-        loading={priority ? 'eager' : undefined}
+        loading={priority ? 'eager' : 'lazy'}
         // @ts-expect-error -- fetchpriority isn't in React's iframe attribute
         // types yet, but every Chromium/Firefox browser that matters honors it.
         fetchpriority={priority ? 'high' : undefined}
@@ -159,7 +190,7 @@ export default function SmartVideo({
     return (
       <video
         ref={videoRef}
-        src={resolvedSrc}
+        src={nearView ? resolvedSrc : undefined}
         poster={poster}
         autoPlay
         loop
@@ -185,7 +216,8 @@ export default function SmartVideo({
   // Nothing set at all -- generic B-roll instead of a blank box.
   return (
     <video
-      src={PLACEHOLDER_VIDEO}
+      ref={videoRef}
+      src={nearView ? PLACEHOLDER_VIDEO : undefined}
       autoPlay
       loop
       muted

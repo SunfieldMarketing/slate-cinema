@@ -42,6 +42,12 @@ const MOBILE_FILES: Record<string, string> = {
   'pipeline-production.mp4': 'pipeline-production-mobile.mp4',
   'pipeline-post-production.mp4': 'pipeline-post-production-mobile.mp4',
   'pipeline-distribution.mp4': 'pipeline-distribution-mobile.mp4',
+  // 2026-10-01 desktop re-encodes of the four loops above (same 960x540,
+  // 85-91% smaller, no audio track) -- phones still get the ~1MB versions.
+  'pipeline-pre-production-web.mp4': 'pipeline-pre-production-mobile.mp4',
+  'pipeline-production-web.mp4': 'pipeline-production-mobile.mp4',
+  'pipeline-post-production-web.mp4': 'pipeline-post-production-mobile.mp4',
+  'pipeline-distribution-web.mp4': 'pipeline-distribution-mobile.mp4',
   'sleepy-hollow-hotel.jpg': 'sleepy-hollow-hotel-mobile.webp',
   'meta-logo.webp': 'meta-logo-mobile.webp',
   'alo-logo.webp': 'alo-logo-mobile.webp',

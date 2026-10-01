@@ -35,9 +35,18 @@ export function extractVimeoId(input?: string | null): string | null {
     matches how a testimonial/portfolio video is meant to be clicked and
     watched, no controls to reimplement ourselves.
 */
-export function vimeoEmbedUrl(id: string, variant: 'background' | 'player' = 'background') {
+export function vimeoEmbedUrl(
+  id: string,
+  variant: 'background' | 'player' = 'background',
+  // `hd: false` (2026-10-01) drops the forced 1080p for small embeds --
+  // client cards and the like -- so Vimeo serves a size that fits the box
+  // instead of a full 1080p stream per card. Heroes keep the default.
+  { hd = true }: { hd?: boolean } = {},
+) {
   const params =
-    variant === 'background'
+    variant === 'background' && !hd
+      ? 'background=1&autoplay=1&loop=1&muted=1&byline=0&title=0&portrait=0'
+      : variant === 'background'
       // quality=1080p -- added 2026-08-27 per "video looks blurry, not
       // crisp 1080p" report. This is a real, documented Vimeo Player
       // parameter, but Vimeo's own docs note it's only honored for Pro/
