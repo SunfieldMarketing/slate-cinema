@@ -5,14 +5,22 @@ import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { Search, PenTool, Palette, Clapperboard, Package, type LucideIcon } from 'lucide-react'
-import type { IndustryProcessStep } from '@/lib/industries'
+import type { IndustryProcessStep, IndustrySectionHeading } from '@/lib/normalize'
 
 gsap.registerPlugin(ScrollTrigger)
 
 /* Step iconography mapped by position, so the data stays copy-only. */
 const STEP_ICONS: LucideIcon[] = [Search, PenTool, Palette, Clapperboard, Package]
 
-export default function IndustryProcess({ steps, accent }: { steps: IndustryProcessStep[]; accent: string }) {
+export default function IndustryProcess({
+  steps,
+  heading,
+  accent,
+}: {
+  steps: IndustryProcessStep[]
+  heading: IndustrySectionHeading
+  accent: string
+}) {
   const ref = useRef<HTMLElement>(null)
   const fillRef = useRef<HTMLDivElement>(null)
   const nodeRefs = useRef<(HTMLDivElement | null)[]>([])
@@ -64,12 +72,22 @@ export default function IndustryProcess({ steps, accent }: { steps: IndustryProc
     <section ref={ref} id="process" className="relative w-full overflow-hidden py-20 md:py-24">
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         <div className="proc-fade text-center mb-16">
-          <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-5" style={{ color: accent }}>
-            <span className="w-8 h-px" style={{ background: `${accent}66` }} /> How It Works
-          </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.05]">
-            The timeline, <span className="font-serif-accent italic text-white/60">concept to distribution.</span>
-          </h2>
+          {heading.eyebrow && (
+            <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-5" style={{ color: accent }}>
+              <span className="w-8 h-px" style={{ background: `${accent}66` }} /> <span data-cms-field="processEyebrow">{heading.eyebrow}</span>
+            </span>
+          )}
+          {(heading.headline || heading.accent) && (
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.05]">
+              <span data-cms-field="processHeadline">{heading.headline}</span>
+              {heading.accent && (
+                <>
+                  {' '}
+                  <span data-cms-field="processHeadlineAccent" className="font-serif-accent italic text-white/60">{heading.accent}</span>
+                </>
+              )}
+            </h2>
+          )}
         </div>
 
         <div className="proc-fade relative h-1 bg-white/10 rounded-full mx-2 mb-3">

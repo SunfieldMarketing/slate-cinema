@@ -6,6 +6,7 @@ import {
   Timer, Mail,
   Clock3, Wallet, Target, Sparkles,
   MessageCircleMore, Phone, MapPin,
+  Mic, Camera, Music, Utensils, Car, House, Store, Megaphone,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -24,6 +25,9 @@ export const ICON_MAP: Record<string, LucideIcon> = {
   Timer, Mail,
   Clock3, Wallet, Target, Sparkles,
   MessageCircleMore, Phone, MapPin,
+  // Industry icons beyond the original nine. Podcasts' "Mic" was missing
+  // here, so the Portfolio menu fell back to the "?" icon for it.
+  Mic, Camera, Music, Utensils, Car, House, Store, Megaphone,
 }
 
 export function resolveIcon(name: string | null | undefined, fallback: LucideIcon = HelpCircle): LucideIcon {

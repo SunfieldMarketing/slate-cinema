@@ -23,12 +23,9 @@ import {
 } from '@/lib/payload-data'
 import type { Category as PipelineCategory } from '@/lib/pipeline-data'
 import { categories as defaultPipelineCategories } from '@/lib/pipeline-data'
-import {
-  industries as staticIndustries,
-  type IndustryData as StaticIndustryData,
-  type IndustryClient as StaticIndustryClient,
-  type IndustryCinematicStatement as StaticIndustryCinematicStatement,
-} from '@/lib/industries'
+import { industries as staticIndustries, type IndustryData as StaticIndustryData } from '@/lib/industries'
+import { extractVimeoId } from '@/lib/vimeo'
+import { PLACEHOLDER_IMAGE } from '@/lib/media-url'
 
 /*
   IMPORTANT: `icon` stays a plain string key (e.g. "Film"), never
@@ -80,6 +77,45 @@ export interface IndustryFaqItem {
   question: string
   answer: string
 }
+/** A client video card in the strip under the logo banner. */
+export interface IndustryClientCard {
+  name: string
+  year: string
+  description: string
+  /** Vimeo URL or ID. Cards without one are not shown. */
+  vimeo: string
+  /** The video's shape, so its card frames it without black bars. */
+  orientation: 'landscape' | 'portrait' | 'feed' | 'square'
+}
+/** Eyebrow + headline (+ an italic grey ending) over a page section. An
+    empty string means the editor cleared it: hide that element. */
+export interface IndustrySectionHeading {
+  eyebrow: string
+  headline: string
+  accent: string
+}
+export interface IndustryStatement {
+  eyebrow: string
+  lines: string[]
+  body: string
+  /** Vimeo URL/ID or a video file URL. */
+  video: string
+}
+export interface IndustryCta {
+  headline: string
+  subhead: string
+  buttonLabel: string
+  buttonHref: string
+}
+/** Set when the whole page should hand visitors off to a sister brand
+    (Healthcare -> Wavecare). */
+export interface IndustryRedirect {
+  eyebrow: string
+  headline: string
+  body: string
+  buttonLabel: string
+  url: string
+}
 export interface IndustryData {
   id: string
   slug: string
@@ -101,11 +137,61 @@ export interface IndustryData {
   videoTestimonials?: IndustryVideoTestimonial[]
   process?: IndustryProcessStep[]
   faqs?: IndustryFaqItem[]
-  clientShowcase?: StaticIndustryClient[]
-  cinematicStatement?: StaticIndustryCinematicStatement
+  /** Position in the Portfolio menu and the /portfolio wheel. */
+  order: number
+  clientsHeading: IndustrySectionHeading
+  clients: IndustryClientCard[]
+  servicesHeading: IndustrySectionHeading
+  statement?: IndustryStatement
+  cta: IndustryCta
+  processHeading: IndustrySectionHeading
+  galleryHeading: { eyebrow: string; headline: string }
+  redirect?: IndustryRedirect
+}
+
+/*
+  Copy for an industry that only exists in src/lib/industries.ts (no CMS
+  doc yet -- e.g. a fresh local database). A CMS doc never falls back to
+  these: its fields are seeded with this same copy (field defaults + the
+  20261001 migration), so an empty value there means an editor cleared it
+  and the element should disappear.
+*/
+const STATIC_DEFAULTS = {
+  clientsHeading: { eyebrow: 'Who We Shoot For', headline: '', accent: '' },
+  servicesHeading: { eyebrow: 'What We Make', headline: 'Ways it shows up', accent: '— pick yours.' },
+  processHeading: { eyebrow: 'How It Works', headline: 'The timeline,', accent: 'concept to distribution.' },
+  galleryHeading: { eyebrow: 'Our Work', headline: 'A Gallery of Impact' },
+  cta: {
+    headline: 'Have a project like this in mind?',
+    subhead: '20 minutes, no pitch deck — just an honest read on scope, timeline and budget.',
+    buttonLabel: 'Get Started',
+    buttonHref: '/contact',
+  },
+}
+const STATIC_REDIRECTS: Record<string, IndustryRedirect> = {
+  healthcare: {
+    eyebrow: 'Sister Brand',
+    headline: 'Want to see what our healthcare marketing does?',
+    body: 'We operate under Wavecare, our sister brand.',
+    buttonLabel: 'Visit Wavecare',
+    url: 'https://wavecare.io',
+  },
+}
+
+function statementLines(headline: string | null | undefined): string[] {
+  return (headline ?? '')
+    .split('\n')
+    .map((l) => l.trim())
+    .filter(Boolean)
 }
 
 export function normalizeIndustry(doc: Industry): IndustryData {
+  // A doc whose slug also exists in src/lib/industries.ts (Podcasts, moved
+  // into the CMS 2026-10-01 without uploading its media) borrows that
+  // entry's files for any media slot that's still empty, so it looks
+  // exactly as it did before. Uploading media in /admin overrides this.
+  const codeEntry = staticIndustries.find((i) => i.slug === doc.slug)
+  const lines = statementLines(doc.statementHeadline)
   return {
     id: String(doc.id),
     slug: doc.slug,
@@ -115,12 +201,14 @@ export function normalizeIndustry(doc: Industry): IndustryData {
     blurb: doc.blurb,
     description: doc.description,
     stat: doc.stat,
-    heroImage: mediaUrlOrPlaceholder(doc.heroImage),
-    heroVideo: mediaUrl(doc.heroVideo) || '',
+    heroImage: mediaUrl(doc.heroImage) || codeEntry?.heroImage || PLACEHOLDER_IMAGE,
+    heroVideo: mediaUrl(doc.heroVideo) || (doc.heroVideoVimeoUrl ? '' : codeEntry?.heroVideo) || '',
     // Re-enabled 2026-08-22 -- heroVideoVimeoUrl is a real column now
     // (see src/migrations/).
     heroVideoVimeoUrl: doc.heroVideoVimeoUrl ?? undefined,
-    gallery: (doc.gallery ?? []).map((g) => mediaUrlOrPlaceholder(g.image)),
+    gallery: doc.gallery?.length
+      ? doc.gallery.map((g) => mediaUrlOrPlaceholder(g.image))
+      : (codeEntry?.gallery ?? []),
     stats: (doc.stats ?? []).map((s) => ({ value: s.value, suffix: s.suffix || '', label: s.label })),
     services: (doc.services ?? []).map((s) => s.name),
     // Only surface a testimonial when every field is actually filled in —
@@ -141,7 +229,10 @@ export function normalizeIndustry(doc: Industry): IndustryData {
       outcome: sc.outcome,
       deliverables: (sc.deliverables ?? []).map((d) => d.item),
       meta: sc.meta || '',
-      image: mediaUrlOrPlaceholder(sc.image),
+      image:
+        mediaUrl(sc.image) ||
+        codeEntry?.serviceCards?.find((c) => c.title === sc.title)?.image ||
+        PLACEHOLDER_IMAGE,
       video: mediaUrl(sc.video),
       videoVimeoUrl: sc.videoVimeoUrl ?? undefined,
       featured: sc.featured ?? false,
@@ -159,13 +250,55 @@ export function normalizeIndustry(doc: Industry): IndustryData {
     })),
     process: (doc.process ?? []).map((p) => ({ week: p.week, title: p.title, body: p.body })),
     faqs: (doc.faqs ?? []).map((f) => ({ question: f.question, answer: f.answer })),
-    // clientShowcase / cinematicStatement ("the Athletics format") stay
-    // code-only -- overlaid from src/lib/industries.ts by slug rather than
-    // round-tripped through Payload, same reasoning as the comment on
-    // IndustryData.clientShowcase. Not in the Industry doc type at all,
-    // so there's nothing to read off `doc` here; see getNormalizedIndustries.
-    clientShowcase: staticIndustries.find((i) => i.slug === doc.slug)?.clientShowcase,
-    cinematicStatement: staticIndustries.find((i) => i.slug === doc.slug)?.cinematicStatement,
+    // Everything below was typed into the page templates or lived only in
+    // src/lib/industries.ts until 2026-10-01 -- see Industries.ts.
+    order: doc.order ?? 100,
+    clientsHeading: {
+      eyebrow: doc.sectionEyebrow ?? '',
+      headline: doc.sectionHeadline ?? '',
+      accent: doc.sectionHeadlineAccent ?? '',
+    },
+    clients: (doc.clients ?? []).filter(Boolean).map((c) => ({
+      name: c.name,
+      year: c.year ?? '',
+      description: c.description ?? '',
+      vimeo: c.vimeoId ?? '',
+      orientation: c.orientation ?? 'landscape',
+    })),
+    servicesHeading: {
+      eyebrow: doc.servicesEyebrow ?? '',
+      headline: doc.servicesHeadline ?? '',
+      accent: doc.servicesHeadlineAccent ?? '',
+    },
+    statement: lines.length
+      ? {
+          eyebrow: doc.statementEyebrow ?? '',
+          lines,
+          body: doc.statementBody ?? '',
+          video: doc.statementVideo ?? '',
+        }
+      : undefined,
+    cta: {
+      headline: doc.ctaHeadline ?? '',
+      subhead: doc.ctaSubhead ?? '',
+      buttonLabel: doc.ctaButtonLabel ?? '',
+      buttonHref: doc.ctaButtonHref || '/contact',
+    },
+    processHeading: {
+      eyebrow: doc.processEyebrow ?? '',
+      headline: doc.processHeadline ?? '',
+      accent: doc.processHeadlineAccent ?? '',
+    },
+    galleryHeading: { eyebrow: doc.galleryEyebrow ?? '', headline: doc.galleryHeadline ?? '' },
+    redirect: doc.redirectEnabled
+      ? {
+          eyebrow: doc.redirectEyebrow ?? '',
+          headline: doc.redirectHeadline ?? '',
+          body: doc.redirectBody ?? '',
+          buttonLabel: doc.redirectButtonLabel ?? '',
+          url: doc.redirectUrl ?? '',
+        }
+      : undefined,
   }
 }
 
@@ -284,9 +417,46 @@ export function normalizePipeline(doc: PayloadPipeline | null): PipelineCategory
   the exported icon name (e.g. `Mic.displayName === 'Mic'`), which every
   lucide-react icon component does.
 */
-function staticToNormalized(industry: StaticIndustryData): IndustryData {
+function staticToNormalized(industry: StaticIndustryData, index: number): IndustryData {
   const iconName = (industry.icon as unknown as { displayName?: string }).displayName || 'Film'
-  return { ...industry, icon: iconName }
+  const { clientShowcase, cinematicStatement, ...rest } = industry
+  const cardCount = industry.serviceCards?.length ?? 0
+  return {
+    ...rest,
+    icon: iconName,
+    order: 1000 + index,
+    clientsHeading: STATIC_DEFAULTS.clientsHeading,
+    // Same rule as the CMS: only cards with a real Vimeo video show.
+    clients: (clientShowcase ?? []).map((c) => ({
+      name: c.name,
+      year: c.year,
+      description: c.body,
+      vimeo: extractVimeoId(c.video) ? c.video : '',
+      orientation: 'landscape' as const,
+    })),
+    servicesHeading: {
+      ...STATIC_DEFAULTS.servicesHeading,
+      headline: servicesHeadlineFor(cardCount) || STATIC_DEFAULTS.servicesHeading.headline,
+    },
+    statement: cinematicStatement
+      ? {
+          eyebrow: cinematicStatement.eyebrow,
+          lines: cinematicStatement.lines,
+          body: cinematicStatement.body,
+          video: cinematicStatement.videoSrc,
+        }
+      : undefined,
+    cta: STATIC_DEFAULTS.cta,
+    processHeading: STATIC_DEFAULTS.processHeading,
+    galleryHeading: STATIC_DEFAULTS.galleryHeading,
+    redirect: STATIC_REDIRECTS[industry.slug],
+  }
+}
+
+const NUMBER_WORDS = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten']
+function servicesHeadlineFor(cardCount: number): string {
+  if (cardCount === 1) return 'One way it shows up'
+  return NUMBER_WORDS[cardCount] ? `${NUMBER_WORDS[cardCount]} ways it shows up` : ''
 }
 
 /* Convenience wrappers — fetch + normalize in one call, for the common
@@ -294,13 +464,15 @@ function staticToNormalized(industry: StaticIndustryData): IndustryData {
 export async function getNormalizedIndustries(draft = false): Promise<IndustryData[]> {
   const docs = await getIndustriesCollection(draft)
   const fromDb = docs.map(normalizeIndustry)
-  // Any industry that only exists in the static file (e.g. "podcasts",
-  // added 2026-08-13 per "make the podcasts page just an industry page
-  // same format and everything") has no DB doc yet -- append it as-is
-  // rather than requiring a CMS entry before it can appear anywhere
-  // (nav dropdown, /portfolio wheel, /portfolio/[slug]).
+  // Any industry that only exists in the static file has no DB doc yet --
+  // append it rather than requiring a CMS entry before it can appear
+  // anywhere (nav dropdown, /portfolio wheel, /portfolio/[slug]). Since
+  // 2026-10-01 every industry, Podcasts included, has a CMS doc on the
+  // live site; this only matters on a fresh/local database.
   const dbSlugs = new Set(fromDb.map((i) => i.slug))
-  const staticOnly = staticIndustries.filter((i) => !dbSlugs.has(i.slug)).map(staticToNormalized)
+  const staticOnly = staticIndustries
+    .filter((i) => !dbSlugs.has(i.slug))
+    .map((industry, index) => staticToNormalized(industry, index))
   return [...fromDb, ...staticOnly]
 }
 

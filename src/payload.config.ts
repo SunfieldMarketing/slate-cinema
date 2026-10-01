@@ -29,6 +29,7 @@ import { PrivacyPolicyPage } from './globals/PrivacyPolicyPage'
 import { TermsOfServicePage } from './globals/TermsOfServicePage'
 import { ThankYouPage } from './globals/ThankYouPage'
 import { SocialMediaManagementPage } from './globals/SocialMediaManagementPage'
+import { JournalPage } from './globals/JournalPage'
 import { Changelog } from './collections/Changelog'
 import { withCollectionChangelog, withGlobalChangelog } from './lib/changelog'
 
@@ -161,6 +162,8 @@ const livePreviewURL = ({
         return appendDraft(`${baseWithProto}/thank-you`)
       case 'social-media-management-page':
         return appendDraft(`${baseWithProto}/social-media-management`)
+      case 'journal-page':
+        return appendDraft(`${baseWithProto}/journal`)
       default:
         // Navigation/Footer/SiteSettings/Pipeline/FinalCTA/ReadyToTalk
         // render on every page -- home is the most representative single
@@ -262,6 +265,7 @@ export default buildConfig({
         TermsOfServicePage.slug,
         ThankYouPage.slug,
         SocialMediaManagementPage.slug,
+        JournalPage.slug,
       ],
       collections: [Industries.slug, PortfolioProjects.slug, JournalPosts.slug],
     },
@@ -290,6 +294,7 @@ export default buildConfig({
     TermsOfServicePage,
     ThankYouPage,
     SocialMediaManagementPage,
+    JournalPage,
   ].map(withGlobalChangelog),
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

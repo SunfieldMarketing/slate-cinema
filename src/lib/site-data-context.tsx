@@ -34,3 +34,39 @@ export function useSiteData(): SiteData {
   }
   return ctx
 }
+
+/*
+  Site Settings > Labels: short copy repeated across pages (2026-10-01).
+  The defaults only cover a database that predates those fields -- a
+  button can't usefully be blank, so an empty value falls back too. The
+  hero trust line is the exception: clearing it hides it.
+*/
+const LABEL_DEFAULTS = {
+  trustLine: '174+ projects since 2023 · Replies within minutes',
+  getStarted: 'Get Started',
+  getStartedHref: '/contact',
+  bookCall: 'Book a call',
+  bookThis: 'Book this',
+  mostBooked: 'Most booked',
+  viewFullPortfolio: 'View Full Portfolio',
+  startProject: 'Start a project like this',
+  backToReel: 'Back to the reel',
+  exploreIndustry: 'Explore {industry} Work',
+}
+export type SiteLabels = typeof LABEL_DEFAULTS
+
+export function useSiteLabels(): SiteLabels {
+  const labels = useSiteData().settings?.labels
+  const out = { ...LABEL_DEFAULTS }
+  for (const key of Object.keys(LABEL_DEFAULTS) as (keyof SiteLabels)[]) {
+    out[key] = labels?.[key] || LABEL_DEFAULTS[key]
+  }
+  if (labels) out.trustLine = labels.trustLine ?? ''
+  return out
+}
+
+/** Marks an element as Site Settings > Labels copy for Live Preview's
+    click-to-edit (it lives in a different document from the page). */
+export function labelField(key: keyof SiteLabels) {
+  return { 'data-cms-global': 'site-settings', 'data-cms-field': `labels.${key}` } as const
+}

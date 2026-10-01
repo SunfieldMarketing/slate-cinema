@@ -146,9 +146,22 @@ export const HomePage: GlobalConfig = {
       ],
     },
     {
+      name: 'selectedWork',
+      type: 'group',
+      admin: { description: 'Heading over the spinning project carousel. The projects come from Portfolio Projects.' },
+      fields: [
+        { name: 'eyebrow', type: 'text', defaultValue: 'Our Work' },
+        { name: 'headline', type: 'text', defaultValue: 'Selected Work' },
+        { name: 'subhead', type: 'text', defaultValue: 'Drag to spin the reel · click a frame to open it' },
+      ],
+    },
+    {
       name: 'results',
       type: 'group',
       fields: [
+        { name: 'eyebrow', type: 'text', defaultValue: 'Our Clients This Month', admin: { description: 'Label above the big views number.' } },
+        { name: 'viewsLabel', type: 'text', defaultValue: 'views', admin: { description: 'Word after the big views number.' } },
+        { name: 'reachLabel', type: 'text', defaultValue: 'Reach' },
         { name: 'viewsTarget', type: 'number', defaultValue: 120000 },
         { name: 'likesTarget', type: 'number', defaultValue: 14352 },
         { name: 'commentsTarget', type: 'number', defaultValue: 1670 },

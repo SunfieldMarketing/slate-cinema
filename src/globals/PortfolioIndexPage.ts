@@ -66,6 +66,15 @@ export const PortfolioIndexPage: GlobalConfig = {
       ],
     },
     {
+      name: 'gallery',
+      type: 'group',
+      admin: { description: 'Heading over the project grid near the bottom of the page.' },
+      fields: [
+        { name: 'eyebrow', type: 'text', defaultValue: 'Our Work' },
+        { name: 'headline', type: 'text', defaultValue: 'A Gallery of Impact' },
+      ],
+    },
+    {
       // Field kept (not deleted) to avoid a DB schema migration on the
       // fragile Windows/tsx `payload generate:types` pipeline -- see
       // CMS_MIGRATION_PHASE0_INVENTORY.md. The client asked (Aug 2026 call)

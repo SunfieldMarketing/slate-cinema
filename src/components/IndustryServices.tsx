@@ -5,8 +5,9 @@ import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { ArrowRight, Check } from 'lucide-react'
-import type { IndustryServiceCard } from '@/lib/industries'
+import type { IndustryServiceCard, IndustrySectionHeading } from '@/lib/normalize'
 import SmartVideo from '@/components/ui/SmartVideo'
+import { labelField, useSiteLabels } from '@/lib/site-data-context'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -17,8 +18,17 @@ gsap.registerPlugin(ScrollTrigger)
   deliverables, and carries an explicit booking CTA — this is a menu of
   services someone buys, not a sitemap.
 */
-export default function IndustryServices({ services, accent }: { services: IndustryServiceCard[]; accent: string }) {
+export default function IndustryServices({
+  services,
+  heading,
+  accent,
+}: {
+  services: IndustryServiceCard[]
+  heading: IndustrySectionHeading
+  accent: string
+}) {
   const ref = useRef<HTMLElement>(null)
+  const labels = useSiteLabels()
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -40,19 +50,30 @@ export default function IndustryServices({ services, accent }: { services: Indus
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         <div className="flex items-end justify-between gap-6 flex-wrap mb-12">
           <div>
-            <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-4" style={{ color: accent }}>
-              <span className="w-8 h-px" style={{ background: `${accent}66` }} /> What We Make
-            </span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.05]">
-              Five ways it shows up <span className="font-serif-accent italic text-white/60">— pick yours.</span>
-            </h2>
+            {heading.eyebrow && (
+              <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-4" style={{ color: accent }}>
+                <span className="w-8 h-px" style={{ background: `${accent}66` }} /> <span data-cms-field="servicesEyebrow">{heading.eyebrow}</span>
+              </span>
+            )}
+            {(heading.headline || heading.accent) && (
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.05]">
+                <span data-cms-field="servicesHeadline">{heading.headline}</span>
+                {heading.accent && (
+                  <>
+                    {' '}
+                    <span data-cms-field="servicesHeadlineAccent" className="font-serif-accent italic text-white/60">{heading.accent}</span>
+                  </>
+                )}
+              </h2>
+            )}
           </div>
           <a
             href="/contact"
+            {...labelField('bookCall')}
             className="group inline-flex items-center gap-2 px-5 py-3 rounded-full text-xs font-semibold text-black transition-transform hover:scale-[1.03] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
             style={{ background: accent }}
           >
-            Book a call <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+            {labels.bookCall} <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
           </a>
         </div>
 
@@ -83,8 +104,8 @@ export default function IndustryServices({ services, accent }: { services: Indus
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent" />
             <div className="absolute top-4 left-4 flex items-center gap-2">
-              <span className="font-mono text-[9px] tracking-[0.2em] uppercase px-2.5 py-1.5 rounded-full border backdrop-blur-md text-white" style={{ borderColor: `${accent}55`, backgroundColor: 'rgba(5,7,12,0.7)' }}>
-                Most booked
+              <span {...labelField('mostBooked')} className="font-mono text-[9px] tracking-[0.2em] uppercase px-2.5 py-1.5 rounded-full border backdrop-blur-md text-white" style={{ borderColor: `${accent}55`, backgroundColor: 'rgba(5,7,12,0.7)' }}>
+                {labels.mostBooked}
               </span>
             </div>
 
@@ -116,8 +137,8 @@ export default function IndustryServices({ services, accent }: { services: Indus
                 ))}
               </ul>
               <div className="flex items-center justify-between gap-4 flex-wrap">
-                <span className="inline-flex items-center gap-2 text-sm font-semibold text-white group-hover:gap-3 transition-all">
-                  Book this <ArrowRight className="w-4 h-4" style={{ color: accent }} />
+                <span {...labelField('bookThis')} className="inline-flex items-center gap-2 text-sm font-semibold text-white group-hover:gap-3 transition-all">
+                  {labels.bookThis} <ArrowRight className="w-4 h-4" style={{ color: accent }} />
                 </span>
                 <span className="font-mono text-[10px] tracking-[0.14em] text-white/55 uppercase">{featured.meta}</span>
               </div>
@@ -159,8 +180,8 @@ export default function IndustryServices({ services, accent }: { services: Indus
                 </ul>
 
                 <div className="flex items-center justify-between gap-3">
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-white group-hover:gap-2.5 transition-all">
-                    Book this <ArrowRight className="w-3.5 h-3.5" style={{ color: accent }} />
+                  <span {...labelField('bookThis')} className="inline-flex items-center gap-1.5 text-xs font-semibold text-white group-hover:gap-2.5 transition-all">
+                    {labels.bookThis} <ArrowRight className="w-3.5 h-3.5" style={{ color: accent }} />
                   </span>
                   <span className="font-mono text-[9px] tracking-[0.12em] text-white/55 uppercase">{s.meta}</span>
                 </div>

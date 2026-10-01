@@ -20,9 +20,11 @@ interface Props {
   body: string
   videoSrc: string
   accent?: string
+  /** Click-to-edit field paths (see LivePreviewClickToEdit.tsx). */
+  fieldPaths?: { eyebrow?: string; lines?: string; body?: string }
 }
 
-export default function CinematicStatement({ eyebrow, lines, body, videoSrc, accent = '#00AEEF' }: Props) {
+export default function CinematicStatement({ eyebrow, lines, body, videoSrc, accent = '#00AEEF', fieldPaths }: Props) {
   const ref = useRef<HTMLElement>(null)
 
   useGSAP(() => {
@@ -65,11 +67,13 @@ export default function CinematicStatement({ eyebrow, lines, body, videoSrc, acc
       </div>
 
       <div className="relative z-10 w-full max-w-5xl mx-auto px-6 text-center">
-        <span className="cs-fade inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.35em] uppercase mb-8" style={{ color: accent }}>
-          <span className="w-8 h-px" style={{ background: `${accent}66` }} /> {eyebrow} <span className="w-8 h-px" style={{ background: `${accent}66` }} />
-        </span>
+        {eyebrow && (
+          <span data-cms-field={fieldPaths?.eyebrow} className="cs-fade inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.35em] uppercase mb-8" style={{ color: accent }}>
+            <span className="w-8 h-px" style={{ background: `${accent}66` }} /> {eyebrow} <span className="w-8 h-px" style={{ background: `${accent}66` }} />
+          </span>
+        )}
 
-        <h2 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight text-white leading-[1.15]">
+        <h2 data-cms-field={fieldPaths?.lines} className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight text-white leading-[1.15]">
           {lines.map((line, i) => (
             <span key={i} className="block overflow-hidden">
               <span
@@ -81,9 +85,11 @@ export default function CinematicStatement({ eyebrow, lines, body, videoSrc, acc
           ))}
         </h2>
 
-        <p className="cs-fade mt-8 text-white/55 text-base sm:text-lg font-light max-w-2xl mx-auto leading-relaxed">
-          {body}
-        </p>
+        {body && (
+          <p data-cms-field={fieldPaths?.body} className="cs-fade mt-8 text-white/55 text-base sm:text-lg font-light max-w-2xl mx-auto leading-relaxed">
+            {body}
+          </p>
+        )}
       </div>
     </section>
   )

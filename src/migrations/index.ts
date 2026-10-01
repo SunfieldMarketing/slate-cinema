@@ -8,6 +8,7 @@ import * as migration_20260824_000000_add_trust_banner from './20260824_000000_a
 import * as migration_20260826_130000_add_privacy_terms_thankyou_smm_pages from './20260826_130000_add_privacy_terms_thankyou_smm_pages';
 import * as migration_20260826_140000_publish_new_pages from './20260826_140000_publish_new_pages';
 import * as migration_20260924_000000_add_changelog from './20260924_000000_add_changelog';
+import * as migration_20261001_000000_cms_full_coverage from './20261001_000000_cms_full_coverage';
 
 export const migrations = [
   {
@@ -59,5 +60,10 @@ export const migrations = [
     up: migration_20260924_000000_add_changelog.up,
     down: migration_20260924_000000_add_changelog.down,
     name: '20260924_000000_add_changelog',
+  },
+  {
+    up: migration_20261001_000000_cms_full_coverage.up,
+    down: migration_20261001_000000_cms_full_coverage.down,
+    name: '20261001_000000_cms_full_coverage',
   },
 ];

@@ -191,7 +191,16 @@ export default function PortfolioPageContent({
             at 8 (a different 8 than the reel above, order 8-15) so the
             bento mosaic tiling -- also hand-tuned for an 8-project grid --
             renders as originally designed instead of an ever-growing list. */}
-        <Portfolio projects={projects.slice(8, 16)} />
+        <div data-cms-global="portfolio-index-page">
+          <Portfolio
+            projects={projects.slice(8, 16)}
+            heading={{
+              eyebrow: page?.gallery ? (page.gallery.eyebrow ?? '') : 'Our Work',
+              headline: page?.gallery ? (page.gallery.headline ?? '') : 'A Gallery of Impact',
+            }}
+            headingFieldPaths={{ eyebrow: 'gallery.eyebrow', headline: 'gallery.headline' }}
+          />
+        </div>
 
         <FinalCTA data={finalCta} />
 

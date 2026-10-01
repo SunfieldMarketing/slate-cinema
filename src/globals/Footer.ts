@@ -26,6 +26,12 @@ export const Footer: GlobalConfig = {
   },
   fields: [
     {
+      name: 'wordmark',
+      type: 'text',
+      defaultValue: 'SLATE CINEMA',
+      admin: { description: 'The oversized faint wordmark across the top of the footer.' },
+    },
+    {
       name: 'marqueeItems',
       type: 'array',
       fields: [{ name: 'text', type: 'text', required: true }],
@@ -68,6 +74,10 @@ export const Footer: GlobalConfig = {
             { name: 'href', type: 'text', required: true },
           ],
         },
+        { name: 'supportLabel', type: 'text', defaultValue: 'Support', admin: { description: 'Listed after the links above.' } },
+        { name: 'supportHref', type: 'text', defaultValue: '/contact#get-started' },
+        { name: 'privacyLabel', type: 'text', defaultValue: 'Privacy Policy' },
+        { name: 'termsLabel', type: 'text', defaultValue: 'Terms of Service' },
       ],
     },
     {
@@ -78,6 +88,10 @@ export const Footer: GlobalConfig = {
         { name: 'privacyHref', type: 'text', defaultValue: '/privacy-policy' },
         { name: 'termsHref', type: 'text', defaultValue: '/terms-of-service' },
         { name: 'clientPortalHref', type: 'text', defaultValue: 'https://my.slatecinema.com/' },
+        { name: 'copyrightName', type: 'text', defaultValue: 'Slate Cinema', admin: { description: 'Follows "© <year>".' } },
+        { name: 'privacyLabel', type: 'text', defaultValue: 'Privacy' },
+        { name: 'termsLabel', type: 'text', defaultValue: 'Terms' },
+        { name: 'clientPortalLabel', type: 'text', defaultValue: 'Client Portal' },
       ],
     },
   ],

@@ -9,6 +9,7 @@ import { Play, ArrowUpRight } from 'lucide-react'
 import type { PortfolioProjectLocal } from '@/lib/normalize'
 import { PLACEHOLDER_IMAGE } from '@/lib/media-url'
 import ProjectCardModal from '@/components/ProjectCardModal'
+import { labelField, useSiteLabels } from '@/lib/site-data-context'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -78,11 +79,19 @@ function bentoCoveredCount(total: number): number {
 export default function Portfolio({
   projects,
   limit,
+  heading = { eyebrow: 'Our Work', headline: 'A Gallery of Impact' },
+  headingFieldPaths,
 }: {
   projects: PortfolioProjectLocal[]
   limit?: number
+  /** From the page's own CMS doc; an empty value hides that line. */
+  heading?: { eyebrow: string; headline: string }
+  /** Click-to-edit paths for the heading, resolved against whichever CMS
+      doc the caller wraps this section in. */
+  headingFieldPaths?: { eyebrow: string; headline: string }
 }) {
   const sectionRef = useRef<HTMLElement>(null)
+  const labels = useSiteLabels()
   // The grid's cards had no click handler at all -- the cursor-pointer
   // styling and hover play button implied you could open one, but nothing
   // was wired up. Reuse the same modal the reel carousel already opens.
@@ -112,16 +121,22 @@ export default function Portfolio({
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
         {/* Header */}
-        <div className="pf-head flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 md:mb-12">
-          <div>
-            <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase mb-4">
-              <span className="w-8 h-px bg-[#00AEEF]/40" /> Our Work
-            </span>
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05]">
-              A Gallery of Impact
-            </h2>
+        {(heading.eyebrow || heading.headline) && (
+          <div className="pf-head flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 md:mb-12">
+            <div>
+              {heading.eyebrow && (
+                <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase mb-4">
+                  <span className="w-8 h-px bg-[#00AEEF]/40" /> <span data-cms-field={headingFieldPaths?.eyebrow}>{heading.eyebrow}</span>
+                </span>
+              )}
+              {heading.headline && (
+                <h2 data-cms-field={headingFieldPaths?.headline} className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05]">
+                  {heading.headline}
+                </h2>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Cinematic bento grid — hand-tiled in cycles of 8 so it fills
             every cell with no gaps; any trailing partial group falls back
@@ -190,8 +205,8 @@ export default function Portfolio({
             className="group relative inline-flex items-center gap-2 px-8 py-4 rounded-full overflow-hidden border border-white/20 bg-white/5 backdrop-blur-md"
           >
             <div className="absolute inset-0 bg-white scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
-            <span className="relative text-sm font-semibold tracking-widest text-white group-hover:text-black transition-colors uppercase">
-              View Full Portfolio
+            <span {...labelField('viewFullPortfolio')} className="relative text-sm font-semibold tracking-widest text-white group-hover:text-black transition-colors uppercase">
+              {labels.viewFullPortfolio}
             </span>
             <ArrowUpRight className="relative w-4 h-4 text-white group-hover:text-black transition-colors" />
           </Link>

@@ -108,9 +108,23 @@ export const getSocialMediaManagementPageGlobal = cache(async (draft = false) =>
   return payload.findGlobal({ slug: 'social-media-management-page', draft, overrideAccess: draft })
 })
 
+export const getJournalPageGlobal = cache(async (draft = false) => {
+  const payload = await getClient()
+  return payload.findGlobal({ slug: 'journal-page', draft, overrideAccess: draft })
+})
+
 export const getIndustriesCollection = cache(async (draft = false) => {
   const payload = await getClient()
-  const result = await payload.find({ collection: 'industries', limit: 100, depth: 2, draft, overrideAccess: draft })
+  // `order` is editable in /admin (Portfolio menu + /portfolio wheel
+  // position); createdAt only breaks ties.
+  const result = await payload.find({
+    collection: 'industries',
+    limit: 100,
+    depth: 2,
+    sort: ['order', 'createdAt'],
+    draft,
+    overrideAccess: draft,
+  })
   return result.docs
 })
 

@@ -13,6 +13,7 @@ import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
 import type { IndustryData } from '@/lib/normalize'
 import { resolveIcon } from '@/lib/icon-map'
+import { labelField, useSiteLabels } from '@/lib/site-data-context'
 
 function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
   const angleRad = ((angleDeg - 90) * Math.PI) / 180
@@ -56,6 +57,7 @@ export default function IndustryWheel({ industries, accent = '#00AEEF' }: { indu
   const current = industries[active]
   const CurrentIcon = resolveIcon(current.icon)
   const gradId = useId().replace(/[:]/g, '')
+  const labels = useSiteLabels()
 
   return (
     <div className="flex flex-col lg:flex-row items-center lg:items-center gap-14 lg:gap-16">
@@ -175,7 +177,7 @@ export default function IndustryWheel({ industries, accent = '#00AEEF' }: { indu
             className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full font-semibold text-sm text-black transition-transform duration-300 hover:scale-[1.03] whitespace-nowrap"
             style={{ background: `linear-gradient(135deg, #ffffff, ${accent})` }}
           >
-            Explore {current.label} Work
+            <span {...labelField('exploreIndustry')}>{labels.exploreIndustry.replace('{industry}', current.label)}</span>
             <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </Link>
         </div>

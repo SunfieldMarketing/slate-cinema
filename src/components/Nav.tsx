@@ -14,7 +14,11 @@ gsap.registerPlugin(ScrollTrigger)
 
 export default function Nav() {
   const { navigation, industries } = useSiteData()
-  const navLinks = [{ label: 'Home', href: '/' }, ...(navigation.links ?? [])]
+  const homeLabel = navigation.homeLabel || 'Home'
+  const portfolioLabel = navigation.portfolioLabel || 'Portfolio'
+  const allWorkLabel = navigation.allWorkLabel || 'All Work'
+  const clientPortalLabel = navigation.clientPortalLabel || 'Client Portal'
+  const navLinks = [{ label: homeLabel, href: '/' }, ...(navigation.links ?? [])]
   const ctaLabel = navigation.ctaButton?.label || 'Schedule Call'
   const ctaHref = navigation.ctaButton?.href || '/schedule-a-call'
   const clientPortalHref = navigation.clientPortalHref || 'https://my.slatecinema.com/'
@@ -23,6 +27,11 @@ export default function Nav() {
   const [mobilePortfolioOpen, setMobilePortfolioOpen] = useState(false)
   const [portfolioDropdownOpen, setPortfolioDropdownOpen] = useState(false)
   const navRef = useRef<HTMLElement>(null)
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false)
+    setMobilePortfolioOpen(false)
+  }
 
   // Lenis runs with syncTouch, so it owns touch scrolling for the whole
   // window -- without this, swiping on the open menu scrolled the page
@@ -37,6 +46,19 @@ export default function Nav() {
       resumeLenis()
     }
   }, [mobileMenuOpen])
+
+  // Esc closes whichever menu is open (2026-09-24 handoff).
+  useEffect(() => {
+    if (!mobileMenuOpen && !portfolioDropdownOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      setMobileMenuOpen(false)
+      setMobilePortfolioOpen(false)
+      setPortfolioDropdownOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [mobileMenuOpen, portfolioDropdownOpen])
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -98,10 +120,11 @@ export default function Nav() {
               href="/"
               onMouseMove={handleLinkMove}
               onMouseLeave={handleLinkLeave}
+              data-cms-field="homeLabel"
               className="relative px-4 py-2 text-sm text-white/50 hover:text-white font-medium tracking-wide transition-colors block"
               style={{ transformStyle: 'preserve-3d' }}
             >
-              Home
+              {homeLabel}
             </Link>
 
             {/* Portfolio dropdown — main page + every individual industry page */}
@@ -114,10 +137,11 @@ export default function Nav() {
                 href="/portfolio"
                 onMouseMove={handleLinkMove}
                 onMouseLeave={handleLinkLeave}
+                data-cms-field="portfolioLabel"
                 className="relative px-4 py-2 text-sm text-white/50 hover:text-white font-medium tracking-wide transition-colors flex items-center gap-1"
                 style={{ transformStyle: 'preserve-3d' }}
               >
-                Portfolio
+                {portfolioLabel}
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${portfolioDropdownOpen ? 'rotate-180' : ''}`} />
               </Link>
 
@@ -126,9 +150,10 @@ export default function Nav() {
                   <div className="rounded-2xl border border-white/10 bg-[rgba(11,12,14,0.95)] backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] p-2 overflow-hidden">
                     <Link
                       href="/portfolio"
+                      data-cms-field="allWorkLabel"
                       className="block px-4 py-2.5 rounded-xl text-sm font-semibold text-white hover:bg-white/[0.06] transition-colors"
                     >
-                      All Work
+                      {allWorkLabel}
                     </Link>
                     {/* A dedicated "Podcasts" link used to live here --
                         removed 2026-08-13 now that podcasts is a normal
@@ -186,7 +211,7 @@ export default function Nav() {
                 Split the difference on that explicit, quantified feedback
                 rather than picking one instruction over the other: a grey
                 that's meaningfully brighter than /25, nowhere near white/80. */}
-            <a href={clientPortalHref} target="_blank" rel="noopener noreferrer" data-cms-field="clientPortalHref" className="text-xs font-mono text-white/35 hover:text-white/55 transition-colors tracking-widest uppercase">Client Portal</a>
+            <a href={clientPortalHref} target="_blank" rel="noopener noreferrer" data-cms-field="clientPortalLabel" className="text-xs font-mono text-white/35 hover:text-white/55 transition-colors tracking-widest uppercase">{clientPortalLabel}</a>
             <Link href={ctaHref} data-cms-field="ctaButton.label" className="relative px-5 py-2.5 rounded-full text-sm font-semibold text-[#030305] bg-white overflow-hidden group">
               <div className="absolute inset-0 bg-[#00AEEF] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
               <span className="relative group-hover:text-white transition-colors">{ctaLabel}</span>
@@ -198,7 +223,7 @@ export default function Nav() {
               (was a bare 20x20 icon with no hit-area padding at all). */}
           <button
             className="md:hidden text-white z-50 relative p-3 -m-3"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => (mobileMenuOpen ? closeMobileMenu() : setMobileMenuOpen(true))}
             aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileMenuOpen}
           >
@@ -207,72 +232,105 @@ export default function Nav() {
         </div>
       </nav>
 
-      {/* Mobile Overlay */}
+      {/* Mobile Overlay -- 2026-09-24 handoff (reproduced at 375px):
+          the list used to be vertically centered, so opening Portfolio
+          pushed its own row ~87px up and the second tap (to close it)
+          missed. Anchored to the top now, so nothing above the submenu
+          ever moves; every row is a full-width tap target; Esc or a tap
+          on the empty space around the list closes the menu. Still
+          scrolls (data-lenis-prevent + overflow-y-auto) when an expanded
+          Portfolio list is taller than a short phone. */}
       {mobileMenuOpen && (
-        // Centered via my-auto on an inner wrapper, not justify-center on the
-        // scroll container: justify-center overflows both ends once the menu
-        // is taller than the screen (Portfolio expanded on a short phone),
-        // and the top items become unreachable -- my-auto centers when there's
-        // room and scrolls normally from the top when there isn't.
-        <div data-cms-global="navigation" data-lenis-prevent className="fixed inset-0 z-30 bg-ink flex flex-col overflow-y-auto overscroll-contain py-24">
-          <div className="my-auto flex flex-col items-center gap-6">
-          <Link href="/"
-            className="text-2xl font-bold text-white hover:text-[#00AEEF] transition-colors tracking-wider"
-            onClick={() => setMobileMenuOpen(false)}>
-            Home
-          </Link>
-
-          <div className="flex flex-col items-center">
-            <button
-              onClick={() => setMobilePortfolioOpen(!mobilePortfolioOpen)}
-              className="flex items-center gap-2 text-2xl font-bold text-white hover:text-[#00AEEF] transition-colors tracking-wider"
+        <div
+          data-cms-global="navigation"
+          data-lenis-prevent
+          className="fixed inset-0 z-30 bg-ink overflow-y-auto overscroll-contain pt-24 pb-16"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) closeMobileMenu()
+          }}
+        >
+          <div className="mx-auto w-full max-w-sm px-6 flex flex-col items-stretch gap-1 text-center">
+            <Link
+              href="/"
+              data-cms-field="homeLabel"
+              className="block py-3 text-2xl font-bold text-white hover:text-[#00AEEF] transition-colors tracking-wider"
+              onClick={closeMobileMenu}
             >
-              Portfolio
-              <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${mobilePortfolioOpen ? 'rotate-180' : ''}`} />
-            </button>
-            {mobilePortfolioOpen && (
-              <div className="flex flex-col items-center gap-4 mt-5">
-                <Link href="/portfolio" onClick={() => setMobileMenuOpen(false)} className="text-sm font-semibold text-white/80 hover:text-[#00AEEF] transition-colors">
-                  All Work
-                </Link>
-                {industries.map((ind) => (
-                  <Link
-                    key={ind.id}
-                    href={`/portfolio/${ind.slug}`}
-                    onClick={() => setMobileMenuOpen(false)}
-                    data-cms-collection="industries"
-                    data-cms-doc-id={ind.id}
-                    data-cms-field="label"
-                    className="text-sm text-white/50 hover:text-[#00AEEF] transition-colors"
-                  >
-                    {ind.label}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {navLinks.slice(1).map((link, i) => (
-            <Link key={link.label} href={link.href}
-              data-cms-field={`links.${i}.label`}
-              className="text-2xl font-bold text-white hover:text-[#00AEEF] transition-colors tracking-wider"
-              onClick={() => setMobileMenuOpen(false)}>
-              {link.label}
+              {homeLabel}
             </Link>
-          ))}
-          <Link href={ctaHref} data-cms-field="ctaButton.label" onClick={() => setMobileMenuOpen(false)} className="bg-[#00AEEF] text-white px-8 py-4 rounded-full text-lg font-semibold mt-4 shadow-[0_0_20px_rgba(0,174,239,0.3)]">
-            {ctaLabel}
-          </Link>
-          <a
-            href={clientPortalHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            data-cms-field="clientPortalHref"
-            onClick={() => setMobileMenuOpen(false)}
-            className="py-2 text-xs font-mono text-white/45 hover:text-white/70 transition-colors tracking-widest uppercase"
-          >
-            Client Portal
-          </a>
+
+            <div>
+              <button
+                type="button"
+                onClick={() => setMobilePortfolioOpen(!mobilePortfolioOpen)}
+                aria-expanded={mobilePortfolioOpen}
+                className="w-full flex items-center justify-center gap-2 py-3 text-2xl font-bold text-white hover:text-[#00AEEF] transition-colors tracking-wider"
+              >
+                <span data-cms-field="portfolioLabel">{portfolioLabel}</span>
+                <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${mobilePortfolioOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {mobilePortfolioOpen && (
+                <div className="flex flex-col items-stretch pb-3">
+                  <Link
+                    href="/portfolio"
+                    data-cms-field="allWorkLabel"
+                    onClick={closeMobileMenu}
+                    className="block py-2.5 text-sm font-semibold text-white/80 hover:text-[#00AEEF] transition-colors"
+                  >
+                    {allWorkLabel}
+                  </Link>
+                  {industries.map((ind) => {
+                    const Icon = resolveIcon(ind.icon)
+                    return (
+                      <Link
+                        key={ind.id}
+                        href={`/portfolio/${ind.slug}`}
+                        onClick={closeMobileMenu}
+                        data-cms-collection="industries"
+                        data-cms-doc-id={ind.id}
+                        data-cms-field="label"
+                        className="flex items-center justify-center gap-2 py-2.5 text-sm text-white/55 hover:text-[#00AEEF] transition-colors"
+                      >
+                        <Icon className="w-3.5 h-3.5 shrink-0" style={{ color: ind.accent }} />
+                        {ind.label}
+                      </Link>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+
+            {navLinks.slice(1).map((link, i) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                data-cms-field={`links.${i}.label`}
+                className="block py-3 text-2xl font-bold text-white hover:text-[#00AEEF] transition-colors tracking-wider"
+                onClick={closeMobileMenu}
+              >
+                {link.label}
+              </Link>
+            ))}
+
+            {/* Client Portal sits above Schedule Call, per the handoff. */}
+            <a
+              href={clientPortalHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-cms-field="clientPortalLabel"
+              onClick={closeMobileMenu}
+              className="block mt-3 py-3 text-xs font-mono text-white/55 hover:text-white/80 transition-colors tracking-widest uppercase"
+            >
+              {clientPortalLabel}
+            </a>
+            <Link
+              href={ctaHref}
+              data-cms-field="ctaButton.label"
+              onClick={closeMobileMenu}
+              className="self-center bg-[#00AEEF] text-white px-8 py-4 rounded-full text-lg font-semibold mt-2 shadow-[0_0_20px_rgba(0,174,239,0.3)]"
+            >
+              {ctaLabel}
+            </Link>
           </div>
         </div>
       )}

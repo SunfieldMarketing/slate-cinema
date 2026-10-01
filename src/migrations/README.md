@@ -265,10 +265,30 @@ future schema change needs a real committed migration
 like the incident above -- dev-mode push still keeps local development
 fast and migration-free, this only closes the gap for what actually ships.
 
-This project also has **no cache-revalidation hooks configured** --
-every page is static HTML baked at build time, so a content or data fix
-(admin edit, direct API/DB write, whatever) never appears on the live
-site until the next actual deployment. Worth adding proper
-`revalidatePath`/`revalidateTag` hooks on the collections/globals that
-change most often, so this stops being "make the fix, then redeploy to
-see it" every time.
+(Since then every collection and global got a revalidation hook --
+src/lib/revalidate.ts -- so admin saves reach the live site without a
+deploy.)
+
+## Writing a migration by hand (how `20261001_000000_cms_full_coverage` was built)
+
+`migrate:create` diffs against the newest `.json` snapshot here
+(20260822), so it would re-emit every hand-written migration since. To
+get the exact DDL Payload expects for a config change instead:
+
+1. Before touching the config, copy a dev-pushed db and load it with
+   production-shaped content (`payload run` a script that creates the
+   docs through the Local API, `NODE_ENV=production` so nothing is pushed).
+2. Change the config, then push it into a **fresh empty** db
+   (`NODE_ENV=development`, `payload run` a script that only calls
+   `getPayload`).
+3. Diff `sqlite_master` + `pragma table_info` between the two: the
+   difference is exactly what the migration must add (column types and
+   defaults included).
+4. Run `payload migrate` (`NODE_ENV=production`) on the copy, diff its
+   schema against the fresh push again -- it must come out identical --
+   then delete the `payload_migrations` row and run it twice more to
+   prove it's idempotent.
+
+Prefer `ADD COLUMN ... DEFAULT <copy>` for new text fields: SQLite fills
+every existing row (live and version history) with the default, so the
+page keeps showing the same text the moment the column appears.

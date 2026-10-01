@@ -5,6 +5,7 @@ import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import type { PortfolioProjectLocal } from '@/lib/normalize'
+import type { HomePage } from '@/payload-types'
 import ThreeDPhotoCarousel from '@/components/ui/three-d-carousel'
 import ProjectCardModal from '@/components/ProjectCardModal'
 
@@ -15,10 +16,21 @@ gsap.registerPlugin(ScrollTrigger)
   instead of the static grid, so the reel format the client liked carries
   through to the front page too. Clicking a card opens the same project
   breakdown modal used on the film reel, so both interactions feel like
-  one system.
+  one system. Heading copy: Home Page > Selected Work (2026-10-01).
 */
-export default function PortfolioCarousel({ projects }: { projects: PortfolioProjectLocal[] }) {
+export default function PortfolioCarousel({
+  projects,
+  copy,
+}: {
+  projects: PortfolioProjectLocal[]
+  copy?: HomePage['selectedWork']
+}) {
   const sectionRef = useRef<HTMLElement>(null)
+  // A doc saved before these fields existed has no group at all -- use the
+  // original copy then; otherwise an emptied field hides its line.
+  const eyebrow = copy ? (copy.eyebrow ?? '') : 'Our Work'
+  const headline = copy ? (copy.headline ?? '') : 'Selected Work'
+  const subhead = copy ? (copy.subhead ?? '') : 'Drag to spin the reel · click a frame to open it'
   const [openProject, setOpenProject] = useState<number | null>(null)
 
   useGSAP(() => {
@@ -45,14 +57,18 @@ export default function PortfolioCarousel({ projects }: { projects: PortfolioPro
   return (
     <section ref={sectionRef} className="relative w-full overflow-hidden py-24 md:py-28">
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
-        <div className="pc-head text-center mb-10 md:mb-12">
-          <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase mb-4">
-            <span className="w-8 h-px bg-[#00AEEF]/40" /> Our Work <span className="w-8 h-px bg-[#00AEEF]/40" />
-          </span>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05]">
-            Selected Work
-          </h2>
-          <p className="mt-4 text-white/50 text-sm font-mono">Drag to spin the reel · click a frame to open it</p>
+        <div className="pc-head text-center mb-10 md:mb-12" data-cms-global="home-page">
+          {eyebrow && (
+            <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase mb-4">
+              <span className="w-8 h-px bg-[#00AEEF]/40" /> <span data-cms-field="selectedWork.eyebrow">{eyebrow}</span> <span className="w-8 h-px bg-[#00AEEF]/40" />
+            </span>
+          )}
+          {headline && (
+            <h2 data-cms-field="selectedWork.headline" className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05]">
+              {headline}
+            </h2>
+          )}
+          {subhead && <p data-cms-field="selectedWork.subhead" className="mt-4 text-white/50 text-sm font-mono">{subhead}</p>}
         </div>
 
         <div className="pc-carousel">

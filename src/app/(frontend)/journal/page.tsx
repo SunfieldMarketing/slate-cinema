@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
+import { draftMode } from 'next/headers'
 import JournalPageContent from '@/components/JournalPageContent'
 import { getNormalizedJournalPosts } from '@/lib/normalize'
+import { getJournalPageGlobal } from '@/lib/payload-data'
 
 export const metadata: Metadata = {
   title: 'The Slate Journal',
@@ -9,6 +11,8 @@ export const metadata: Metadata = {
 }
 
 export default async function JournalPage() {
-  const posts = await getNormalizedJournalPosts()
-  return <JournalPageContent posts={posts} />
+  // Set by /api/preview for Live Preview (see payload.config.ts).
+  const draft = (await draftMode()).isEnabled
+  const [posts, page] = await Promise.all([getNormalizedJournalPosts(draft), getJournalPageGlobal(draft)])
+  return <JournalPageContent posts={posts} page={page} />
 }

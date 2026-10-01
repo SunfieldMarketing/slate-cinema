@@ -54,5 +54,19 @@ export const Navigation: GlobalConfig = {
       admin: { description: 'Where the "Client Portal" nav link sends visitors.' },
       defaultValue: 'https://my.slatecinema.com/',
     },
+    { name: 'clientPortalLabel', type: 'text', defaultValue: 'Client Portal' },
+    { name: 'homeLabel', type: 'text', defaultValue: 'Home', admin: { description: 'First link in the menu (always goes to the homepage).' } },
+    {
+      name: 'portfolioLabel',
+      type: 'text',
+      defaultValue: 'Portfolio',
+      admin: { description: 'The Portfolio menu. Its list of industries comes from the Industries collection.' },
+    },
+    {
+      name: 'allWorkLabel',
+      type: 'text',
+      defaultValue: 'All Work',
+      admin: { description: 'First entry inside the Portfolio menu (goes to /portfolio).' },
+    },
   ],
 }

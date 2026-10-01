@@ -6,26 +6,40 @@ import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { MagicCard } from '@/components/ui/magic-card'
 import { BorderBeam } from '@/components/ui/border-beam'
-import type { IndustryClient } from '@/lib/industries'
+import type { IndustryClientCard, IndustrySectionHeading } from '@/lib/normalize'
+import { extractVimeoId } from '@/lib/vimeo'
 import SmartVideo from '@/components/ui/SmartVideo'
 
 gsap.registerPlugin(ScrollTrigger)
 
 /*
-  Generalized 2026-08-13 from AthleticsClientShowcase.tsx (Athletics was
-  the first industry page to get this treatment; Kauan then asked for
-  "the new athletics industry format for all the industry pages") --
-  same component, now data-driven per industry instead of hardcoded to
-  Athletics' 4 clients.
+  The client strip under the logo banner on every industry page. Since
+  2026-10-01 the heading and every card come from the industry's CMS doc
+  (Client strip section) instead of src/lib/industries.ts.
+
+  Per Jake's handoff, a card with no Vimeo video is hidden rather than
+  falling back to a generic pipeline loop, and the whole section goes
+  away when no card has one.
 */
+
+// Frame inside the card's 16:9 media area, matched to the video's own
+// shape -- Vimeo letterboxes a video that doesn't fill its iframe, so a
+// vertical clip in a 16:9 frame would sit between two black bars.
+const FRAME: Record<IndustryClientCard['orientation'], string> = {
+  landscape: 'absolute inset-0',
+  portrait: 'absolute inset-y-0 left-1/2 -translate-x-1/2 aspect-[9/16]',
+  feed: 'absolute inset-y-0 left-1/2 -translate-x-1/2 aspect-[4/5]',
+  square: 'absolute inset-y-0 left-1/2 -translate-x-1/2 aspect-square',
+}
+
 export default function IndustryClientShowcase({
   clients,
+  heading,
   accent,
-  eyebrow = 'Who We Shoot For',
 }: {
-  clients: IndustryClient[]
+  clients: IndustryClientCard[]
+  heading: IndustrySectionHeading
   accent: string
-  eyebrow?: string
 }) {
   const ref = useRef<HTMLElement>(null)
 
@@ -40,40 +54,71 @@ export default function IndustryClientShowcase({
     return () => ctx.revert()
   }, { scope: ref })
 
-  if (!clients.length) return null
+  // Keep each card's index in the CMS array so click-to-edit lands on the
+  // right row even when hidden cards sit between visible ones.
+  const visible = clients
+    .map((c, index) => ({ ...c, index, vimeoId: extractVimeoId(c.vimeo) }))
+    .filter((c) => c.vimeoId)
+  if (!visible.length) return null
+  const single = visible.length === 1
 
   return (
     <section ref={ref} className="relative w-full overflow-hidden py-20 md:py-24">
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
-        <div className="text-center mb-12 max-w-2xl mx-auto">
-          <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase block mb-4" style={{ color: accent }}>{eyebrow}</span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.05]">
-            Real clients. Real work. <span className="font-serif-accent italic text-white/60">Real footage.</span>
-          </h2>
-        </div>
+        {(heading.eyebrow || heading.headline) && (
+          <div className="text-center mb-12 max-w-2xl mx-auto">
+            {heading.eyebrow && (
+              <span data-cms-field="sectionEyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase block mb-4" style={{ color: accent }}>
+                {heading.eyebrow}
+              </span>
+            )}
+            {heading.headline && (
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.05]">
+                <span data-cms-field="sectionHeadline">{heading.headline}</span>
+                {heading.accent && (
+                  <>
+                    {' '}
+                    <span data-cms-field="sectionHeadlineAccent" className="font-serif-accent italic text-white/60">{heading.accent}</span>
+                  </>
+                )}
+              </h2>
+            )}
+          </div>
+        )}
 
-        <div className="acs-grid grid grid-cols-1 sm:grid-cols-2 gap-5">
-          {clients.map((c) => (
+        <div className={`acs-grid grid gap-5 ${single ? 'grid-cols-1 max-w-3xl mx-auto' : 'grid-cols-1 sm:grid-cols-2'}`}>
+          {visible.map((c) => (
             <MagicCard
-              key={c.name}
+              key={`${c.index}-${c.name}`}
               className="acs-card rounded-2xl overflow-hidden relative"
               gradientColor={`${accent}22`}
               gradientFrom={accent}
               gradientTo={accent}
             >
-              <div className="relative aspect-video">
+              <div
+                className="relative aspect-video overflow-hidden"
+                style={c.orientation === 'landscape' ? undefined : { background: `radial-gradient(ellipse at center, ${accent}26 0%, transparent 70%)` }}
+              >
                 <BorderBeam size={100} duration={6} colorFrom={accent} colorTo={accent} />
-                {/* c.video doubles as the Vimeo source too -- see the matching
-                    comment in CinematicStatement.tsx for why that's safe. */}
-                <SmartVideo src={c.video} vimeo={c.video} variant="background" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
+                <div className={FRAME[c.orientation] ?? FRAME.landscape}>
+                  <SmartVideo vimeo={c.vimeo} variant="background" className="w-full h-full object-cover" />
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent pointer-events-none" />
               </div>
               <div className="p-6">
                 <div className="flex items-baseline justify-between gap-3 mb-2">
-                  <h3 className="text-white font-bold text-lg">{c.name}</h3>
-                  {c.year && <span className="font-mono text-[10px] text-white/40 uppercase tracking-wide shrink-0">{c.year}</span>}
+                  <h3 data-cms-field={`clients.${c.index}.name`} className="text-white font-bold text-lg">{c.name}</h3>
+                  {c.year && (
+                    <span data-cms-field={`clients.${c.index}.year`} className="font-mono text-[10px] text-white/40 uppercase tracking-wide shrink-0">
+                      {c.year}
+                    </span>
+                  )}
                 </div>
-                <p className="text-white/55 text-sm font-light leading-relaxed">{c.body}</p>
+                {c.description && (
+                  <p data-cms-field={`clients.${c.index}.description`} className="text-white/55 text-sm font-light leading-relaxed">
+                    {c.description}
+                  </p>
+                )}
               </div>
             </MagicCard>
           ))}

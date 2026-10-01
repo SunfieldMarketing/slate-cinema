@@ -6,6 +6,7 @@ import { ArrowRight, X } from 'lucide-react'
 import type { PortfolioProjectLocal } from '@/lib/normalize'
 import SmartVideo from '@/components/ui/SmartVideo'
 import { PLACEHOLDER_IMAGE } from '@/lib/media-url'
+import { labelField, useSiteLabels } from '@/lib/site-data-context'
 
 /*
   ProjectCardModal — the breakdown card opened by clicking a frame on the
@@ -27,6 +28,7 @@ export default function ProjectCardModal({
   accent: string
   onClose: () => void
 }) {
+  const labels = useSiteLabels()
   const cardRef = useRef<HTMLDivElement>(null)
   const backdropRef = useRef<HTMLButtonElement>(null)
   // The Vimeo iframe (player variant) takes a beat to boot -- its own JS,
@@ -172,17 +174,20 @@ export default function ProjectCardModal({
           <div className="flex items-center gap-4 flex-wrap">
             <a
               href="/contact"
+              {...labelField('startProject')}
               className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold text-black transition-transform hover:scale-[1.03] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
               style={{ background: accent, boxShadow: `0 0 28px ${accent}50` }}
             >
-              Start a project like this <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+              {labels.startProject} <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
             </a>
+            {/* Deliberately not click-to-edit tagged: in Live Preview that
+                would swallow the click and the card couldn't be closed. */}
             <button
               type="button"
               onClick={onClose}
               className="text-sm font-semibold text-white/60 hover:text-white transition-colors px-2 py-2 rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
             >
-              Back to the reel
+              {labels.backToReel}
             </button>
           </div>
         </div>

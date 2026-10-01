@@ -55,7 +55,7 @@ export default function HomePageContent({
         <div data-scroll-section="results" data-cms-global="home-page"><Results data={homePage?.results} /></div>
         <div data-scroll-section="standards" data-cms-global="home-page"><IndustryStandards data={homePage?.industryStandards} /></div>
         <div data-scroll-section="reviews" data-cms-global="home-page"><Reviews data={homePage?.reviews} /></div>
-        <div id="reel" data-scroll-section="portfolio"><PortfolioCarousel projects={portfolioProjects} /></div>
+        <div id="reel" data-scroll-section="portfolio"><PortfolioCarousel projects={portfolioProjects} copy={homePage?.selectedWork} /></div>
         <div data-scroll-section="finalcta" data-cms-global="final-cta"><FinalCTA data={finalCta} /></div>
         <div data-scroll-section="footer"><Footer /></div>
       </div>

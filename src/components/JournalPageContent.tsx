@@ -10,12 +10,13 @@ import Footer from '@/components/Footer'
 import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
 import PageHero from '@/components/ui/PageHero'
 import type { JournalPostLocal } from '@/lib/normalize'
+import type { JournalPage } from '@/payload-types'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const JOURNAL_ACCENT = '#00AEEF'
 
-function JournalGrid({ journalPosts }: { journalPosts: JournalPostLocal[] }) {
+function JournalGrid({ journalPosts, readLabel }: { journalPosts: JournalPostLocal[]; readLabel: string }) {
   const ref = useRef<HTMLElement>(null)
   const categories = ['All', ...Array.from(new Set(journalPosts.map((p) => p.category)))]
   const [filter, setFilter] = useState('All')
@@ -87,7 +88,7 @@ function JournalGrid({ journalPosts }: { journalPosts: JournalPostLocal[] }) {
                 </h3>
                 <p data-cms-field="excerpt" className="text-white/50 text-sm font-light leading-relaxed line-clamp-3 flex-1">{p.excerpt}</p>
                 <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white/80 group-hover:text-white transition-colors">
-                  Read the piece
+                  <span data-cms-global="journal-page" data-cms-field="readLabel">{readLabel}</span>
                   <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                 </div>
               </div>
@@ -99,7 +100,14 @@ function JournalGrid({ journalPosts }: { journalPosts: JournalPostLocal[] }) {
   )
 }
 
-export default function JournalPageContent({ posts }: { posts: JournalPostLocal[] }) {
+export default function JournalPageContent({ posts, page }: { posts: JournalPostLocal[]; page: JournalPage | null }) {
+  // Copy: the Journal Page global (2026-10-01). These fallbacks only cover
+  // a database that predates it.
+  const hero = page?.hero
+  const titleLines = [
+    { text: hero?.titleLine1 ?? 'What it takes', path: 'hero.titleLine1' },
+    { text: hero?.titleLine2 ?? 'to get watched', path: 'hero.titleLine2' },
+  ].filter((l) => l.text)
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-[#00AEEF] selection:text-white">
       <AmbientBackdrop accent={JOURNAL_ACCENT} />
@@ -107,14 +115,22 @@ export default function JournalPageContent({ posts }: { posts: JournalPostLocal[
       <div className="relative z-10 w-full">
         <Nav />
 
-        <PageHero
-          eyebrow="The Slate Journal"
-          title={['What it takes', 'to get watched']}
-          subtitle="Field notes from inside our own production process — on story, strategy, and the craft decisions that decide whether someone keeps watching or scrolls past."
-          accent={JOURNAL_ACCENT}
-        />
+        <div data-cms-global="journal-page">
+          <PageHero
+            eyebrow={hero?.eyebrow ?? 'The Slate Journal'}
+            title={titleLines.map((l) => l.text)}
+            subtitle={
+              hero?.subtitle ??
+              'Field notes from inside our own production process — on story, strategy, and the craft decisions that decide whether someone keeps watching or scrolls past.'
+            }
+            accent={JOURNAL_ACCENT}
+            eyebrowFieldPath="hero.eyebrow"
+            titleFieldPaths={titleLines.map((l) => l.path)}
+            subtitleFieldPath="hero.subtitle"
+          />
+        </div>
 
-        <JournalGrid journalPosts={posts} />
+        <JournalGrid journalPosts={posts} readLabel={page?.readLabel || 'Read the piece'} />
 
         <Footer />
       </div>

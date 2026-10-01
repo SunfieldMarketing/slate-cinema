@@ -81,6 +81,7 @@ export default function Footer() {
   const newsletter = footer.newsletter
   const sitemap = footer.sitemapColumn
   const bottomBar = footer.bottomBar
+  const wordmark = footer.wordmark || 'SLATE CINEMA'
 
   return (
     <footer ref={footerRef} data-cms-global="footer" className="relative w-full bg-ink pt-14 pb-6 overflow-hidden" style={{ perspective: '1000px' }}>
@@ -113,9 +114,10 @@ export default function Footer() {
       <div className="footer-wordmark w-full flex items-center justify-center py-3 mb-5 overflow-visible">
         <h1
           ref={textRef}
+          data-cms-field="wordmark"
           className="text-[9vw] md:text-[9vw] font-bold text-white/[0.07] font-mono leading-none tracking-tighter whitespace-nowrap select-none"
         >
-          SLATE CINEMA
+          {wordmark}
         </h1>
       </div>
 
@@ -202,14 +204,14 @@ export default function Footer() {
                     {link.label}
                   </Link>
                 ))}
-                <a href="/contact#get-started" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm py-1.5 -my-1.5">
-                  Support
+                <a href={sitemap?.supportHref || '/contact#get-started'} data-cms-field="sitemapColumn.supportLabel" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm py-1.5 -my-1.5">
+                  {sitemap?.supportLabel || 'Support'}
                 </a>
-                <a href={bottomBar?.privacyHref || '/privacy-policy'} data-cms-field="bottomBar.privacyHref" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm py-1.5 -my-1.5">
-                  Privacy Policy
+                <a href={bottomBar?.privacyHref || '/privacy-policy'} data-cms-field="sitemapColumn.privacyLabel" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm py-1.5 -my-1.5">
+                  {sitemap?.privacyLabel || 'Privacy Policy'}
                 </a>
-                <a href={bottomBar?.termsHref || '/terms-of-service'} data-cms-field="bottomBar.termsHref" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm py-1.5 -my-1.5">
-                  Terms of Service
+                <a href={bottomBar?.termsHref || '/terms-of-service'} data-cms-field="sitemapColumn.termsLabel" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm py-1.5 -my-1.5">
+                  {sitemap?.termsLabel || 'Terms of Service'}
                 </a>
               </div>
             </div>
@@ -218,7 +220,7 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="w-full flex flex-col md:flex-row justify-between items-center mt-4 text-[10px] font-mono text-white/20 tracking-widest uppercase gap-4">
-          <p>&copy; {new Date().getFullYear()} Slate Cinema</p>
+          <p>&copy; {new Date().getFullYear()} <span data-cms-field="bottomBar.copyrightName">{bottomBar?.copyrightName || 'Slate Cinema'}</span></p>
           <div data-cms-field="bottomBar.craftedWithLoveText" className="flex items-center gap-2">
             {bottomBar?.craftedWithLoveText || 'Crafted with love by Slate Cinema'}
             <Heart size={12} className="text-[#00AEEF]" />
@@ -229,9 +231,9 @@ export default function Footer() {
               padding + matching negative margin trick, same reasoning:
               10px/uppercase text rendered these at only 15px tall. */}
           <div className="flex gap-4">
-            <a href={bottomBar?.privacyHref || '/privacy-policy'} data-cms-field="bottomBar.privacyHref" className="py-1.5 -my-1.5 hover:text-white transition-colors">Privacy</a>
-            <a href={bottomBar?.termsHref || '/terms-of-service'} data-cms-field="bottomBar.termsHref" className="py-1.5 -my-1.5 hover:text-white transition-colors">Terms</a>
-            <a href={bottomBar?.clientPortalHref || 'https://my.slatecinema.com/'} target="_blank" rel="noopener noreferrer" data-cms-field="bottomBar.clientPortalHref" className="py-1.5 -my-1.5 hover:text-[#00AEEF] transition-colors">Client Portal</a>
+            <a href={bottomBar?.privacyHref || '/privacy-policy'} data-cms-field="bottomBar.privacyLabel" className="py-1.5 -my-1.5 hover:text-white transition-colors">{bottomBar?.privacyLabel || 'Privacy'}</a>
+            <a href={bottomBar?.termsHref || '/terms-of-service'} data-cms-field="bottomBar.termsLabel" className="py-1.5 -my-1.5 hover:text-white transition-colors">{bottomBar?.termsLabel || 'Terms'}</a>
+            <a href={bottomBar?.clientPortalHref || 'https://my.slatecinema.com/'} target="_blank" rel="noopener noreferrer" data-cms-field="bottomBar.clientPortalLabel" className="py-1.5 -my-1.5 hover:text-[#00AEEF] transition-colors">{bottomBar?.clientPortalLabel || 'Client Portal'}</a>
           </div>
         </div>
 

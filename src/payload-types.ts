@@ -115,6 +115,7 @@ export interface Config {
     'terms-of-service-page': TermsOfServicePage;
     'thank-you-page': ThankYouPage;
     'social-media-management-page': SocialMediaManagementPage;
+    'journal-page': JournalPage;
   };
   globalsSelect: {
     navigation: NavigationSelect<false> | NavigationSelect<true>;
@@ -132,6 +133,7 @@ export interface Config {
     'terms-of-service-page': TermsOfServicePageSelect<false> | TermsOfServicePageSelect<true>;
     'thank-you-page': ThankYouPageSelect<false> | ThankYouPageSelect<true>;
     'social-media-management-page': SocialMediaManagementPageSelect<false> | SocialMediaManagementPageSelect<true>;
+    'journal-page': JournalPageSelect<false> | JournalPageSelect<true>;
   };
   locale: null;
   widgets: {
@@ -242,7 +244,13 @@ export interface Media {
 export interface Industry {
   id: number;
   slug: string;
+  /**
+   * Industry name: the page title, the Portfolio menu entry and the wheel slice.
+   */
   label: string;
+  /**
+   * Shown next to the name in the Portfolio menu and in the /portfolio wheel.
+   */
   icon:
     | 'Film'
     | 'Dumbbell'
@@ -252,32 +260,45 @@ export interface Industry {
     | 'ShoppingBag'
     | 'Briefcase'
     | 'Users'
-    | 'GraduationCap';
+    | 'GraduationCap'
+    | 'Mic'
+    | 'Camera'
+    | 'Clapperboard'
+    | 'Music'
+    | 'Utensils'
+    | 'Car'
+    | 'House'
+    | 'Store'
+    | 'Megaphone'
+    | 'Sparkles';
   /**
    * Hex color, e.g. #00AEEF
    */
   accent: string;
   /**
-   * Short one-liner used by the industry wheel
+   * Position in the Portfolio menu and the /portfolio wheel. Lower numbers come first.
+   */
+  order?: number | null;
+  /**
+   * Short tag, a few words (e.g. "Team & athlete films"). Shown as the small label above the page title, and on this industry's photo card in the /portfolio wheel.
+   */
+  stat: string;
+  /**
+   * Subtitle under the page title. Also used in the /portfolio wheel.
    */
   blurb: string;
   /**
-   * Longer paragraph used on the individual industry page
+   * Shown while the hero video loads, and on the /portfolio wheel card.
    */
-  description: string;
-  stat: string;
   heroImage?: (number | null) | Media;
   heroVideo?: (number | null) | Media;
   /**
    * Paste a Vimeo URL or ID -- takes priority over the uploaded file when set
    */
   heroVideoVimeoUrl?: string | null;
-  gallery?:
-    | {
-        image: number | Media;
-        id?: string | null;
-      }[]
-    | null;
+  /**
+   * The animated numbers along the bottom of the hero.
+   */
   stats?:
     | {
         value: number;
@@ -286,23 +307,48 @@ export interface Industry {
         id?: string | null;
       }[]
     | null;
-  services?:
+  /**
+   * Small label above the headline. Leave blank to hide it.
+   */
+  sectionEyebrow?: string | null;
+  /**
+   * Leave blank to hide it.
+   */
+  sectionHeadline?: string | null;
+  /**
+   * Optional end of the headline, set in grey italics.
+   */
+  sectionHeadlineAccent?: string | null;
+  /**
+   * One card per client. A card without a Vimeo video is hidden on the site, and the whole strip is hidden when no card has one.
+   */
+  clients?:
     | {
         name: string;
+        /**
+         * Optional, e.g. "2025" or "2018–2021".
+         */
+        year?: string | null;
+        description?: string | null;
+        /**
+         * Vimeo link or ID, e.g. https://vimeo.com/862067416 or just 862067416
+         */
+        vimeoId?: string | null;
+        orientation?: ('landscape' | 'portrait' | 'feed' | 'square') | null;
         id?: string | null;
       }[]
     | null;
   /**
-   * Optional — real client quote only, leave blank if none
+   * Leave blank to hide it.
    */
-  testimonial?: {
-    quote?: string | null;
-    name?: string | null;
-    role?: string | null;
-    company?: string | null;
-  };
+  servicesEyebrow?: string | null;
+  servicesHeadline?: string | null;
   /**
-   * Optional — rich bento cards for the individual industry page
+   * Optional end of the headline, set in grey italics.
+   */
+  servicesHeadlineAccent?: string | null;
+  /**
+   * The service cards. The one marked "featured" runs large.
    */
   serviceCards?:
     | {
@@ -332,8 +378,60 @@ export interface Industry {
         id?: string | null;
       }[]
     | null;
+  statementEyebrow?: string | null;
   /**
-   * Optional — video testimonial + case-study proof cards
+   * One line per row; the last row is set in italics. Leave blank to hide the whole section.
+   */
+  statementHeadline?: string | null;
+  statementBody?: string | null;
+  /**
+   * Background video. Vimeo link or ID, e.g. https://vimeo.com/862067416 or just 862067416 (a video file URL also works).
+   */
+  statementVideo?: string | null;
+  ctaHeadline?: string | null;
+  ctaSubhead?: string | null;
+  ctaButtonLabel?: string | null;
+  ctaButtonHref?: string | null;
+  /**
+   * Leave blank to hide it.
+   */
+  processEyebrow?: string | null;
+  processHeadline?: string | null;
+  /**
+   * Optional end of the headline, set in grey italics.
+   */
+  processHeadlineAccent?: string | null;
+  /**
+   * The timeline steps.
+   */
+  process?:
+    | {
+        week: string;
+        title: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Leave blank to hide it.
+   */
+  galleryEyebrow?: string | null;
+  galleryHeadline?: string | null;
+  redirectEnabled?: boolean | null;
+  redirectEyebrow?: string | null;
+  redirectHeadline?: string | null;
+  redirectBody?: string | null;
+  redirectButtonLabel?: string | null;
+  /**
+   * Full address, e.g. https://wavecare.io
+   */
+  redirectUrl?: string | null;
+  /**
+   * Search-engine description for this page (not shown on the page itself).
+   */
+  description: string;
+  /**
+   * Video testimonial cards. Not shown on this page -- the homepage reviews section uses the first industry that has any.
    */
   videoTestimonials?:
     | {
@@ -353,18 +451,34 @@ export interface Industry {
       }[]
     | null;
   /**
-   * Optional — process timeline
+   * Not currently shown on the site.
    */
-  process?:
+  gallery?:
     | {
-        week: string;
-        title: string;
-        body: string;
+        image: number | Media;
         id?: string | null;
       }[]
     | null;
   /**
-   * Optional — FAQ accordion
+   * Not currently shown on the site.
+   */
+  services?:
+    | {
+        name: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Not currently shown on the site. Real client quotes only.
+   */
+  testimonial?: {
+    quote?: string | null;
+    name?: string | null;
+    role?: string | null;
+    company?: string | null;
+  };
+  /**
+   * Not currently shown on the site.
    */
   faqs?:
     | {
@@ -867,18 +981,12 @@ export interface IndustriesSelect<T extends boolean = true> {
   label?: T;
   icon?: T;
   accent?: T;
-  blurb?: T;
-  description?: T;
+  order?: T;
   stat?: T;
+  blurb?: T;
   heroImage?: T;
   heroVideo?: T;
   heroVideoVimeoUrl?: T;
-  gallery?:
-    | T
-    | {
-        image?: T;
-        id?: T;
-      };
   stats?:
     | T
     | {
@@ -887,20 +995,22 @@ export interface IndustriesSelect<T extends boolean = true> {
         label?: T;
         id?: T;
       };
-  services?:
+  sectionEyebrow?: T;
+  sectionHeadline?: T;
+  sectionHeadlineAccent?: T;
+  clients?:
     | T
     | {
         name?: T;
+        year?: T;
+        description?: T;
+        vimeoId?: T;
+        orientation?: T;
         id?: T;
       };
-  testimonial?:
-    | T
-    | {
-        quote?: T;
-        name?: T;
-        role?: T;
-        company?: T;
-      };
+  servicesEyebrow?: T;
+  servicesHeadline?: T;
+  servicesHeadlineAccent?: T;
   serviceCards?:
     | T
     | {
@@ -920,6 +1030,34 @@ export interface IndustriesSelect<T extends boolean = true> {
         featured?: T;
         id?: T;
       };
+  statementEyebrow?: T;
+  statementHeadline?: T;
+  statementBody?: T;
+  statementVideo?: T;
+  ctaHeadline?: T;
+  ctaSubhead?: T;
+  ctaButtonLabel?: T;
+  ctaButtonHref?: T;
+  processEyebrow?: T;
+  processHeadline?: T;
+  processHeadlineAccent?: T;
+  process?:
+    | T
+    | {
+        week?: T;
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  galleryEyebrow?: T;
+  galleryHeadline?: T;
+  redirectEnabled?: T;
+  redirectEyebrow?: T;
+  redirectHeadline?: T;
+  redirectBody?: T;
+  redirectButtonLabel?: T;
+  redirectUrl?: T;
+  description?: T;
   videoTestimonials?:
     | T
     | {
@@ -934,13 +1072,25 @@ export interface IndustriesSelect<T extends boolean = true> {
         logo?: T;
         id?: T;
       };
-  process?:
+  gallery?:
     | T
     | {
-        week?: T;
-        title?: T;
-        body?: T;
+        image?: T;
         id?: T;
+      };
+  services?:
+    | T
+    | {
+        name?: T;
+        id?: T;
+      };
+  testimonial?:
+    | T
+    | {
+        quote?: T;
+        name?: T;
+        role?: T;
+        company?: T;
       };
   faqs?:
     | T
@@ -1228,6 +1378,19 @@ export interface Navigation {
    * Where the "Client Portal" nav link sends visitors.
    */
   clientPortalHref?: string | null;
+  clientPortalLabel?: string | null;
+  /**
+   * First link in the menu (always goes to the homepage).
+   */
+  homeLabel?: string | null;
+  /**
+   * The Portfolio menu. Its list of industries comes from the Industries collection.
+   */
+  portfolioLabel?: string | null;
+  /**
+   * First entry inside the Portfolio menu (goes to /portfolio).
+   */
+  allWorkLabel?: string | null;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1238,6 +1401,10 @@ export interface Navigation {
  */
 export interface Footer {
   id: number;
+  /**
+   * The oversized faint wordmark across the top of the footer.
+   */
+  wordmark?: string | null;
   marqueeItems?:
     | {
         text: string;
@@ -1264,12 +1431,26 @@ export interface Footer {
           id?: string | null;
         }[]
       | null;
+    /**
+     * Listed after the links above.
+     */
+    supportLabel?: string | null;
+    supportHref?: string | null;
+    privacyLabel?: string | null;
+    termsLabel?: string | null;
   };
   bottomBar?: {
     craftedWithLoveText?: string | null;
     privacyHref?: string | null;
     termsHref?: string | null;
     clientPortalHref?: string | null;
+    /**
+     * Follows "© <year>".
+     */
+    copyrightName?: string | null;
+    privacyLabel?: string | null;
+    termsLabel?: string | null;
+    clientPortalLabel?: string | null;
   };
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
@@ -1313,6 +1494,51 @@ export interface SiteSetting {
           id?: string | null;
         }[]
       | null;
+  };
+  /**
+   * Short bits of copy that repeat across pages. Change one here and every page that uses it updates.
+   */
+  labels?: {
+    /**
+     * Small line under the button in every industry page hero.
+     */
+    trustLine?: string | null;
+    /**
+     * Industry page hero button, and the floating button bottom-right on industry pages.
+     */
+    getStarted?: string | null;
+    /**
+     * Where those "Get Started" buttons go.
+     */
+    getStartedHref?: string | null;
+    /**
+     * Button beside the service-cards heading on industry pages.
+     */
+    bookCall?: string | null;
+    /**
+     * Link at the bottom of every service card.
+     */
+    bookThis?: string | null;
+    /**
+     * Badge on the large featured service card.
+     */
+    mostBooked?: string | null;
+    /**
+     * Button under the project gallery.
+     */
+    viewFullPortfolio?: string | null;
+    /**
+     * Main button on an opened project card.
+     */
+    startProject?: string | null;
+    /**
+     * Close button on an opened project card.
+     */
+    backToReel?: string | null;
+    /**
+     * Button in the /portfolio industry wheel. {industry} is replaced with the industry name.
+     */
+    exploreIndustry?: string | null;
   };
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
@@ -1509,7 +1735,24 @@ export interface HomePage {
         }[]
       | null;
   };
+  /**
+   * Heading over the spinning project carousel. The projects come from Portfolio Projects.
+   */
+  selectedWork?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    subhead?: string | null;
+  };
   results: {
+    /**
+     * Label above the big views number.
+     */
+    eyebrow?: string | null;
+    /**
+     * Word after the big views number.
+     */
+    viewsLabel?: string | null;
+    reachLabel?: string | null;
     viewsTarget?: number | null;
     likesTarget?: number | null;
     commentsTarget?: number | null;
@@ -1657,6 +1900,13 @@ export interface PortfolioIndexPage {
     subhead?: string | null;
   };
   industriesSection?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+  };
+  /**
+   * Heading over the project grid near the bottom of the page.
+   */
+  gallery?: {
     eyebrow?: string | null;
     headline?: string | null;
   };
@@ -2071,6 +2321,42 @@ export interface SocialMediaManagementPage {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "journal-page".
+ */
+export interface JournalPage {
+  id: number;
+  /**
+   * Top of the /journal page.
+   */
+  hero?: {
+    eyebrow?: string | null;
+    titleLine1?: string | null;
+    titleLine2?: string | null;
+    subtitle?: string | null;
+  };
+  /**
+   * Link at the bottom of each post card on /journal.
+   */
+  readLabel?: string | null;
+  /**
+   * Call to action at the end of every journal post.
+   */
+  postCta?: {
+    headline?: string | null;
+    subhead?: string | null;
+    buttonLabel?: string | null;
+    buttonHref?: string | null;
+  };
+  /**
+   * Label over the related posts at the bottom of every journal post.
+   */
+  relatedLabel?: string | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "navigation_select".
  */
 export interface NavigationSelect<T extends boolean = true> {
@@ -2088,6 +2374,10 @@ export interface NavigationSelect<T extends boolean = true> {
         href?: T;
       };
   clientPortalHref?: T;
+  clientPortalLabel?: T;
+  homeLabel?: T;
+  portfolioLabel?: T;
+  allWorkLabel?: T;
   _status?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -2098,6 +2388,7 @@ export interface NavigationSelect<T extends boolean = true> {
  * via the `definition` "footer_select".
  */
 export interface FooterSelect<T extends boolean = true> {
+  wordmark?: T;
   marqueeItems?:
     | T
     | {
@@ -2130,6 +2421,10 @@ export interface FooterSelect<T extends boolean = true> {
               href?: T;
               id?: T;
             };
+        supportLabel?: T;
+        supportHref?: T;
+        privacyLabel?: T;
+        termsLabel?: T;
       };
   bottomBar?:
     | T
@@ -2138,6 +2433,10 @@ export interface FooterSelect<T extends boolean = true> {
         privacyHref?: T;
         termsHref?: T;
         clientPortalHref?: T;
+        copyrightName?: T;
+        privacyLabel?: T;
+        termsLabel?: T;
+        clientPortalLabel?: T;
       };
   _status?: T;
   updatedAt?: T;
@@ -2181,6 +2480,20 @@ export interface SiteSettingsSelect<T extends boolean = true> {
               logo?: T;
               id?: T;
             };
+      };
+  labels?:
+    | T
+    | {
+        trustLine?: T;
+        getStarted?: T;
+        getStartedHref?: T;
+        bookCall?: T;
+        bookThis?: T;
+        mostBooked?: T;
+        viewFullPortfolio?: T;
+        startProject?: T;
+        backToReel?: T;
+        exploreIndustry?: T;
       };
   _status?: T;
   updatedAt?: T;
@@ -2357,9 +2670,19 @@ export interface HomePageSelect<T extends boolean = true> {
               id?: T;
             };
       };
+  selectedWork?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        subhead?: T;
+      };
   results?:
     | T
     | {
+        eyebrow?: T;
+        viewsLabel?: T;
+        reachLabel?: T;
         viewsTarget?: T;
         likesTarget?: T;
         commentsTarget?: T;
@@ -2500,6 +2823,12 @@ export interface PortfolioIndexPageSelect<T extends boolean = true> {
         subhead?: T;
       };
   industriesSection?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+      };
+  gallery?:
     | T
     | {
         eyebrow?: T;
@@ -2748,6 +3077,34 @@ export interface SocialMediaManagementPageSelect<T extends boolean = true> {
         buttonHref?: T;
         altText?: T;
       };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "journal-page_select".
+ */
+export interface JournalPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        titleLine1?: T;
+        titleLine2?: T;
+        subtitle?: T;
+      };
+  readLabel?: T;
+  postCta?:
+    | T
+    | {
+        headline?: T;
+        subhead?: T;
+        buttonLabel?: T;
+        buttonHref?: T;
+      };
+  relatedLabel?: T;
   _status?: T;
   updatedAt?: T;
   createdAt?: T;

@@ -55,6 +55,11 @@ interface Props {
   ctaFieldPath?: string
   secondaryCtaFieldPath?: string
   trustNoteFieldPath?: string
+  /** Set when the CTA label / trust note come from a different CMS
+      document than the rest of the hero (e.g. Site Settings > Labels on
+      an industry page), so click-to-edit opens the right one. */
+  ctaGlobal?: string
+  trustNoteGlobal?: string
 }
 
 export default function PageHero({
@@ -76,6 +81,8 @@ export default function PageHero({
   ctaFieldPath,
   secondaryCtaFieldPath,
   trustNoteFieldPath,
+  ctaGlobal,
+  trustNoteGlobal,
 }: Props) {
   const ref = useRef<HTMLElement>(null)
 
@@ -156,6 +163,7 @@ export default function PageHero({
                 <a
                   href={cta.href}
                   data-cms-field={ctaFieldPath}
+                  data-cms-global={ctaGlobal}
                   className="group inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-sm text-black bg-white hover:text-white transition-colors duration-300 shadow-[0_0_30px_rgba(255,255,255,0.15)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
                   style={{ ['--acc' as string]: accent }}
                 >
@@ -177,7 +185,7 @@ export default function PageHero({
           )}
 
           {trustNote && (
-            <p data-cms-field={trustNoteFieldPath} className="ph-fade mt-6 font-mono text-[10px] tracking-[0.2em] uppercase text-white/55">
+            <p data-cms-field={trustNoteFieldPath} data-cms-global={trustNoteGlobal} className="ph-fade mt-6 font-mono text-[10px] tracking-[0.2em] uppercase text-white/55">
               {trustNote}
             </p>
           )}

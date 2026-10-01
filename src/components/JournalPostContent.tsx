@@ -10,12 +10,30 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
 import type { JournalPostLocal } from '@/lib/normalize'
+import type { JournalPage } from '@/payload-types'
 
 gsap.registerPlugin(ScrollTrigger)
 
-export default function JournalPostContent({ post, allPosts }: { post: JournalPostLocal; allPosts: JournalPostLocal[] }) {
+export default function JournalPostContent({
+  post,
+  allPosts,
+  page,
+}: {
+  post: JournalPostLocal
+  allPosts: JournalPostLocal[]
+  page: JournalPage | null
+}) {
   const ref = useRef<HTMLElement>(null)
   const related = allPosts.filter((p) => p.slug !== post.slug).slice(0, 3)
+  // A database that predates the Journal Page global has no `postCta`
+  // group -- keep the original copy then; otherwise an emptied field hides.
+  const cta = page?.postCta
+  const postCta = {
+    headline: cta ? (cta.headline ?? '') : 'Have a project in mind?',
+    subhead: cta ? (cta.subhead ?? '') : "Tell us where you're at and we'll point you to the right next step.",
+    buttonLabel: cta ? (cta.buttonLabel ?? '') : 'Get Started',
+    buttonHref: cta?.buttonHref || '/contact',
+  }
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -83,18 +101,34 @@ export default function JournalPostContent({ post, allPosts }: { post: JournalPo
             <RichText data={post.content} />
           </div>
 
-          <div className="mt-16 pt-10 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+          {/* End-of-post CTA: Journal Page global > Post CTA (same copy on
+              every post). */}
+          <div
+            data-cms-global="journal-page"
+            className="mt-16 pt-10 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left"
+          >
             <div>
-              <div className="text-white font-bold text-lg mb-1">Have a project in mind?</div>
-              <p className="text-white/50 text-sm font-light">Tell us where you&apos;re at and we&apos;ll point you to the right next step.</p>
+              {postCta.headline && (
+                <div data-cms-field="postCta.headline" className="text-white font-bold text-lg mb-1">
+                  {postCta.headline}
+                </div>
+              )}
+              {postCta.subhead && (
+                <p data-cms-field="postCta.subhead" className="text-white/50 text-sm font-light">
+                  {postCta.subhead}
+                </p>
+              )}
             </div>
-            <a
-              href="/contact"
-              className="group inline-flex items-center gap-2.5 shrink-0 px-7 py-3.5 rounded-full text-sm font-semibold text-black transition-transform hover:scale-[1.04]"
-              style={{ background: post.accent }}
-            >
-              Get Started <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
-            </a>
+            {postCta.buttonLabel && (
+              <a
+                href={postCta.buttonHref}
+                data-cms-field="postCta.buttonLabel"
+                className="group inline-flex items-center gap-2.5 shrink-0 px-7 py-3.5 rounded-full text-sm font-semibold text-black transition-transform hover:scale-[1.04]"
+                style={{ background: post.accent }}
+              >
+                {postCta.buttonLabel} <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+              </a>
+            )}
           </div>
         </section>
 
@@ -102,8 +136,12 @@ export default function JournalPostContent({ post, allPosts }: { post: JournalPo
         {related.length > 0 && (
           <section className="relative w-full overflow-hidden py-16 md:py-20 border-t border-white/[0.07]">
             <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
-              <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-white/40 uppercase block mb-8">
-                More from the Journal
+              <span
+                data-cms-global="journal-page"
+                data-cms-field="relatedLabel"
+                className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-white/40 uppercase block mb-8"
+              >
+                {page?.relatedLabel || 'More from the Journal'}
               </span>
               <div className="jp-related-grid grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {related.map((p) => (

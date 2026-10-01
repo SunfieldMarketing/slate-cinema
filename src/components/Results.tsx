@@ -31,6 +31,9 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
     'Slate Cinema creates content built for the platforms where attention is won or lost in seconds. Every frame, hook, cut, and caption is meticulously shaped to make audiences stop scrolling.'
   const ctaLabel = data?.ctaLabel || 'See Case Studies'
   const ctaHref = data?.ctaHref || '/portfolio'
+  const eyebrow = data?.eyebrow || 'Our Clients This Month'
+  const viewsLabel = data?.viewsLabel || 'views'
+  const reachLabel = data?.reachLabel || 'Reach'
   const buttonRef = useRef<HTMLAnchorElement>(null)
   const textRef = useRef<HTMLSpanElement>(null)
   const [views, setViews] = useState(0)
@@ -190,8 +193,8 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
         <div className="metrics-block flex flex-col items-center max-w-4xl w-full" style={{ transformStyle: 'preserve-3d' }}>
 
           {/* Views Counter */}
-          <span className="font-mono text-sm sm:text-base tracking-[0.2em] text-white/50 uppercase mb-4">
-            Our Clients This Month
+          <span data-cms-field="results.eyebrow" className="font-mono text-sm sm:text-base tracking-[0.2em] text-white/50 uppercase mb-4">
+            {eyebrow}
           </span>
           <div className="flex items-baseline gap-4 md:gap-8 justify-center flex-wrap">
             {/* clamp(): a fixed 5rem overflowed a 375px phone once the count
@@ -201,8 +204,8 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
             <div className="text-[clamp(2.5rem,14vw,5rem)] md:text-[8rem] lg:text-[11rem] font-bold text-white tracking-tighter leading-none whitespace-nowrap" style={{ textShadow: '0 0 100px rgba(0,174,239,0.25), 0 10px 40px rgba(0,0,0,0.5)' }}>
               {views.toLocaleString()}
             </div>
-            <div className="text-3xl md:text-5xl lg:text-7xl font-light text-white/90 uppercase tracking-widest">
-              views
+            <div data-cms-field="results.viewsLabel" className="text-3xl md:text-5xl lg:text-7xl font-light text-white/90 uppercase tracking-widest">
+              {viewsLabel}
             </div>
           </div>
 
@@ -230,7 +233,7 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
                   flash a mismatched "0% Reach" right before it, so this
                   just renders it directly. */}
               <span data-cms-field="results.reachPercent">{reachPercent}</span>
-              <span className="text-xs text-white/40 font-normal ml-1">Reach</span>
+              <span data-cms-field="results.reachLabel" className="text-xs text-white/40 font-normal ml-1">{reachLabel}</span>
             </div>
             <div className="flex items-center gap-3">
               <ThumbsUp className="w-6 h-6 md:w-10 md:h-10 text-[#00AEEF]" />

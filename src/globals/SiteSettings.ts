@@ -88,5 +88,76 @@ export const SiteSettings: GlobalConfig = {
         },
       ],
     },
+    {
+      // 2026-09-24 handoff: short labels repeated across many pages were
+      // typed into the components, so changing one meant a deploy.
+      name: 'labels',
+      type: 'group',
+      admin: {
+        description: 'Short bits of copy that repeat across pages. Change one here and every page that uses it updates.',
+      },
+      fields: [
+        {
+          name: 'trustLine',
+          type: 'text',
+          defaultValue: '174+ projects since 2023 · Replies within minutes',
+          admin: { description: 'Small line under the button in every industry page hero.' },
+        },
+        {
+          name: 'getStarted',
+          type: 'text',
+          defaultValue: 'Get Started',
+          admin: { description: 'Industry page hero button, and the floating button bottom-right on industry pages.' },
+        },
+        {
+          name: 'getStartedHref',
+          type: 'text',
+          defaultValue: '/contact',
+          admin: { description: 'Where those "Get Started" buttons go.' },
+        },
+        {
+          name: 'bookCall',
+          type: 'text',
+          defaultValue: 'Book a call',
+          admin: { description: 'Button beside the service-cards heading on industry pages.' },
+        },
+        {
+          name: 'bookThis',
+          type: 'text',
+          defaultValue: 'Book this',
+          admin: { description: 'Link at the bottom of every service card.' },
+        },
+        {
+          name: 'mostBooked',
+          type: 'text',
+          defaultValue: 'Most booked',
+          admin: { description: 'Badge on the large featured service card.' },
+        },
+        {
+          name: 'viewFullPortfolio',
+          type: 'text',
+          defaultValue: 'View Full Portfolio',
+          admin: { description: 'Button under the project gallery.' },
+        },
+        {
+          name: 'startProject',
+          type: 'text',
+          defaultValue: 'Start a project like this',
+          admin: { description: 'Main button on an opened project card.' },
+        },
+        {
+          name: 'backToReel',
+          type: 'text',
+          defaultValue: 'Back to the reel',
+          admin: { description: 'Close button on an opened project card.' },
+        },
+        {
+          name: 'exploreIndustry',
+          type: 'text',
+          defaultValue: 'Explore {industry} Work',
+          admin: { description: 'Button in the /portfolio industry wheel. {industry} is replaced with the industry name.' },
+        },
+      ],
+    },
   ],
 }
