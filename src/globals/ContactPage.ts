@@ -129,6 +129,30 @@ export const ContactPage: GlobalConfig = {
         },
         { name: 'submitLabel', type: 'text', defaultValue: 'Send Message' },
         { name: 'successMessage', type: 'text', defaultValue: "We'll be in touch within minutes." },
+        {
+          // Typed into the form until 2026-10-02.
+          type: 'collapsible',
+          label: 'Form labels',
+          admin: { initCollapsed: true },
+          fields: [
+            { name: 'nameLabel', type: 'text', defaultValue: 'Name *' },
+            { name: 'namePlaceholder', type: 'text', defaultValue: 'Jane Doe' },
+            { name: 'companyLabel', type: 'text', defaultValue: 'Company' },
+            { name: 'companyPlaceholder', type: 'text', defaultValue: 'Optional' },
+            { name: 'emailLabel', type: 'text', defaultValue: 'Email *' },
+            { name: 'emailPlaceholder', type: 'text', defaultValue: 'jane@company.com' },
+            { name: 'phoneLabel', type: 'text', defaultValue: 'Phone *' },
+            { name: 'phonePlaceholder', type: 'text', defaultValue: '(555) 000-0000' },
+            { name: 'messageLabel', type: 'text', defaultValue: 'Message' },
+            { name: 'messagePlaceholder', type: 'text', defaultValue: 'One line on what you have in mind (optional)' },
+            {
+              name: 'successTitle',
+              type: 'text',
+              defaultValue: 'Thanks — we’re on it.',
+              admin: { description: 'Heading of the thank-you note after sending; the line under it is "Success message" above.' },
+            },
+          ],
+        },
       ],
     },
     {

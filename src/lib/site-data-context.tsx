@@ -39,7 +39,8 @@ export function useSiteData(): SiteData {
   Site Settings > Labels: short copy repeated across pages (2026-10-01).
   The defaults only cover a database that predates those fields -- a
   button can't usefully be blank, so an empty value falls back too. The
-  hero trust line is the exception: clearing it hides it.
+  hero trust line and the hero scroll cue are the exceptions: clearing
+  one hides it.
 */
 const LABEL_DEFAULTS = {
   trustLine: '174+ projects since 2023 · Replies within minutes',
@@ -52,6 +53,8 @@ const LABEL_DEFAULTS = {
   startProject: 'Start a project like this',
   backToReel: 'Back to the reel',
   exploreIndustry: 'Explore {industry} Work',
+  selectIndustry: 'Select Industry',
+  scrollCue: 'Scroll',
 }
 export type SiteLabels = typeof LABEL_DEFAULTS
 
@@ -61,7 +64,10 @@ export function useSiteLabels(): SiteLabels {
   for (const key of Object.keys(LABEL_DEFAULTS) as (keyof SiteLabels)[]) {
     out[key] = labels?.[key] || LABEL_DEFAULTS[key]
   }
-  if (labels) out.trustLine = labels.trustLine ?? ''
+  if (labels) {
+    out.trustLine = labels.trustLine ?? ''
+    out.scrollCue = labels.scrollCue ?? LABEL_DEFAULTS.scrollCue
+  }
   return out
 }
 

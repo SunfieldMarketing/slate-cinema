@@ -3219,6 +3219,10 @@ export interface Footer {
     sentence: string;
     placeholder?: string | null;
     buttonLabel?: string | null;
+    /**
+     * Shown after someone signs up.
+     */
+    successMessage?: string | null;
   };
   sitemapColumn?: {
     heading?: string | null;
@@ -3337,6 +3341,14 @@ export interface SiteSetting {
      * Button in the /portfolio industry wheel. {industry} is replaced with the industry name.
      */
     exploreIndustry?: string | null;
+    /**
+     * Small label above the industry name in the middle of the /portfolio wheel.
+     */
+    selectIndustry?: string | null;
+    /**
+     * Word over the bouncing arrow at the bottom of page heroes. Clear it to show just the arrow.
+     */
+    scrollCue?: string | null;
   };
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
@@ -3903,6 +3915,18 @@ export interface HowItWorksPage {
     subtitle?: string | null;
     ctaLabel?: string | null;
     ctaHref?: string | null;
+    /**
+     * The captions over the four scroll scenes, and the closing call to action at the end of the hero.
+     */
+    storyboard?: {
+      preProductionCaption?: string | null;
+      productionCaption?: string | null;
+      postProductionCaption?: string | null;
+      editHint?: string | null;
+      distributionCaption?: string | null;
+      closingHeadline?: string | null;
+      closingText?: string | null;
+    };
   };
   processOverview?: {
     eyebrow?: string | null;
@@ -4441,6 +4465,20 @@ export interface ContactPage {
       | null;
     submitLabel?: string | null;
     successMessage?: string | null;
+    nameLabel?: string | null;
+    namePlaceholder?: string | null;
+    companyLabel?: string | null;
+    companyPlaceholder?: string | null;
+    emailLabel?: string | null;
+    emailPlaceholder?: string | null;
+    phoneLabel?: string | null;
+    phonePlaceholder?: string | null;
+    messageLabel?: string | null;
+    messagePlaceholder?: string | null;
+    /**
+     * Heading of the thank-you note after sending; the line under it is "Success message" above.
+     */
+    successTitle?: string | null;
   };
   contactMethods?: {
     eyebrow?: string | null;
@@ -5242,6 +5280,7 @@ export interface FooterSelect<T extends boolean = true> {
         sentence?: T;
         placeholder?: T;
         buttonLabel?: T;
+        successMessage?: T;
       };
   sitemapColumn?:
     | T
@@ -5327,6 +5366,8 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         startProject?: T;
         backToReel?: T;
         exploreIndustry?: T;
+        selectIndustry?: T;
+        scrollCue?: T;
       };
   _status?: T;
   updatedAt?: T;
@@ -5767,6 +5808,17 @@ export interface HowItWorksPageSelect<T extends boolean = true> {
         subtitle?: T;
         ctaLabel?: T;
         ctaHref?: T;
+        storyboard?:
+          | T
+          | {
+              preProductionCaption?: T;
+              productionCaption?: T;
+              postProductionCaption?: T;
+              editHint?: T;
+              distributionCaption?: T;
+              closingHeadline?: T;
+              closingText?: T;
+            };
       };
   processOverview?:
     | T
@@ -6127,6 +6179,17 @@ export interface ContactPageSelect<T extends boolean = true> {
             };
         submitLabel?: T;
         successMessage?: T;
+        nameLabel?: T;
+        namePlaceholder?: T;
+        companyLabel?: T;
+        companyPlaceholder?: T;
+        emailLabel?: T;
+        emailPlaceholder?: T;
+        phoneLabel?: T;
+        phonePlaceholder?: T;
+        messageLabel?: T;
+        messagePlaceholder?: T;
+        successTitle?: T;
       };
   contactMethods?:
     | T

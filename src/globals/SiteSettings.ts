@@ -157,6 +157,18 @@ export const SiteSettings: GlobalConfig = {
           defaultValue: 'Explore {industry} Work',
           admin: { description: 'Button in the /portfolio industry wheel. {industry} is replaced with the industry name.' },
         },
+        {
+          name: 'selectIndustry',
+          type: 'text',
+          defaultValue: 'Select Industry',
+          admin: { description: 'Small label above the industry name in the middle of the /portfolio wheel.' },
+        },
+        {
+          name: 'scrollCue',
+          type: 'text',
+          defaultValue: 'Scroll',
+          admin: { description: 'Word over the bouncing arrow at the bottom of page heroes. Clear it to show just the arrow.' },
+        },
       ],
     },
   ],

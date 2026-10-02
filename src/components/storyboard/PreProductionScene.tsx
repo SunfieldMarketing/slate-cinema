@@ -15,7 +15,12 @@ const pre = categories[0]
 const LEFT = pre.services[0].tags ?? []
 const RIGHT = pre.services[1].tags ?? []
 
-export default function PreProductionScene() {
+export default function PreProductionScene({
+  caption = 'Every project starts on the board.',
+}: {
+  /** How It Works > Hero > Storyboard text (the default is the original wording). */
+  caption?: string
+}) {
   return (
     <div className="sb-scene sb-scene-pre absolute inset-0 pointer-events-none" style={{ opacity: 0, visibility: 'hidden' }}>
       {/* Concepts — lower left, lines reaching toward the stage */}
@@ -54,8 +59,9 @@ export default function PreProductionScene() {
       <p
         className="sbs-item absolute top-[15%] left-6 right-6 md:max-w-[18rem] md:left-16 md:right-auto text-center md:text-left text-white/90 text-xl md:text-3xl font-semibold tracking-tight"
         style={{ textShadow: '0 2px 14px rgba(0,0,0,0.9)' }}
+        data-cms-field="hero.storyboard.preProductionCaption"
       >
-        Every project starts on the board.
+        {caption}
       </p>
     </div>
   )

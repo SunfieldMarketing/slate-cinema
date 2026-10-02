@@ -21,6 +21,8 @@ import {
   SCENES,
 } from '@/components/storyboard/config'
 import type { HeroStageHandle } from '@/components/storyboard/HeroStage'
+import { labelField, useSiteLabels } from '@/lib/site-data-context'
+import type { HowItWorksPage } from '@/payload-types'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -72,9 +74,16 @@ interface Props {
   subtitle?: string
   accent?: string
   cta?: { label: string; href: string }
+  /** Scene captions and the closing call to action (How It Works > Hero >
+      Storyboard text). Empty values fall back to the original wording. */
+  storyboard?: NonNullable<HowItWorksPage['hero']>['storyboard']
 }
 
-export default function StoryboardHero({ eyebrow = 'The Process', title, subtitle, accent = '#00AEEF', cta }: Props) {
+export default function StoryboardHero({ eyebrow = 'The Process', title, subtitle, accent = '#00AEEF', cta, storyboard }: Props) {
+  const { scrollCue } = useSiteLabels()
+  const closingHeadline = storyboard?.closingHeadline ?? "Let's make something great."
+  const closingText =
+    storyboard?.closingText ?? "Every project starts with a conversation — reach out and we'll walk you through exactly how it works."
   const containerRef = useRef<HTMLElement>(null)
   const stageRef = useRef<HeroStageHandle>(null)
   const ringRef = useRef<RingHUDHandle>(null)
@@ -317,10 +326,10 @@ export default function StoryboardHero({ eyebrow = 'The Process', title, subtitl
 
         {/* Beat content overlays */}
         <div className="absolute inset-0 z-30">
-          <PreProductionScene />
-          <ProductionScene />
-          <PostProductionScene />
-          <DistributionScene />
+          <PreProductionScene caption={storyboard?.preProductionCaption ?? undefined} />
+          <ProductionScene caption={storyboard?.productionCaption ?? undefined} />
+          <PostProductionScene caption={storyboard?.postProductionCaption ?? undefined} hint={storyboard?.editHint ?? undefined} />
+          <DistributionScene caption={storyboard?.distributionCaption ?? undefined} />
         </div>
 
         {/* Intro — the ONLY thing visible at rest */}
@@ -336,7 +345,11 @@ export default function StoryboardHero({ eyebrow = 'The Process', title, subtitl
             </h1>
             {subtitle && <p data-cms-field="hero.subtitle" className="mt-6 text-white/55 text-base sm:text-lg font-light max-w-xl mx-auto leading-relaxed">{subtitle}</p>}
             <div className="mt-10 flex flex-col items-center gap-2 opacity-60">
-              <span className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/40">Scroll</span>
+              {scrollCue && (
+                <span {...labelField('scrollCue')} className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/40">
+                  {scrollCue}
+                </span>
+              )}
               <svg width="18" height="18" viewBox="0 0 20 20" fill="none" className="animate-bounce" style={{ color: `${accent}99` }}>
                 <path d="M4 7l6 6 6-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -346,10 +359,14 @@ export default function StoryboardHero({ eyebrow = 'The Process', title, subtitl
 
         {/* Closing CTA */}
         <div className="sb-cta-wrapper absolute inset-0 z-40 flex flex-col items-center justify-center text-center px-4 pointer-events-auto" style={{ opacity: 0, visibility: 'hidden' }}>
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight sb-silver-text">Let&apos;s make something great.</h2>
-          <p className="text-white/55 text-lg md:text-xl mb-12 max-w-xl mx-auto font-light leading-relaxed">
-            Every project starts with a conversation — reach out and we&apos;ll walk you through exactly how it works.
-          </p>
+          <h2 data-cms-field="hero.storyboard.closingHeadline" className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight sb-silver-text">
+            {closingHeadline}
+          </h2>
+          {closingText && (
+            <p data-cms-field="hero.storyboard.closingText" className="text-white/55 text-lg md:text-xl mb-12 max-w-xl mx-auto font-light leading-relaxed">
+              {closingText}
+            </p>
+          )}
           {cta && (
             <div className="flex flex-col sm:flex-row gap-5">
               <a href={cta.href} data-cms-field="hero.ctaLabel" className="sb-cta-btn-primary px-8 py-4 rounded-full font-semibold text-sm text-black bg-white">

@@ -120,7 +120,9 @@ export default function IndustryWheel({ industries, accent = '#00AEEF' }: { indu
             style={{ background: `radial-gradient(circle, ${accent}22 0%, transparent 70%)` }}
           />
           <CurrentIcon className="w-8 h-8 sm:w-9 sm:h-9 mb-2.5 transition-colors duration-300" style={{ color: accent }} />
-          <span className="font-mono text-[10px] sm:text-xs tracking-widest uppercase text-white/40">Select Industry</span>
+          <span {...labelField('selectIndustry')} className="font-mono text-[10px] sm:text-xs tracking-widest uppercase text-white/40">
+            {labels.selectIndustry}
+          </span>
           <span className="text-lg sm:text-xl font-bold text-white leading-tight mt-1.5">{current.label}</span>
         </div>
       </div>

@@ -7,6 +7,7 @@ import { useGSAP } from '@gsap/react'
 import { NumberTicker } from '@/components/ui/number-ticker'
 import SmartVideo from '@/components/ui/SmartVideo'
 import { extractVimeoId } from '@/lib/vimeo'
+import { labelField, useSiteLabels } from '@/lib/site-data-context'
 
 /*
   Shared cinematic hero for interior pages. A full-viewport video/gradient
@@ -85,6 +86,7 @@ export default function PageHero({
   trustNoteGlobal,
 }: Props) {
   const ref = useRef<HTMLElement>(null)
+  const { scrollCue } = useSiteLabels()
 
   // Preload media immediately with high priority so it's ready instantly
   if (posterSrc) {
@@ -229,7 +231,11 @@ export default function PageHero({
       {/* ── Scroll hint (only visible when no stats strip) ── */}
       {(!stats || stats.length === 0) && (
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 opacity-60">
-          <span className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/40">Scroll</span>
+          {scrollCue && (
+            <span {...labelField('scrollCue')} className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/40">
+              {scrollCue}
+            </span>
+          )}
           <svg width="18" height="18" viewBox="0 0 20 20" fill="none" className="animate-bounce" style={{ color: `${accent}99` }}>
             <path d="M4 7l6 6 6-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>

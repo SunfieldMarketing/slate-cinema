@@ -59,6 +59,7 @@ export const Footer: GlobalConfig = {
         },
         { name: 'placeholder', type: 'text', defaultValue: 'Your email address' },
         { name: 'buttonLabel', type: 'text', defaultValue: 'Sign Up' },
+        { name: 'successMessage', type: 'text', defaultValue: 'Thanks — you’re on the list.', admin: { description: 'Shown after someone signs up.' } },
       ],
     },
     {

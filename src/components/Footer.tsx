@@ -152,7 +152,9 @@ export default function Footer() {
                 {newsletter?.sentence}
               </p>
               {newsletterSubmitted ? (
-                <p className="text-sm text-[#00AEEF]">Thanks — you&rsquo;re on the list.</p>
+                <p data-cms-field="newsletter.successMessage" className="text-sm text-[#00AEEF]">
+                  {newsletter?.successMessage || 'Thanks — you’re on the list.'}
+                </p>
               ) : (
                 <form
                   className="flex w-full max-w-md"

@@ -53,6 +53,27 @@ export const HowItWorksPage: GlobalConfig = {
         },
         { name: 'ctaLabel', type: 'text', defaultValue: 'Get Started' },
         { name: 'ctaHref', type: 'text', defaultValue: '/contact' },
+        {
+          // Typed into the storyboard scenes until 2026-10-02.
+          name: 'storyboard',
+          type: 'group',
+          label: 'Storyboard text',
+          admin: { description: 'The captions over the four scroll scenes, and the closing call to action at the end of the hero.' },
+          fields: [
+            { name: 'preProductionCaption', label: 'Scene 1 caption', type: 'text', defaultValue: 'Every project starts on the board.' },
+            { name: 'productionCaption', label: 'Scene 2 caption', type: 'text', defaultValue: 'On set, it all comes together.' },
+            { name: 'postProductionCaption', label: 'Scene 3 caption', type: 'text', defaultValue: 'Then it all takes shape in the edit.' },
+            { name: 'editHint', label: 'Scene 3 hint', type: 'text', defaultValue: 'Scroll scrubs the edit · drag the playhead' },
+            { name: 'distributionCaption', label: 'Scene 4 caption', type: 'text', defaultValue: 'Then it goes everywhere at once.' },
+            { name: 'closingHeadline', label: 'Closing headline', type: 'text', defaultValue: "Let's make something great." },
+            {
+              name: 'closingText',
+              label: 'Closing text',
+              type: 'textarea',
+              defaultValue: "Every project starts with a conversation — reach out and we'll walk you through exactly how it works.",
+            },
+          ],
+        },
       ],
     },
     {

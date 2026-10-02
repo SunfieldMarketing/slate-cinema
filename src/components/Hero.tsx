@@ -8,6 +8,7 @@ import { scrollState, toTimecode, scrollToY } from '@/lib/scroll'
 import type { HomePage } from '@/payload-types'
 import SmartVideo from '@/components/ui/SmartVideo'
 import { useIsMobile, HERO_MOBILE_VIDEO, HERO_MOBILE_POSTER } from '@/lib/mobile-media'
+import { labelField, useSiteLabels } from '@/lib/site-data-context'
 
 // Real master reel, per the "CLAUDE INPUT 8/12 -- HOMEPAGE" doc note:
 // "HERO: keep 'Video Marketing At Your Fingertips'. Visual: ... from the
@@ -146,6 +147,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
   const ctaHref = data?.ctaHref || '/contact'
   const secondaryCtaLabel = data?.secondaryCtaLabel || 'Watch Our Reel'
   const secondaryCtaHref = data?.secondaryCtaHref || '#reel'
+  const { scrollCue } = useSiteLabels()
   // true on phones (<=767px), false otherwise, null until the client knows.
   // Phones get ONE small <video> instead of the canvas + 291-frame WebP
   // sequence (see src/lib/mobile-media.ts for why); desktop and tablet are
@@ -970,7 +972,11 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
             ref={scrollHintRef}
             className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-30 pointer-events-none transition-opacity duration-100"
           >
-            <span className="font-mono text-[9px] text-white/40 tracking-[0.3em] uppercase">Scroll</span>
+            {scrollCue && (
+              <span {...labelField('scrollCue')} className="font-mono text-[9px] text-white/40 tracking-[0.3em] uppercase">
+                {scrollCue}
+              </span>
+            )}
             {/* Animated chevron arrow */}
             <svg
               width="20"

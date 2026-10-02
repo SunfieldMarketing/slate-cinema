@@ -13,7 +13,12 @@ import { categories } from '@/lib/pipeline-data'
 const dist = categories[3]
 const PLATFORMS = ['Instagram', 'TikTok', 'YouTube', 'Meta Ads', 'Programmatic OOH', 'CTV']
 
-export default function DistributionScene() {
+export default function DistributionScene({
+  caption = 'Then it goes everywhere at once.',
+}: {
+  /** How It Works > Hero > Storyboard text (the default is the original wording). */
+  caption?: string
+}) {
   return (
     <div className="sb-scene sb-scene-dist absolute inset-0 pointer-events-none" style={{ opacity: 0, visibility: 'hidden' }}>
       {/* Real services — right column on desktop, leader-lined toward the
@@ -41,8 +46,9 @@ export default function DistributionScene() {
       <p
         className="sbs-item absolute top-[15%] left-6 right-6 md:max-w-[18rem] md:left-16 md:right-auto text-center md:text-left text-white/90 text-xl md:text-3xl font-semibold tracking-tight"
         style={{ textShadow: '0 2px 14px rgba(0,0,0,0.9)' }}
+        data-cms-field="hero.storyboard.distributionCaption"
       >
-        Then it goes everywhere at once.
+        {caption}
       </p>
 
       {/* Platform marquee — plain text chips, no brand marks. Pinned flush

@@ -294,6 +294,7 @@ export default function HowItWorksPageContent({
         subtitle={hero?.subtitle || 'A clear, structured process designed to take your project from idea to final delivery — seamlessly, efficiently, and cinematically.'}
         accent="#00AEEF"
         cta={{ label: hero?.ctaLabel || 'Get Started', href: hero?.ctaHref || '/contact' }}
+        storyboard={hero?.storyboard}
       />
     ),
     // Quick-glance map of the 4 phases -- horizontal, short, and up top so a

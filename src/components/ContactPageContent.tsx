@@ -361,13 +361,13 @@ const fieldClass =
   'w-full bg-white/5 border border-white/15 rounded-xl px-5 py-3.5 text-white placeholder:text-white/30 focus:outline-none focus:border-[#00AEEF] transition-colors'
 const labelClass = 'block font-mono text-[10px] tracking-widest text-white/40 uppercase mb-2'
 
-function SuccessNote({ text }: { text: string }) {
+function SuccessNote({ title, text }: { title: string; text: string }) {
   return (
     <div className="flex items-start gap-4 rounded-2xl border border-[#00AEEF]/30 bg-[#00AEEF]/10 p-6 sm:p-8">
       <CheckCircle2 className="w-6 h-6 text-[#00AEEF] shrink-0 mt-0.5" />
       <div>
-        <div className="text-white font-bold text-lg mb-1">Thanks — we&rsquo;re on it.</div>
-        <p className="text-white/60 text-sm font-light">{text}</p>
+        <div data-cms-field="leadForm.successTitle" className="text-white font-bold text-lg mb-1">{title}</div>
+        <p data-cms-field="leadForm.successMessage" className="text-white/60 text-sm font-light">{text}</p>
       </div>
     </div>
   )
@@ -395,6 +395,15 @@ function LeadForm({ copy }: { copy?: ContactPage['leadForm'] }) {
   const badges: Badge[] = copy?.badges?.length ? copy.badges : [{ icon: 'Timer', label: '~10 Seconds' }, { icon: 'ShieldCheck', label: 'No Spam, Ever' }, { icon: 'Mail', label: 'Replies Within Minutes' }]
   const submitLabel = copy?.submitLabel || 'Send Message'
   const successMessage = copy?.successMessage || "We'll be in touch within minutes."
+  // Labels/placeholders: the Contact Page's "Form labels" (2026-10-02).
+  const field = {
+    name: { label: copy?.nameLabel || 'Name *', placeholder: copy?.namePlaceholder ?? 'Jane Doe' },
+    company: { label: copy?.companyLabel || 'Company', placeholder: copy?.companyPlaceholder ?? 'Optional' },
+    email: { label: copy?.emailLabel || 'Email *', placeholder: copy?.emailPlaceholder ?? 'jane@company.com' },
+    phone: { label: copy?.phoneLabel || 'Phone *', placeholder: copy?.phonePlaceholder ?? '(555) 000-0000' },
+    message: { label: copy?.messageLabel || 'Message', placeholder: copy?.messagePlaceholder ?? 'One line on what you have in mind (optional)' },
+  }
+  const successTitle = copy?.successTitle || 'Thanks — we’re on it.'
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -444,32 +453,32 @@ function LeadForm({ copy }: { copy?: ContactPage['leadForm'] }) {
         <div className="relative rounded-3xl border border-white/[0.14] bg-white/[0.05] backdrop-blur-md p-8 sm:p-10 max-w-2xl mx-auto shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#00AEEF] to-transparent" />
           {submitted ? (
-            <SuccessNote text={successMessage} />
+            <SuccessNote title={successTitle} text={successMessage} />
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
               <div className="grid sm:grid-cols-2 gap-5">
                 <div>
-                  <label className={labelClass} htmlFor="lead-name">Name *</label>
-                  <input id="lead-name" required type="text" value={data.name} onChange={set('name')} placeholder="Jane Doe" className={fieldClass} />
+                  <label className={labelClass} htmlFor="lead-name" data-cms-field="leadForm.nameLabel">{field.name.label}</label>
+                  <input id="lead-name" required type="text" value={data.name} onChange={set('name')} placeholder={field.name.placeholder} className={fieldClass} />
                 </div>
                 <div>
-                  <label className={labelClass} htmlFor="lead-company">Company</label>
-                  <input id="lead-company" type="text" value={data.company} onChange={set('company')} placeholder="Optional" className={fieldClass} />
+                  <label className={labelClass} htmlFor="lead-company" data-cms-field="leadForm.companyLabel">{field.company.label}</label>
+                  <input id="lead-company" type="text" value={data.company} onChange={set('company')} placeholder={field.company.placeholder} className={fieldClass} />
                 </div>
               </div>
               <div className="grid sm:grid-cols-2 gap-5">
                 <div>
-                  <label className={labelClass} htmlFor="lead-email">Email *</label>
-                  <input id="lead-email" required type="email" value={data.email} onChange={set('email')} placeholder="jane@company.com" className={fieldClass} />
+                  <label className={labelClass} htmlFor="lead-email" data-cms-field="leadForm.emailLabel">{field.email.label}</label>
+                  <input id="lead-email" required type="email" value={data.email} onChange={set('email')} placeholder={field.email.placeholder} className={fieldClass} />
                 </div>
                 <div>
-                  <label className={labelClass} htmlFor="lead-phone">Phone *</label>
-                  <input id="lead-phone" required type="tel" value={data.phone} onChange={set('phone')} placeholder="(555) 000-0000" className={fieldClass} />
+                  <label className={labelClass} htmlFor="lead-phone" data-cms-field="leadForm.phoneLabel">{field.phone.label}</label>
+                  <input id="lead-phone" required type="tel" value={data.phone} onChange={set('phone')} placeholder={field.phone.placeholder} className={fieldClass} />
                 </div>
               </div>
               <div>
-                <label className={labelClass} htmlFor="lead-message">Message</label>
-                <input id="lead-message" type="text" value={data.message} onChange={set('message')} placeholder="One line on what you have in mind (optional)" className={fieldClass} />
+                <label className={labelClass} htmlFor="lead-message" data-cms-field="leadForm.messageLabel">{field.message.label}</label>
+                <input id="lead-message" type="text" value={data.message} onChange={set('message')} placeholder={field.message.placeholder} className={fieldClass} />
               </div>
               <button
                 type="submit"

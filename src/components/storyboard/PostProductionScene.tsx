@@ -21,7 +21,14 @@ const wavePath = (amp: number) =>
 
 const RULER_MARKS = ['00:00', '00:04', '00:08', '00:12', '00:16']
 
-export default function PostProductionScene() {
+export default function PostProductionScene({
+  caption = 'Then it all takes shape in the edit.',
+  hint = 'Scroll scrubs the edit · drag the playhead',
+}: {
+  /** How It Works > Hero > Storyboard text (the default is the original wording). */
+  caption?: string
+  hint?: string
+}) {
   const panelRef = useRef<HTMLDivElement>(null)
   const playheadRef = useRef<HTMLDivElement>(null)
   const dragging = useRef(false)
@@ -40,8 +47,9 @@ export default function PostProductionScene() {
       <p
         className="sbs-item absolute top-[15%] left-6 right-6 md:max-w-[18rem] md:left-16 md:right-auto text-center md:text-left text-white/90 text-xl md:text-3xl font-semibold tracking-tight"
         style={{ textShadow: '0 2px 14px rgba(0,0,0,0.9)' }}
+        data-cms-field="hero.storyboard.postProductionCaption"
       >
-        Then it all takes shape in the edit.
+        {caption}
       </p>
 
       {/* Smaller + lower on mobile so there's real clearance between the
@@ -125,8 +133,9 @@ export default function PostProductionScene() {
         <p
           className="sbs-item hidden md:block mt-2 text-center font-mono text-[9px] tracking-[0.3em] uppercase text-white/60"
           style={{ textShadow: '0 1px 6px rgba(0,0,0,0.8)' }}
+          data-cms-field="hero.storyboard.editHint"
         >
-          Scroll scrubs the edit · drag the playhead
+          {hint}
         </p>
       </div>
     </div>

@@ -12,6 +12,7 @@ import * as migration_20261001_000000_cms_full_coverage from './20261001_000000_
 import * as migration_20261002_000000_page_builder from './20261002_000000_page_builder';
 import * as migration_20261002_180000_page_sections from './20261002_180000_page_sections';
 import * as migration_20261002_200000_page_seo from './20261002_200000_page_seo';
+import * as migration_20261002_220000_remaining_copy from './20261002_220000_remaining_copy';
 
 export const migrations = [
   {
@@ -83,5 +84,10 @@ export const migrations = [
     up: migration_20261002_200000_page_seo.up,
     down: migration_20261002_200000_page_seo.down,
     name: '20261002_200000_page_seo',
+  },
+  {
+    up: migration_20261002_220000_remaining_copy.up,
+    down: migration_20261002_220000_remaining_copy.down,
+    name: '20261002_220000_remaining_copy',
   },
 ];
