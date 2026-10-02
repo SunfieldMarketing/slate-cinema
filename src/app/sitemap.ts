@@ -1,10 +1,15 @@
 import type { MetadataRoute } from 'next'
 import { getNormalizedIndustries, getNormalizedJournalPosts } from '@/lib/normalize'
+import { getAllPagePaths } from '@/lib/payload-data'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://slatecinema.com'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [industries, journalPosts] = await Promise.all([getNormalizedIndustries(), getNormalizedJournalPosts()])
+  const [industries, journalPosts, customPages] = await Promise.all([
+    getNormalizedIndustries(),
+    getNormalizedJournalPosts(),
+    getAllPagePaths(),
+  ])
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: BASE_URL, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
@@ -32,5 +37,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }))
 
-  return [...staticRoutes, ...industryRoutes, ...journalRoutes]
+  // Pages built in /admin (Custom pages), minus any marked "hide from search engines".
+  const customRoutes: MetadataRoute.Sitemap = customPages
+    .filter((page) => !page.noIndex)
+    .map((page) => ({
+      url: `${BASE_URL}/${page.path}`,
+      lastModified: page.updatedAt ? new Date(page.updatedAt) : new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    }))
+
+  return [...staticRoutes, ...industryRoutes, ...journalRoutes, ...customRoutes]
 }

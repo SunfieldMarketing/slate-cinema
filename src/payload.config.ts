@@ -14,6 +14,7 @@ import { Media } from './collections/Media'
 import { Industries } from './collections/Industries'
 import { PortfolioProjects } from './collections/PortfolioProjects'
 import { JournalPosts } from './collections/JournalPosts'
+import { Pages } from './collections/Pages'
 import { Navigation } from './globals/Navigation'
 import { Footer } from './globals/Footer'
 import { SiteSettings } from './globals/SiteSettings'
@@ -80,6 +81,13 @@ const db = isPostgres
         url: databaseURI,
         authToken: process.env.DATABASE_AUTH_TOKEN,
       },
+      // Page-builder sections (src/blocks) are stored as one JSON column per
+      // blocks field instead of a table per section type per page -- the
+      // section library can grow without new tables or migrations. Turned
+      // on 2026-10-01; migration 20261002_000000_page_builder moved the
+      // form builder's existing form fields (the only blocks field before
+      // then) into the JSON column.
+      blocksAsJSON: true,
     })
 
 // Frontend URL for each collection/global doc, for Live Preview's iframe.
@@ -179,6 +187,8 @@ const livePreviewURL = ({
         return appendDraft(`${baseWithProto}/journal/${data.slug}`)
       case 'portfolio-projects':
         return appendDraft(`${baseWithProto}/portfolio`)
+      case 'pages':
+        return appendDraft(`${baseWithProto}/${data.path ?? ''}`)
       default:
         return appendDraft(baseWithProto)
     }
@@ -267,7 +277,7 @@ export default buildConfig({
         SocialMediaManagementPage.slug,
         JournalPage.slug,
       ],
-      collections: [Industries.slug, PortfolioProjects.slug, JournalPosts.slug],
+      collections: [Industries.slug, PortfolioProjects.slug, JournalPosts.slug, Pages.slug],
     },
   },
   // Every content collection and global records its saves into the
@@ -275,7 +285,7 @@ export default buildConfig({
   // (added by formBuilderPlugin below) are deliberately not logged -- they're
   // visitor data, not site edits, and would bury real changes.
   collections: [
-    ...[Users, Media, Industries, PortfolioProjects, JournalPosts].map(withCollectionChangelog),
+    ...[Users, Media, Pages, Industries, PortfolioProjects, JournalPosts].map(withCollectionChangelog),
     Changelog,
   ],
   globals: [

@@ -9,6 +9,7 @@ import * as migration_20260826_130000_add_privacy_terms_thankyou_smm_pages from 
 import * as migration_20260826_140000_publish_new_pages from './20260826_140000_publish_new_pages';
 import * as migration_20260924_000000_add_changelog from './20260924_000000_add_changelog';
 import * as migration_20261001_000000_cms_full_coverage from './20261001_000000_cms_full_coverage';
+import * as migration_20261002_000000_page_builder from './20261002_000000_page_builder';
 
 export const migrations = [
   {
@@ -65,5 +66,10 @@ export const migrations = [
     up: migration_20261001_000000_cms_full_coverage.up,
     down: migration_20261001_000000_cms_full_coverage.down,
     name: '20261001_000000_cms_full_coverage',
+  },
+  {
+    up: migration_20261002_000000_page_builder.up,
+    down: migration_20261002_000000_page_builder.down,
+    name: '20261002_000000_page_builder',
   },
 ];

@@ -142,17 +142,49 @@ export default function SmartVideo({
     return () => io.disconnect()
   }, [nearView, vimeoId, src])
 
+  // Exact "cover" box for a Vimeo embed (2026-10-02, "the hero section video
+  // on mobile should fit size of hero section"). The old fixed 200%
+  // oversize covered wide desktop heroes, but a phone hero is tall and
+  // narrow: Vimeo letterboxes its 16:9 picture inside the iframe, so the
+  // video showed as a band across the middle with dark gaps above and
+  // below. Sizing the iframe from the container's real dimensions -- wide
+  // enough for the height, tall enough for the width -- covers any shape.
+  // Positioned with left/top, not a transform, so scroll animations that
+  // transform the iframe (CinematicStatement's parallax) still compose.
+  const [cover, setCover] = useState<CSSProperties | null>(null)
+  useEffect(() => {
+    const parent = coverFit && vimeoId ? iframeRef.current?.parentElement : null
+    if (!parent) return
+    const RATIO = 16 / 9
+    const measure = () => {
+      const W = parent.clientWidth
+      const H = parent.clientHeight
+      if (!W || !H) return
+      const w = Math.ceil(Math.max(W, H * RATIO)) + 2
+      const h = Math.ceil(Math.max(H, W / RATIO)) + 2
+      setCover({ width: w, height: h, left: Math.floor((W - w) / 2), top: Math.floor((H - h) / 2) })
+    }
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(parent)
+    return () => ro.disconnect()
+  }, [coverFit, vimeoId])
+
   if (vimeoId) {
     // CSS object-fit only affects replaced elements (<video>/<img>), never
     // an <iframe>'s content -- a plain w-full/h-full className just
-    // stretches or letterboxes the player instead of covering. Oversizing
-    // by a fixed percentage covers regardless of the parent's actual
-    // aspect ratio. Opt-in via coverFit rather than automatic, since
-    // Hero.tsx's own className already does its own (more precise,
-    // viewport-relative) version of this and an inline style here would
+    // stretches or letterboxes the player instead of covering. coverFit
+    // sizes it from the container (see `cover` above), with the old fixed
+    // 200% oversize only until the first measurement. Opt-in rather than
+    // automatic, since Hero.tsx's own className already does its own
+    // (viewport-relative) version of this and an inline style here would
     // win specificity and clobber it.
     const coverStyle: CSSProperties = coverFit
-      ? { border: 0, position: 'absolute', top: '-50%', left: '-50%', width: '200%', height: '200%' }
+      ? {
+          border: 0,
+          position: 'absolute',
+          ...(cover ?? { top: '-50%', left: '-50%', width: '200%', height: '200%' }),
+        }
       : { border: 0 }
     return (
       <iframe

@@ -37,7 +37,25 @@ export const Navigation: GlobalConfig = {
       admin: { description: 'Rendered after Home and the Portfolio dropdown, in order' },
       fields: [
         { name: 'label', type: 'text', required: true },
-        { name: 'href', type: 'text', required: true },
+        {
+          name: 'href',
+          label: 'Link',
+          type: 'text',
+          required: true,
+          admin: { description: 'A page on this site ("/services") or a full address ("https://...").' },
+        },
+        {
+          // 2026-10-01: lets a menu item open a dropdown of subpages, the
+          // same way Portfolio lists its industries.
+          name: 'children',
+          label: 'Dropdown items',
+          type: 'array',
+          admin: { initCollapsed: true, description: 'Optional. Turns this item into a dropdown.' },
+          fields: [
+            { name: 'label', type: 'text', required: true },
+            { name: 'href', label: 'Link', type: 'text', required: true },
+          ],
+        },
       ],
     },
     {

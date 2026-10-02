@@ -40,7 +40,14 @@ import type { ScheduleACallPage } from '@/payload-types'
 const CALENDAR_ID = 'nwrti66org5yO4mGWzb3'
 const WIDGET_HEIGHT_PX = 1080
 
-export default function GHLBookingWidget({ copy }: { copy?: ScheduleACallPage['calendar'] }) {
+export default function GHLBookingWidget({
+  copy,
+  cms = { global: 'schedule-a-call-page', prefix: 'calendar' },
+}: {
+  copy?: ScheduleACallPage['calendar']
+  /** Click-to-edit target; the page builder's booking block passes its own. */
+  cms?: { global?: string; prefix: string }
+}) {
   const eyebrow = copy?.eyebrow || '// Production Meeting'
   const headline = copy?.headline || 'Lock In A Time'
   const sessionLabel = copy?.sessionLabel || 'Strategy Session'
@@ -48,12 +55,12 @@ export default function GHLBookingWidget({ copy }: { copy?: ScheduleACallPage['c
 
   return (
     <section className="relative w-full pt-10 pb-20 md:pt-14 md:pb-24 overflow-hidden">
-      <div className="relative z-10 max-w-3xl mx-auto px-5 sm:px-6" data-cms-global="schedule-a-call-page">
+      <div className="relative z-10 max-w-3xl mx-auto px-5 sm:px-6" data-cms-global={cms.global}>
         <div className="text-center mb-10">
-          <span data-cms-field="calendar.eyebrow" className="font-mono text-[10px] text-[#00AEEF] tracking-[0.4em] uppercase block mb-4">{eyebrow}</span>
-          <h2 data-cms-field="calendar.headline" className="text-4xl md:text-6xl font-bold text-white tracking-tight mb-3">{headline}</h2>
+          <span data-cms-field={`${cms.prefix}.eyebrow`} className="font-mono text-[10px] text-[#00AEEF] tracking-[0.4em] uppercase block mb-4">{eyebrow}</span>
+          <h2 data-cms-field={`${cms.prefix}.headline`} className="text-4xl md:text-6xl font-bold text-white tracking-tight mb-3">{headline}</h2>
           <p className="text-white/40 text-sm">
-            <span data-cms-field="calendar.sessionLabel">{sessionLabel}</span> · <span data-cms-field="calendar.durationLabel">{durationLabel}</span>
+            <span data-cms-field={`${cms.prefix}.sessionLabel`}>{sessionLabel}</span> · <span data-cms-field={`${cms.prefix}.durationLabel`}>{durationLabel}</span>
           </p>
         </div>
 

@@ -93,6 +93,8 @@ export interface IndustrySectionHeading {
   eyebrow: string
   headline: string
   accent: string
+  /** Optional paragraph under the headline (page-builder blocks). */
+  intro?: string
 }
 export interface IndustryStatement {
   eyebrow: string

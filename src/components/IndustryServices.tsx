@@ -8,6 +8,14 @@ import { ArrowRight, Check } from 'lucide-react'
 import type { IndustryServiceCard, IndustrySectionHeading } from '@/lib/normalize'
 import SmartVideo from '@/components/ui/SmartVideo'
 import { labelField, useSiteLabels } from '@/lib/site-data-context'
+import type { SectionCmsPaths } from '@/lib/cms-paths'
+
+const INDUSTRY_PATHS: SectionCmsPaths = {
+  eyebrow: 'servicesEyebrow',
+  headline: 'servicesHeadline',
+  accent: 'servicesHeadlineAccent',
+  items: 'serviceCards',
+}
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -22,10 +30,13 @@ export default function IndustryServices({
   services,
   heading,
   accent,
+  paths = INDUSTRY_PATHS,
 }: {
   services: IndustryServiceCard[]
   heading: IndustrySectionHeading
   accent: string
+  /** Click-to-edit paths; defaults to the industry doc's fields. */
+  paths?: SectionCmsPaths
 }) {
   const ref = useRef<HTMLElement>(null)
   const labels = useSiteLabels()
@@ -52,19 +63,24 @@ export default function IndustryServices({
           <div>
             {heading.eyebrow && (
               <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-4" style={{ color: accent }}>
-                <span className="w-8 h-px" style={{ background: `${accent}66` }} /> <span data-cms-field="servicesEyebrow">{heading.eyebrow}</span>
+                <span className="w-8 h-px" style={{ background: `${accent}66` }} /> <span data-cms-field={paths.eyebrow}>{heading.eyebrow}</span>
               </span>
             )}
             {(heading.headline || heading.accent) && (
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.05]">
-                <span data-cms-field="servicesHeadline">{heading.headline}</span>
+                <span data-cms-field={paths.headline}>{heading.headline}</span>
                 {heading.accent && (
                   <>
                     {' '}
-                    <span data-cms-field="servicesHeadlineAccent" className="font-serif-accent italic text-white/60">{heading.accent}</span>
+                    <span data-cms-field={paths.accent} className="font-serif-accent italic text-white/60">{heading.accent}</span>
                   </>
                 )}
               </h2>
+            )}
+            {heading.intro && (
+              <p data-cms-field={paths?.intro} className="mt-5 max-w-2xl text-white/55 text-base sm:text-lg font-light leading-relaxed whitespace-pre-line">
+                {heading.intro}
+              </p>
             )}
           </div>
           <a
@@ -124,11 +140,11 @@ export default function IndustryServices({
                 this one -- md:pt-8 keeps the original spacing where the
                 card is much larger/wider and this was never a risk. */}
             <div className="relative p-6 pt-14 md:p-8">
-              <div data-cms-field={`serviceCards.${services.indexOf(featured)}.outcome`} className="font-mono text-sm md:text-base font-bold tracking-tight mb-2" style={{ color: accent }}>
+              <div data-cms-field={`${paths.items}.${services.indexOf(featured)}.outcome`} className="font-mono text-sm md:text-base font-bold tracking-tight mb-2" style={{ color: accent }}>
                 {featured.outcome}
               </div>
-              <h3 data-cms-field={`serviceCards.${services.indexOf(featured)}.title`} className="text-2xl md:text-3xl font-bold text-white mb-2.5">{featured.title}</h3>
-              <p data-cms-field={`serviceCards.${services.indexOf(featured)}.description`} className="text-sm text-white/60 leading-relaxed font-light max-w-md mb-5">{featured.description}</p>
+              <h3 data-cms-field={`${paths.items}.${services.indexOf(featured)}.title`} className="text-2xl md:text-3xl font-bold text-white mb-2.5">{featured.title}</h3>
+              <p data-cms-field={`${paths.items}.${services.indexOf(featured)}.description`} className="text-sm text-white/60 leading-relaxed font-light max-w-md mb-5">{featured.description}</p>
               <ul className="flex flex-wrap gap-x-5 gap-y-2 mb-6">
                 {featured.deliverables.map((d) => (
                   <li key={d} className="flex items-center gap-1.5 text-xs text-white/70">
@@ -162,11 +178,11 @@ export default function IndustryServices({
               <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/60 to-ink/10" />
 
               <div className="relative p-5">
-                <div data-cms-field={`serviceCards.${services.indexOf(s)}.outcome`} className="font-mono text-xs font-bold tracking-tight mb-1.5" style={{ color: accent }}>
+                <div data-cms-field={`${paths.items}.${services.indexOf(s)}.outcome`} className="font-mono text-xs font-bold tracking-tight mb-1.5" style={{ color: accent }}>
                   {s.outcome}
                 </div>
-                <h3 data-cms-field={`serviceCards.${services.indexOf(s)}.title`} className="text-lg font-bold text-white mb-1.5">{s.title}</h3>
-                <p data-cms-field={`serviceCards.${services.indexOf(s)}.description`} className="text-xs text-white/55 leading-relaxed font-light mb-3">{s.description}</p>
+                <h3 data-cms-field={`${paths.items}.${services.indexOf(s)}.title`} className="text-lg font-bold text-white mb-1.5">{s.title}</h3>
+                <p data-cms-field={`${paths.items}.${services.indexOf(s)}.description`} className="text-xs text-white/55 leading-relaxed font-light mb-3">{s.description}</p>
 
                 {/* Always shown -- was a hover-triggered max-height expand
                     that grew/shrank the whole card on hover; removed per

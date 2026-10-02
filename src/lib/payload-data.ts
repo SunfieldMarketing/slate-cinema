@@ -139,3 +139,30 @@ export const getJournalPostsCollection = cache(async (draft = false) => {
   const result = await payload.find({ collection: 'journal-posts', limit: 100, depth: 1, draft, overrideAccess: draft })
   return result.docs
 })
+
+/** A page built in /admin (Custom pages), by its address, e.g. "services/branding". */
+export const getPageByPath = cache(async (path: string, draft = false) => {
+  const payload = await getClient()
+  const result = await payload.find({
+    collection: 'pages',
+    where: { path: { equals: path } },
+    limit: 1,
+    depth: 2,
+    draft,
+    overrideAccess: draft,
+  })
+  return result.docs[0] ?? null
+})
+
+/** Every published custom page's address, for static generation and the sitemap. */
+export const getAllPagePaths = cache(async () => {
+  const payload = await getClient()
+  const result = await payload.find({
+    collection: 'pages',
+    limit: 1000,
+    depth: 0,
+    overrideAccess: false,
+    select: { path: true, noIndex: true, updatedAt: true },
+  })
+  return result.docs.map((p) => ({ path: p.path, noIndex: Boolean(p.noIndex), updatedAt: p.updatedAt }))
+})

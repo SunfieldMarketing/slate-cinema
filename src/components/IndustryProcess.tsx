@@ -6,6 +6,14 @@ import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { Search, PenTool, Palette, Clapperboard, Package, type LucideIcon } from 'lucide-react'
 import type { IndustryProcessStep, IndustrySectionHeading } from '@/lib/normalize'
+import type { SectionCmsPaths } from '@/lib/cms-paths'
+
+const INDUSTRY_PATHS: SectionCmsPaths = {
+  eyebrow: 'processEyebrow',
+  headline: 'processHeadline',
+  accent: 'processHeadlineAccent',
+  items: 'process',
+}
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -16,10 +24,13 @@ export default function IndustryProcess({
   steps,
   heading,
   accent,
+  paths = INDUSTRY_PATHS,
 }: {
   steps: IndustryProcessStep[]
   heading: IndustrySectionHeading
   accent: string
+  /** Click-to-edit paths; defaults to the industry doc's fields. */
+  paths?: SectionCmsPaths
 }) {
   const ref = useRef<HTMLElement>(null)
   const fillRef = useRef<HTMLDivElement>(null)
@@ -74,19 +85,24 @@ export default function IndustryProcess({
         <div className="proc-fade text-center mb-16">
           {heading.eyebrow && (
             <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-5" style={{ color: accent }}>
-              <span className="w-8 h-px" style={{ background: `${accent}66` }} /> <span data-cms-field="processEyebrow">{heading.eyebrow}</span>
+              <span className="w-8 h-px" style={{ background: `${accent}66` }} /> <span data-cms-field={paths.eyebrow}>{heading.eyebrow}</span>
             </span>
           )}
           {(heading.headline || heading.accent) && (
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.05]">
-              <span data-cms-field="processHeadline">{heading.headline}</span>
+              <span data-cms-field={paths.headline}>{heading.headline}</span>
               {heading.accent && (
                 <>
                   {' '}
-                  <span data-cms-field="processHeadlineAccent" className="font-serif-accent italic text-white/60">{heading.accent}</span>
+                  <span data-cms-field={paths.accent} className="font-serif-accent italic text-white/60">{heading.accent}</span>
                 </>
               )}
             </h2>
+          )}
+          {heading.intro && (
+            <p data-cms-field={paths?.intro} className="mt-5 mx-auto max-w-2xl text-white/55 text-base sm:text-lg font-light leading-relaxed whitespace-pre-line">
+              {heading.intro}
+            </p>
           )}
         </div>
 
@@ -122,11 +138,11 @@ export default function IndustryProcess({
                 >
                   <Icon className="w-[18px] h-[18px]" style={{ color: accent }} />
                 </div>
-                <div data-cms-field={`process.${i}.week`} className="font-mono text-[9px] tracking-[0.2em] uppercase mb-2.5" style={{ color: accent }}>
+                <div data-cms-field={`${paths.items}.${i}.week`} className="font-mono text-[9px] tracking-[0.2em] uppercase mb-2.5" style={{ color: accent }}>
                   Keyframe {String(i + 1).padStart(2, '0')} · {s.week}
                 </div>
-                <h3 data-cms-field={`process.${i}.title`} className="text-sm font-semibold text-white mb-1.5">{s.title}</h3>
-                <p data-cms-field={`process.${i}.body`} className="text-xs text-white/55 leading-relaxed font-light">{s.body}</p>
+                <h3 data-cms-field={`${paths.items}.${i}.title`} className="text-sm font-semibold text-white mb-1.5">{s.title}</h3>
+                <p data-cms-field={`${paths.items}.${i}.body`} className="text-xs text-white/55 leading-relaxed font-light">{s.body}</p>
               </div>
             )
           })}

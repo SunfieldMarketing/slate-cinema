@@ -7,6 +7,7 @@ import { useGSAP } from '@gsap/react'
 import { MagicCard } from '@/components/ui/magic-card'
 import { BorderBeam } from '@/components/ui/border-beam'
 import type { IndustryClientCard, IndustrySectionHeading } from '@/lib/normalize'
+import type { SectionCmsPaths } from '@/lib/cms-paths'
 import { extractVimeoId } from '@/lib/vimeo'
 import SmartVideo from '@/components/ui/SmartVideo'
 
@@ -32,14 +33,24 @@ const FRAME: Record<IndustryClientCard['orientation'], string> = {
   square: 'absolute inset-y-0 left-1/2 -translate-x-1/2 aspect-square',
 }
 
+const INDUSTRY_PATHS: SectionCmsPaths = {
+  eyebrow: 'sectionEyebrow',
+  headline: 'sectionHeadline',
+  accent: 'sectionHeadlineAccent',
+  items: 'clients',
+}
+
 export default function IndustryClientShowcase({
   clients,
   heading,
   accent,
+  paths = INDUSTRY_PATHS,
 }: {
   clients: IndustryClientCard[]
   heading: IndustrySectionHeading
   accent: string
+  /** Click-to-edit paths; defaults to the industry doc's fields. */
+  paths?: SectionCmsPaths
 }) {
   const ref = useRef<HTMLElement>(null)
 
@@ -65,23 +76,28 @@ export default function IndustryClientShowcase({
   return (
     <section ref={ref} className="relative w-full overflow-hidden py-20 md:py-24">
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
-        {(heading.eyebrow || heading.headline) && (
+        {(heading.eyebrow || heading.headline || heading.intro) && (
           <div className="text-center mb-12 max-w-2xl mx-auto">
             {heading.eyebrow && (
-              <span data-cms-field="sectionEyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase block mb-4" style={{ color: accent }}>
+              <span data-cms-field={paths.eyebrow} className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase block mb-4" style={{ color: accent }}>
                 {heading.eyebrow}
               </span>
             )}
             {heading.headline && (
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.05]">
-                <span data-cms-field="sectionHeadline">{heading.headline}</span>
+                <span data-cms-field={paths.headline}>{heading.headline}</span>
                 {heading.accent && (
                   <>
                     {' '}
-                    <span data-cms-field="sectionHeadlineAccent" className="font-serif-accent italic text-white/60">{heading.accent}</span>
+                    <span data-cms-field={paths.accent} className="font-serif-accent italic text-white/60">{heading.accent}</span>
                   </>
                 )}
               </h2>
+            )}
+            {heading.intro && (
+              <p data-cms-field={paths?.intro} className="mt-5 text-white/55 text-base sm:text-lg font-light leading-relaxed whitespace-pre-line">
+                {heading.intro}
+              </p>
             )}
           </div>
         )}
@@ -107,15 +123,15 @@ export default function IndustryClientShowcase({
               </div>
               <div className="p-6">
                 <div className="flex items-baseline justify-between gap-3 mb-2">
-                  <h3 data-cms-field={`clients.${c.index}.name`} className="text-white font-bold text-lg">{c.name}</h3>
+                  <h3 data-cms-field={`${paths.items}.${c.index}.name`} className="text-white font-bold text-lg">{c.name}</h3>
                   {c.year && (
-                    <span data-cms-field={`clients.${c.index}.year`} className="font-mono text-[10px] text-white/40 uppercase tracking-wide shrink-0">
+                    <span data-cms-field={`${paths.items}.${c.index}.year`} className="font-mono text-[10px] text-white/40 uppercase tracking-wide shrink-0">
                       {c.year}
                     </span>
                   )}
                 </div>
                 {c.description && (
-                  <p data-cms-field={`clients.${c.index}.description`} className="text-white/55 text-sm font-light leading-relaxed">
+                  <p data-cms-field={`${paths.items}.${c.index}.description`} className="text-white/55 text-sm font-light leading-relaxed">
                     {c.description}
                   </p>
                 )}

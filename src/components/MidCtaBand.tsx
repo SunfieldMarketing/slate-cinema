@@ -16,7 +16,18 @@ gsap.registerPlugin(ScrollTrigger)
   Copy comes from the industry doc's "Mid-page call to action" fields
   (2026-10-01); the band hides when both its headline and button are blank.
 */
-export default function MidCtaBand({ accent, cta }: { accent: string; cta: IndustryCta }) {
+const INDUSTRY_PATHS = { headline: 'ctaHeadline', subhead: 'ctaSubhead', button: 'ctaButtonLabel' }
+
+export default function MidCtaBand({
+  accent,
+  cta,
+  paths = INDUSTRY_PATHS,
+}: {
+  accent: string
+  cta: IndustryCta
+  /** Click-to-edit paths; defaults to the industry doc's fields. */
+  paths?: { headline: string; subhead: string; button: string }
+}) {
   const ref = useRef<HTMLElement>(null)
 
   useGSAP(() => {
@@ -45,12 +56,12 @@ export default function MidCtaBand({ accent, cta }: { accent: string; cta: Indus
           />
           <div className="relative text-center sm:text-left">
             {cta.headline && (
-              <div data-cms-field="ctaHeadline" className="text-lg sm:text-xl font-bold text-white leading-snug">
+              <div data-cms-field={paths.headline} className="text-lg sm:text-xl font-bold text-white leading-snug">
                 {cta.headline}
               </div>
             )}
             {cta.subhead && (
-              <div data-cms-field="ctaSubhead" className="text-sm text-white/55 font-light mt-1">
+              <div data-cms-field={paths.subhead} className="text-sm text-white/55 font-light mt-1">
                 {cta.subhead}
               </div>
             )}
@@ -58,7 +69,7 @@ export default function MidCtaBand({ accent, cta }: { accent: string; cta: Indus
           {cta.buttonLabel && (
             <a
               href={cta.buttonHref}
-              data-cms-field="ctaButtonLabel"
+              data-cms-field={paths.button}
               onClick={() => posthog.capture('get_started_clicked', { source: 'mid_cta_band', label: cta.headline })}
               className="relative group inline-flex items-center gap-2.5 shrink-0 px-7 py-3.5 rounded-full text-sm font-semibold text-black transition-transform hover:scale-[1.04] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
               style={{ background: accent, boxShadow: `0 0 32px ${accent}55` }}

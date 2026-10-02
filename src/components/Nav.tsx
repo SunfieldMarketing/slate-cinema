@@ -18,7 +18,9 @@ export default function Nav() {
   const portfolioLabel = navigation.portfolioLabel || 'Portfolio'
   const allWorkLabel = navigation.allWorkLabel || 'All Work'
   const clientPortalLabel = navigation.clientPortalLabel || 'Client Portal'
-  const navLinks = [{ label: homeLabel, href: '/' }, ...(navigation.links ?? [])]
+  // Editable links after Home + Portfolio; any of them can carry dropdown
+  // items (Navigation > Links > Dropdown items, 2026-10-01).
+  const navLinks = navigation.links ?? []
   const ctaLabel = navigation.ctaButton?.label || 'Schedule Call'
   const ctaHref = navigation.ctaButton?.href || '/schedule-a-call'
   const clientPortalHref = navigation.clientPortalHref || 'https://my.slatecinema.com/'
@@ -26,11 +28,16 @@ export default function Nav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [mobilePortfolioOpen, setMobilePortfolioOpen] = useState(false)
   const [portfolioDropdownOpen, setPortfolioDropdownOpen] = useState(false)
+  // Index of the editable link whose dropdown is open (desktop hover /
+  // mobile tap), or null.
+  const [openDropdown, setOpenDropdown] = useState<number | null>(null)
+  const [mobileOpenGroup, setMobileOpenGroup] = useState<number | null>(null)
   const navRef = useRef<HTMLElement>(null)
 
   const closeMobileMenu = () => {
     setMobileMenuOpen(false)
     setMobilePortfolioOpen(false)
+    setMobileOpenGroup(null)
   }
 
   // Lenis runs with syncTouch, so it owns touch scrolling for the whole
@@ -49,16 +56,18 @@ export default function Nav() {
 
   // Esc closes whichever menu is open (2026-09-24 handoff).
   useEffect(() => {
-    if (!mobileMenuOpen && !portfolioDropdownOpen) return
+    if (!mobileMenuOpen && !portfolioDropdownOpen && openDropdown === null) return
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return
       setMobileMenuOpen(false)
       setMobilePortfolioOpen(false)
+      setMobileOpenGroup(null)
       setPortfolioDropdownOpen(false)
+      setOpenDropdown(null)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [mobileMenuOpen, portfolioDropdownOpen])
+  }, [mobileMenuOpen, portfolioDropdownOpen, openDropdown])
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -185,19 +194,62 @@ export default function Nav() {
               )}
             </div>
 
-            {navLinks.slice(1).map((link, i) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                data-cms-field={`links.${i}.label`}
-                onMouseMove={handleLinkMove}
-                onMouseLeave={handleLinkLeave}
-                className="relative px-4 py-2 text-sm text-white/50 hover:text-white font-medium tracking-wide transition-colors block"
-                style={{ transformStyle: 'preserve-3d' }}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link, i) => {
+              const children = link.children ?? []
+              if (!children.length) {
+                return (
+                  <Link
+                    key={`${i}-${link.label}`}
+                    href={link.href}
+                    data-cms-field={`links.${i}.label`}
+                    onMouseMove={handleLinkMove}
+                    onMouseLeave={handleLinkLeave}
+                    className="relative px-4 py-2 text-sm text-white/50 hover:text-white font-medium tracking-wide transition-colors block"
+                    style={{ transformStyle: 'preserve-3d' }}
+                  >
+                    {link.label}
+                  </Link>
+                )
+              }
+              const open = openDropdown === i
+              return (
+                <div
+                  key={`${i}-${link.label}`}
+                  className="relative"
+                  onMouseEnter={() => setOpenDropdown(i)}
+                  onMouseLeave={() => setOpenDropdown(null)}
+                >
+                  <Link
+                    href={link.href}
+                    data-cms-field={`links.${i}.label`}
+                    onMouseMove={handleLinkMove}
+                    onMouseLeave={handleLinkLeave}
+                    aria-expanded={open}
+                    className="relative px-4 py-2 text-sm text-white/50 hover:text-white font-medium tracking-wide transition-colors flex items-center gap-1"
+                    style={{ transformStyle: 'preserve-3d' }}
+                  >
+                    {link.label}
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
+                  </Link>
+                  {open && (
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 w-64">
+                      <div className="rounded-2xl border border-white/10 bg-[rgba(11,12,14,0.95)] backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] p-2 overflow-hidden">
+                        {children.map((child, j) => (
+                          <Link
+                            key={`${j}-${child.label}`}
+                            href={child.href}
+                            data-cms-field={`links.${i}.children.${j}.label`}
+                            className="block px-4 py-2.5 rounded-xl text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition-colors"
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )
+            })}
           </div>
 
           {/* CTA + Portal */}
@@ -300,17 +352,59 @@ export default function Nav() {
               )}
             </div>
 
-            {navLinks.slice(1).map((link, i) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                data-cms-field={`links.${i}.label`}
-                className="block py-3 text-2xl font-bold text-white hover:text-[#00AEEF] transition-colors tracking-wider"
-                onClick={closeMobileMenu}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link, i) => {
+              const children = link.children ?? []
+              if (!children.length) {
+                return (
+                  <Link
+                    key={`${i}-${link.label}`}
+                    href={link.href}
+                    data-cms-field={`links.${i}.label`}
+                    className="block py-3 text-2xl font-bold text-white hover:text-[#00AEEF] transition-colors tracking-wider"
+                    onClick={closeMobileMenu}
+                  >
+                    {link.label}
+                  </Link>
+                )
+              }
+              const open = mobileOpenGroup === i
+              return (
+                <div key={`${i}-${link.label}`}>
+                  <button
+                    type="button"
+                    onClick={() => setMobileOpenGroup(open ? null : i)}
+                    aria-expanded={open}
+                    className="w-full flex items-center justify-center gap-2 py-3 text-2xl font-bold text-white hover:text-[#00AEEF] transition-colors tracking-wider"
+                  >
+                    <span data-cms-field={`links.${i}.label`}>{link.label}</span>
+                    <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
+                  </button>
+                  {open && (
+                    <div className="flex flex-col items-stretch pb-3">
+                      {/* The parent page itself, since tapping its row only opens the list. */}
+                      <Link
+                        href={link.href}
+                        onClick={closeMobileMenu}
+                        className="block py-2.5 text-sm font-semibold text-white/80 hover:text-[#00AEEF] transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                      {children.map((child, j) => (
+                        <Link
+                          key={`${j}-${child.label}`}
+                          href={child.href}
+                          onClick={closeMobileMenu}
+                          data-cms-field={`links.${i}.children.${j}.label`}
+                          className="block py-2.5 text-sm text-white/55 hover:text-[#00AEEF] transition-colors"
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
 
             {/* Client Portal sits above Schedule Call, per the handoff. */}
             <a
