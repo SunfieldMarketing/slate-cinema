@@ -6,6 +6,8 @@ import Footer from '@/components/Footer'
 import PageSections from '@/components/blocks/PageSections'
 import { getTermsOfServicePageGlobal } from '@/lib/payload-data'
 import { loadBlocksData } from '@/lib/page-builder-data'
+import { pageMetadata } from '@/lib/seo'
+import { PAGE_META } from '@/lib/page-meta'
 
 /*
   Brought into the CMS 2026-08-26 -- see PrivacyPolicyPage's header
@@ -20,12 +22,12 @@ import { loadBlocksData } from '@/lib/page-builder-data'
 export async function generateMetadata(): Promise<Metadata> {
   const draft = (await draftMode()).isEnabled
   const page = await getTermsOfServicePageGlobal(draft)
-  const title = page?.title || 'Terms of Service'
-  return {
-    title,
-    description:
-      'Terms governing use of the Slate Cinema social media management service and the publishing platform that supports it.',
-  }
+  return pageMetadata({
+    path: '/terms-of-service',
+    seo: page,
+    title: page?.title || 'Terms of Service',
+    description: PAGE_META.terms.description,
+  })
 }
 
 export default async function TermsOfServicePage() {

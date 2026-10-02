@@ -6,6 +6,8 @@ import Footer from '@/components/Footer'
 import PageSections from '@/components/blocks/PageSections'
 import { getPrivacyPolicyPageGlobal } from '@/lib/payload-data'
 import { loadBlocksData } from '@/lib/page-builder-data'
+import { pageMetadata } from '@/lib/seo'
+import { PAGE_META } from '@/lib/page-meta'
 
 /*
   Brought into the CMS 2026-08-26 (see src/globals/PrivacyPolicyPage.ts
@@ -32,12 +34,12 @@ import { loadBlocksData } from '@/lib/page-builder-data'
 export async function generateMetadata(): Promise<Metadata> {
   const draft = (await draftMode()).isEnabled
   const page = await getPrivacyPolicyPageGlobal(draft)
-  const title = page?.title || 'Privacy Policy'
-  return {
-    title,
-    description:
-      'How Slate Cinema collects, uses, stores and protects data as part of its social media management service and publishing platform.',
-  }
+  return pageMetadata({
+    path: '/privacy-policy',
+    seo: page,
+    title: page?.title || 'Privacy Policy',
+    description: PAGE_META.privacy.description,
+  })
 }
 
 export default async function PrivacyPolicyPage() {

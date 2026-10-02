@@ -2,6 +2,8 @@ import type { GlobalConfig } from 'payload'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 import { sectionsField } from '@/blocks/builtin'
+import { seoFields } from '@/fields/seo'
+import { PAGE_META } from '@/lib/page-meta'
 
 /*
   Brings /privacy-policy into the CMS -- previously fully hardcoded (see
@@ -42,5 +44,6 @@ export const PrivacyPolicyPage: GlobalConfig = {
       required: true,
       admin: { description: 'The full policy -- headings, paragraphs, lists, and links all live here as one document.' },
     },
+    seoFields({ title: 'Privacy Policy', titleHint: 'Leave blank to use the page title above.', description: PAGE_META.privacy.description }),
   ],
 }

@@ -1,6 +1,7 @@
 import type { CollectionConfig, Condition } from 'payload'
 import { revalidateCollectionAfterChange, revalidateCollectionAfterDelete } from '@/lib/revalidate'
 import { sectionsField } from '@/blocks/builtin'
+import { seoFields } from '@/fields/seo'
 
 /*
   Matches src/lib/normalize.ts's IndustryData shape — the richest,
@@ -403,5 +404,10 @@ export const Industries: CollectionConfig = {
         },
       ],
     },
+    seoFields({
+      titleHint: 'Shown in the browser tab, search results and link previews. Leave blank to use "<industry name> Video Production".',
+      descriptionHint: 'Leave blank to use the description under "More".',
+      imageHint: 'Shown when the page is shared in messages or on social media. Leave empty to use the hero image.',
+    }),
   ],
 }

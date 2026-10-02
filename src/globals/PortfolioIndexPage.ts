@@ -1,6 +1,8 @@
 import type { GlobalConfig } from 'payload'
 import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 import { sectionsField } from '@/blocks/builtin'
+import { seoFields } from '@/fields/seo'
+import { PAGE_META } from '@/lib/page-meta'
 
 export const PortfolioIndexPage: GlobalConfig = {
   slug: 'portfolio-index-page',
@@ -89,5 +91,6 @@ export const PortfolioIndexPage: GlobalConfig = {
       admin: { hidden: true, description: 'Unused -- filter chips were removed from the portfolio grid per client request.' },
       fields: [{ name: 'name', type: 'text', required: true }],
     },
+    seoFields({ title: PAGE_META.portfolio.title, description: PAGE_META.portfolio.description }),
   ],
 }

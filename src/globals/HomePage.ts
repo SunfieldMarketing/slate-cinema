@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 import { sectionsField } from '@/blocks/builtin'
+import { seoFields } from '@/fields/seo'
 
 /*
   Every hardcoded string/media reference on the homepage that isn't
@@ -205,5 +206,11 @@ export const HomePage: GlobalConfig = {
         },
       ],
     },
+    seoFields({
+      title: 'Slate Cinema',
+      titleHint:
+        'Leave blank to use Site Settings > SEO > Default title. (TikTok requires the homepage tab to read exactly "Slate Cinema".)',
+      descriptionHint: 'Leave blank to use Site Settings > SEO > Default description.',
+    }),
   ],
 }

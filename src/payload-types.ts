@@ -288,11 +288,20 @@ export interface Page {
       )[]
     | null;
   /**
-   * Defaults to the page title.
+   * Shown in the browser tab, search results and link previews. Leave blank to use the page title.
    */
   metaTitle?: string | null;
+  /**
+   * The snippet under the title in search results and link previews. Leave blank to use the text shown.
+   */
   metaDescription?: string | null;
+  /**
+   * Shown when the page is shared in messages or on social media. Leave empty to use the share image in Site Settings > SEO.
+   */
   metaImage?: (number | null) | Media;
+  /**
+   * Asks search engines not to list this page, and leaves it out of the sitemap.
+   */
   noIndex?: boolean | null;
   updatedAt: string;
   createdAt: string;
@@ -1627,6 +1636,22 @@ export interface Industry {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Shown in the browser tab, search results and link previews. Leave blank to use "<industry name> Video Production".
+   */
+  metaTitle?: string | null;
+  /**
+   * Leave blank to use the description under "More".
+   */
+  metaDescription?: string | null;
+  /**
+   * Shown when the page is shared in messages or on social media. Leave empty to use the hero image.
+   */
+  metaImage?: (number | null) | Media;
+  /**
+   * Asks search engines not to list this page, and leaves it out of the sitemap.
+   */
+  noIndex?: boolean | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -1670,6 +1695,22 @@ export interface JournalPost {
     };
     [k: string]: unknown;
   };
+  /**
+   * Shown in the browser tab, search results and link previews. Leave blank to use the post title.
+   */
+  metaTitle?: string | null;
+  /**
+   * Leave blank to use the excerpt.
+   */
+  metaDescription?: string | null;
+  /**
+   * Shown when the post is shared in messages or on social media. Leave empty to use the cover image.
+   */
+  metaImage?: (number | null) | Media;
+  /**
+   * Asks search engines not to list this page, and leaves it out of the sitemap.
+   */
+  noIndex?: boolean | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -2835,6 +2876,10 @@ export interface IndustriesSelect<T extends boolean = true> {
         answer?: T;
         id?: T;
       };
+  metaTitle?: T;
+  metaDescription?: T;
+  metaImage?: T;
+  noIndex?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -2878,6 +2923,10 @@ export interface JournalPostsSelect<T extends boolean = true> {
   coverImage?: T;
   author?: T;
   content?: T;
+  metaTitle?: T;
+  metaDescription?: T;
+  metaImage?: T;
+  noIndex?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -3694,6 +3743,22 @@ export interface HomePage {
         }[]
       | null;
   };
+  /**
+   * Leave blank to use Site Settings > SEO > Default title. (TikTok requires the homepage tab to read exactly "Slate Cinema".)
+   */
+  metaTitle?: string | null;
+  /**
+   * Leave blank to use Site Settings > SEO > Default description.
+   */
+  metaDescription?: string | null;
+  /**
+   * Shown when the page is shared in messages or on social media. Leave empty to use the share image in Site Settings > SEO.
+   */
+  metaImage?: (number | null) | Media;
+  /**
+   * Asks search engines not to list this page, and leaves it out of the sitemap.
+   */
+  noIndex?: boolean | null;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -3908,6 +3973,22 @@ export interface HowItWorksPage {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Shown in the browser tab, search results and link previews. Leave blank to use the text shown.
+   */
+  metaTitle?: string | null;
+  /**
+   * The snippet under the title in search results and link previews. Leave blank to use the text shown.
+   */
+  metaDescription?: string | null;
+  /**
+   * Shown when the page is shared in messages or on social media. Leave empty to use the share image in Site Settings > SEO.
+   */
+  metaImage?: (number | null) | Media;
+  /**
+   * Asks search engines not to list this page, and leaves it out of the sitemap.
+   */
+  noIndex?: boolean | null;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -4053,6 +4134,22 @@ export interface PortfolioIndexPage {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Shown in the browser tab, search results and link previews. Leave blank to use the text shown.
+   */
+  metaTitle?: string | null;
+  /**
+   * The snippet under the title in search results and link previews. Leave blank to use the text shown.
+   */
+  metaDescription?: string | null;
+  /**
+   * Shown when the page is shared in messages or on social media. Leave empty to use the share image in Site Settings > SEO.
+   */
+  metaImage?: (number | null) | Media;
+  /**
+   * Asks search engines not to list this page, and leaves it out of the sitemap.
+   */
+  noIndex?: boolean | null;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -4389,6 +4486,22 @@ export interface ContactPage {
     headlineLine1?: string | null;
     headlineLine2?: string | null;
   };
+  /**
+   * Shown in the browser tab, search results and link previews. Leave blank to use the text shown.
+   */
+  metaTitle?: string | null;
+  /**
+   * The snippet under the title in search results and link previews. Leave blank to use the text shown.
+   */
+  metaDescription?: string | null;
+  /**
+   * Shown when the page is shared in messages or on social media. Leave empty to use the share image in Site Settings > SEO.
+   */
+  metaImage?: (number | null) | Media;
+  /**
+   * Asks search engines not to list this page, and leaves it out of the sitemap.
+   */
+  noIndex?: boolean | null;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -4502,6 +4615,22 @@ export interface ScheduleACallPage {
     confirmLabel?: string | null;
     confirmedLabel?: string | null;
   };
+  /**
+   * Shown in the browser tab, search results and link previews. Leave blank to use the text shown.
+   */
+  metaTitle?: string | null;
+  /**
+   * The snippet under the title in search results and link previews. Leave blank to use the text shown.
+   */
+  metaDescription?: string | null;
+  /**
+   * Shown when the page is shared in messages or on social media. Leave empty to use the share image in Site Settings > SEO.
+   */
+  metaImage?: (number | null) | Media;
+  /**
+   * Asks search engines not to list this page, and leaves it out of the sitemap.
+   */
+  noIndex?: boolean | null;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -4573,6 +4702,22 @@ export interface PrivacyPolicyPage {
     };
     [k: string]: unknown;
   };
+  /**
+   * Leave blank to use the page title above.
+   */
+  metaTitle?: string | null;
+  /**
+   * The snippet under the title in search results and link previews. Leave blank to use the text shown.
+   */
+  metaDescription?: string | null;
+  /**
+   * Shown when the page is shared in messages or on social media. Leave empty to use the share image in Site Settings > SEO.
+   */
+  metaImage?: (number | null) | Media;
+  /**
+   * Asks search engines not to list this page, and leaves it out of the sitemap.
+   */
+  noIndex?: boolean | null;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -4644,6 +4789,22 @@ export interface TermsOfServicePage {
     };
     [k: string]: unknown;
   };
+  /**
+   * Leave blank to use the page title above.
+   */
+  metaTitle?: string | null;
+  /**
+   * The snippet under the title in search results and link previews. Leave blank to use the text shown.
+   */
+  metaDescription?: string | null;
+  /**
+   * Shown when the page is shared in messages or on social media. Leave empty to use the share image in Site Settings > SEO.
+   */
+  metaImage?: (number | null) | Media;
+  /**
+   * Asks search engines not to list this page, and leaves it out of the sitemap.
+   */
+  noIndex?: boolean | null;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -4728,6 +4889,22 @@ export interface ThankYouPage {
   primaryCtaHref?: string | null;
   secondaryCtaLabel?: string | null;
   secondaryCtaHref?: string | null;
+  /**
+   * Shown in the browser tab, search results and link previews. Leave blank to use the text shown.
+   */
+  metaTitle?: string | null;
+  /**
+   * The snippet under the title in search results and link previews. Leave blank to use the text shown.
+   */
+  metaDescription?: string | null;
+  /**
+   * Shown when the page is shared in messages or on social media. Leave empty to use the share image in Site Settings > SEO.
+   */
+  metaImage?: (number | null) | Media;
+  /**
+   * Asks search engines not to list this page, and leaves it out of the sitemap.
+   */
+  noIndex?: boolean | null;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -4877,6 +5054,22 @@ export interface SocialMediaManagementPage {
      */
     altText?: string | null;
   };
+  /**
+   * Shown in the browser tab, search results and link previews. Leave blank to use the text shown.
+   */
+  metaTitle?: string | null;
+  /**
+   * The snippet under the title in search results and link previews. Leave blank to use the text shown.
+   */
+  metaDescription?: string | null;
+  /**
+   * Shown when the page is shared in messages or on social media. Leave empty to use the share image in Site Settings > SEO.
+   */
+  metaImage?: (number | null) | Media;
+  /**
+   * Asks search engines not to list this page, and leaves it out of the sitemap.
+   */
+  noIndex?: boolean | null;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -4968,6 +5161,22 @@ export interface JournalPage {
    * Label over the related posts at the bottom of every journal post.
    */
   relatedLabel?: string | null;
+  /**
+   * Shown in the browser tab, search results and link previews. Leave blank to use the text shown.
+   */
+  metaTitle?: string | null;
+  /**
+   * The snippet under the title in search results and link previews. Leave blank to use the text shown.
+   */
+  metaDescription?: string | null;
+  /**
+   * Shown when the page is shared in messages or on social media. Leave empty to use the share image in Site Settings > SEO.
+   */
+  metaImage?: (number | null) | Media;
+  /**
+   * Asks search engines not to list this page, and leaves it out of the sitemap.
+   */
+  noIndex?: boolean | null;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -5449,6 +5658,10 @@ export interface HomePageSelect<T extends boolean = true> {
               id?: T;
             };
       };
+  metaTitle?: T;
+  metaDescription?: T;
+  metaImage?: T;
+  noIndex?: T;
   _status?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -5618,6 +5831,10 @@ export interface HowItWorksPageSelect<T extends boolean = true> {
         desc?: T;
         id?: T;
       };
+  metaTitle?: T;
+  metaDescription?: T;
+  metaImage?: T;
+  noIndex?: T;
   _status?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -5734,6 +5951,10 @@ export interface PortfolioIndexPageSelect<T extends boolean = true> {
         name?: T;
         id?: T;
       };
+  metaTitle?: T;
+  metaDescription?: T;
+  metaImage?: T;
+  noIndex?: T;
   _status?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -5928,6 +6149,10 @@ export interface ContactPageSelect<T extends boolean = true> {
         headlineLine1?: T;
         headlineLine2?: T;
       };
+  metaTitle?: T;
+  metaDescription?: T;
+  metaImage?: T;
+  noIndex?: T;
   _status?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -6019,6 +6244,10 @@ export interface ScheduleACallPageSelect<T extends boolean = true> {
         confirmLabel?: T;
         confirmedLabel?: T;
       };
+  metaTitle?: T;
+  metaDescription?: T;
+  metaImage?: T;
+  noIndex?: T;
   _status?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -6065,6 +6294,10 @@ export interface PrivacyPolicyPageSelect<T extends boolean = true> {
   title?: T;
   dateline?: T;
   body?: T;
+  metaTitle?: T;
+  metaDescription?: T;
+  metaImage?: T;
+  noIndex?: T;
   _status?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -6111,6 +6344,10 @@ export interface TermsOfServicePageSelect<T extends boolean = true> {
   title?: T;
   dateline?: T;
   body?: T;
+  metaTitle?: T;
+  metaDescription?: T;
+  metaImage?: T;
+  noIndex?: T;
   _status?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -6184,6 +6421,10 @@ export interface ThankYouPageSelect<T extends boolean = true> {
   primaryCtaHref?: T;
   secondaryCtaLabel?: T;
   secondaryCtaHref?: T;
+  metaTitle?: T;
+  metaDescription?: T;
+  metaImage?: T;
+  noIndex?: T;
   _status?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -6286,6 +6527,10 @@ export interface SocialMediaManagementPageSelect<T extends boolean = true> {
         buttonHref?: T;
         altText?: T;
       };
+  metaTitle?: T;
+  metaDescription?: T;
+  metaImage?: T;
+  noIndex?: T;
   _status?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -6356,6 +6601,10 @@ export interface JournalPageSelect<T extends boolean = true> {
         buttonHref?: T;
       };
   relatedLabel?: T;
+  metaTitle?: T;
+  metaDescription?: T;
+  metaImage?: T;
+  noIndex?: T;
   _status?: T;
   updatedAt?: T;
   createdAt?: T;

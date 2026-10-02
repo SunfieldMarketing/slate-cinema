@@ -1,8 +1,24 @@
+import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
 import HomePageContent from '@/components/HomePageContent'
-import { getHomePageGlobal, getPipeline, getFinalCTA } from '@/lib/payload-data'
+import { getHomePageGlobal, getPipeline, getFinalCTA, getSiteSettings } from '@/lib/payload-data'
 import { getNormalizedPortfolioProjects, normalizePipeline } from '@/lib/normalize'
 import { loadBlocksData } from '@/lib/page-builder-data'
+import { DEFAULT_TITLE, pageMetadata } from '@/lib/seo'
+
+// The homepage keeps Site Settings > SEO's default title as-is, with no
+// "| Slate Cinema" suffix (TikTok requires its tab to read exactly "Slate
+// Cinema"), unless the page's own "Search engines & sharing" says otherwise.
+export async function generateMetadata(): Promise<Metadata> {
+  const draft = (await draftMode()).isEnabled
+  const [page, settings] = await Promise.all([getHomePageGlobal(draft), getSiteSettings(draft)])
+  return pageMetadata({
+    path: '/',
+    seo: page,
+    title: settings.seo?.defaultTitle || DEFAULT_TITLE,
+    absoluteTitle: true,
+  })
+}
 
 export default async function Home() {
   // Set by /api/preview, which every Live Preview iframe URL routes

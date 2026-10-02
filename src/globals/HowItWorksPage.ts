@@ -1,6 +1,8 @@
 import type { GlobalConfig } from 'payload'
 import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 import { sectionsField } from '@/blocks/builtin'
+import { seoFields } from '@/fields/seo'
+import { PAGE_META } from '@/lib/page-meta'
 
 const GUARANTEE_ICONS = ['Clock', 'ShieldCheck', 'RefreshCw', 'Handshake'].map((v) => ({ label: v, value: v }))
 
@@ -148,5 +150,6 @@ export const HowItWorksPage: GlobalConfig = {
         { name: 'desc', type: 'text', required: true },
       ],
     },
+    seoFields({ title: PAGE_META.howItWorks.title, description: PAGE_META.howItWorks.description }),
   ],
 }

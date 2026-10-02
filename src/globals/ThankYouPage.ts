@@ -1,6 +1,8 @@
 import type { GlobalConfig } from 'payload'
 import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 import { sectionsField } from '@/blocks/builtin'
+import { seoFields } from '@/fields/seo'
+import { PAGE_META } from '@/lib/page-meta'
 
 // lucide-react icons actually used by src/app/(frontend)/thank-you/page.tsx's
 // nextSteps array, same "icon as a select string key" convention as every
@@ -57,5 +59,6 @@ export const ThankYouPage: GlobalConfig = {
     { name: 'primaryCtaHref', type: 'text', defaultValue: '/portfolio' },
     { name: 'secondaryCtaLabel', type: 'text', defaultValue: 'Back to Home' },
     { name: 'secondaryCtaHref', type: 'text', defaultValue: '/' },
+    seoFields({ title: PAGE_META.thankYou.title, description: PAGE_META.thankYou.description }),
   ],
 }

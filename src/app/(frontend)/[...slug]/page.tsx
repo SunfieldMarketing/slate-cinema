@@ -3,8 +3,8 @@ import { notFound } from 'next/navigation'
 import { draftMode } from 'next/headers'
 import { getAllPagePaths, getPageByPath } from '@/lib/payload-data'
 import { loadBlocksData } from '@/lib/page-builder-data'
-import { mediaUrl } from '@/lib/media-url'
 import CustomPageContent from '@/components/CustomPageContent'
+import { pageMetadata } from '@/lib/seo'
 
 /*
   Pages built in /admin (Custom pages collection, src/collections/Pages.ts).
@@ -27,15 +27,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const draft = (await draftMode()).isEnabled
   const page = await getPageByPath(toPath(slug), draft)
   if (!page) return {}
-  const image = mediaUrl(page.metaImage)
-  const title = page.metaTitle || page.title
-  const description = page.metaDescription || undefined
-  return {
-    title,
-    description,
-    robots: page.noIndex ? { index: false, follow: false } : undefined,
-    openGraph: { title, description, ...(image ? { images: [{ url: image }] } : {}) },
-  }
+  return pageMetadata({ path: `/${page.path}`, seo: page, title: page.title })
 }
 
 export default async function CustomPage({ params }: { params: Params }) {

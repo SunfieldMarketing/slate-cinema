@@ -6,6 +6,8 @@ import Footer from '@/components/Footer'
 import PageSections from '@/components/blocks/PageSections'
 import { getSocialMediaManagementPageGlobal, getSiteSettings } from '@/lib/payload-data'
 import { loadBlocksData } from '@/lib/page-builder-data'
+import { pageMetadata } from '@/lib/seo'
+import { PAGE_META } from '@/lib/page-meta'
 
 /*
   Brought into the CMS 2026-08-26 (see src/globals/SocialMediaManagementPage.ts
@@ -22,21 +24,14 @@ import { loadBlocksData } from '@/lib/page-builder-data'
   out of sync with the real contact email if that ever changes.
 */
 
-// 2026-09-04 mobile audit: this page (and privacy-policy, terms-of-service --
-// all three brought into the CMS on the same 2026-08-26 pass) had no `title`
-// in its exported metadata, so Next fell back to the root layout's generic
-// "Slate Cinema" for the browser tab / bookmarks / search results, unlike
-// every other page in the app. No CMS field holds an SEO title for this
-// global, so a plain static string here (matching the nav label) is the
-// right fix -- no need for generateMetadata/CMS wiring for this one.
-// NOTE: bare title, no manual "| Slate Cinema" suffix -- the root layout's
-// `template: "%s | Slate Cinema"` already appends that (confirmed live:
-// an earlier version of this fix that included the suffix here rendered
-// as a doubled "Social Media Management | Slate Cinema | Slate Cinema").
-export const metadata: Metadata = {
-  title: 'Social Media Management',
-  description:
-    "We run social media for businesses that need to focus on operations. Slate Cinema plans, produces, schedules and publishes social content for client businesses across Instagram, Facebook, TikTok, YouTube and X — from one calendar, with one approval step, on the client's own accounts.",
+// Search title/description/share card: the page's "Search engines &
+// sharing" fields in /admin (2026-10-02), else the defaults in
+// src/lib/page-meta.ts. A bare title -- Site Settings' "%s | Slate Cinema"
+// template adds the suffix (a manual one rendered doubled, 2026-09-04).
+export async function generateMetadata(): Promise<Metadata> {
+  const draft = (await draftMode()).isEnabled
+  const page = await getSocialMediaManagementPageGlobal(draft)
+  return pageMetadata({ path: '/social-media-management', seo: page, title: PAGE_META.socialMedia.title, description: PAGE_META.socialMedia.description })
 }
 
 export default async function SocialMediaManagementPage() {

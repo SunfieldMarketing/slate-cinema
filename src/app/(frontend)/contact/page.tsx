@@ -3,11 +3,15 @@ import { draftMode } from 'next/headers'
 import ContactPageContent from '@/components/ContactPageContent'
 import { getContactPageGlobal, getReadyToTalk } from '@/lib/payload-data'
 import { loadBlocksData } from '@/lib/page-builder-data'
+import { pageMetadata } from '@/lib/seo'
+import { PAGE_META } from '@/lib/page-meta'
 
-export const metadata: Metadata = {
-  title: 'Get Started',
-  description:
-    'Tell us where you’re at — leave a quick lead, fill out a full project intake, or schedule a call. We reply within minutes.',
+// Search title/description/share card: the page's "Search engines &
+// sharing" fields in /admin, else these defaults (src/lib/page-meta.ts).
+export async function generateMetadata(): Promise<Metadata> {
+  const draft = (await draftMode()).isEnabled
+  const page = await getContactPageGlobal(draft)
+  return pageMetadata({ path: '/contact', seo: page, title: PAGE_META.contact.title, description: PAGE_META.contact.description })
 }
 
 export default async function ContactPage() {

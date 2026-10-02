@@ -2,6 +2,8 @@ import type { GlobalConfig } from 'payload'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 import { sectionsField } from '@/blocks/builtin'
+import { seoFields } from '@/fields/seo'
+import { PAGE_META } from '@/lib/page-meta'
 
 /*
   Brings /terms-of-service into the CMS -- same rationale as
@@ -32,5 +34,6 @@ export const TermsOfServicePage: GlobalConfig = {
       required: true,
       admin: { description: 'The full terms -- headings, paragraphs, and links all live here as one document.' },
     },
+    seoFields({ title: 'Terms of Service', titleHint: 'Leave blank to use the page title above.', description: PAGE_META.terms.description }),
   ],
 }

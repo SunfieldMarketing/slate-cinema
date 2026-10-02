@@ -11,13 +11,21 @@ import ThankYouTracking from '@/components/ThankYouTracking'
 import PageSections from '@/components/blocks/PageSections'
 import { getThankYouPageGlobal } from '@/lib/payload-data'
 import { loadBlocksData } from '@/lib/page-builder-data'
+import { pageMetadata } from '@/lib/seo'
+import { PAGE_META } from '@/lib/page-meta'
 
 // noindex: this is a conversion-confirmation page, not something that
 // should show up in search results or get direct organic traffic.
-export const metadata: Metadata = {
-  title: 'Thank You',
-  description: "We've got your submission — here's what happens next.",
-  robots: { index: false, follow: false },
+export async function generateMetadata(): Promise<Metadata> {
+  const draft = (await draftMode()).isEnabled
+  const page = await getThankYouPageGlobal(draft)
+  return pageMetadata({
+    path: '/thank-you',
+    seo: page,
+    title: PAGE_META.thankYou.title,
+    description: PAGE_META.thankYou.description,
+    noIndex: true,
+  })
 }
 
 const ICONS: Record<string, LucideIcon> = { Mail, Clock3, PlayCircle }

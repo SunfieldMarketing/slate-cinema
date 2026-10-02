@@ -12,11 +12,15 @@ import { loadBlocksData } from '@/lib/page-builder-data'
 import { resolveIcon } from '@/lib/icon-map'
 import { getScheduleACallPageGlobal, getReadyToTalk } from '@/lib/payload-data'
 import type { ReadyToTalk as ReadyToTalkGlobal } from '@/payload-types'
+import { pageMetadata } from '@/lib/seo'
+import { PAGE_META } from '@/lib/page-meta'
 
-export const metadata: Metadata = {
-  title: 'Schedule a Call',
-  description:
-    'Book a 20-minute call with our team to talk through your project, timeline, and budget — no pitch deck, just an honest read on scope.',
+// Search title/description/share card: the page's "Search engines &
+// sharing" fields in /admin, else these defaults (src/lib/page-meta.ts).
+export async function generateMetadata(): Promise<Metadata> {
+  const draft = (await draftMode()).isEnabled
+  const page = await getScheduleACallPageGlobal(draft)
+  return pageMetadata({ path: '/schedule-a-call', seo: page, title: PAGE_META.scheduleCall.title, description: PAGE_META.scheduleCall.description })
 }
 
 const fallbackPrepItems = [

@@ -1,5 +1,6 @@
 import type { CollectionConfig, FieldHook, Validate } from 'payload'
 import { contentBlocks } from '@/blocks'
+import { seoFields } from '@/fields/seo'
 import { revalidateCollectionAfterChange, revalidateCollectionAfterDelete } from '@/lib/revalidate'
 
 /*
@@ -131,16 +132,6 @@ export const Pages: CollectionConfig = {
       blocks: contentBlocks,
       admin: { description: 'Add, drag to reorder, duplicate or remove sections. Each section has its own settings to hide it.' },
     },
-    {
-      type: 'collapsible',
-      label: 'Search engines & sharing',
-      admin: { initCollapsed: true },
-      fields: [
-        { name: 'metaTitle', label: 'Search title', type: 'text', admin: { description: 'Defaults to the page title.' } },
-        { name: 'metaDescription', label: 'Search description', type: 'textarea' },
-        { name: 'metaImage', label: 'Share image', type: 'upload', relationTo: 'media' },
-        { name: 'noIndex', label: 'Hide from search engines', type: 'checkbox', defaultValue: false },
-      ],
-    },
+    seoFields({ titleHint: 'Shown in the browser tab, search results and link previews. Leave blank to use the page title.' }),
   ],
 }

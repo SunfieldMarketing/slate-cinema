@@ -4,11 +4,15 @@ import JournalPageContent from '@/components/JournalPageContent'
 import { getNormalizedJournalPosts } from '@/lib/normalize'
 import { getJournalPageGlobal } from '@/lib/payload-data'
 import { loadBlocksData } from '@/lib/page-builder-data'
+import { pageMetadata } from '@/lib/seo'
+import { PAGE_META } from '@/lib/page-meta'
 
-export const metadata: Metadata = {
-  title: 'The Slate Journal',
-  description:
-    'Notes on video production, storytelling, and brand — practical writing from Slate Cinema on what actually earns attention and what makes people watch to the end.',
+// Search title/description/share card: the page's "Search engines &
+// sharing" fields in /admin, else these defaults (src/lib/page-meta.ts).
+export async function generateMetadata(): Promise<Metadata> {
+  const draft = (await draftMode()).isEnabled
+  const page = await getJournalPageGlobal(draft)
+  return pageMetadata({ path: '/journal', seo: page, title: PAGE_META.journal.title, description: PAGE_META.journal.description })
 }
 
 export default async function JournalPage() {

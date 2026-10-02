@@ -1,6 +1,8 @@
 import type { GlobalConfig } from 'payload'
 import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 import { sectionsField } from '@/blocks/builtin'
+import { seoFields } from '@/fields/seo'
+import { PAGE_META } from '@/lib/page-meta'
 
 /*
   Brings the /journal index page and the shared bits around every journal
@@ -66,5 +68,6 @@ export const JournalPage: GlobalConfig = {
       defaultValue: 'More from the Journal',
       admin: { description: 'Label over the related posts at the bottom of every journal post.' },
     },
+    seoFields({ title: PAGE_META.journal.title, description: PAGE_META.journal.description }),
   ],
 }

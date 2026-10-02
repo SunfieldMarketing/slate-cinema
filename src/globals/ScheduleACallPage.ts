@@ -1,6 +1,8 @@
 import type { GlobalConfig } from 'payload'
 import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 import { sectionsField } from '@/blocks/builtin'
+import { seoFields } from '@/fields/seo'
+import { PAGE_META } from '@/lib/page-meta'
 
 /*
   Hero + CustomCalendar copy for /schedule-a-call. The "Book a time on
@@ -68,5 +70,6 @@ export const ScheduleACallPage: GlobalConfig = {
         { name: 'confirmedLabel', type: 'text', defaultValue: "You're Booked — We'll Be in Touch" },
       ],
     },
+    seoFields({ title: PAGE_META.scheduleCall.title, description: PAGE_META.scheduleCall.description }),
   ],
 }

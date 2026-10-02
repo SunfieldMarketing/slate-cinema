@@ -2,6 +2,8 @@ import type { GlobalConfig } from 'payload'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 import { sectionsField } from '@/blocks/builtin'
+import { seoFields } from '@/fields/seo'
+import { PAGE_META } from '@/lib/page-meta'
 
 /*
   Brings /social-media-management into the CMS -- previously fully
@@ -106,5 +108,6 @@ export const SocialMediaManagementPage: GlobalConfig = {
         },
       ],
     },
+    seoFields({ title: PAGE_META.socialMedia.title, description: PAGE_META.socialMedia.description }),
   ],
 }

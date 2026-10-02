@@ -11,6 +11,7 @@ import * as migration_20260924_000000_add_changelog from './20260924_000000_add_
 import * as migration_20261001_000000_cms_full_coverage from './20261001_000000_cms_full_coverage';
 import * as migration_20261002_000000_page_builder from './20261002_000000_page_builder';
 import * as migration_20261002_180000_page_sections from './20261002_180000_page_sections';
+import * as migration_20261002_200000_page_seo from './20261002_200000_page_seo';
 
 export const migrations = [
   {
@@ -77,5 +78,10 @@ export const migrations = [
     up: migration_20261002_180000_page_sections.up,
     down: migration_20261002_180000_page_sections.down,
     name: '20261002_180000_page_sections',
+  },
+  {
+    up: migration_20261002_200000_page_seo.up,
+    down: migration_20261002_200000_page_seo.down,
+    name: '20261002_200000_page_seo',
   },
 ];

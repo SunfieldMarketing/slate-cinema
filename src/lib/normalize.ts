@@ -14,6 +14,7 @@
   strings/arrays like before.
 */
 import type { Industry, PortfolioProject as PayloadPortfolioProject, JournalPost as PayloadJournalPost, Pipeline as PayloadPipeline } from '@/payload-types'
+import type { SeoValues } from '@/lib/seo'
 import {
   mediaUrl,
   mediaUrlOrPlaceholder,
@@ -153,6 +154,8 @@ export interface IndustryData {
       saved in /admin. Absent for a code-only industry and in the copy the
       root layout hands every page (see layout.tsx). */
   layout?: Industry['layout']
+  /** "Search engines & sharing" -- only read by the page's metadata. */
+  seo?: SeoValues
 }
 
 /*
@@ -306,6 +309,7 @@ export function normalizeIndustry(doc: Industry): IndustryData {
         }
       : undefined,
     layout: doc.layout ?? undefined,
+    seo: { metaTitle: doc.metaTitle, metaDescription: doc.metaDescription, metaImage: doc.metaImage, noIndex: doc.noIndex },
   }
 }
 
@@ -356,6 +360,8 @@ export interface JournalPostLocal {
   coverImage: string
   author: string
   content: PayloadJournalPost['content']
+  /** "Search engines & sharing" -- only read by the post's metadata. */
+  seo?: SeoValues
 }
 
 export function normalizeJournalPost(doc: PayloadJournalPost): JournalPostLocal {
@@ -371,6 +377,7 @@ export function normalizeJournalPost(doc: PayloadJournalPost): JournalPostLocal 
     coverImage: mediaUrlOrPlaceholder(doc.coverImage),
     author: doc.author,
     content: doc.content,
+    seo: { metaTitle: doc.metaTitle, metaDescription: doc.metaDescription, metaImage: doc.metaImage, noIndex: doc.noIndex },
   }
 }
 

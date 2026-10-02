@@ -1,6 +1,8 @@
 import type { GlobalConfig } from 'payload'
 import { revalidateGlobalAfterChange } from '@/lib/revalidate'
 import { sectionsField } from '@/blocks/builtin'
+import { seoFields } from '@/fields/seo'
+import { PAGE_META } from '@/lib/page-meta'
 
 // Every lucide-react icon used anywhere across the Contact page's cards/
 // badges, in one shared option list rather than a dozen near-duplicate
@@ -161,5 +163,6 @@ export const ContactPage: GlobalConfig = {
         { name: 'headlineLine2', type: 'text', defaultValue: 'shooting everywhere.' },
       ],
     },
+    seoFields({ title: PAGE_META.contact.title, description: PAGE_META.contact.description }),
   ],
 }

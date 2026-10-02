@@ -10,6 +10,7 @@ import GoogleAdsTag from "@/components/GoogleAdsTag";
 import { SiteDataProvider } from "@/lib/site-data-context";
 import { getNavigation, getFooterGlobal, getSiteSettings, mediaUrl } from "@/lib/payload-data";
 import { getNormalizedIndustries } from "@/lib/normalize";
+import { DEFAULT_DESCRIPTION, DEFAULT_TITLE } from "@/lib/seo";
 import { preload } from 'react-dom';
 import { draftMode } from 'next/headers';
 
@@ -34,10 +35,8 @@ export const revalidate = 300
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings()
-  const title = settings.seo?.defaultTitle || "Slate Cinema | Video Marketing at Your Fingertips"
-  const description =
-    settings.seo?.defaultDescription ||
-    "From concept to campaign, we create cinematic content built to capture attention, tell stories, and drive engagement. Brooklyn, NY."
+  const title = settings.seo?.defaultTitle || DEFAULT_TITLE
+  const description = settings.seo?.defaultDescription || DEFAULT_DESCRIPTION
   const ogImage = mediaUrl(settings.seo?.ogImage)
 
   return {
@@ -138,8 +137,8 @@ export default async function RootLayout({
         <PostHogInit />
         <GoogleAdsTag />
         {/* Industries go to every page (menu, wheel); each one's Sections list
-            only matters on its own page, which loads it itself. */}
-        <SiteDataProvider value={{ navigation, footer, industries: industries.map((industry) => ({ ...industry, layout: undefined })), settings }}>
+            and search settings only matter on its own page, which loads them. */}
+        <SiteDataProvider value={{ navigation, footer, industries: industries.map((industry) => ({ ...industry, layout: undefined, seo: undefined })), settings }}>
           <SmoothScrolling>
             {children}
           </SmoothScrolling>

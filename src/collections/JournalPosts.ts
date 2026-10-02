@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { revalidateCollectionAfterChange, revalidateCollectionAfterDelete } from '@/lib/revalidate'
+import { seoFields } from '@/fields/seo'
 
 /*
   Matches src/lib/journal.ts's JournalPost shape. `content` was a typed
@@ -56,5 +57,10 @@ export const JournalPosts: CollectionConfig = {
       editor: lexicalEditor(),
       required: true,
     },
+    seoFields({
+      titleHint: 'Shown in the browser tab, search results and link previews. Leave blank to use the post title.',
+      descriptionHint: 'Leave blank to use the excerpt.',
+      imageHint: 'Shown when the post is shared in messages or on social media. Leave empty to use the cover image.',
+    }),
   ],
 }

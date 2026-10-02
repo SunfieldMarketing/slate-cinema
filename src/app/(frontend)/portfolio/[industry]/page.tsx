@@ -4,6 +4,8 @@ import { getNormalizedIndustries, getNormalizedPortfolioProjects } from '@/lib/n
 import { getFinalCTA } from '@/lib/payload-data'
 import { loadBlocksData } from '@/lib/page-builder-data'
 import IndustryPageContent from '@/components/IndustryPageContent'
+import { pageMetadata } from '@/lib/seo'
+import { PLACEHOLDER_IMAGE } from '@/lib/media-url'
 
 // Athletics' dedicated static route (portfolio/athletics/page.tsx) was
 // retired 2026-08-13 -- its client-showcase + cinematic-statement
@@ -22,10 +24,15 @@ export async function generateMetadata({ params }: { params: Promise<{ industry:
   const industries = await getNormalizedIndustries()
   const industry = industries.find((i) => i.slug === slug)
   if (!industry) return {}
-  return {
+  // The industry's "Search engines & sharing" fields, else its name and
+  // description, shared with its hero image.
+  return pageMetadata({
+    path: `/portfolio/${industry.slug}`,
+    seo: industry.seo,
     title: `${industry.label} Video Production`,
-    description: industry.description,
-  }
+    description: industry.description || undefined,
+    image: industry.heroImage && industry.heroImage !== PLACEHOLDER_IMAGE ? industry.heroImage : undefined,
+  })
 }
 
 export default async function IndustryPage({ params }: { params: Promise<{ industry: string }> }) {

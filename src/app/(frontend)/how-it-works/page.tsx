@@ -4,11 +4,15 @@ import HowItWorksPageContent from '@/components/HowItWorksPageContent'
 import { getHowItWorksPageGlobal, getPipeline, getFinalCTA } from '@/lib/payload-data'
 import { normalizePipeline } from '@/lib/normalize'
 import { loadBlocksData } from '@/lib/page-builder-data'
+import { pageMetadata } from '@/lib/seo'
+import { PAGE_META } from '@/lib/page-meta'
 
-export const metadata: Metadata = {
-  title: 'How It Works',
-  description:
-    'A clear, structured process designed to take your project from idea to final delivery — seamlessly, efficiently, and cinematically.',
+// Search title/description/share card: the page's "Search engines &
+// sharing" fields in /admin, else these defaults (src/lib/page-meta.ts).
+export async function generateMetadata(): Promise<Metadata> {
+  const draft = (await draftMode()).isEnabled
+  const page = await getHowItWorksPageGlobal(draft)
+  return pageMetadata({ path: '/how-it-works', seo: page, title: PAGE_META.howItWorks.title, description: PAGE_META.howItWorks.description })
 }
 
 export default async function HowItWorksPage() {
