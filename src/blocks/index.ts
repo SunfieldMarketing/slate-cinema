@@ -13,6 +13,11 @@ import { buttonsField, headingField, ICON_OPTIONS, mediaFields, sectionSettings,
 
   Renderers: src/components/blocks/RenderBlocks.tsx. A block added here
   also needs a case there.
+
+  Every block sets an `interfaceName` ("<Name>Block"): GraphQL names a block
+  type after its slug otherwise, and a bare "media" or "pipeline" collides
+  with the Media collection / Pipeline global, which takes /api/graphql down
+  with "Schema must contain uniquely named types".
 */
 
 const ORIENTATION_OPTIONS = [
@@ -24,6 +29,7 @@ const ORIENTATION_OPTIONS = [
 
 export const HeroBlock: Block = {
   slug: 'hero',
+  interfaceName: 'HeroBlock',
   labels: { singular: 'Hero', plural: 'Heroes' },
   fields: [
     { name: 'eyebrow', label: 'Eyebrow', type: 'text' },
@@ -56,6 +62,7 @@ export const HeroBlock: Block = {
 
 export const RichTextBlock: Block = {
   slug: 'richText',
+  interfaceName: 'RichTextBlock',
   labels: { singular: 'Text', plural: 'Text sections' },
   fields: [
     headingField,
@@ -85,6 +92,7 @@ export const RichTextBlock: Block = {
 
 export const MediaTextBlock: Block = {
   slug: 'mediaText',
+  interfaceName: 'MediaTextBlock',
   labels: { singular: 'Image / video + text', plural: 'Image / video + text' },
   fields: [
     headingField,
@@ -114,6 +122,7 @@ export const MediaTextBlock: Block = {
 
 export const MediaBlock: Block = {
   slug: 'media',
+  interfaceName: 'MediaBlock',
   labels: { singular: 'Image / video', plural: 'Images / videos' },
   fields: [
     ...mediaFields('The image, or the poster frame shown before a video plays.'),
@@ -151,6 +160,7 @@ export const MediaBlock: Block = {
 
 export const StatementBlock: Block = {
   slug: 'statement',
+  interfaceName: 'StatementBlock',
   labels: { singular: 'Statement (full-width video moment)', plural: 'Statements' },
   fields: [
     { name: 'eyebrow', label: 'Eyebrow', type: 'text' },
@@ -174,6 +184,7 @@ export const StatementBlock: Block = {
 
 export const CtaBandBlock: Block = {
   slug: 'ctaBand',
+  interfaceName: 'CtaBandBlock',
   labels: { singular: 'Call-to-action band', plural: 'Call-to-action bands' },
   fields: [
     { name: 'headline', label: 'Headline', type: 'text', defaultValue: 'Have a project like this in mind?' },
@@ -191,6 +202,7 @@ export const CtaBandBlock: Block = {
 
 export const CardsBlock: Block = {
   slug: 'cards',
+  interfaceName: 'CardsBlock',
   labels: { singular: 'Cards grid', plural: 'Cards grids' },
   fields: [
     headingField,
@@ -223,6 +235,7 @@ export const CardsBlock: Block = {
 
 export const StatsBlock: Block = {
   slug: 'stats',
+  interfaceName: 'StatsBlock',
   labels: { singular: 'Numbers strip', plural: 'Numbers strips' },
   fields: [
     headingField,
@@ -243,6 +256,7 @@ export const StatsBlock: Block = {
 
 export const ClientCardsBlock: Block = {
   slug: 'clientCards',
+  interfaceName: 'ClientCardsBlock',
   labels: { singular: 'Client video cards', plural: 'Client video cards' },
   fields: [
     headingField,
@@ -267,6 +281,7 @@ export const ClientCardsBlock: Block = {
 
 export const ServiceCardsBlock: Block = {
   slug: 'serviceCards',
+  interfaceName: 'ServiceCardsBlock',
   labels: { singular: 'Service cards', plural: 'Service cards' },
   fields: [
     headingField,
@@ -292,6 +307,7 @@ export const ServiceCardsBlock: Block = {
 
 export const TimelineBlock: Block = {
   slug: 'timeline',
+  interfaceName: 'TimelineBlock',
   labels: { singular: 'Timeline / steps', plural: 'Timelines' },
   fields: [
     headingField,
@@ -311,6 +327,7 @@ export const TimelineBlock: Block = {
 
 export const FaqBlock: Block = {
   slug: 'faq',
+  interfaceName: 'FaqBlock',
   labels: { singular: 'FAQ', plural: 'FAQs' },
   fields: [
     headingField,
@@ -348,6 +365,7 @@ export const FaqBlock: Block = {
 
 export const LogosBlock: Block = {
   slug: 'logos',
+  interfaceName: 'LogosBlock',
   labels: { singular: 'Logo strip', plural: 'Logo strips' },
   fields: [
     { name: 'ratingText', label: 'Rating text', type: 'text', admin: { description: 'e.g. "5.0/5 · 44 Google reviews". Leave blank to hide the stars.' } },
@@ -367,6 +385,7 @@ export const LogosBlock: Block = {
 
 export const PortfolioGridBlock: Block = {
   slug: 'portfolioGrid',
+  interfaceName: 'PortfolioGridBlock',
   labels: { singular: 'Portfolio projects', plural: 'Portfolio projects' },
   fields: [
     headingField,
@@ -403,6 +422,7 @@ export const PortfolioGridBlock: Block = {
 
 export const JournalPostsBlock: Block = {
   slug: 'journalPosts',
+  interfaceName: 'JournalPostsBlock',
   labels: { singular: 'Journal posts', plural: 'Journal posts' },
   fields: [
     headingField,
@@ -414,6 +434,7 @@ export const JournalPostsBlock: Block = {
 
 export const PipelineBlock: Block = {
   slug: 'pipeline',
+  interfaceName: 'PipelineBlock',
   labels: { singular: 'Production pipeline', plural: 'Production pipelines' },
   fields: [
     {
@@ -433,6 +454,7 @@ export const PipelineBlock: Block = {
 
 export const FinalCtaBlock: Block = {
   slug: 'finalCta',
+  interfaceName: 'FinalCtaBlock',
   labels: { singular: 'Closing call to action', plural: 'Closing calls to action' },
   // No fields of its own: its words live in Shared Sections > Final CTA, so
   // one edit there updates every page that uses it.
@@ -441,6 +463,7 @@ export const FinalCtaBlock: Block = {
 
 export const BookingBlock: Block = {
   slug: 'booking',
+  interfaceName: 'BookingBlock',
   labels: { singular: 'Booking calendar', plural: 'Booking calendars' },
   fields: [
     { name: 'eyebrow', label: 'Eyebrow', type: 'text', defaultValue: '// Production Meeting' },
@@ -453,6 +476,7 @@ export const BookingBlock: Block = {
 
 export const EmbedBlock: Block = {
   slug: 'embed',
+  interfaceName: 'EmbedBlock',
   labels: { singular: 'Embed (form, map, calendar...)', plural: 'Embeds' },
   fields: [
     headingField,
@@ -475,6 +499,7 @@ export const EmbedBlock: Block = {
 
 export const SpacerBlock: Block = {
   slug: 'spacer',
+  interfaceName: 'SpacerBlock',
   labels: { singular: 'Spacer / divider', plural: 'Spacers' },
   fields: [
     {

@@ -200,7 +200,6 @@ export interface User {
 export interface Media {
   id: number;
   alt: string;
-  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -265,815 +264,26 @@ export interface Page {
    */
   layout?:
     | (
-        | {
-            eyebrow?: string | null;
-            /**
-             * One line per row.
-             */
-            title: string;
-            subtitle?: string | null;
-            /**
-             * Background image, also shown while the video loads.
-             */
-            image?: (number | null) | Media;
-            video?: (number | null) | Media;
-            /**
-             * Vimeo link or ID, e.g. https://vimeo.com/862067416 or just 862067416. Takes priority over the video file.
-             */
-            vimeo?: string | null;
-            buttons?:
-              | {
-                  label: string;
-                  /**
-                   * A page on this site ("/contact", "/services#pricing") or a full address ("https://...").
-                   */
-                  href: string;
-                  style?: ('primary' | 'secondary') | null;
-                  id?: string | null;
-                }[]
-              | null;
-            trustNote?: string | null;
-            /**
-             * Shown along the bottom of the hero. Makes it full-screen.
-             */
-            stats?:
-              | {
-                  value: number;
-                  /**
-                   * e.g. "+", "%", "k"
-                   */
-                  suffix?: string | null;
-                  label: string;
-                  id?: string | null;
-                }[]
-              | null;
-            /**
-             * Keeps the section here but stops it showing on the site.
-             */
-            hidden?: boolean | null;
-            hideOn?: ('mobile' | 'desktop') | null;
-            /**
-             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
-             */
-            anchor?: string | null;
-            /**
-             * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
-             */
-            accent?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'hero';
-          }
-        | {
-            heading?: {
-              /**
-               * Small label above the headline. Optional.
-               */
-              eyebrow?: string | null;
-              headline?: string | null;
-              /**
-               * Optional end of the headline, set in grey italics.
-               */
-              headlineAccent?: string | null;
-              intro?: string | null;
-            };
-            content?: {
-              root: {
-                type: string;
-                children: {
-                  type: any;
-                  version: number;
-                  [k: string]: unknown;
-                }[];
-                direction: ('ltr' | 'rtl') | null;
-                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-                indent: number;
-                version: number;
-              };
-              [k: string]: unknown;
-            } | null;
-            align?: ('left' | 'center') | null;
-            width?: ('narrow' | 'normal' | 'wide') | null;
-            /**
-             * Keeps the section here but stops it showing on the site.
-             */
-            hidden?: boolean | null;
-            hideOn?: ('mobile' | 'desktop') | null;
-            /**
-             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
-             */
-            anchor?: string | null;
-            /**
-             * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
-             */
-            accent?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'richText';
-          }
-        | {
-            heading?: {
-              /**
-               * Small label above the headline. Optional.
-               */
-              eyebrow?: string | null;
-              headline?: string | null;
-              /**
-               * Optional end of the headline, set in grey italics.
-               */
-              headlineAccent?: string | null;
-              intro?: string | null;
-            };
-            content?: {
-              root: {
-                type: string;
-                children: {
-                  type: any;
-                  version: number;
-                  [k: string]: unknown;
-                }[];
-                direction: ('ltr' | 'rtl') | null;
-                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-                indent: number;
-                version: number;
-              };
-              [k: string]: unknown;
-            } | null;
-            buttons?:
-              | {
-                  label: string;
-                  /**
-                   * A page on this site ("/contact", "/services#pricing") or a full address ("https://...").
-                   */
-                  href: string;
-                  style?: ('primary' | 'secondary') | null;
-                  id?: string | null;
-                }[]
-              | null;
-            /**
-             * Shown while the video loads, or on its own if there is no video.
-             */
-            image?: (number | null) | Media;
-            video?: (number | null) | Media;
-            /**
-             * Vimeo link or ID, e.g. https://vimeo.com/862067416 or just 862067416. Takes priority over the video file.
-             */
-            vimeo?: string | null;
-            mediaPosition?: ('left' | 'right') | null;
-            aspect?: ('landscape' | 'portrait' | 'feed' | 'square') | null;
-            /**
-             * Keeps the section here but stops it showing on the site.
-             */
-            hidden?: boolean | null;
-            hideOn?: ('mobile' | 'desktop') | null;
-            /**
-             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
-             */
-            anchor?: string | null;
-            /**
-             * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
-             */
-            accent?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'mediaText';
-          }
-        | {
-            /**
-             * The image, or the poster frame shown before a video plays.
-             */
-            image?: (number | null) | Media;
-            video?: (number | null) | Media;
-            /**
-             * Vimeo link or ID, e.g. https://vimeo.com/862067416 or just 862067416. Takes priority over the video file.
-             */
-            vimeo?: string | null;
-            /**
-             * For videos only.
-             */
-            playback?: ('ambient' | 'player') | null;
-            caption?: string | null;
-            size?: ('contained' | 'wide' | 'full') | null;
-            aspect?: ('landscape' | 'portrait' | 'feed' | 'square' | 'cinema') | null;
-            /**
-             * Keeps the section here but stops it showing on the site.
-             */
-            hidden?: boolean | null;
-            hideOn?: ('mobile' | 'desktop') | null;
-            /**
-             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
-             */
-            anchor?: string | null;
-            /**
-             * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
-             */
-            accent?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'media';
-          }
-        | {
-            eyebrow?: string | null;
-            /**
-             * One line per row; the last row is set in italics.
-             */
-            headline: string;
-            body?: string | null;
-            /**
-             * Vimeo link or ID, e.g. https://vimeo.com/862067416 or just 862067416 (a video file URL also works).
-             */
-            video?: string | null;
-            /**
-             * Keeps the section here but stops it showing on the site.
-             */
-            hidden?: boolean | null;
-            hideOn?: ('mobile' | 'desktop') | null;
-            /**
-             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
-             */
-            anchor?: string | null;
-            /**
-             * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
-             */
-            accent?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'statement';
-          }
-        | {
-            headline?: string | null;
-            subhead?: string | null;
-            buttonLabel?: string | null;
-            buttonHref?: string | null;
-            /**
-             * Keeps the section here but stops it showing on the site.
-             */
-            hidden?: boolean | null;
-            hideOn?: ('mobile' | 'desktop') | null;
-            /**
-             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
-             */
-            anchor?: string | null;
-            /**
-             * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
-             */
-            accent?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'ctaBand';
-          }
-        | {
-            heading?: {
-              /**
-               * Small label above the headline. Optional.
-               */
-              eyebrow?: string | null;
-              headline?: string | null;
-              /**
-               * Optional end of the headline, set in grey italics.
-               */
-              headlineAccent?: string | null;
-              intro?: string | null;
-            };
-            columns?: ('2' | '3' | '4') | null;
-            cards?:
-              | {
-                  /**
-                   * Optional.
-                   */
-                  icon?:
-                    | (
-                        | 'Film'
-                        | 'Dumbbell'
-                        | 'Plane'
-                        | 'Building2'
-                        | 'HeartPulse'
-                        | 'ShoppingBag'
-                        | 'Briefcase'
-                        | 'Users'
-                        | 'GraduationCap'
-                        | 'Clock'
-                        | 'ShieldCheck'
-                        | 'RefreshCw'
-                        | 'Handshake'
-                        | 'FileText'
-                        | 'PhoneCall'
-                        | 'FileCheck2'
-                        | 'Clapperboard'
-                        | 'Receipt'
-                        | 'Repeat'
-                        | 'BadgeCheck'
-                        | 'HelpCircle'
-                        | 'ClipboardList'
-                        | 'CalendarClock'
-                        | 'Timer'
-                        | 'Mail'
-                        | 'Clock3'
-                        | 'Wallet'
-                        | 'Target'
-                        | 'Sparkles'
-                        | 'MessageCircleMore'
-                        | 'Phone'
-                        | 'MapPin'
-                        | 'Mic'
-                        | 'Camera'
-                        | 'Music'
-                        | 'Utensils'
-                        | 'Car'
-                        | 'House'
-                        | 'Store'
-                        | 'Megaphone'
-                      )
-                    | null;
-                  /**
-                   * Optional photo across the top of the card.
-                   */
-                  image?: (number | null) | Media;
-                  title: string;
-                  text?: string | null;
-                  linkLabel?: string | null;
-                  linkHref?: string | null;
-                  id?: string | null;
-                }[]
-              | null;
-            /**
-             * Keeps the section here but stops it showing on the site.
-             */
-            hidden?: boolean | null;
-            hideOn?: ('mobile' | 'desktop') | null;
-            /**
-             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
-             */
-            anchor?: string | null;
-            /**
-             * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
-             */
-            accent?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'cards';
-          }
-        | {
-            heading?: {
-              /**
-               * Small label above the headline. Optional.
-               */
-              eyebrow?: string | null;
-              headline?: string | null;
-              /**
-               * Optional end of the headline, set in grey italics.
-               */
-              headlineAccent?: string | null;
-              intro?: string | null;
-            };
-            stats?:
-              | {
-                  value: number;
-                  /**
-                   * e.g. "+", "%", "wk"
-                   */
-                  suffix?: string | null;
-                  label: string;
-                  id?: string | null;
-                }[]
-              | null;
-            /**
-             * Keeps the section here but stops it showing on the site.
-             */
-            hidden?: boolean | null;
-            hideOn?: ('mobile' | 'desktop') | null;
-            /**
-             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
-             */
-            anchor?: string | null;
-            /**
-             * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
-             */
-            accent?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'stats';
-          }
-        | {
-            heading?: {
-              /**
-               * Small label above the headline. Optional.
-               */
-              eyebrow?: string | null;
-              headline?: string | null;
-              /**
-               * Optional end of the headline, set in grey italics.
-               */
-              headlineAccent?: string | null;
-              intro?: string | null;
-            };
-            /**
-             * A card without a Vimeo video is hidden; the section hides when none has one.
-             */
-            clients?:
-              | {
-                  name: string;
-                  year?: string | null;
-                  description?: string | null;
-                  /**
-                   * Vimeo link or ID, e.g. https://vimeo.com/862067416 or just 862067416
-                   */
-                  vimeoId?: string | null;
-                  orientation?: ('landscape' | 'portrait' | 'feed' | 'square') | null;
-                  id?: string | null;
-                }[]
-              | null;
-            /**
-             * Keeps the section here but stops it showing on the site.
-             */
-            hidden?: boolean | null;
-            hideOn?: ('mobile' | 'desktop') | null;
-            /**
-             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
-             */
-            anchor?: string | null;
-            /**
-             * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
-             */
-            accent?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'clientCards';
-          }
-        | {
-            heading?: {
-              /**
-               * Small label above the headline. Optional.
-               */
-              eyebrow?: string | null;
-              headline?: string | null;
-              /**
-               * Optional end of the headline, set in grey italics.
-               */
-              headlineAccent?: string | null;
-              intro?: string | null;
-            };
-            /**
-             * The one marked "featured" runs large.
-             */
-            cards?:
-              | {
-                  title: string;
-                  description: string;
-                  /**
-                   * Short result up top, e.g. "Boards in days, not weeks"
-                   */
-                  outcome?: string | null;
-                  deliverables?:
-                    | {
-                        item: string;
-                        id?: string | null;
-                      }[]
-                    | null;
-                  /**
-                   * e.g. "60–120s · 4–6 wks"
-                   */
-                  meta?: string | null;
-                  image?: (number | null) | Media;
-                  video?: (number | null) | Media;
-                  /**
-                   * Vimeo link or ID, e.g. https://vimeo.com/862067416 or just 862067416
-                   */
-                  videoVimeoUrl?: string | null;
-                  featured?: boolean | null;
-                  id?: string | null;
-                }[]
-              | null;
-            /**
-             * Keeps the section here but stops it showing on the site.
-             */
-            hidden?: boolean | null;
-            hideOn?: ('mobile' | 'desktop') | null;
-            /**
-             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
-             */
-            anchor?: string | null;
-            /**
-             * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
-             */
-            accent?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'serviceCards';
-          }
-        | {
-            heading?: {
-              /**
-               * Small label above the headline. Optional.
-               */
-              eyebrow?: string | null;
-              headline?: string | null;
-              /**
-               * Optional end of the headline, set in grey italics.
-               */
-              headlineAccent?: string | null;
-              intro?: string | null;
-            };
-            steps?:
-              | {
-                  /**
-                   * e.g. "Wk 1" or "Mon"
-                   */
-                  week: string;
-                  title: string;
-                  body: string;
-                  id?: string | null;
-                }[]
-              | null;
-            /**
-             * Keeps the section here but stops it showing on the site.
-             */
-            hidden?: boolean | null;
-            hideOn?: ('mobile' | 'desktop') | null;
-            /**
-             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
-             */
-            anchor?: string | null;
-            /**
-             * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
-             */
-            accent?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'timeline';
-          }
-        | {
-            heading?: {
-              /**
-               * Small label above the headline. Optional.
-               */
-              eyebrow?: string | null;
-              headline?: string | null;
-              /**
-               * Optional end of the headline, set in grey italics.
-               */
-              headlineAccent?: string | null;
-              intro?: string | null;
-            };
-            items?:
-              | {
-                  question: string;
-                  answer: string;
-                  id?: string | null;
-                }[]
-              | null;
-            /**
-             * The "Still deciding?" card beside the questions. Leave the title blank to hide it.
-             */
-            aside?: {
-              title?: string | null;
-              body?: string | null;
-              buttonLabel?: string | null;
-              buttonHref?: string | null;
-              note?: string | null;
-            };
-            /**
-             * Keeps the section here but stops it showing on the site.
-             */
-            hidden?: boolean | null;
-            hideOn?: ('mobile' | 'desktop') | null;
-            /**
-             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
-             */
-            anchor?: string | null;
-            /**
-             * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
-             */
-            accent?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'faq';
-          }
-        | {
-            /**
-             * e.g. "5.0/5 · 44 Google reviews". Leave blank to hide the stars.
-             */
-            ratingText?: string | null;
-            label?: string | null;
-            logos?:
-              | {
-                  name: string;
-                  logo: number | Media;
-                  id?: string | null;
-                }[]
-              | null;
-            /**
-             * Keeps the section here but stops it showing on the site.
-             */
-            hidden?: boolean | null;
-            hideOn?: ('mobile' | 'desktop') | null;
-            /**
-             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
-             */
-            anchor?: string | null;
-            /**
-             * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
-             */
-            accent?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'logos';
-          }
-        | {
-            heading?: {
-              /**
-               * Small label above the headline. Optional.
-               */
-              eyebrow?: string | null;
-              headline?: string | null;
-              /**
-               * Optional end of the headline, set in grey italics.
-               */
-              headlineAccent?: string | null;
-              intro?: string | null;
-            };
-            source?: ('all' | 'category' | 'manual') | null;
-            /**
-             * Exactly as written on the projects, e.g. "Brand Film".
-             */
-            category?: string | null;
-            projects?: (number | PortfolioProject)[] | null;
-            limit?: number | null;
-            /**
-             * Keeps the section here but stops it showing on the site.
-             */
-            hidden?: boolean | null;
-            hideOn?: ('mobile' | 'desktop') | null;
-            /**
-             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
-             */
-            anchor?: string | null;
-            /**
-             * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
-             */
-            accent?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'portfolioGrid';
-          }
-        | {
-            heading?: {
-              /**
-               * Small label above the headline. Optional.
-               */
-              eyebrow?: string | null;
-              headline?: string | null;
-              /**
-               * Optional end of the headline, set in grey italics.
-               */
-              headlineAccent?: string | null;
-              intro?: string | null;
-            };
-            /**
-             * Optional: only posts in this category.
-             */
-            category?: string | null;
-            limit?: number | null;
-            /**
-             * Keeps the section here but stops it showing on the site.
-             */
-            hidden?: boolean | null;
-            hideOn?: ('mobile' | 'desktop') | null;
-            /**
-             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
-             */
-            anchor?: string | null;
-            /**
-             * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
-             */
-            accent?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'journalPosts';
-          }
-        | {
-            /**
-             * The phases themselves come from Shared Sections > Pipeline. Leave these heading fields blank to use the ones set there.
-             */
-            eyebrow?: string | null;
-            title?: string | null;
-            description?: string | null;
-            /**
-             * Keeps the section here but stops it showing on the site.
-             */
-            hidden?: boolean | null;
-            hideOn?: ('mobile' | 'desktop') | null;
-            /**
-             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
-             */
-            anchor?: string | null;
-            /**
-             * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
-             */
-            accent?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'pipeline';
-          }
-        | {
-            /**
-             * Keeps the section here but stops it showing on the site.
-             */
-            hidden?: boolean | null;
-            hideOn?: ('mobile' | 'desktop') | null;
-            /**
-             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
-             */
-            anchor?: string | null;
-            /**
-             * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
-             */
-            accent?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'finalCta';
-          }
-        | {
-            eyebrow?: string | null;
-            headline?: string | null;
-            sessionLabel?: string | null;
-            durationLabel?: string | null;
-            /**
-             * Keeps the section here but stops it showing on the site.
-             */
-            hidden?: boolean | null;
-            hideOn?: ('mobile' | 'desktop') | null;
-            /**
-             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
-             */
-            anchor?: string | null;
-            /**
-             * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
-             */
-            accent?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'booking';
-          }
-        | {
-            heading?: {
-              /**
-               * Small label above the headline. Optional.
-               */
-              eyebrow?: string | null;
-              headline?: string | null;
-              /**
-               * Optional end of the headline, set in grey italics.
-               */
-              headlineAccent?: string | null;
-              intro?: string | null;
-            };
-            /**
-             * The "embed" or "iframe" link the other service gives you (Google Maps, YouTube, a form, a calendar...).
-             */
-            url?: string | null;
-            /**
-             * Only if the service gives you code instead of a link. Runs in its own sandboxed frame.
-             */
-            html?: string | null;
-            height?: number | null;
-            /**
-             * Keeps the section here but stops it showing on the site.
-             */
-            hidden?: boolean | null;
-            hideOn?: ('mobile' | 'desktop') | null;
-            /**
-             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
-             */
-            anchor?: string | null;
-            /**
-             * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
-             */
-            accent?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'embed';
-          }
-        | {
-            size?: ('sm' | 'md' | 'lg') | null;
-            divider?: boolean | null;
-            /**
-             * Keeps the section here but stops it showing on the site.
-             */
-            hidden?: boolean | null;
-            hideOn?: ('mobile' | 'desktop') | null;
-            /**
-             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
-             */
-            anchor?: string | null;
-            /**
-             * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
-             */
-            accent?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'spacer';
-          }
+        | HeroBlock
+        | RichTextBlock
+        | MediaTextBlock
+        | MediaBlock
+        | StatementBlock
+        | CtaBandBlock
+        | CardsBlock
+        | StatsBlock
+        | ClientCardsBlock
+        | ServiceCardsBlock
+        | TimelineBlock
+        | FaqBlock
+        | LogosBlock
+        | PortfolioGridBlock
+        | JournalPostsBlock
+        | PipelineBlock
+        | FinalCtaBlock
+        | BookingBlock
+        | EmbedBlock
+        | SpacerBlock
       )[]
     | null;
   /**
@@ -1086,6 +296,713 @@ export interface Page {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroBlock".
+ */
+export interface HeroBlock {
+  eyebrow?: string | null;
+  /**
+   * One line per row.
+   */
+  title: string;
+  subtitle?: string | null;
+  /**
+   * Background image, also shown while the video loads.
+   */
+  image?: (number | null) | Media;
+  video?: (number | null) | Media;
+  /**
+   * Vimeo link or ID, e.g. https://vimeo.com/862067416 or just 862067416. Takes priority over the video file.
+   */
+  vimeo?: string | null;
+  buttons?:
+    | {
+        label: string;
+        /**
+         * A page on this site ("/contact", "/services#pricing") or a full address ("https://...").
+         */
+        href: string;
+        style?: ('primary' | 'secondary') | null;
+        id?: string | null;
+      }[]
+    | null;
+  trustNote?: string | null;
+  /**
+   * Shown along the bottom of the hero. Makes it full-screen.
+   */
+  stats?:
+    | {
+        value: number;
+        /**
+         * e.g. "+", "%", "k"
+         */
+        suffix?: string | null;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Keeps the section here but stops it showing on the site.
+   */
+  hidden?: boolean | null;
+  hideOn?: ('mobile' | 'desktop') | null;
+  /**
+   * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  /**
+   * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
+   */
+  accent?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'hero';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RichTextBlock".
+ */
+export interface RichTextBlock {
+  heading?: {
+    /**
+     * Small label above the headline. Optional.
+     */
+    eyebrow?: string | null;
+    headline?: string | null;
+    /**
+     * Optional end of the headline, set in grey italics.
+     */
+    headlineAccent?: string | null;
+    intro?: string | null;
+  };
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  align?: ('left' | 'center') | null;
+  width?: ('narrow' | 'normal' | 'wide') | null;
+  /**
+   * Keeps the section here but stops it showing on the site.
+   */
+  hidden?: boolean | null;
+  hideOn?: ('mobile' | 'desktop') | null;
+  /**
+   * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  /**
+   * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
+   */
+  accent?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'richText';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaTextBlock".
+ */
+export interface MediaTextBlock {
+  heading?: {
+    /**
+     * Small label above the headline. Optional.
+     */
+    eyebrow?: string | null;
+    headline?: string | null;
+    /**
+     * Optional end of the headline, set in grey italics.
+     */
+    headlineAccent?: string | null;
+    intro?: string | null;
+  };
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  buttons?:
+    | {
+        label: string;
+        /**
+         * A page on this site ("/contact", "/services#pricing") or a full address ("https://...").
+         */
+        href: string;
+        style?: ('primary' | 'secondary') | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Shown while the video loads, or on its own if there is no video.
+   */
+  image?: (number | null) | Media;
+  video?: (number | null) | Media;
+  /**
+   * Vimeo link or ID, e.g. https://vimeo.com/862067416 or just 862067416. Takes priority over the video file.
+   */
+  vimeo?: string | null;
+  mediaPosition?: ('left' | 'right') | null;
+  aspect?: ('landscape' | 'portrait' | 'feed' | 'square') | null;
+  /**
+   * Keeps the section here but stops it showing on the site.
+   */
+  hidden?: boolean | null;
+  hideOn?: ('mobile' | 'desktop') | null;
+  /**
+   * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  /**
+   * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
+   */
+  accent?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'mediaText';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaBlock".
+ */
+export interface MediaBlock {
+  /**
+   * The image, or the poster frame shown before a video plays.
+   */
+  image?: (number | null) | Media;
+  video?: (number | null) | Media;
+  /**
+   * Vimeo link or ID, e.g. https://vimeo.com/862067416 or just 862067416. Takes priority over the video file.
+   */
+  vimeo?: string | null;
+  /**
+   * For videos only.
+   */
+  playback?: ('ambient' | 'player') | null;
+  caption?: string | null;
+  size?: ('contained' | 'wide' | 'full') | null;
+  aspect?: ('landscape' | 'portrait' | 'feed' | 'square' | 'cinema') | null;
+  /**
+   * Keeps the section here but stops it showing on the site.
+   */
+  hidden?: boolean | null;
+  hideOn?: ('mobile' | 'desktop') | null;
+  /**
+   * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  /**
+   * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
+   */
+  accent?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'media';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StatementBlock".
+ */
+export interface StatementBlock {
+  eyebrow?: string | null;
+  /**
+   * One line per row; the last row is set in italics.
+   */
+  headline: string;
+  body?: string | null;
+  /**
+   * Vimeo link or ID, e.g. https://vimeo.com/862067416 or just 862067416 (a video file URL also works).
+   */
+  video?: string | null;
+  /**
+   * Keeps the section here but stops it showing on the site.
+   */
+  hidden?: boolean | null;
+  hideOn?: ('mobile' | 'desktop') | null;
+  /**
+   * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  /**
+   * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
+   */
+  accent?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'statement';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CtaBandBlock".
+ */
+export interface CtaBandBlock {
+  headline?: string | null;
+  subhead?: string | null;
+  buttonLabel?: string | null;
+  buttonHref?: string | null;
+  /**
+   * Keeps the section here but stops it showing on the site.
+   */
+  hidden?: boolean | null;
+  hideOn?: ('mobile' | 'desktop') | null;
+  /**
+   * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  /**
+   * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
+   */
+  accent?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'ctaBand';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CardsBlock".
+ */
+export interface CardsBlock {
+  heading?: {
+    /**
+     * Small label above the headline. Optional.
+     */
+    eyebrow?: string | null;
+    headline?: string | null;
+    /**
+     * Optional end of the headline, set in grey italics.
+     */
+    headlineAccent?: string | null;
+    intro?: string | null;
+  };
+  columns?: ('2' | '3' | '4') | null;
+  cards?:
+    | {
+        /**
+         * Optional.
+         */
+        icon?:
+          | (
+              | 'Film'
+              | 'Dumbbell'
+              | 'Plane'
+              | 'Building2'
+              | 'HeartPulse'
+              | 'ShoppingBag'
+              | 'Briefcase'
+              | 'Users'
+              | 'GraduationCap'
+              | 'Clock'
+              | 'ShieldCheck'
+              | 'RefreshCw'
+              | 'Handshake'
+              | 'FileText'
+              | 'PhoneCall'
+              | 'FileCheck2'
+              | 'Clapperboard'
+              | 'Receipt'
+              | 'Repeat'
+              | 'BadgeCheck'
+              | 'HelpCircle'
+              | 'ClipboardList'
+              | 'CalendarClock'
+              | 'Timer'
+              | 'Mail'
+              | 'Clock3'
+              | 'Wallet'
+              | 'Target'
+              | 'Sparkles'
+              | 'MessageCircleMore'
+              | 'Phone'
+              | 'MapPin'
+              | 'Mic'
+              | 'Camera'
+              | 'Music'
+              | 'Utensils'
+              | 'Car'
+              | 'House'
+              | 'Store'
+              | 'Megaphone'
+            )
+          | null;
+        /**
+         * Optional photo across the top of the card.
+         */
+        image?: (number | null) | Media;
+        title: string;
+        text?: string | null;
+        linkLabel?: string | null;
+        linkHref?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Keeps the section here but stops it showing on the site.
+   */
+  hidden?: boolean | null;
+  hideOn?: ('mobile' | 'desktop') | null;
+  /**
+   * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  /**
+   * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
+   */
+  accent?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'cards';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StatsBlock".
+ */
+export interface StatsBlock {
+  heading?: {
+    /**
+     * Small label above the headline. Optional.
+     */
+    eyebrow?: string | null;
+    headline?: string | null;
+    /**
+     * Optional end of the headline, set in grey italics.
+     */
+    headlineAccent?: string | null;
+    intro?: string | null;
+  };
+  stats?:
+    | {
+        value: number;
+        /**
+         * e.g. "+", "%", "wk"
+         */
+        suffix?: string | null;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Keeps the section here but stops it showing on the site.
+   */
+  hidden?: boolean | null;
+  hideOn?: ('mobile' | 'desktop') | null;
+  /**
+   * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  /**
+   * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
+   */
+  accent?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'stats';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ClientCardsBlock".
+ */
+export interface ClientCardsBlock {
+  heading?: {
+    /**
+     * Small label above the headline. Optional.
+     */
+    eyebrow?: string | null;
+    headline?: string | null;
+    /**
+     * Optional end of the headline, set in grey italics.
+     */
+    headlineAccent?: string | null;
+    intro?: string | null;
+  };
+  /**
+   * A card without a Vimeo video is hidden; the section hides when none has one.
+   */
+  clients?:
+    | {
+        name: string;
+        year?: string | null;
+        description?: string | null;
+        /**
+         * Vimeo link or ID, e.g. https://vimeo.com/862067416 or just 862067416
+         */
+        vimeoId?: string | null;
+        orientation?: ('landscape' | 'portrait' | 'feed' | 'square') | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Keeps the section here but stops it showing on the site.
+   */
+  hidden?: boolean | null;
+  hideOn?: ('mobile' | 'desktop') | null;
+  /**
+   * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  /**
+   * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
+   */
+  accent?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'clientCards';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ServiceCardsBlock".
+ */
+export interface ServiceCardsBlock {
+  heading?: {
+    /**
+     * Small label above the headline. Optional.
+     */
+    eyebrow?: string | null;
+    headline?: string | null;
+    /**
+     * Optional end of the headline, set in grey italics.
+     */
+    headlineAccent?: string | null;
+    intro?: string | null;
+  };
+  /**
+   * The one marked "featured" runs large.
+   */
+  cards?:
+    | {
+        title: string;
+        description: string;
+        /**
+         * Short result up top, e.g. "Boards in days, not weeks"
+         */
+        outcome?: string | null;
+        deliverables?:
+          | {
+              item: string;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * e.g. "60–120s · 4–6 wks"
+         */
+        meta?: string | null;
+        image?: (number | null) | Media;
+        video?: (number | null) | Media;
+        /**
+         * Vimeo link or ID, e.g. https://vimeo.com/862067416 or just 862067416
+         */
+        videoVimeoUrl?: string | null;
+        featured?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Keeps the section here but stops it showing on the site.
+   */
+  hidden?: boolean | null;
+  hideOn?: ('mobile' | 'desktop') | null;
+  /**
+   * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  /**
+   * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
+   */
+  accent?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'serviceCards';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TimelineBlock".
+ */
+export interface TimelineBlock {
+  heading?: {
+    /**
+     * Small label above the headline. Optional.
+     */
+    eyebrow?: string | null;
+    headline?: string | null;
+    /**
+     * Optional end of the headline, set in grey italics.
+     */
+    headlineAccent?: string | null;
+    intro?: string | null;
+  };
+  steps?:
+    | {
+        /**
+         * e.g. "Wk 1" or "Mon"
+         */
+        week: string;
+        title: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Keeps the section here but stops it showing on the site.
+   */
+  hidden?: boolean | null;
+  hideOn?: ('mobile' | 'desktop') | null;
+  /**
+   * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  /**
+   * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
+   */
+  accent?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'timeline';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FaqBlock".
+ */
+export interface FaqBlock {
+  heading?: {
+    /**
+     * Small label above the headline. Optional.
+     */
+    eyebrow?: string | null;
+    headline?: string | null;
+    /**
+     * Optional end of the headline, set in grey italics.
+     */
+    headlineAccent?: string | null;
+    intro?: string | null;
+  };
+  items?:
+    | {
+        question: string;
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The "Still deciding?" card beside the questions. Leave the title blank to hide it.
+   */
+  aside?: {
+    title?: string | null;
+    body?: string | null;
+    buttonLabel?: string | null;
+    buttonHref?: string | null;
+    note?: string | null;
+  };
+  /**
+   * Keeps the section here but stops it showing on the site.
+   */
+  hidden?: boolean | null;
+  hideOn?: ('mobile' | 'desktop') | null;
+  /**
+   * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  /**
+   * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
+   */
+  accent?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'faq';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LogosBlock".
+ */
+export interface LogosBlock {
+  /**
+   * e.g. "5.0/5 · 44 Google reviews". Leave blank to hide the stars.
+   */
+  ratingText?: string | null;
+  label?: string | null;
+  logos?:
+    | {
+        name: string;
+        logo: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Keeps the section here but stops it showing on the site.
+   */
+  hidden?: boolean | null;
+  hideOn?: ('mobile' | 'desktop') | null;
+  /**
+   * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  /**
+   * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
+   */
+  accent?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'logos';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PortfolioGridBlock".
+ */
+export interface PortfolioGridBlock {
+  heading?: {
+    /**
+     * Small label above the headline. Optional.
+     */
+    eyebrow?: string | null;
+    headline?: string | null;
+    /**
+     * Optional end of the headline, set in grey italics.
+     */
+    headlineAccent?: string | null;
+    intro?: string | null;
+  };
+  source?: ('all' | 'category' | 'manual') | null;
+  /**
+   * Exactly as written on the projects, e.g. "Brand Film".
+   */
+  category?: string | null;
+  projects?: (number | PortfolioProject)[] | null;
+  limit?: number | null;
+  /**
+   * Keeps the section here but stops it showing on the site.
+   */
+  hidden?: boolean | null;
+  hideOn?: ('mobile' | 'desktop') | null;
+  /**
+   * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  /**
+   * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
+   */
+  accent?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'portfolioGrid';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1123,6 +1040,188 @@ export interface PortfolioProject {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "JournalPostsBlock".
+ */
+export interface JournalPostsBlock {
+  heading?: {
+    /**
+     * Small label above the headline. Optional.
+     */
+    eyebrow?: string | null;
+    headline?: string | null;
+    /**
+     * Optional end of the headline, set in grey italics.
+     */
+    headlineAccent?: string | null;
+    intro?: string | null;
+  };
+  /**
+   * Optional: only posts in this category.
+   */
+  category?: string | null;
+  limit?: number | null;
+  /**
+   * Keeps the section here but stops it showing on the site.
+   */
+  hidden?: boolean | null;
+  hideOn?: ('mobile' | 'desktop') | null;
+  /**
+   * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  /**
+   * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
+   */
+  accent?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'journalPosts';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PipelineBlock".
+ */
+export interface PipelineBlock {
+  /**
+   * The phases themselves come from Shared Sections > Pipeline. Leave these heading fields blank to use the ones set there.
+   */
+  eyebrow?: string | null;
+  title?: string | null;
+  description?: string | null;
+  /**
+   * Keeps the section here but stops it showing on the site.
+   */
+  hidden?: boolean | null;
+  hideOn?: ('mobile' | 'desktop') | null;
+  /**
+   * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  /**
+   * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
+   */
+  accent?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pipeline';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FinalCtaBlock".
+ */
+export interface FinalCtaBlock {
+  /**
+   * Keeps the section here but stops it showing on the site.
+   */
+  hidden?: boolean | null;
+  hideOn?: ('mobile' | 'desktop') | null;
+  /**
+   * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  /**
+   * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
+   */
+  accent?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'finalCta';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BookingBlock".
+ */
+export interface BookingBlock {
+  eyebrow?: string | null;
+  headline?: string | null;
+  sessionLabel?: string | null;
+  durationLabel?: string | null;
+  /**
+   * Keeps the section here but stops it showing on the site.
+   */
+  hidden?: boolean | null;
+  hideOn?: ('mobile' | 'desktop') | null;
+  /**
+   * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  /**
+   * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
+   */
+  accent?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'booking';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "EmbedBlock".
+ */
+export interface EmbedBlock {
+  heading?: {
+    /**
+     * Small label above the headline. Optional.
+     */
+    eyebrow?: string | null;
+    headline?: string | null;
+    /**
+     * Optional end of the headline, set in grey italics.
+     */
+    headlineAccent?: string | null;
+    intro?: string | null;
+  };
+  /**
+   * The "embed" or "iframe" link the other service gives you (Google Maps, YouTube, a form, a calendar...).
+   */
+  url?: string | null;
+  /**
+   * Only if the service gives you code instead of a link. Runs in its own sandboxed frame.
+   */
+  html?: string | null;
+  height?: number | null;
+  /**
+   * Keeps the section here but stops it showing on the site.
+   */
+  hidden?: boolean | null;
+  hideOn?: ('mobile' | 'desktop') | null;
+  /**
+   * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  /**
+   * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
+   */
+  accent?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'embed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SpacerBlock".
+ */
+export interface SpacerBlock {
+  size?: ('sm' | 'md' | 'lg') | null;
+  divider?: boolean | null;
+  /**
+   * Keeps the section here but stops it showing on the site.
+   */
+  hidden?: boolean | null;
+  hideOn?: ('mobile' | 'desktop') | null;
+  /**
+   * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  /**
+   * Hex color for this section, e.g. #f97316. Leave blank to use the page color.
+   */
+  accent?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'spacer';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1779,7 +1878,6 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
-  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -1838,449 +1936,26 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
-        hero?:
-          | T
-          | {
-              eyebrow?: T;
-              title?: T;
-              subtitle?: T;
-              image?: T;
-              video?: T;
-              vimeo?: T;
-              buttons?:
-                | T
-                | {
-                    label?: T;
-                    href?: T;
-                    style?: T;
-                    id?: T;
-                  };
-              trustNote?: T;
-              stats?:
-                | T
-                | {
-                    value?: T;
-                    suffix?: T;
-                    label?: T;
-                    id?: T;
-                  };
-              hidden?: T;
-              hideOn?: T;
-              anchor?: T;
-              accent?: T;
-              id?: T;
-              blockName?: T;
-            };
-        richText?:
-          | T
-          | {
-              heading?:
-                | T
-                | {
-                    eyebrow?: T;
-                    headline?: T;
-                    headlineAccent?: T;
-                    intro?: T;
-                  };
-              content?: T;
-              align?: T;
-              width?: T;
-              hidden?: T;
-              hideOn?: T;
-              anchor?: T;
-              accent?: T;
-              id?: T;
-              blockName?: T;
-            };
-        mediaText?:
-          | T
-          | {
-              heading?:
-                | T
-                | {
-                    eyebrow?: T;
-                    headline?: T;
-                    headlineAccent?: T;
-                    intro?: T;
-                  };
-              content?: T;
-              buttons?:
-                | T
-                | {
-                    label?: T;
-                    href?: T;
-                    style?: T;
-                    id?: T;
-                  };
-              image?: T;
-              video?: T;
-              vimeo?: T;
-              mediaPosition?: T;
-              aspect?: T;
-              hidden?: T;
-              hideOn?: T;
-              anchor?: T;
-              accent?: T;
-              id?: T;
-              blockName?: T;
-            };
-        media?:
-          | T
-          | {
-              image?: T;
-              video?: T;
-              vimeo?: T;
-              playback?: T;
-              caption?: T;
-              size?: T;
-              aspect?: T;
-              hidden?: T;
-              hideOn?: T;
-              anchor?: T;
-              accent?: T;
-              id?: T;
-              blockName?: T;
-            };
-        statement?:
-          | T
-          | {
-              eyebrow?: T;
-              headline?: T;
-              body?: T;
-              video?: T;
-              hidden?: T;
-              hideOn?: T;
-              anchor?: T;
-              accent?: T;
-              id?: T;
-              blockName?: T;
-            };
-        ctaBand?:
-          | T
-          | {
-              headline?: T;
-              subhead?: T;
-              buttonLabel?: T;
-              buttonHref?: T;
-              hidden?: T;
-              hideOn?: T;
-              anchor?: T;
-              accent?: T;
-              id?: T;
-              blockName?: T;
-            };
-        cards?:
-          | T
-          | {
-              heading?:
-                | T
-                | {
-                    eyebrow?: T;
-                    headline?: T;
-                    headlineAccent?: T;
-                    intro?: T;
-                  };
-              columns?: T;
-              cards?:
-                | T
-                | {
-                    icon?: T;
-                    image?: T;
-                    title?: T;
-                    text?: T;
-                    linkLabel?: T;
-                    linkHref?: T;
-                    id?: T;
-                  };
-              hidden?: T;
-              hideOn?: T;
-              anchor?: T;
-              accent?: T;
-              id?: T;
-              blockName?: T;
-            };
-        stats?:
-          | T
-          | {
-              heading?:
-                | T
-                | {
-                    eyebrow?: T;
-                    headline?: T;
-                    headlineAccent?: T;
-                    intro?: T;
-                  };
-              stats?:
-                | T
-                | {
-                    value?: T;
-                    suffix?: T;
-                    label?: T;
-                    id?: T;
-                  };
-              hidden?: T;
-              hideOn?: T;
-              anchor?: T;
-              accent?: T;
-              id?: T;
-              blockName?: T;
-            };
-        clientCards?:
-          | T
-          | {
-              heading?:
-                | T
-                | {
-                    eyebrow?: T;
-                    headline?: T;
-                    headlineAccent?: T;
-                    intro?: T;
-                  };
-              clients?:
-                | T
-                | {
-                    name?: T;
-                    year?: T;
-                    description?: T;
-                    vimeoId?: T;
-                    orientation?: T;
-                    id?: T;
-                  };
-              hidden?: T;
-              hideOn?: T;
-              anchor?: T;
-              accent?: T;
-              id?: T;
-              blockName?: T;
-            };
-        serviceCards?:
-          | T
-          | {
-              heading?:
-                | T
-                | {
-                    eyebrow?: T;
-                    headline?: T;
-                    headlineAccent?: T;
-                    intro?: T;
-                  };
-              cards?:
-                | T
-                | {
-                    title?: T;
-                    description?: T;
-                    outcome?: T;
-                    deliverables?:
-                      | T
-                      | {
-                          item?: T;
-                          id?: T;
-                        };
-                    meta?: T;
-                    image?: T;
-                    video?: T;
-                    videoVimeoUrl?: T;
-                    featured?: T;
-                    id?: T;
-                  };
-              hidden?: T;
-              hideOn?: T;
-              anchor?: T;
-              accent?: T;
-              id?: T;
-              blockName?: T;
-            };
-        timeline?:
-          | T
-          | {
-              heading?:
-                | T
-                | {
-                    eyebrow?: T;
-                    headline?: T;
-                    headlineAccent?: T;
-                    intro?: T;
-                  };
-              steps?:
-                | T
-                | {
-                    week?: T;
-                    title?: T;
-                    body?: T;
-                    id?: T;
-                  };
-              hidden?: T;
-              hideOn?: T;
-              anchor?: T;
-              accent?: T;
-              id?: T;
-              blockName?: T;
-            };
-        faq?:
-          | T
-          | {
-              heading?:
-                | T
-                | {
-                    eyebrow?: T;
-                    headline?: T;
-                    headlineAccent?: T;
-                    intro?: T;
-                  };
-              items?:
-                | T
-                | {
-                    question?: T;
-                    answer?: T;
-                    id?: T;
-                  };
-              aside?:
-                | T
-                | {
-                    title?: T;
-                    body?: T;
-                    buttonLabel?: T;
-                    buttonHref?: T;
-                    note?: T;
-                  };
-              hidden?: T;
-              hideOn?: T;
-              anchor?: T;
-              accent?: T;
-              id?: T;
-              blockName?: T;
-            };
-        logos?:
-          | T
-          | {
-              ratingText?: T;
-              label?: T;
-              logos?:
-                | T
-                | {
-                    name?: T;
-                    logo?: T;
-                    id?: T;
-                  };
-              hidden?: T;
-              hideOn?: T;
-              anchor?: T;
-              accent?: T;
-              id?: T;
-              blockName?: T;
-            };
-        portfolioGrid?:
-          | T
-          | {
-              heading?:
-                | T
-                | {
-                    eyebrow?: T;
-                    headline?: T;
-                    headlineAccent?: T;
-                    intro?: T;
-                  };
-              source?: T;
-              category?: T;
-              projects?: T;
-              limit?: T;
-              hidden?: T;
-              hideOn?: T;
-              anchor?: T;
-              accent?: T;
-              id?: T;
-              blockName?: T;
-            };
-        journalPosts?:
-          | T
-          | {
-              heading?:
-                | T
-                | {
-                    eyebrow?: T;
-                    headline?: T;
-                    headlineAccent?: T;
-                    intro?: T;
-                  };
-              category?: T;
-              limit?: T;
-              hidden?: T;
-              hideOn?: T;
-              anchor?: T;
-              accent?: T;
-              id?: T;
-              blockName?: T;
-            };
-        pipeline?:
-          | T
-          | {
-              eyebrow?: T;
-              title?: T;
-              description?: T;
-              hidden?: T;
-              hideOn?: T;
-              anchor?: T;
-              accent?: T;
-              id?: T;
-              blockName?: T;
-            };
-        finalCta?:
-          | T
-          | {
-              hidden?: T;
-              hideOn?: T;
-              anchor?: T;
-              accent?: T;
-              id?: T;
-              blockName?: T;
-            };
-        booking?:
-          | T
-          | {
-              eyebrow?: T;
-              headline?: T;
-              sessionLabel?: T;
-              durationLabel?: T;
-              hidden?: T;
-              hideOn?: T;
-              anchor?: T;
-              accent?: T;
-              id?: T;
-              blockName?: T;
-            };
-        embed?:
-          | T
-          | {
-              heading?:
-                | T
-                | {
-                    eyebrow?: T;
-                    headline?: T;
-                    headlineAccent?: T;
-                    intro?: T;
-                  };
-              url?: T;
-              html?: T;
-              height?: T;
-              hidden?: T;
-              hideOn?: T;
-              anchor?: T;
-              accent?: T;
-              id?: T;
-              blockName?: T;
-            };
-        spacer?:
-          | T
-          | {
-              size?: T;
-              divider?: T;
-              hidden?: T;
-              hideOn?: T;
-              anchor?: T;
-              accent?: T;
-              id?: T;
-              blockName?: T;
-            };
+        hero?: T | HeroBlockSelect<T>;
+        richText?: T | RichTextBlockSelect<T>;
+        mediaText?: T | MediaTextBlockSelect<T>;
+        media?: T | MediaBlockSelect<T>;
+        statement?: T | StatementBlockSelect<T>;
+        ctaBand?: T | CtaBandBlockSelect<T>;
+        cards?: T | CardsBlockSelect<T>;
+        stats?: T | StatsBlockSelect<T>;
+        clientCards?: T | ClientCardsBlockSelect<T>;
+        serviceCards?: T | ServiceCardsBlockSelect<T>;
+        timeline?: T | TimelineBlockSelect<T>;
+        faq?: T | FaqBlockSelect<T>;
+        logos?: T | LogosBlockSelect<T>;
+        portfolioGrid?: T | PortfolioGridBlockSelect<T>;
+        journalPosts?: T | JournalPostsBlockSelect<T>;
+        pipeline?: T | PipelineBlockSelect<T>;
+        finalCta?: T | FinalCtaBlockSelect<T>;
+        booking?: T | BookingBlockSelect<T>;
+        embed?: T | EmbedBlockSelect<T>;
+        spacer?: T | SpacerBlockSelect<T>;
       };
   metaTitle?: T;
   metaDescription?: T;
@@ -2289,6 +1964,489 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroBlock_select".
+ */
+export interface HeroBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  subtitle?: T;
+  image?: T;
+  video?: T;
+  vimeo?: T;
+  buttons?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        style?: T;
+        id?: T;
+      };
+  trustNote?: T;
+  stats?:
+    | T
+    | {
+        value?: T;
+        suffix?: T;
+        label?: T;
+        id?: T;
+      };
+  hidden?: T;
+  hideOn?: T;
+  anchor?: T;
+  accent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RichTextBlock_select".
+ */
+export interface RichTextBlockSelect<T extends boolean = true> {
+  heading?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        intro?: T;
+      };
+  content?: T;
+  align?: T;
+  width?: T;
+  hidden?: T;
+  hideOn?: T;
+  anchor?: T;
+  accent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaTextBlock_select".
+ */
+export interface MediaTextBlockSelect<T extends boolean = true> {
+  heading?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        intro?: T;
+      };
+  content?: T;
+  buttons?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        style?: T;
+        id?: T;
+      };
+  image?: T;
+  video?: T;
+  vimeo?: T;
+  mediaPosition?: T;
+  aspect?: T;
+  hidden?: T;
+  hideOn?: T;
+  anchor?: T;
+  accent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaBlock_select".
+ */
+export interface MediaBlockSelect<T extends boolean = true> {
+  image?: T;
+  video?: T;
+  vimeo?: T;
+  playback?: T;
+  caption?: T;
+  size?: T;
+  aspect?: T;
+  hidden?: T;
+  hideOn?: T;
+  anchor?: T;
+  accent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StatementBlock_select".
+ */
+export interface StatementBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  headline?: T;
+  body?: T;
+  video?: T;
+  hidden?: T;
+  hideOn?: T;
+  anchor?: T;
+  accent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CtaBandBlock_select".
+ */
+export interface CtaBandBlockSelect<T extends boolean = true> {
+  headline?: T;
+  subhead?: T;
+  buttonLabel?: T;
+  buttonHref?: T;
+  hidden?: T;
+  hideOn?: T;
+  anchor?: T;
+  accent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CardsBlock_select".
+ */
+export interface CardsBlockSelect<T extends boolean = true> {
+  heading?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        intro?: T;
+      };
+  columns?: T;
+  cards?:
+    | T
+    | {
+        icon?: T;
+        image?: T;
+        title?: T;
+        text?: T;
+        linkLabel?: T;
+        linkHref?: T;
+        id?: T;
+      };
+  hidden?: T;
+  hideOn?: T;
+  anchor?: T;
+  accent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StatsBlock_select".
+ */
+export interface StatsBlockSelect<T extends boolean = true> {
+  heading?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        intro?: T;
+      };
+  stats?:
+    | T
+    | {
+        value?: T;
+        suffix?: T;
+        label?: T;
+        id?: T;
+      };
+  hidden?: T;
+  hideOn?: T;
+  anchor?: T;
+  accent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ClientCardsBlock_select".
+ */
+export interface ClientCardsBlockSelect<T extends boolean = true> {
+  heading?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        intro?: T;
+      };
+  clients?:
+    | T
+    | {
+        name?: T;
+        year?: T;
+        description?: T;
+        vimeoId?: T;
+        orientation?: T;
+        id?: T;
+      };
+  hidden?: T;
+  hideOn?: T;
+  anchor?: T;
+  accent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ServiceCardsBlock_select".
+ */
+export interface ServiceCardsBlockSelect<T extends boolean = true> {
+  heading?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        intro?: T;
+      };
+  cards?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        outcome?: T;
+        deliverables?:
+          | T
+          | {
+              item?: T;
+              id?: T;
+            };
+        meta?: T;
+        image?: T;
+        video?: T;
+        videoVimeoUrl?: T;
+        featured?: T;
+        id?: T;
+      };
+  hidden?: T;
+  hideOn?: T;
+  anchor?: T;
+  accent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TimelineBlock_select".
+ */
+export interface TimelineBlockSelect<T extends boolean = true> {
+  heading?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        intro?: T;
+      };
+  steps?:
+    | T
+    | {
+        week?: T;
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  hidden?: T;
+  hideOn?: T;
+  anchor?: T;
+  accent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FaqBlock_select".
+ */
+export interface FaqBlockSelect<T extends boolean = true> {
+  heading?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        intro?: T;
+      };
+  items?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  aside?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        buttonLabel?: T;
+        buttonHref?: T;
+        note?: T;
+      };
+  hidden?: T;
+  hideOn?: T;
+  anchor?: T;
+  accent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LogosBlock_select".
+ */
+export interface LogosBlockSelect<T extends boolean = true> {
+  ratingText?: T;
+  label?: T;
+  logos?:
+    | T
+    | {
+        name?: T;
+        logo?: T;
+        id?: T;
+      };
+  hidden?: T;
+  hideOn?: T;
+  anchor?: T;
+  accent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PortfolioGridBlock_select".
+ */
+export interface PortfolioGridBlockSelect<T extends boolean = true> {
+  heading?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        intro?: T;
+      };
+  source?: T;
+  category?: T;
+  projects?: T;
+  limit?: T;
+  hidden?: T;
+  hideOn?: T;
+  anchor?: T;
+  accent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "JournalPostsBlock_select".
+ */
+export interface JournalPostsBlockSelect<T extends boolean = true> {
+  heading?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        intro?: T;
+      };
+  category?: T;
+  limit?: T;
+  hidden?: T;
+  hideOn?: T;
+  anchor?: T;
+  accent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PipelineBlock_select".
+ */
+export interface PipelineBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  description?: T;
+  hidden?: T;
+  hideOn?: T;
+  anchor?: T;
+  accent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FinalCtaBlock_select".
+ */
+export interface FinalCtaBlockSelect<T extends boolean = true> {
+  hidden?: T;
+  hideOn?: T;
+  anchor?: T;
+  accent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BookingBlock_select".
+ */
+export interface BookingBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  headline?: T;
+  sessionLabel?: T;
+  durationLabel?: T;
+  hidden?: T;
+  hideOn?: T;
+  anchor?: T;
+  accent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "EmbedBlock_select".
+ */
+export interface EmbedBlockSelect<T extends boolean = true> {
+  heading?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        intro?: T;
+      };
+  url?: T;
+  html?: T;
+  height?: T;
+  hidden?: T;
+  hideOn?: T;
+  anchor?: T;
+  accent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SpacerBlock_select".
+ */
+export interface SpacerBlockSelect<T extends boolean = true> {
+  size?: T;
+  divider?: T;
+  hidden?: T;
+  hideOn?: T;
+  anchor?: T;
+  accent?: T;
+  id?: T;
+  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
