@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { revalidateGlobalAfterChange } from '@/lib/revalidate'
+import { sectionsField } from '@/blocks/builtin'
 
 /*
   Every hardcoded string/media reference on the homepage that isn't
@@ -31,6 +32,8 @@ export const HomePage: GlobalConfig = {
     afterChange: [revalidateGlobalAfterChange],
   },
   fields: [
+    // Order/visibility of this page's sections + library sections in between.
+    sectionsField('home'),
     {
       name: 'hero',
       type: 'group',

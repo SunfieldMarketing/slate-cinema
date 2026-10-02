@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { revalidateGlobalAfterChange } from '@/lib/revalidate'
+import { sectionsField } from '@/blocks/builtin'
 
 export const PortfolioIndexPage: GlobalConfig = {
   slug: 'portfolio-index-page',
@@ -25,6 +26,8 @@ export const PortfolioIndexPage: GlobalConfig = {
     afterChange: [revalidateGlobalAfterChange],
   },
   fields: [
+    // Order/visibility of this page's sections + library sections in between.
+    sectionsField('portfolio'),
     {
       name: 'hero',
       type: 'group',

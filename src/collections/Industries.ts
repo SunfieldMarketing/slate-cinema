@@ -1,5 +1,6 @@
 import type { CollectionConfig, Condition } from 'payload'
 import { revalidateCollectionAfterChange, revalidateCollectionAfterDelete } from '@/lib/revalidate'
+import { sectionsField } from '@/blocks/builtin'
 
 /*
   Matches src/lib/normalize.ts's IndustryData shape — the richest,
@@ -102,6 +103,8 @@ export const Industries: CollectionConfig = {
         description: 'Position in the Portfolio menu and the /portfolio wheel. Lower numbers come first.',
       },
     },
+    // Order/visibility of this page's sections + library sections in between.
+    sectionsField('industry'),
     {
       type: 'collapsible',
       label: 'Hero',

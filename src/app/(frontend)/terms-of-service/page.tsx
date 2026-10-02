@@ -3,7 +3,9 @@ import { draftMode } from 'next/headers'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
+import PageSections from '@/components/blocks/PageSections'
 import { getTermsOfServicePageGlobal } from '@/lib/payload-data'
+import { loadBlocksData } from '@/lib/page-builder-data'
 
 /*
   Brought into the CMS 2026-08-26 -- see PrivacyPolicyPage's header
@@ -29,8 +31,30 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function TermsOfServicePage() {
   const draft = (await draftMode()).isEnabled
   const page = await getTermsOfServicePageGlobal(draft)
+  const blocksData = await loadBlocksData(page?.layout, draft)
   const title = page?.title || 'Terms of Service'
   const dateline = page?.dateline || 'Last updated · 6 August 2026'
+
+  // The document itself is the page's one built-in section; editors can add
+  // library sections above or below it (Sections in /admin). It carries its
+  // own .legal-page scope so the stylesheet above only styles the document --
+  // not added sections, and not the shared Nav/Footer (until 2026-10-02
+  // ".legal-page h1" restyled the footer wordmark on this page).
+  const builtIns = {
+    document: (
+      <div className="legal-page">
+        <div className="wrap doc" data-cms-global="terms-of-service-page">
+          <div className="docmark"><img src="/images/logo-mark.webp" alt="Slate Cinema app icon" /><span>SLATE CINEMA</span></div>
+          <h1 data-cms-field="title">{title}</h1>
+          <p className="dateline" data-cms-field="dateline">{dateline}</p>
+
+          <div data-cms-field="body">
+            {page?.body ? <RichText data={page.body} /> : null}
+          </div>
+        </div>
+      </div>
+    ),
+  }
 
   return (
     <>
@@ -68,18 +92,10 @@ export default async function TermsOfServicePage() {
   .legal-page .doc { padding-bottom:40px; }
       `}</style>
 
-      <div className="legal-page">
+      <div className="bg-ink antialiased">
         <Nav />
 
-        <div className="wrap doc" data-cms-global="terms-of-service-page">
-          <div className="docmark"><img src="/images/logo-mark.webp" alt="Slate Cinema app icon" /><span>SLATE CINEMA</span></div>
-          <h1 data-cms-field="title">{title}</h1>
-          <p className="dateline" data-cms-field="dateline">{dateline}</p>
-
-          <div data-cms-field="body">
-            {page?.body ? <RichText data={page.body} /> : null}
-          </div>
-        </div>
+        <PageSections page="terms" layout={page?.layout} builtIns={builtIns} accent="#00AEEF" cms={{ global: 'terms-of-service-page' }} data={blocksData} />
 
         <Footer />
       </div>

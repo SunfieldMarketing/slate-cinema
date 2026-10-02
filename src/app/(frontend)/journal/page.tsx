@@ -3,6 +3,7 @@ import { draftMode } from 'next/headers'
 import JournalPageContent from '@/components/JournalPageContent'
 import { getNormalizedJournalPosts } from '@/lib/normalize'
 import { getJournalPageGlobal } from '@/lib/payload-data'
+import { loadBlocksData } from '@/lib/page-builder-data'
 
 export const metadata: Metadata = {
   title: 'The Slate Journal',
@@ -14,5 +15,6 @@ export default async function JournalPage() {
   // Set by /api/preview for Live Preview (see payload.config.ts).
   const draft = (await draftMode()).isEnabled
   const [posts, page] = await Promise.all([getNormalizedJournalPosts(draft), getJournalPageGlobal(draft)])
-  return <JournalPageContent posts={posts} page={page} />
+  const blocksData = await loadBlocksData(page?.layout, draft)
+  return <JournalPageContent posts={posts} page={page} blocksData={blocksData} />
 }

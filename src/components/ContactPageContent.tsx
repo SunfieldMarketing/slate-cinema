@@ -24,6 +24,8 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import PageHero from '@/components/ui/PageHero'
 import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
+import PageSections from '@/components/blocks/PageSections'
+import type { BlocksData } from '@/components/blocks/types'
 import { MagicCard } from '@/components/ui/magic-card'
 import IntakeCTABand from '@/components/IntakeCTABand'
 import { resolveIcon } from '@/lib/icon-map'
@@ -802,9 +804,78 @@ function ContactMethods({ copy }: { copy?: ContactPage['contactMethods'] }) {
   )
 }
 
-export default function ContactPageContent({ page, readyToTalk }: { page: ContactPage; readyToTalk: ReadyToTalkGlobal | null }) {
+export default function ContactPageContent({
+  page,
+  readyToTalk,
+  blocksData,
+}: {
+  page: ContactPage
+  readyToTalk: ReadyToTalkGlobal | null
+  blocksData?: BlocksData
+}) {
   const backdropRootRef = useRef<HTMLDivElement>(null)
   const hero = page?.hero
+
+  // Each built-in section, drawn in the order of the page's Sections list
+  // (Contact Page > Sections in /admin). The data-glow-* wrappers feed the
+  // backdrop's glow chain (PageBackdrop); the chevron dividers travel with
+  // the two stages they lead into.
+  const builtIns = {
+    hero: (
+      <div data-cms-global="contact-page">
+        <PageHero
+          eyebrow={hero?.eyebrow || 'Get Started'}
+          title={[hero?.titleLine1 || "Let's get", hero?.titleLine2 || 'you started']}
+          subtitle={hero?.subtitle || "Tell us where you're at and we'll point you to the right next step. We reply within minutes."}
+          accent="#00AEEF"
+          titleFieldPaths={['hero.titleLine1', 'hero.titleLine2']}
+          eyebrowFieldPath="hero.eyebrow"
+          subtitleFieldPath="hero.subtitle"
+        />
+      </div>
+    ),
+    whatHappensNext: (
+      <div data-glow-color="#00AEEF" data-glow-size="32" data-glow-opacity="0.12">
+        <WhatHappensNext copy={page?.whatHappensNext} />
+      </div>
+    ),
+    stageRouter: (
+      <div data-glow-color="#00AEEF" data-glow-size="38" data-glow-opacity="0.13">
+        <StageRouter copy={page?.stageRouter} />
+      </div>
+    ),
+    leadForm: (
+      <>
+        <StageDivider />
+        <div data-glow-color="#00AEEF" data-glow-size="34" data-glow-opacity="0.12">
+          <LeadForm copy={page?.leadForm} />
+        </div>
+      </>
+    ),
+    readyToTalk: (
+      <>
+        <StageDivider />
+        <div data-glow-color="#34d399" data-glow-size="40" data-glow-opacity="0.13">
+          <ReadyToTalkSection copy={readyToTalk} />
+        </div>
+      </>
+    ),
+    intakeBand: (
+      <div data-glow-color="#00AEEF" data-glow-size="34" data-glow-opacity="0.12">
+        <IntakeCTABand copy={readyToTalk?.intakeBand} />
+      </div>
+    ),
+    contactMethods: (
+      <div data-glow-color="#fbbf24" data-glow-size="34" data-glow-opacity="0.1">
+        <ContactMethods copy={page?.contactMethods} />
+      </div>
+    ),
+    studioLocation: (
+      <div data-glow-color="#22d3ee" data-glow-size="36" data-glow-opacity="0.12">
+        <StudioLocation copy={page?.studioLocation} />
+      </div>
+    ),
+  }
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-[#00AEEF] selection:text-white">
@@ -816,45 +887,7 @@ export default function ContactPageContent({ page, readyToTalk }: { page: Contac
         <div className="relative" ref={backdropRootRef}>
           <PageBackdrop rootRef={backdropRootRef} />
 
-          <div data-cms-global="contact-page">
-            <PageHero
-              eyebrow={hero?.eyebrow || 'Get Started'}
-              title={[hero?.titleLine1 || "Let's get", hero?.titleLine2 || 'you started']}
-              subtitle={hero?.subtitle || "Tell us where you're at and we'll point you to the right next step. We reply within minutes."}
-              accent="#00AEEF"
-              titleFieldPaths={['hero.titleLine1', 'hero.titleLine2']}
-              eyebrowFieldPath="hero.eyebrow"
-              subtitleFieldPath="hero.subtitle"
-            />
-          </div>
-
-          <div data-glow-color="#00AEEF" data-glow-size="32" data-glow-opacity="0.12">
-            <WhatHappensNext copy={page?.whatHappensNext} />
-          </div>
-
-          <div data-glow-color="#00AEEF" data-glow-size="38" data-glow-opacity="0.13">
-            <StageRouter copy={page?.stageRouter} />
-          </div>
-          <StageDivider />
-          <div data-glow-color="#00AEEF" data-glow-size="34" data-glow-opacity="0.12">
-            <LeadForm copy={page?.leadForm} />
-          </div>
-          <StageDivider />
-          <div data-glow-color="#34d399" data-glow-size="40" data-glow-opacity="0.13">
-            <ReadyToTalkSection copy={readyToTalk} />
-          </div>
-
-          <div data-glow-color="#00AEEF" data-glow-size="34" data-glow-opacity="0.12">
-            <IntakeCTABand />
-          </div>
-
-          <div data-glow-color="#fbbf24" data-glow-size="34" data-glow-opacity="0.1">
-            <ContactMethods copy={page?.contactMethods} />
-          </div>
-
-          <div data-glow-color="#22d3ee" data-glow-size="36" data-glow-opacity="0.12">
-            <StudioLocation copy={page?.studioLocation} />
-          </div>
+          <PageSections page="contact" layout={page?.layout} builtIns={builtIns} accent="#00AEEF" cms={{ global: 'contact-page' }} data={blocksData} />
         </div>
 
         <Footer />

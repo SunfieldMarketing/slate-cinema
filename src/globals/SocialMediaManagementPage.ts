@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { revalidateGlobalAfterChange } from '@/lib/revalidate'
+import { sectionsField } from '@/blocks/builtin'
 
 /*
   Brings /social-media-management into the CMS -- previously fully
@@ -31,6 +32,8 @@ export const SocialMediaManagementPage: GlobalConfig = {
     afterChange: [revalidateGlobalAfterChange],
   },
   fields: [
+    // Order/visibility of this page's sections + library sections in between.
+    sectionsField('socialMedia'),
     {
       name: 'hero',
       type: 'group',

@@ -2,6 +2,7 @@ import { draftMode } from 'next/headers'
 import HomePageContent from '@/components/HomePageContent'
 import { getHomePageGlobal, getPipeline, getFinalCTA } from '@/lib/payload-data'
 import { getNormalizedPortfolioProjects, normalizePipeline } from '@/lib/normalize'
+import { loadBlocksData } from '@/lib/page-builder-data'
 
 export default async function Home() {
   // Set by /api/preview, which every Live Preview iframe URL routes
@@ -19,6 +20,8 @@ export default async function Home() {
   // instead of the exact same set twice. /portfolio still gets everything
   // via its own page.tsx, which never slices.
   const portfolioProjects = allProjects.slice(0, 8)
+  // Whatever library sections an editor added to the page's Sections list.
+  const blocksData = await loadBlocksData(homePage?.layout, draft)
   return (
     <HomePageContent
       homePage={homePage}
@@ -26,6 +29,7 @@ export default async function Home() {
       pipelineHeading={pipeline?.heading}
       portfolioProjects={portfolioProjects}
       finalCta={finalCta}
+      blocksData={blocksData}
     />
   )
 }

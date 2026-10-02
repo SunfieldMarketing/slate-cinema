@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { revalidateGlobalAfterChange } from '@/lib/revalidate'
+import { sectionsField } from '@/blocks/builtin'
 
 const GUARANTEE_ICONS = ['Clock', 'ShieldCheck', 'RefreshCw', 'Handshake'].map((v) => ({ label: v, value: v }))
 
@@ -33,6 +34,8 @@ export const HowItWorksPage: GlobalConfig = {
     afterChange: [revalidateGlobalAfterChange],
   },
   fields: [
+    // Order/visibility of this page's sections + library sections in between.
+    sectionsField('howItWorks'),
     {
       name: 'hero',
       type: 'group',

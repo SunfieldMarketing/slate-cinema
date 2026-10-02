@@ -3,6 +3,7 @@ import { draftMode } from 'next/headers'
 import PortfolioPageContent from '@/components/PortfolioPageContent'
 import { getNormalizedIndustries, getNormalizedPortfolioProjects } from '@/lib/normalize'
 import { getPortfolioIndexPageGlobal, getFinalCTA } from '@/lib/payload-data'
+import { loadBlocksData } from '@/lib/page-builder-data'
 
 export const metadata: Metadata = {
   title: 'Our Work',
@@ -17,5 +18,6 @@ export default async function PortfolioPage() {
     getPortfolioIndexPageGlobal(draft),
     getFinalCTA(draft),
   ])
-  return <PortfolioPageContent industries={industries} projects={projects} page={page} finalCta={finalCta} />
+  const blocksData = await loadBlocksData(page?.layout, draft)
+  return <PortfolioPageContent industries={industries} projects={projects} page={page} finalCta={finalCta} blocksData={blocksData} />
 }

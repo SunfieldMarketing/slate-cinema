@@ -200,9 +200,12 @@ export default function SmartVideo({
         allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
         allowFullScreen
         loading={priority ? 'eager' : 'lazy'}
-        // @ts-expect-error -- fetchpriority isn't in React's iframe attribute
-        // types yet, but every Chromium/Firefox browser that matters honors it.
-        fetchpriority={priority ? 'high' : undefined}
+        // @ts-expect-error -- React's types only list fetchPriority on
+        // img/link/script, but it renders the attribute on any element and
+        // every Chromium/Firefox browser that matters honors it on iframes.
+        // (camelCase: the lowercase spelling logs an invalid-DOM-property
+        // warning in development.)
+        fetchPriority={priority ? 'high' : undefined}
         title="Vimeo video"
         // Previously ignored on this path (see the prop doc above) -- an
         // iframe's own "loaded" signal is exactly what a caller wiring up
@@ -235,7 +238,7 @@ export default function SmartVideo({
         onLoadedData={onLoadedData}
         preload={priority ? 'auto' : swappable && isMobile ? 'metadata' : undefined}
         // @ts-expect-error -- same as the iframe path above.
-        fetchpriority={priority ? 'high' : undefined}
+        fetchPriority={priority ? 'high' : undefined}
       />
     )
   }

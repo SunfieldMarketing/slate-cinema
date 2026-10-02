@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { revalidateGlobalAfterChange } from '@/lib/revalidate'
+import { sectionsField } from '@/blocks/builtin'
 
 /*
   Brings /terms-of-service into the CMS -- same rationale as
@@ -20,6 +21,8 @@ export const TermsOfServicePage: GlobalConfig = {
     afterChange: [revalidateGlobalAfterChange],
   },
   fields: [
+    // Order/visibility of this page's sections + library sections in between.
+    sectionsField('terms'),
     { name: 'title', type: 'text', required: true, defaultValue: 'Terms of Service' },
     { name: 'dateline', type: 'text', required: true, defaultValue: 'Last updated · 6 August 2026' },
     {

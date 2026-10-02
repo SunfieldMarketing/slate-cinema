@@ -18,6 +18,8 @@ import CinematicStatement from '@/components/ui/CinematicStatement'
 import TrustBanner from '@/components/TrustBanner'
 import MidCtaBand from '@/components/MidCtaBand'
 import StickyCta from '@/components/StickyCta'
+import PageSections from '@/components/blocks/PageSections'
+import type { BlocksData } from '@/components/blocks/types'
 import type { IndustryData, IndustryRedirect, PortfolioProjectLocal } from '@/lib/normalize'
 import type { FinalCta } from '@/payload-types'
 import { useSiteLabels } from '@/lib/site-data-context'
@@ -111,10 +113,12 @@ export default function IndustryPageContent({
   industry,
   portfolioProjects,
   finalCta,
+  blocksData,
 }: {
   industry: IndustryData
   portfolioProjects: PortfolioProjectLocal[]
   finalCta: FinalCta | null
+  blocksData?: BlocksData
 }) {
   const labels = useSiteLabels()
 
@@ -130,11 +134,84 @@ export default function IndustryPageContent({
   // "The Athletics format" (2026-08-13, generalized to every industry
   // page per Kauan): PageHero -> TrustBanner -> real client showcase ->
   // Services -> a CinematicStatement video "beat" -> MidCta -> Process ->
-  // Portfolio grid -> FinalCTA. Every piece of copy in it comes from the
-  // industry doc (or Site Settings > Labels for the shared button text);
-  // each wrapper below tells Live Preview's click-to-edit which doc a
-  // click belongs to.
+  // Portfolio grid -> FinalCTA -- now the default order of the industry's
+  // Sections list (2026-10-02), which editors can rearrange per industry.
+  // Every piece of copy in it comes from the industry doc (or Site Settings
+  // > Labels for the shared button text); each wrapper below tells Live
+  // Preview's click-to-edit which doc a click belongs to.
   const cms = { 'data-cms-collection': 'industries', 'data-cms-doc-id': industry.id }
+  const builtIns = {
+    hero: (
+      <div {...cms}>
+        <PageHero
+          // The industry's short tag (e.g. "Team & athlete films") --
+          // it used to render only on the /portfolio wheel card.
+          eyebrow={industry.stat || 'Our Work'}
+          title={[industry.label]}
+          subtitle={industry.blurb}
+          videoSrc={industry.heroVideo}
+          videoVimeoUrl={industry.heroVideoVimeoUrl}
+          accent={industry.accent}
+          stats={industry.stats}
+          cta={{ label: labels.getStarted, href: labels.getStartedHref }}
+          trustNote={labels.trustLine}
+          eyebrowFieldPath="stat"
+          titleFieldPaths={['label']}
+          subtitleFieldPath="blurb"
+          ctaFieldPath="labels.getStarted"
+          ctaGlobal="site-settings"
+          trustNoteFieldPath="labels.trustLine"
+          trustNoteGlobal="site-settings"
+        />
+      </div>
+    ),
+    trust: <TrustBanner />,
+    clients: (
+      <div {...cms}>
+        <IndustryClientShowcase clients={industry.clients} heading={industry.clientsHeading} accent={industry.accent} />
+      </div>
+    ),
+    services:
+      industry.serviceCards && industry.serviceCards.length > 0 ? (
+        <div {...cms}>
+          <IndustryServices services={industry.serviceCards} heading={industry.servicesHeading} accent={industry.accent} />
+        </div>
+      ) : null,
+    statement: industry.statement ? (
+      <div {...cms}>
+        <CinematicStatement
+          eyebrow={industry.statement.eyebrow}
+          lines={industry.statement.lines}
+          body={industry.statement.body}
+          videoSrc={industry.statement.video}
+          accent={industry.accent}
+          fieldPaths={{ eyebrow: 'statementEyebrow', lines: 'statementHeadline', body: 'statementBody' }}
+        />
+      </div>
+    ) : null,
+    midCta: (
+      <div {...cms}>
+        <MidCtaBand accent={industry.accent} cta={industry.cta} />
+      </div>
+    ),
+    process:
+      industry.process && industry.process.length > 0 ? (
+        <div {...cms}>
+          <IndustryProcess steps={industry.process} heading={industry.processHeading} accent={industry.accent} />
+        </div>
+      ) : null,
+    gallery: (
+      <div id="gallery" {...cms}>
+        <Portfolio
+          projects={portfolioProjects}
+          heading={industry.galleryHeading}
+          headingFieldPaths={{ eyebrow: 'galleryEyebrow', headline: 'galleryHeadline' }}
+        />
+      </div>
+    ),
+    finalCta: <FinalCTA data={finalCta} />,
+  }
+
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-brand-blue selection:text-white">
       <AmbientBackdrop accent={industry.accent} />
@@ -142,73 +219,14 @@ export default function IndustryPageContent({
       <div className="relative z-10 w-full">
         <Nav />
 
-        <div {...cms}>
-          <PageHero
-            // The industry's short tag (e.g. "Team & athlete films") --
-            // it used to render only on the /portfolio wheel card.
-            eyebrow={industry.stat || 'Our Work'}
-            title={[industry.label]}
-            subtitle={industry.blurb}
-            videoSrc={industry.heroVideo}
-            videoVimeoUrl={industry.heroVideoVimeoUrl}
-            accent={industry.accent}
-            stats={industry.stats}
-            cta={{ label: labels.getStarted, href: labels.getStartedHref }}
-            trustNote={labels.trustLine}
-            eyebrowFieldPath="stat"
-            titleFieldPaths={['label']}
-            subtitleFieldPath="blurb"
-            ctaFieldPath="labels.getStarted"
-            ctaGlobal="site-settings"
-            trustNoteFieldPath="labels.trustLine"
-            trustNoteGlobal="site-settings"
-          />
-        </div>
-
-        <TrustBanner />
-
-        <div {...cms}>
-          <IndustryClientShowcase clients={industry.clients} heading={industry.clientsHeading} accent={industry.accent} />
-        </div>
-
-        {industry.serviceCards && industry.serviceCards.length > 0 && (
-          <div {...cms}>
-            <IndustryServices services={industry.serviceCards} heading={industry.servicesHeading} accent={industry.accent} />
-          </div>
-        )}
-
-        {industry.statement && (
-          <div {...cms}>
-            <CinematicStatement
-              eyebrow={industry.statement.eyebrow}
-              lines={industry.statement.lines}
-              body={industry.statement.body}
-              videoSrc={industry.statement.video}
-              accent={industry.accent}
-              fieldPaths={{ eyebrow: 'statementEyebrow', lines: 'statementHeadline', body: 'statementBody' }}
-            />
-          </div>
-        )}
-
-        <div {...cms}>
-          <MidCtaBand accent={industry.accent} cta={industry.cta} />
-        </div>
-
-        {industry.process && industry.process.length > 0 && (
-          <div {...cms}>
-            <IndustryProcess steps={industry.process} heading={industry.processHeading} accent={industry.accent} />
-          </div>
-        )}
-
-        <div id="gallery" {...cms}>
-          <Portfolio
-            projects={portfolioProjects}
-            heading={industry.galleryHeading}
-            headingFieldPaths={{ eyebrow: 'galleryEyebrow', headline: 'galleryHeadline' }}
-          />
-        </div>
-
-        <FinalCTA data={finalCta} />
+        <PageSections
+          page="industry"
+          layout={industry.layout}
+          builtIns={builtIns}
+          accent={industry.accent}
+          cms={{ collection: 'industries', docId: industry.id }}
+          data={blocksData}
+        />
 
         <Footer />
 

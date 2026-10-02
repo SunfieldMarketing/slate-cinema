@@ -44,6 +44,65 @@ function isCmsFieldClickMessage(data: unknown): data is CmsFieldClickMessage {
   )
 }
 
+const tick = () => new Promise((resolve) => setTimeout(resolve, 60))
+
+/** Opens every collapsed array/blocks row along a field's path. Row ids are
+    Payload's own: the parent path with dashes, then -row-<index> (the row
+    holding "layout.1.items.0.*" is #layout-1-items-row-0). */
+function openRowsAlongPath(parts: string[]): boolean {
+  let opened = false
+  for (let i = 1; i < parts.length; i++) {
+    if (!/^\d+$/.test(parts[i])) continue
+    const row = document.getElementById(`${parts.slice(0, i).join('-')}-row-${parts[i]}`)
+    const toggle = row?.querySelector<HTMLButtonElement>('.collapsible__toggle')
+    if (toggle?.classList.contains('collapsible__toggle--collapsed')) {
+      toggle.click()
+      opened = true
+    }
+  }
+  return opened
+}
+
+/*
+  Finds a field's input in the edit view, making it exist first. Payload
+  only renders what an editor could see: rows of a list stay empty while
+  collapsed (every row of a page's Sections list starts collapsed,
+  2026-10-02), groups of fields render once scrolled within ~1000px, and a
+  collapsed group of fields renders nothing. Opens rows along the path,
+  brings unrendered field groups into view, and as a last resort opens
+  collapsed field groups -- one step at a time, until the field appears.
+*/
+async function revealField(field: string): Promise<HTMLElement | null> {
+  const domId = `field-${field.replace(/\./g, '__')}`
+  const parts = field.split('.')
+  const visited = new Set<Element>()
+  for (let step = 0; step < 80; step++) {
+    const el = document.getElementById(domId)
+    if (el) return el
+    if (openRowsAlongPath(parts)) {
+      await tick()
+      continue
+    }
+    const unrendered = Array.from(document.querySelectorAll<HTMLElement>('.render-fields')).find(
+      (group) => !group.childElementCount && group.offsetParent && !visited.has(group),
+    )
+    if (unrendered) {
+      visited.add(unrendered)
+      unrendered.scrollIntoView({ block: 'center' })
+      await tick()
+      continue
+    }
+    const closedGroup = Array.from(
+      document.querySelectorAll<HTMLElement>('.collapsible-field > .collapsible-field__collapsible.collapsible--collapsed'),
+    ).find((group) => group.offsetParent && !visited.has(group))
+    if (!closedGroup) break
+    visited.add(closedGroup)
+    closedGroup.querySelector<HTMLButtonElement>('.collapsible__toggle')?.click()
+    await tick()
+  }
+  return null
+}
+
 function parseCurrentDoc(pathname: string): { global?: string; collection?: string; docId?: string } {
   const globalMatch = pathname.match(/\/admin\/globals\/([^/]+)/)
   if (globalMatch) return { global: globalMatch[1] }
@@ -56,6 +115,30 @@ export const LivePreviewClickToEditProvider: React.FC<{ children?: React.ReactNo
   const router = useRouter()
 
   useEffect(() => {
+    const focusField = async (field: string) => {
+      const fieldEl = await revealField(field)
+      if (!fieldEl) {
+        toast.warning('Could not locate that field -- it may be inside a collapsed group, array row, or block.')
+        return
+      }
+
+      fieldEl.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      const focusable = fieldEl.matches('input, textarea, select, [contenteditable="true"]')
+        ? fieldEl
+        : fieldEl.querySelector<HTMLElement>('input, textarea, select, [contenteditable="true"]')
+      focusable?.focus()
+
+      const highlightTarget = fieldEl.closest<HTMLElement>('.field-type') || fieldEl
+      const prevOutline = highlightTarget.style.outline
+      const prevOffset = highlightTarget.style.outlineOffset
+      highlightTarget.style.outline = '2px solid #00AEEF'
+      highlightTarget.style.outlineOffset = '2px'
+      setTimeout(() => {
+        highlightTarget.style.outline = prevOutline
+        highlightTarget.style.outlineOffset = prevOffset
+      }, 1800)
+    }
+
     const onMessage = (event: MessageEvent) => {
       if (!isCmsFieldClickMessage(event.data)) return
       const { field, global, collection, docId } = event.data
@@ -79,28 +162,7 @@ export const LivePreviewClickToEditProvider: React.FC<{ children?: React.ReactNo
         return
       }
 
-      const domId = `field-${field.replace(/\./g, '__')}`
-      const fieldEl = document.getElementById(domId)
-      if (!fieldEl) {
-        toast.warning('Could not locate that field -- it may be inside a collapsed group, array row, or block.')
-        return
-      }
-
-      fieldEl.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      const focusable = fieldEl.matches('input, textarea, select, [contenteditable="true"]')
-        ? fieldEl
-        : fieldEl.querySelector<HTMLElement>('input, textarea, select, [contenteditable="true"]')
-      focusable?.focus()
-
-      const highlightTarget = fieldEl.closest<HTMLElement>('.field-type') || fieldEl
-      const prevOutline = highlightTarget.style.outline
-      const prevOffset = highlightTarget.style.outlineOffset
-      highlightTarget.style.outline = '2px solid #00AEEF'
-      highlightTarget.style.outlineOffset = '2px'
-      setTimeout(() => {
-        highlightTarget.style.outline = prevOutline
-        highlightTarget.style.outlineOffset = prevOffset
-      }, 1800)
+      void focusField(field)
     }
 
     window.addEventListener('message', onMessage)

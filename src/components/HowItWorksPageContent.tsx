@@ -12,6 +12,8 @@ import BehindTheScenes from '@/components/BehindTheScenes'
 import StoryboardHero from '@/components/StoryboardHero'
 import StatsBand from '@/components/ui/StatsBand'
 import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
+import PageSections from '@/components/blocks/PageSections'
+import type { BlocksData } from '@/components/blocks/types'
 import { StickyScroll } from '@/components/ui/sticky-scroll-reveal'
 import { resolveIcon } from '@/lib/icon-map'
 import { mediaUrl } from '@/lib/media-url'
@@ -269,16 +271,52 @@ export default function HowItWorksPageContent({
   pipelineCategories,
   pipelineHeading,
   finalCta,
+  blocksData,
 }: {
   page: HowItWorksPage
   pipelineCategories: Category[]
   pipelineHeading?: { eyebrow?: string | null; title?: string | null; description?: string | null }
   finalCta: FinalCta | null
+  blocksData?: BlocksData
 }) {
   const hero = page?.hero
   const stats = page?.statsBand?.length
     ? page.statsBand.map((s) => ({ value: s.value, suffix: s.suffix || '', label: s.label }))
     : fallbackStats
+
+  // Each built-in section, drawn in the order of the page's Sections list
+  // (How It Works Page > Sections in /admin).
+  const builtIns = {
+    hero: (
+      <StoryboardHero
+        eyebrow={hero?.eyebrow || 'The Process'}
+        title={[hero?.title || 'How It Works']}
+        subtitle={hero?.subtitle || 'A clear, structured process designed to take your project from idea to final delivery — seamlessly, efficiently, and cinematically.'}
+        accent="#00AEEF"
+        cta={{ label: hero?.ctaLabel || 'Get Started', href: hero?.ctaHref || '/contact' }}
+      />
+    ),
+    // Quick-glance map of the 4 phases -- horizontal, short, and up top so a
+    // visitor gets the whole shape of the process before scrolling into
+    // Pipeline's full per-phase breakdown below.
+    overview: <ProcessOverview copy={page?.processOverview} />,
+    // The centerpiece -- open a phase, pick a service, see the breakdown.
+    pipeline: (
+      <div data-cms-global="pipeline">
+        <Pipeline categories={pipelineCategories} heading={pipelineHeading} />
+      </div>
+    ),
+    behindTheScenes: <BehindTheScenes data={page?.behindTheScenes} />,
+    walkthrough: <ProcessWalkthrough copy={page?.processWalkthrough} />,
+    // One combined trust section: Guarantees tucks up under the numbers.
+    stats: (
+      <div data-cms-global="how-it-works-page">
+        <StatsBand stats={stats} fieldPathPrefix="statsBand" />
+        <Guarantees items={page?.guarantees} />
+      </div>
+    ),
+    finalCta: <FinalCTA data={finalCta} />,
+  }
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-brand-blue selection:text-white">
@@ -287,31 +325,7 @@ export default function HowItWorksPageContent({
       <div className="relative z-10 w-full">
         <Nav />
 
-        <StoryboardHero
-          eyebrow={hero?.eyebrow || 'The Process'}
-          title={[hero?.title || 'How It Works']}
-          subtitle={hero?.subtitle || 'A clear, structured process designed to take your project from idea to final delivery — seamlessly, efficiently, and cinematically.'}
-          accent="#00AEEF"
-          cta={{ label: hero?.ctaLabel || 'Get Started', href: hero?.ctaHref || '/contact' }}
-        />
-
-        {/* Quick-glance map of the 4 phases — horizontal, short, and up
-            top so a visitor gets the whole shape of the process before
-            scrolling into Pipeline's full per-phase breakdown below. */}
-        <ProcessOverview copy={page?.processOverview} />
-
-        {/* The centerpiece — open a phase, pick a service, see the breakdown */}
-        <Pipeline categories={pipelineCategories} heading={pipelineHeading} />
-
-        <BehindTheScenes data={page?.behindTheScenes} />
-
-        <ProcessWalkthrough copy={page?.processWalkthrough} />
-
-        <StatsBand stats={stats} fieldPathPrefix="statsBand" />
-
-        <Guarantees items={page?.guarantees} />
-
-        <FinalCTA data={finalCta} />
+        <PageSections page="howItWorks" layout={page?.layout} builtIns={builtIns} accent="#00AEEF" cms={{ global: 'how-it-works-page' }} data={blocksData} />
 
         <Footer />
       </div>

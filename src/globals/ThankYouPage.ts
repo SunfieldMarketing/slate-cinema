@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { revalidateGlobalAfterChange } from '@/lib/revalidate'
+import { sectionsField } from '@/blocks/builtin'
 
 // lucide-react icons actually used by src/app/(frontend)/thank-you/page.tsx's
 // nextSteps array, same "icon as a select string key" convention as every
@@ -25,6 +26,8 @@ export const ThankYouPage: GlobalConfig = {
     afterChange: [revalidateGlobalAfterChange],
   },
   fields: [
+    // Order/visibility of this page's sections + library sections in between.
+    sectionsField('thankYou'),
     {
       name: 'hero',
       type: 'group',

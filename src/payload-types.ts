@@ -200,6 +200,7 @@ export interface User {
 export interface Media {
   id: number;
   alt: string;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -1266,6 +1267,159 @@ export interface Industry {
    */
   order?: number | null;
   /**
+   * The order this page's sections appear in. Drag to reorder, open a section to hide it (on every device or just phones or computers), or use "Add Section" to put any section from the library anywhere on the page. A removed built-in section can be added back from the same menu. The built-in sections keep their words and media in the fields below.
+   */
+  layout?:
+    | (
+        | HeroBlock
+        | RichTextBlock
+        | MediaTextBlock
+        | MediaBlock
+        | StatementBlock
+        | CtaBandBlock
+        | CardsBlock
+        | StatsBlock
+        | ClientCardsBlock
+        | ServiceCardsBlock
+        | TimelineBlock
+        | FaqBlock
+        | LogosBlock
+        | PortfolioGridBlock
+        | JournalPostsBlock
+        | PipelineBlock
+        | FinalCtaBlock
+        | BookingBlock
+        | EmbedBlock
+        | SpacerBlock
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'industryHero';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in Site Settings > Trust banner (the same on every industry page).
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'industryTrust';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'industryClients';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'industryServices';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'industryStatement';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'industryMidCta';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'industryProcess';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'industryGallery';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in Shared Sections > Final CTA (the same on every page that shows it).
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'industryFinalCta';
+          }
+      )[]
+    | null;
+  /**
    * Short tag, a few words (e.g. "Team & athlete films"). Shown as the small label above the page title, and on this industry's photo card in the /portfolio wheel.
    */
   stat: string;
@@ -1878,6 +2032,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -2458,6 +2613,111 @@ export interface IndustriesSelect<T extends boolean = true> {
   icon?: T;
   accent?: T;
   order?: T;
+  layout?:
+    | T
+    | {
+        hero?: T | HeroBlockSelect<T>;
+        richText?: T | RichTextBlockSelect<T>;
+        mediaText?: T | MediaTextBlockSelect<T>;
+        media?: T | MediaBlockSelect<T>;
+        statement?: T | StatementBlockSelect<T>;
+        ctaBand?: T | CtaBandBlockSelect<T>;
+        cards?: T | CardsBlockSelect<T>;
+        stats?: T | StatsBlockSelect<T>;
+        clientCards?: T | ClientCardsBlockSelect<T>;
+        serviceCards?: T | ServiceCardsBlockSelect<T>;
+        timeline?: T | TimelineBlockSelect<T>;
+        faq?: T | FaqBlockSelect<T>;
+        logos?: T | LogosBlockSelect<T>;
+        portfolioGrid?: T | PortfolioGridBlockSelect<T>;
+        journalPosts?: T | JournalPostsBlockSelect<T>;
+        pipeline?: T | PipelineBlockSelect<T>;
+        finalCta?: T | FinalCtaBlockSelect<T>;
+        booking?: T | BookingBlockSelect<T>;
+        embed?: T | EmbedBlockSelect<T>;
+        spacer?: T | SpacerBlockSelect<T>;
+        industryHero?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        industryTrust?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        industryClients?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        industryServices?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        industryStatement?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        industryMidCta?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        industryProcess?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        industryGallery?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        industryFinalCta?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
   stat?: T;
   blurb?: T;
   heroImage?: T;
@@ -3133,6 +3393,16 @@ export interface ReadyToTalk {
   buttonLabel?: string | null;
   buttonHref?: string | null;
   note?: string | null;
+  /**
+   * The "Already know exactly what you want?" band that sends visitors to the project intake form, on Contact and Schedule a Call.
+   */
+  intakeBand?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    body?: string | null;
+    buttonLabel?: string | null;
+    buttonHref?: string | null;
+  };
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -3143,6 +3413,159 @@ export interface ReadyToTalk {
  */
 export interface HomePage {
   id: number;
+  /**
+   * The order this page's sections appear in. Drag to reorder, open a section to hide it (on every device or just phones or computers), or use "Add Section" to put any section from the library anywhere on the page. A removed built-in section can be added back from the same menu. The built-in sections keep their words and media in the fields below.
+   */
+  layout?:
+    | (
+        | HeroBlock
+        | RichTextBlock
+        | MediaTextBlock
+        | MediaBlock
+        | StatementBlock
+        | CtaBandBlock
+        | CardsBlock
+        | StatsBlock
+        | ClientCardsBlock
+        | ServiceCardsBlock
+        | TimelineBlock
+        | FaqBlock
+        | LogosBlock
+        | PortfolioGridBlock
+        | JournalPostsBlock
+        | PipelineBlock
+        | FinalCtaBlock
+        | BookingBlock
+        | EmbedBlock
+        | SpacerBlock
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'homeHero';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'homeTrust';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in Shared Sections > Pipeline (the same on every page that shows it).
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'homePipeline';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'homeMediaVoid';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'homeResults';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'homeStandards';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'homeReviews';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'homeSelectedWork';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in Shared Sections > Final CTA (the same on every page that shows it).
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'homeFinalCta';
+          }
+      )[]
+    | null;
   hero: {
     wordmarkPart1: string;
     wordmarkPart2: string;
@@ -3282,6 +3705,131 @@ export interface HomePage {
 export interface HowItWorksPage {
   id: number;
   /**
+   * The order this page's sections appear in. Drag to reorder, open a section to hide it (on every device or just phones or computers), or use "Add Section" to put any section from the library anywhere on the page. A removed built-in section can be added back from the same menu. The built-in sections keep their words and media in the fields below.
+   */
+  layout?:
+    | (
+        | HeroBlock
+        | RichTextBlock
+        | MediaTextBlock
+        | MediaBlock
+        | StatementBlock
+        | CtaBandBlock
+        | CardsBlock
+        | StatsBlock
+        | ClientCardsBlock
+        | ServiceCardsBlock
+        | TimelineBlock
+        | FaqBlock
+        | LogosBlock
+        | PortfolioGridBlock
+        | JournalPostsBlock
+        | PipelineBlock
+        | FinalCtaBlock
+        | BookingBlock
+        | EmbedBlock
+        | SpacerBlock
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'howItWorksHero';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'howItWorksOverview';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in Shared Sections > Pipeline (the same on every page that shows it).
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'howItWorksPipeline';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'howItWorksBehindTheScenes';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'howItWorksWalkthrough';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'howItWorksStats';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in Shared Sections > Final CTA (the same on every page that shows it).
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'howItWorksFinalCta';
+          }
+      )[]
+    | null;
+  /**
    * StoryboardHero text overlay -- the 3D scene/choreography itself stays code
    */
   hero?: {
@@ -3370,6 +3918,103 @@ export interface HowItWorksPage {
  */
 export interface PortfolioIndexPage {
   id: number;
+  /**
+   * The order this page's sections appear in. Drag to reorder, open a section to hide it (on every device or just phones or computers), or use "Add Section" to put any section from the library anywhere on the page. A removed built-in section can be added back from the same menu. The built-in sections keep their words and media in the fields below.
+   */
+  layout?:
+    | (
+        | HeroBlock
+        | RichTextBlock
+        | MediaTextBlock
+        | MediaBlock
+        | StatementBlock
+        | CtaBandBlock
+        | CardsBlock
+        | StatsBlock
+        | ClientCardsBlock
+        | ServiceCardsBlock
+        | TimelineBlock
+        | FaqBlock
+        | LogosBlock
+        | PortfolioGridBlock
+        | JournalPostsBlock
+        | PipelineBlock
+        | FinalCtaBlock
+        | BookingBlock
+        | EmbedBlock
+        | SpacerBlock
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page. Always shown at the top of the page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'portfolioHero';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'portfolioReel';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'portfolioIndustries';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'portfolioGallery';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in Shared Sections > Final CTA (the same on every page that shows it).
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'portfolioFinalCta';
+          }
+      )[]
+    | null;
   hero?: {
     video?: (number | null) | Media;
     /**
@@ -3418,6 +4063,145 @@ export interface PortfolioIndexPage {
  */
 export interface ContactPage {
   id: number;
+  /**
+   * The order this page's sections appear in. Drag to reorder, open a section to hide it (on every device or just phones or computers), or use "Add Section" to put any section from the library anywhere on the page. A removed built-in section can be added back from the same menu. The built-in sections keep their words and media in the fields below.
+   */
+  layout?:
+    | (
+        | HeroBlock
+        | RichTextBlock
+        | MediaTextBlock
+        | MediaBlock
+        | StatementBlock
+        | CtaBandBlock
+        | CardsBlock
+        | StatsBlock
+        | ClientCardsBlock
+        | ServiceCardsBlock
+        | TimelineBlock
+        | FaqBlock
+        | LogosBlock
+        | PortfolioGridBlock
+        | JournalPostsBlock
+        | PipelineBlock
+        | FinalCtaBlock
+        | BookingBlock
+        | EmbedBlock
+        | SpacerBlock
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contactHero';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contactWhatHappensNext';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contactStageRouter';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contactLeadForm';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in Shared Sections > Ready To Talk (shared by Contact and Schedule a Call).
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contactReadyToTalk';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in Shared Sections > Ready To Talk > "Intake form band" (shared by Contact and Schedule a Call).
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contactIntakeBand';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contactContactMethods';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contactStudioLocation';
+          }
+      )[]
+    | null;
   hero?: {
     eyebrow?: string | null;
     titleLine1?: string | null;
@@ -3615,6 +4399,89 @@ export interface ContactPage {
  */
 export interface ScheduleACallPage {
   id: number;
+  /**
+   * The order this page's sections appear in. Drag to reorder, open a section to hide it (on every device or just phones or computers), or use "Add Section" to put any section from the library anywhere on the page. A removed built-in section can be added back from the same menu. The built-in sections keep their words and media in the fields below.
+   */
+  layout?:
+    | (
+        | HeroBlock
+        | RichTextBlock
+        | MediaTextBlock
+        | MediaBlock
+        | StatementBlock
+        | CtaBandBlock
+        | CardsBlock
+        | StatsBlock
+        | ClientCardsBlock
+        | ServiceCardsBlock
+        | TimelineBlock
+        | FaqBlock
+        | LogosBlock
+        | PortfolioGridBlock
+        | JournalPostsBlock
+        | PipelineBlock
+        | FinalCtaBlock
+        | BookingBlock
+        | EmbedBlock
+        | SpacerBlock
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'scheduleCallHero';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in Shared Sections > Ready To Talk (shared by Contact and Schedule a Call).
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'scheduleCallCallPrep';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'scheduleCallCalendar';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in Shared Sections > Ready To Talk > "Intake form band" (shared by Contact and Schedule a Call).
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'scheduleCallIntakeBand';
+          }
+      )[]
+    | null;
   hero?: {
     eyebrow?: string | null;
     titleLine1?: string | null;
@@ -3645,6 +4512,47 @@ export interface ScheduleACallPage {
  */
 export interface PrivacyPolicyPage {
   id: number;
+  /**
+   * The order this page's sections appear in. Drag to reorder, open a section to hide it (on every device or just phones or computers), or use "Add Section" to put any section from the library anywhere on the page. A removed built-in section can be added back from the same menu. The built-in sections keep their words and media in the fields below.
+   */
+  layout?:
+    | (
+        | HeroBlock
+        | RichTextBlock
+        | MediaTextBlock
+        | MediaBlock
+        | StatementBlock
+        | CtaBandBlock
+        | CardsBlock
+        | StatsBlock
+        | ClientCardsBlock
+        | ServiceCardsBlock
+        | TimelineBlock
+        | FaqBlock
+        | LogosBlock
+        | PortfolioGridBlock
+        | JournalPostsBlock
+        | PipelineBlock
+        | FinalCtaBlock
+        | BookingBlock
+        | EmbedBlock
+        | SpacerBlock
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'privacyDocument';
+          }
+      )[]
+    | null;
   title: string;
   dateline: string;
   /**
@@ -3675,6 +4583,47 @@ export interface PrivacyPolicyPage {
  */
 export interface TermsOfServicePage {
   id: number;
+  /**
+   * The order this page's sections appear in. Drag to reorder, open a section to hide it (on every device or just phones or computers), or use "Add Section" to put any section from the library anywhere on the page. A removed built-in section can be added back from the same menu. The built-in sections keep their words and media in the fields below.
+   */
+  layout?:
+    | (
+        | HeroBlock
+        | RichTextBlock
+        | MediaTextBlock
+        | MediaBlock
+        | StatementBlock
+        | CtaBandBlock
+        | CardsBlock
+        | StatsBlock
+        | ClientCardsBlock
+        | ServiceCardsBlock
+        | TimelineBlock
+        | FaqBlock
+        | LogosBlock
+        | PortfolioGridBlock
+        | JournalPostsBlock
+        | PipelineBlock
+        | FinalCtaBlock
+        | BookingBlock
+        | EmbedBlock
+        | SpacerBlock
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'termsDocument';
+          }
+      )[]
+    | null;
   title: string;
   dateline: string;
   /**
@@ -3705,6 +4654,61 @@ export interface TermsOfServicePage {
  */
 export interface ThankYouPage {
   id: number;
+  /**
+   * The order this page's sections appear in. Drag to reorder, open a section to hide it (on every device or just phones or computers), or use "Add Section" to put any section from the library anywhere on the page. A removed built-in section can be added back from the same menu. The built-in sections keep their words and media in the fields below.
+   */
+  layout?:
+    | (
+        | HeroBlock
+        | RichTextBlock
+        | MediaTextBlock
+        | MediaBlock
+        | StatementBlock
+        | CtaBandBlock
+        | CardsBlock
+        | StatsBlock
+        | ClientCardsBlock
+        | ServiceCardsBlock
+        | TimelineBlock
+        | FaqBlock
+        | LogosBlock
+        | PortfolioGridBlock
+        | JournalPostsBlock
+        | PipelineBlock
+        | FinalCtaBlock
+        | BookingBlock
+        | EmbedBlock
+        | SpacerBlock
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'thankYouHero';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'thankYouNextSteps';
+          }
+      )[]
+    | null;
   hero: {
     eyebrow?: string | null;
     titleLine1: string;
@@ -3734,6 +4738,75 @@ export interface ThankYouPage {
  */
 export interface SocialMediaManagementPage {
   id: number;
+  /**
+   * The order this page's sections appear in. Drag to reorder, open a section to hide it (on every device or just phones or computers), or use "Add Section" to put any section from the library anywhere on the page. A removed built-in section can be added back from the same menu. The built-in sections keep their words and media in the fields below.
+   */
+  layout?:
+    | (
+        | HeroBlock
+        | RichTextBlock
+        | MediaTextBlock
+        | MediaBlock
+        | StatementBlock
+        | CtaBandBlock
+        | CardsBlock
+        | StatsBlock
+        | ClientCardsBlock
+        | ServiceCardsBlock
+        | TimelineBlock
+        | FaqBlock
+        | LogosBlock
+        | PortfolioGridBlock
+        | JournalPostsBlock
+        | PipelineBlock
+        | FinalCtaBlock
+        | BookingBlock
+        | EmbedBlock
+        | SpacerBlock
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'socialMediaHero';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'socialMediaHowItWorks';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'socialMediaIncluded';
+          }
+      )[]
+    | null;
   hero: {
     eyebrow?: string | null;
     headlineText: string;
@@ -3814,6 +4887,61 @@ export interface SocialMediaManagementPage {
  */
 export interface JournalPage {
   id: number;
+  /**
+   * The order this page's sections appear in. Drag to reorder, open a section to hide it (on every device or just phones or computers), or use "Add Section" to put any section from the library anywhere on the page. A removed built-in section can be added back from the same menu. The built-in sections keep their words and media in the fields below.
+   */
+  layout?:
+    | (
+        | HeroBlock
+        | RichTextBlock
+        | MediaTextBlock
+        | MediaBlock
+        | StatementBlock
+        | CtaBandBlock
+        | CardsBlock
+        | StatsBlock
+        | ClientCardsBlock
+        | ServiceCardsBlock
+        | TimelineBlock
+        | FaqBlock
+        | LogosBlock
+        | PortfolioGridBlock
+        | JournalPostsBlock
+        | PipelineBlock
+        | FinalCtaBlock
+        | BookingBlock
+        | EmbedBlock
+        | SpacerBlock
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'journalHero';
+          }
+        | {
+            /**
+             * Keeps the section in the list but stops it showing on the site. Its words and media are edited in the fields further down this page.
+             */
+            hidden?: boolean | null;
+            hideOn?: ('mobile' | 'desktop') | null;
+            /**
+             * Lets a button jump straight here: "pricing" makes /this-page#pricing work. Letters, numbers and dashes.
+             */
+            anchor?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'journalGrid';
+          }
+      )[]
+    | null;
   /**
    * Top of the /journal page.
    */
@@ -4079,6 +5207,15 @@ export interface ReadyToTalkSelect<T extends boolean = true> {
   buttonLabel?: T;
   buttonHref?: T;
   note?: T;
+  intakeBand?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        body?: T;
+        buttonLabel?: T;
+        buttonHref?: T;
+      };
   _status?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -4089,6 +5226,111 @@ export interface ReadyToTalkSelect<T extends boolean = true> {
  * via the `definition` "home-page_select".
  */
 export interface HomePageSelect<T extends boolean = true> {
+  layout?:
+    | T
+    | {
+        hero?: T | HeroBlockSelect<T>;
+        richText?: T | RichTextBlockSelect<T>;
+        mediaText?: T | MediaTextBlockSelect<T>;
+        media?: T | MediaBlockSelect<T>;
+        statement?: T | StatementBlockSelect<T>;
+        ctaBand?: T | CtaBandBlockSelect<T>;
+        cards?: T | CardsBlockSelect<T>;
+        stats?: T | StatsBlockSelect<T>;
+        clientCards?: T | ClientCardsBlockSelect<T>;
+        serviceCards?: T | ServiceCardsBlockSelect<T>;
+        timeline?: T | TimelineBlockSelect<T>;
+        faq?: T | FaqBlockSelect<T>;
+        logos?: T | LogosBlockSelect<T>;
+        portfolioGrid?: T | PortfolioGridBlockSelect<T>;
+        journalPosts?: T | JournalPostsBlockSelect<T>;
+        pipeline?: T | PipelineBlockSelect<T>;
+        finalCta?: T | FinalCtaBlockSelect<T>;
+        booking?: T | BookingBlockSelect<T>;
+        embed?: T | EmbedBlockSelect<T>;
+        spacer?: T | SpacerBlockSelect<T>;
+        homeHero?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        homeTrust?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        homePipeline?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        homeMediaVoid?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        homeResults?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        homeStandards?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        homeReviews?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        homeSelectedWork?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        homeFinalCta?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
   hero?:
     | T
     | {
@@ -4217,6 +5459,93 @@ export interface HomePageSelect<T extends boolean = true> {
  * via the `definition` "how-it-works-page_select".
  */
 export interface HowItWorksPageSelect<T extends boolean = true> {
+  layout?:
+    | T
+    | {
+        hero?: T | HeroBlockSelect<T>;
+        richText?: T | RichTextBlockSelect<T>;
+        mediaText?: T | MediaTextBlockSelect<T>;
+        media?: T | MediaBlockSelect<T>;
+        statement?: T | StatementBlockSelect<T>;
+        ctaBand?: T | CtaBandBlockSelect<T>;
+        cards?: T | CardsBlockSelect<T>;
+        stats?: T | StatsBlockSelect<T>;
+        clientCards?: T | ClientCardsBlockSelect<T>;
+        serviceCards?: T | ServiceCardsBlockSelect<T>;
+        timeline?: T | TimelineBlockSelect<T>;
+        faq?: T | FaqBlockSelect<T>;
+        logos?: T | LogosBlockSelect<T>;
+        portfolioGrid?: T | PortfolioGridBlockSelect<T>;
+        journalPosts?: T | JournalPostsBlockSelect<T>;
+        pipeline?: T | PipelineBlockSelect<T>;
+        finalCta?: T | FinalCtaBlockSelect<T>;
+        booking?: T | BookingBlockSelect<T>;
+        embed?: T | EmbedBlockSelect<T>;
+        spacer?: T | SpacerBlockSelect<T>;
+        howItWorksHero?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        howItWorksOverview?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        howItWorksPipeline?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        howItWorksBehindTheScenes?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        howItWorksWalkthrough?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        howItWorksStats?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        howItWorksFinalCta?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
   hero?:
     | T
     | {
@@ -4299,6 +5628,75 @@ export interface HowItWorksPageSelect<T extends boolean = true> {
  * via the `definition` "portfolio-index-page_select".
  */
 export interface PortfolioIndexPageSelect<T extends boolean = true> {
+  layout?:
+    | T
+    | {
+        hero?: T | HeroBlockSelect<T>;
+        richText?: T | RichTextBlockSelect<T>;
+        mediaText?: T | MediaTextBlockSelect<T>;
+        media?: T | MediaBlockSelect<T>;
+        statement?: T | StatementBlockSelect<T>;
+        ctaBand?: T | CtaBandBlockSelect<T>;
+        cards?: T | CardsBlockSelect<T>;
+        stats?: T | StatsBlockSelect<T>;
+        clientCards?: T | ClientCardsBlockSelect<T>;
+        serviceCards?: T | ServiceCardsBlockSelect<T>;
+        timeline?: T | TimelineBlockSelect<T>;
+        faq?: T | FaqBlockSelect<T>;
+        logos?: T | LogosBlockSelect<T>;
+        portfolioGrid?: T | PortfolioGridBlockSelect<T>;
+        journalPosts?: T | JournalPostsBlockSelect<T>;
+        pipeline?: T | PipelineBlockSelect<T>;
+        finalCta?: T | FinalCtaBlockSelect<T>;
+        booking?: T | BookingBlockSelect<T>;
+        embed?: T | EmbedBlockSelect<T>;
+        spacer?: T | SpacerBlockSelect<T>;
+        portfolioHero?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        portfolioReel?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        portfolioIndustries?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        portfolioGallery?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        portfolioFinalCta?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
   hero?:
     | T
     | {
@@ -4346,6 +5744,102 @@ export interface PortfolioIndexPageSelect<T extends boolean = true> {
  * via the `definition` "contact-page_select".
  */
 export interface ContactPageSelect<T extends boolean = true> {
+  layout?:
+    | T
+    | {
+        hero?: T | HeroBlockSelect<T>;
+        richText?: T | RichTextBlockSelect<T>;
+        mediaText?: T | MediaTextBlockSelect<T>;
+        media?: T | MediaBlockSelect<T>;
+        statement?: T | StatementBlockSelect<T>;
+        ctaBand?: T | CtaBandBlockSelect<T>;
+        cards?: T | CardsBlockSelect<T>;
+        stats?: T | StatsBlockSelect<T>;
+        clientCards?: T | ClientCardsBlockSelect<T>;
+        serviceCards?: T | ServiceCardsBlockSelect<T>;
+        timeline?: T | TimelineBlockSelect<T>;
+        faq?: T | FaqBlockSelect<T>;
+        logos?: T | LogosBlockSelect<T>;
+        portfolioGrid?: T | PortfolioGridBlockSelect<T>;
+        journalPosts?: T | JournalPostsBlockSelect<T>;
+        pipeline?: T | PipelineBlockSelect<T>;
+        finalCta?: T | FinalCtaBlockSelect<T>;
+        booking?: T | BookingBlockSelect<T>;
+        embed?: T | EmbedBlockSelect<T>;
+        spacer?: T | SpacerBlockSelect<T>;
+        contactHero?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        contactWhatHappensNext?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        contactStageRouter?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        contactLeadForm?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        contactReadyToTalk?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        contactIntakeBand?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        contactContactMethods?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        contactStudioLocation?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
   hero?:
     | T
     | {
@@ -4444,6 +5938,66 @@ export interface ContactPageSelect<T extends boolean = true> {
  * via the `definition` "schedule-a-call-page_select".
  */
 export interface ScheduleACallPageSelect<T extends boolean = true> {
+  layout?:
+    | T
+    | {
+        hero?: T | HeroBlockSelect<T>;
+        richText?: T | RichTextBlockSelect<T>;
+        mediaText?: T | MediaTextBlockSelect<T>;
+        media?: T | MediaBlockSelect<T>;
+        statement?: T | StatementBlockSelect<T>;
+        ctaBand?: T | CtaBandBlockSelect<T>;
+        cards?: T | CardsBlockSelect<T>;
+        stats?: T | StatsBlockSelect<T>;
+        clientCards?: T | ClientCardsBlockSelect<T>;
+        serviceCards?: T | ServiceCardsBlockSelect<T>;
+        timeline?: T | TimelineBlockSelect<T>;
+        faq?: T | FaqBlockSelect<T>;
+        logos?: T | LogosBlockSelect<T>;
+        portfolioGrid?: T | PortfolioGridBlockSelect<T>;
+        journalPosts?: T | JournalPostsBlockSelect<T>;
+        pipeline?: T | PipelineBlockSelect<T>;
+        finalCta?: T | FinalCtaBlockSelect<T>;
+        booking?: T | BookingBlockSelect<T>;
+        embed?: T | EmbedBlockSelect<T>;
+        spacer?: T | SpacerBlockSelect<T>;
+        scheduleCallHero?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        scheduleCallCallPrep?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        scheduleCallCalendar?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        scheduleCallIntakeBand?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
   hero?:
     | T
     | {
@@ -4475,6 +6029,39 @@ export interface ScheduleACallPageSelect<T extends boolean = true> {
  * via the `definition` "privacy-policy-page_select".
  */
 export interface PrivacyPolicyPageSelect<T extends boolean = true> {
+  layout?:
+    | T
+    | {
+        hero?: T | HeroBlockSelect<T>;
+        richText?: T | RichTextBlockSelect<T>;
+        mediaText?: T | MediaTextBlockSelect<T>;
+        media?: T | MediaBlockSelect<T>;
+        statement?: T | StatementBlockSelect<T>;
+        ctaBand?: T | CtaBandBlockSelect<T>;
+        cards?: T | CardsBlockSelect<T>;
+        stats?: T | StatsBlockSelect<T>;
+        clientCards?: T | ClientCardsBlockSelect<T>;
+        serviceCards?: T | ServiceCardsBlockSelect<T>;
+        timeline?: T | TimelineBlockSelect<T>;
+        faq?: T | FaqBlockSelect<T>;
+        logos?: T | LogosBlockSelect<T>;
+        portfolioGrid?: T | PortfolioGridBlockSelect<T>;
+        journalPosts?: T | JournalPostsBlockSelect<T>;
+        pipeline?: T | PipelineBlockSelect<T>;
+        finalCta?: T | FinalCtaBlockSelect<T>;
+        booking?: T | BookingBlockSelect<T>;
+        embed?: T | EmbedBlockSelect<T>;
+        spacer?: T | SpacerBlockSelect<T>;
+        privacyDocument?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
   title?: T;
   dateline?: T;
   body?: T;
@@ -4488,6 +6075,39 @@ export interface PrivacyPolicyPageSelect<T extends boolean = true> {
  * via the `definition` "terms-of-service-page_select".
  */
 export interface TermsOfServicePageSelect<T extends boolean = true> {
+  layout?:
+    | T
+    | {
+        hero?: T | HeroBlockSelect<T>;
+        richText?: T | RichTextBlockSelect<T>;
+        mediaText?: T | MediaTextBlockSelect<T>;
+        media?: T | MediaBlockSelect<T>;
+        statement?: T | StatementBlockSelect<T>;
+        ctaBand?: T | CtaBandBlockSelect<T>;
+        cards?: T | CardsBlockSelect<T>;
+        stats?: T | StatsBlockSelect<T>;
+        clientCards?: T | ClientCardsBlockSelect<T>;
+        serviceCards?: T | ServiceCardsBlockSelect<T>;
+        timeline?: T | TimelineBlockSelect<T>;
+        faq?: T | FaqBlockSelect<T>;
+        logos?: T | LogosBlockSelect<T>;
+        portfolioGrid?: T | PortfolioGridBlockSelect<T>;
+        journalPosts?: T | JournalPostsBlockSelect<T>;
+        pipeline?: T | PipelineBlockSelect<T>;
+        finalCta?: T | FinalCtaBlockSelect<T>;
+        booking?: T | BookingBlockSelect<T>;
+        embed?: T | EmbedBlockSelect<T>;
+        spacer?: T | SpacerBlockSelect<T>;
+        termsDocument?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
   title?: T;
   dateline?: T;
   body?: T;
@@ -4501,6 +6121,48 @@ export interface TermsOfServicePageSelect<T extends boolean = true> {
  * via the `definition` "thank-you-page_select".
  */
 export interface ThankYouPageSelect<T extends boolean = true> {
+  layout?:
+    | T
+    | {
+        hero?: T | HeroBlockSelect<T>;
+        richText?: T | RichTextBlockSelect<T>;
+        mediaText?: T | MediaTextBlockSelect<T>;
+        media?: T | MediaBlockSelect<T>;
+        statement?: T | StatementBlockSelect<T>;
+        ctaBand?: T | CtaBandBlockSelect<T>;
+        cards?: T | CardsBlockSelect<T>;
+        stats?: T | StatsBlockSelect<T>;
+        clientCards?: T | ClientCardsBlockSelect<T>;
+        serviceCards?: T | ServiceCardsBlockSelect<T>;
+        timeline?: T | TimelineBlockSelect<T>;
+        faq?: T | FaqBlockSelect<T>;
+        logos?: T | LogosBlockSelect<T>;
+        portfolioGrid?: T | PortfolioGridBlockSelect<T>;
+        journalPosts?: T | JournalPostsBlockSelect<T>;
+        pipeline?: T | PipelineBlockSelect<T>;
+        finalCta?: T | FinalCtaBlockSelect<T>;
+        booking?: T | BookingBlockSelect<T>;
+        embed?: T | EmbedBlockSelect<T>;
+        spacer?: T | SpacerBlockSelect<T>;
+        thankYouHero?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        thankYouNextSteps?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
   hero?:
     | T
     | {
@@ -4532,6 +6194,57 @@ export interface ThankYouPageSelect<T extends boolean = true> {
  * via the `definition` "social-media-management-page_select".
  */
 export interface SocialMediaManagementPageSelect<T extends boolean = true> {
+  layout?:
+    | T
+    | {
+        hero?: T | HeroBlockSelect<T>;
+        richText?: T | RichTextBlockSelect<T>;
+        mediaText?: T | MediaTextBlockSelect<T>;
+        media?: T | MediaBlockSelect<T>;
+        statement?: T | StatementBlockSelect<T>;
+        ctaBand?: T | CtaBandBlockSelect<T>;
+        cards?: T | CardsBlockSelect<T>;
+        stats?: T | StatsBlockSelect<T>;
+        clientCards?: T | ClientCardsBlockSelect<T>;
+        serviceCards?: T | ServiceCardsBlockSelect<T>;
+        timeline?: T | TimelineBlockSelect<T>;
+        faq?: T | FaqBlockSelect<T>;
+        logos?: T | LogosBlockSelect<T>;
+        portfolioGrid?: T | PortfolioGridBlockSelect<T>;
+        journalPosts?: T | JournalPostsBlockSelect<T>;
+        pipeline?: T | PipelineBlockSelect<T>;
+        finalCta?: T | FinalCtaBlockSelect<T>;
+        booking?: T | BookingBlockSelect<T>;
+        embed?: T | EmbedBlockSelect<T>;
+        spacer?: T | SpacerBlockSelect<T>;
+        socialMediaHero?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        socialMediaHowItWorks?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        socialMediaIncluded?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
   hero?:
     | T
     | {
@@ -4583,6 +6296,48 @@ export interface SocialMediaManagementPageSelect<T extends boolean = true> {
  * via the `definition` "journal-page_select".
  */
 export interface JournalPageSelect<T extends boolean = true> {
+  layout?:
+    | T
+    | {
+        hero?: T | HeroBlockSelect<T>;
+        richText?: T | RichTextBlockSelect<T>;
+        mediaText?: T | MediaTextBlockSelect<T>;
+        media?: T | MediaBlockSelect<T>;
+        statement?: T | StatementBlockSelect<T>;
+        ctaBand?: T | CtaBandBlockSelect<T>;
+        cards?: T | CardsBlockSelect<T>;
+        stats?: T | StatsBlockSelect<T>;
+        clientCards?: T | ClientCardsBlockSelect<T>;
+        serviceCards?: T | ServiceCardsBlockSelect<T>;
+        timeline?: T | TimelineBlockSelect<T>;
+        faq?: T | FaqBlockSelect<T>;
+        logos?: T | LogosBlockSelect<T>;
+        portfolioGrid?: T | PortfolioGridBlockSelect<T>;
+        journalPosts?: T | JournalPostsBlockSelect<T>;
+        pipeline?: T | PipelineBlockSelect<T>;
+        finalCta?: T | FinalCtaBlockSelect<T>;
+        booking?: T | BookingBlockSelect<T>;
+        embed?: T | EmbedBlockSelect<T>;
+        spacer?: T | SpacerBlockSelect<T>;
+        journalHero?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        journalGrid?:
+          | T
+          | {
+              hidden?: T;
+              hideOn?: T;
+              anchor?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
   hero?:
     | T
     | {

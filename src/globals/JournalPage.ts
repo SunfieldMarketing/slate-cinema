@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { revalidateGlobalAfterChange } from '@/lib/revalidate'
+import { sectionsField } from '@/blocks/builtin'
 
 /*
   Brings the /journal index page and the shared bits around every journal
@@ -20,6 +21,8 @@ export const JournalPage: GlobalConfig = {
     afterChange: [revalidateGlobalAfterChange],
   },
   fields: [
+    // Order/visibility of this page's sections + library sections in between.
+    sectionsField('journal'),
     {
       name: 'hero',
       type: 'group',

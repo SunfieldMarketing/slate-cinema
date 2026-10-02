@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
 import ContactPageContent from '@/components/ContactPageContent'
 import { getContactPageGlobal, getReadyToTalk } from '@/lib/payload-data'
+import { loadBlocksData } from '@/lib/page-builder-data'
 
 export const metadata: Metadata = {
   title: 'Get Started',
@@ -12,5 +13,6 @@ export const metadata: Metadata = {
 export default async function ContactPage() {
   const draft = (await draftMode()).isEnabled
   const [page, readyToTalk] = await Promise.all([getContactPageGlobal(draft), getReadyToTalk(draft)])
-  return <ContactPageContent page={page} readyToTalk={readyToTalk} />
+  const blocksData = await loadBlocksData(page?.layout, draft)
+  return <ContactPageContent page={page} readyToTalk={readyToTalk} blocksData={blocksData} />
 }

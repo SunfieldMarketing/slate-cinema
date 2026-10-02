@@ -67,5 +67,26 @@ export const ReadyToTalk: GlobalConfig = {
     { name: 'buttonLabel', type: 'text', defaultValue: 'Schedule a Call' },
     { name: 'buttonHref', type: 'text', defaultValue: '/schedule-a-call' },
     { name: 'note', type: 'text', defaultValue: 'No commitment — reschedule or cancel anytime.' },
+    {
+      // Was typed into IntakeCTABand.tsx until 2026-10-02.
+      name: 'intakeBand',
+      label: 'Intake form band',
+      type: 'group',
+      admin: {
+        description:
+          'The "Already know exactly what you want?" band that sends visitors to the project intake form, on Contact and Schedule a Call.',
+      },
+      fields: [
+        { name: 'eyebrow', type: 'text', defaultValue: '// Already Know?' },
+        { name: 'headline', type: 'text', defaultValue: 'Already know exactly what you want?' },
+        {
+          name: 'body',
+          type: 'textarea',
+          defaultValue: "Skip the call — walk us through the project details directly and we'll follow up with a plan.",
+        },
+        { name: 'buttonLabel', label: 'Button label', type: 'text', defaultValue: 'Start the Intake Form' },
+        { name: 'buttonHref', label: 'Button link', type: 'text', defaultValue: '/contact/project' },
+      ],
+    },
   ],
 }

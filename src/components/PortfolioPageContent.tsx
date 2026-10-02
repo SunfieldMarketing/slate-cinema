@@ -19,6 +19,8 @@ import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
 import ScrollExpandMedia from '@/components/ui/scroll-expand-media'
 import ThreeDPhotoCarousel from '@/components/ui/three-d-carousel'
 import ProjectCardModal from '@/components/ProjectCardModal'
+import PageSections from '@/components/blocks/PageSections'
+import type { BlocksData } from '@/components/blocks/types'
 import type { IndustryData, PortfolioProjectLocal } from '@/lib/normalize'
 import type { FinalCta, PortfolioIndexPage } from '@/payload-types'
 import { mediaUrl } from '@/lib/media-url'
@@ -126,11 +128,13 @@ export default function PortfolioPageContent({
   projects,
   page,
   finalCta,
+  blocksData,
 }: {
   industries: IndustryData[]
   projects: PortfolioProjectLocal[]
   page: PortfolioIndexPage
   finalCta: FinalCta | null
+  blocksData?: BlocksData
 }) {
   const hero = page?.hero
   // Was hardcoded to the placeholder file below regardless of what was
@@ -143,6 +147,65 @@ export default function PortfolioPageContent({
   const heroMediaSrc = heroVimeoId
     ? vimeoEmbedUrl(heroVimeoId, 'background')
     : mediaUrl(hero?.video) || '/videos/hero.mp4'
+  // Each built-in section, drawn in the order of the page's Sections list
+  // (Portfolio Index Page > Sections in /admin). The hero always stays on
+  // top: it holds the page's scroll until its video has opened up.
+  const builtIns = {
+    hero: (
+      <ScrollExpandMedia
+        mediaType="video"
+        mediaSrc={heroMediaSrc}
+        accent={PORTFOLIO_ACCENT}
+        title={hero?.title || 'Our Work'}
+        date={hero?.date || 'Selected Campaigns'}
+        scrollToExpand={hero?.scrollToExpandLabel || 'Scroll To Explore'}
+      >
+        <div className="max-w-2xl mx-auto text-center" data-cms-global="portfolio-index-page">
+          <p data-cms-field="hero.description" className="text-white/60 text-base sm:text-lg font-light leading-relaxed mb-8">
+            {hero?.description ||
+              "Discover a world of captivating storytelling. From immersive brand journeys to campaigns that dominate the feed — this is Slate Cinema's showcase."}
+          </p>
+          <a
+            href={hero?.ctaHref || '/contact'}
+            data-cms-field="hero.ctaLabel"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-black font-semibold text-sm hover:bg-[#a855f7] hover:text-white transition-colors duration-300"
+          >
+            {hero?.ctaLabel || 'Get Started'}
+          </a>
+        </div>
+      </ScrollExpandMedia>
+    ),
+    // The showcase centerpiece -- drag-to-spin reel of actual work.
+    // Capped at 8: the ring's geometry (card size, radius vs. the
+    // fixed 3D perspective) was hand-tuned for an 8-card reel, and
+    // feeding it the full growing project list stretched the ring
+    // radius far past what the perspective can render cleanly.
+    // Gallery below gets a different 8 (order 8-15) so the two
+    // sections never repeat the same projects.
+    reel: <ReelCarousel projects={projects.slice(0, 8)} copy={page?.reelCarousel} />,
+    // Who we serve -- the main routing interaction on this page.
+    industries: <Industries industries={industries} copy={page?.industriesSection} />,
+    // The full project archive -- no category filter chips, per the
+    // client's call: with only a handful of projects per category,
+    // filtering makes the grid look sparse rather than deep. Capped
+    // at 8 (a different 8 than the reel above, order 8-15) so the
+    // bento mosaic tiling -- also hand-tuned for an 8-project grid --
+    // renders as originally designed instead of an ever-growing list.
+    gallery: (
+      <div data-cms-global="portfolio-index-page">
+        <Portfolio
+          projects={projects.slice(8, 16)}
+          heading={{
+            eyebrow: page?.gallery ? (page.gallery.eyebrow ?? '') : 'Our Work',
+            headline: page?.gallery ? (page.gallery.headline ?? '') : 'A Gallery of Impact',
+          }}
+          headingFieldPaths={{ eyebrow: 'gallery.eyebrow', headline: 'gallery.headline' }}
+        />
+      </div>
+    ),
+    finalCta: <FinalCTA data={finalCta} />,
+  }
+
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-brand-blue selection:text-white">
       <AmbientBackdrop accent={PORTFOLIO_ACCENT} />
@@ -150,59 +213,7 @@ export default function PortfolioPageContent({
       <div className="relative z-10 w-full">
         <Nav />
 
-        <ScrollExpandMedia
-          mediaType="video"
-          mediaSrc={heroMediaSrc}
-          accent={PORTFOLIO_ACCENT}
-          title={hero?.title || 'Our Work'}
-          date={hero?.date || 'Selected Campaigns'}
-          scrollToExpand={hero?.scrollToExpandLabel || 'Scroll To Explore'}
-        >
-          <div className="max-w-2xl mx-auto text-center" data-cms-global="portfolio-index-page">
-            <p data-cms-field="hero.description" className="text-white/60 text-base sm:text-lg font-light leading-relaxed mb-8">
-              {hero?.description ||
-                "Discover a world of captivating storytelling. From immersive brand journeys to campaigns that dominate the feed — this is Slate Cinema's showcase."}
-            </p>
-            <a
-              href={hero?.ctaHref || '/contact'}
-              data-cms-field="hero.ctaLabel"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-black font-semibold text-sm hover:bg-[#a855f7] hover:text-white transition-colors duration-300"
-            >
-              {hero?.ctaLabel || 'Get Started'}
-            </a>
-          </div>
-        </ScrollExpandMedia>
-
-        {/* The showcase centerpiece — drag-to-spin reel of actual work.
-            Capped at 8: the ring's geometry (card size, radius vs. the
-            fixed 3D perspective) was hand-tuned for an 8-card reel, and
-            feeding it the full growing project list stretched the ring
-            radius far past what the perspective can render cleanly.
-            Gallery below gets a different 8 (order 8-15) so the two
-            sections never repeat the same projects. */}
-        <ReelCarousel projects={projects.slice(0, 8)} copy={page?.reelCarousel} />
-
-        {/* Who we serve — the main routing interaction on this page */}
-        <Industries industries={industries} copy={page?.industriesSection} />
-
-        {/* The full project archive -- no category filter chips, per the
-            client's call: with only a handful of projects per category,
-            filtering makes the grid look sparse rather than deep. Capped
-            at 8 (a different 8 than the reel above, order 8-15) so the
-            bento mosaic tiling -- also hand-tuned for an 8-project grid --
-            renders as originally designed instead of an ever-growing list. */}
-        <div data-cms-global="portfolio-index-page">
-          <Portfolio
-            projects={projects.slice(8, 16)}
-            heading={{
-              eyebrow: page?.gallery ? (page.gallery.eyebrow ?? '') : 'Our Work',
-              headline: page?.gallery ? (page.gallery.headline ?? '') : 'A Gallery of Impact',
-            }}
-            headingFieldPaths={{ eyebrow: 'gallery.eyebrow', headline: 'gallery.headline' }}
-          />
-        </div>
-
-        <FinalCTA data={finalCta} />
+        <PageSections page="portfolio" layout={page?.layout} builtIns={builtIns} accent={PORTFOLIO_ACCENT} cms={{ global: 'portfolio-index-page' }} data={blocksData} />
 
         <Footer />
       </div>

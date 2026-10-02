@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { revalidateGlobalAfterChange } from '@/lib/revalidate'
+import { sectionsField } from '@/blocks/builtin'
 
 // Every lucide-react icon used anywhere across the Contact page's cards/
 // badges, in one shared option list rather than a dozen near-duplicate
@@ -36,6 +37,8 @@ export const ContactPage: GlobalConfig = {
     afterChange: [revalidateGlobalAfterChange],
   },
   fields: [
+    // Order/visibility of this page's sections + library sections in between.
+    sectionsField('contact'),
     {
       name: 'hero',
       type: 'group',

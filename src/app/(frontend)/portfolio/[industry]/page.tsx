@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { draftMode } from 'next/headers'
 import { getNormalizedIndustries, getNormalizedPortfolioProjects } from '@/lib/normalize'
 import { getFinalCTA } from '@/lib/payload-data'
+import { loadBlocksData } from '@/lib/page-builder-data'
 import IndustryPageContent from '@/components/IndustryPageContent'
 
 // Athletics' dedicated static route (portfolio/athletics/page.tsx) was
@@ -39,5 +40,6 @@ export default async function IndustryPage({ params }: { params: Promise<{ indus
   ])
   const industry = industries.find((i) => i.slug === slug)
   if (!industry) notFound()
-  return <IndustryPageContent industry={industry} portfolioProjects={portfolioProjects} finalCta={finalCta} />
+  const blocksData = await loadBlocksData(industry.layout, draft)
+  return <IndustryPageContent industry={industry} portfolioProjects={portfolioProjects} finalCta={finalCta} blocksData={blocksData} />
 }

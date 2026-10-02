@@ -3,7 +3,9 @@ import { draftMode } from 'next/headers'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
+import PageSections from '@/components/blocks/PageSections'
 import { getSocialMediaManagementPageGlobal, getSiteSettings } from '@/lib/payload-data'
+import { loadBlocksData } from '@/lib/page-builder-data'
 
 /*
   Brought into the CMS 2026-08-26 (see src/globals/SocialMediaManagementPage.ts
@@ -43,6 +45,7 @@ export default async function SocialMediaManagementPage() {
     getSocialMediaManagementPageGlobal(draft),
     getSiteSettings(draft),
   ])
+  const blocksData = await loadBlocksData(page?.layout, draft)
 
   const hero = page?.hero
   const howItWorks = page?.howItWorks
@@ -67,6 +70,92 @@ export default async function SocialMediaManagementPage() {
     'Performance reporting in one place, updated automatically',
   ]
   const includedItems = included?.items?.length ? included.items.map((i) => i.text) : fallbackIncluded
+
+  // Each built-in section, drawn in the order of the page's Sections list
+  // (Social Media Management Page > Sections in /admin). Each one carries
+  // its own .smm-page scope, so the stylesheet above styles these sections
+  // only -- not library sections placed between them, and not the shared
+  // Nav/Footer (until 2026-10-02 ".smm-page h1" restyled the footer wordmark
+  // on this page).
+  const builtIns = {
+    hero: (
+      <div className="smm-page">
+        <div className="hero" data-cms-global="social-media-management-page">
+          <div className="sprockets" aria-hidden="true" />
+          <div className="wrap">
+            <div className="eyebrow" data-cms-field="hero.eyebrow">{hero?.eyebrow || 'Distribution · Always On'}</div>
+            <h1>
+              <span data-cms-field="hero.headlineText">{hero?.headlineText || 'We run social media for businesses that need to'}</span>{' '}
+              <em data-cms-field="hero.headlineEmphasis">{hero?.headlineEmphasis || 'focus on operations.'}</em>
+            </h1>
+            <div className="lede" data-cms-field="hero.lede">
+              {hero?.lede ? (
+                <RichText data={hero.lede} />
+              ) : (
+                <p>Slate Cinema plans, produces, schedules and publishes social content for client
+                businesses across Instagram, Facebook, TikTok, YouTube and X — from one calendar, with one
+                approval step, <strong>on the client&apos;s own accounts</strong>. The same crew that shoots your
+                story keeps it on screen, week after week.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    ),
+    howItWorks: (
+      <div className="smm-page">
+        <section data-cms-global="social-media-management-page">
+          <div className="wrap">
+            <h2 className="slate" data-cms-field="howItWorks.heading">{howItWorks?.heading || 'How it works'}</h2>
+            <div className="steps">
+              {(steps || fallbackSteps).map((s, i) => (
+                <div className="step" key={s.title}>
+                  <div className="num mono">{String(i + 1).padStart(2, '0')}</div>
+                  <div>
+                    <h3 data-cms-field={`howItWorks.steps.${i}.title`}>{s.title}</h3>
+                    <div data-cms-field={`howItWorks.steps.${i}.body`}>
+                      {steps && 'body' in s && typeof s.body === 'object' ? (
+                        <RichText data={s.body} />
+                      ) : (
+                        <p>{typeof s.body === 'string' ? s.body : ''}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </div>
+    ),
+    included: (
+      <div className="smm-page">
+        <section className="smm-divided" data-cms-global="social-media-management-page">
+          <div className="wrap twocol">
+            <div>
+              <h2 className="slate" data-cms-field="included.heading">{included?.heading || "What's included"}</h2>
+              <ul className="incl">
+                {includedItems.map((text, i) => (
+                  <li key={text} data-cms-field={`included.items.${i}.text`}>{text}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="cta">
+              <div className="mono-tag" data-cms-field="cta.monoTag">{cta?.monoTag || 'Now scheduling'}</div>
+              <h3 data-cms-field="cta.heading">{cta?.heading || 'One calendar. One approval. Action.'}</h3>
+              <p data-cms-field="cta.body">{cta?.body || "Tell us about your business and what you want your social to do — we'll get back to you with a plan."}</p>
+              <a className="go" href={cta?.buttonHref || '/schedule-a-call'} data-cms-field="cta.buttonLabel">{cta?.buttonLabel || 'Schedule a call'}</a>
+              {/* 2026-09-11 audit: py-1.5 -my-1.5 expands the email link's
+                  tap target (was 145x20) without disturbing this inline
+                  text's line flow, same trick used elsewhere for these
+                  small utility links. */}
+              <span className="alt"><span data-cms-field="cta.altText">{cta?.altText || 'Or email'}</span> <a href={`mailto:${email}`} className="py-1.5 -my-1.5">{email}</a></span>
+            </div>
+          </div>
+        </section>
+      </div>
+    ),
+  }
 
   return (
     <>
@@ -102,7 +191,7 @@ export default async function SocialMediaManagementPage() {
   .smm-page h2.slate { font-family:'Courier Prime',monospace; font-weight:700; font-size:13px;
              letter-spacing:.4em; text-transform:uppercase; color:var(--muted); margin:0 0 30px; }
   .smm-page section { padding:64px 0; }
-  .smm-page section + section { border-top:1px solid var(--line); }
+  .smm-page section.smm-divided { border-top:1px solid var(--line); }
 
   .smm-page .steps { display:flex; flex-direction:column; }
   .smm-page .step { display:grid; grid-template-columns:86px 1fr; gap:22px; padding:26px 0;
@@ -135,76 +224,10 @@ export default async function SocialMediaManagementPage() {
   }
       `}</style>
 
-      <div className="smm-page">
+      <div className="bg-ink antialiased">
         <Nav />
 
-        <div className="hero" data-cms-global="social-media-management-page">
-          <div className="sprockets" aria-hidden="true" />
-          <div className="wrap">
-            <div className="eyebrow" data-cms-field="hero.eyebrow">{hero?.eyebrow || 'Distribution · Always On'}</div>
-            <h1>
-              <span data-cms-field="hero.headlineText">{hero?.headlineText || 'We run social media for businesses that need to'}</span>{' '}
-              <em data-cms-field="hero.headlineEmphasis">{hero?.headlineEmphasis || 'focus on operations.'}</em>
-            </h1>
-            <div className="lede" data-cms-field="hero.lede">
-              {hero?.lede ? (
-                <RichText data={hero.lede} />
-              ) : (
-                <p>Slate Cinema plans, produces, schedules and publishes social content for client
-                businesses across Instagram, Facebook, TikTok, YouTube and X — from one calendar, with one
-                approval step, <strong>on the client&apos;s own accounts</strong>. The same crew that shoots your
-                story keeps it on screen, week after week.</p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <section data-cms-global="social-media-management-page">
-          <div className="wrap">
-            <h2 className="slate" data-cms-field="howItWorks.heading">{howItWorks?.heading || 'How it works'}</h2>
-            <div className="steps">
-              {(steps || fallbackSteps).map((s, i) => (
-                <div className="step" key={s.title}>
-                  <div className="num mono">{String(i + 1).padStart(2, '0')}</div>
-                  <div>
-                    <h3 data-cms-field={`howItWorks.steps.${i}.title`}>{s.title}</h3>
-                    <div data-cms-field={`howItWorks.steps.${i}.body`}>
-                      {steps && 'body' in s && typeof s.body === 'object' ? (
-                        <RichText data={s.body} />
-                      ) : (
-                        <p>{typeof s.body === 'string' ? s.body : ''}</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section data-cms-global="social-media-management-page">
-          <div className="wrap twocol">
-            <div>
-              <h2 className="slate" data-cms-field="included.heading">{included?.heading || "What's included"}</h2>
-              <ul className="incl">
-                {includedItems.map((text, i) => (
-                  <li key={text} data-cms-field={`included.items.${i}.text`}>{text}</li>
-                ))}
-              </ul>
-            </div>
-            <div className="cta">
-              <div className="mono-tag" data-cms-field="cta.monoTag">{cta?.monoTag || 'Now scheduling'}</div>
-              <h3 data-cms-field="cta.heading">{cta?.heading || 'One calendar. One approval. Action.'}</h3>
-              <p data-cms-field="cta.body">{cta?.body || "Tell us about your business and what you want your social to do — we'll get back to you with a plan."}</p>
-              <a className="go" href={cta?.buttonHref || '/schedule-a-call'} data-cms-field="cta.buttonLabel">{cta?.buttonLabel || 'Schedule a call'}</a>
-              {/* 2026-09-11 audit: py-1.5 -my-1.5 expands the email link's
-                  tap target (was 145x20) without disturbing this inline
-                  text's line flow, same trick used elsewhere for these
-                  small utility links. */}
-              <span className="alt"><span data-cms-field="cta.altText">{cta?.altText || 'Or email'}</span> <a href={`mailto:${email}`} className="py-1.5 -my-1.5">{email}</a></span>
-            </div>
-          </div>
-        </section>
+        <PageSections page="socialMedia" layout={page?.layout} builtIns={builtIns} accent="#f97316" cms={{ global: 'social-media-management-page' }} data={blocksData} />
 
         <Footer />
       </div>

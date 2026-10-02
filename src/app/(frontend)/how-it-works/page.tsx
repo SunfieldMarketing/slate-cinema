@@ -3,6 +3,7 @@ import { draftMode } from 'next/headers'
 import HowItWorksPageContent from '@/components/HowItWorksPageContent'
 import { getHowItWorksPageGlobal, getPipeline, getFinalCTA } from '@/lib/payload-data'
 import { normalizePipeline } from '@/lib/normalize'
+import { loadBlocksData } from '@/lib/page-builder-data'
 
 export const metadata: Metadata = {
   title: 'How It Works',
@@ -17,12 +18,14 @@ export default async function HowItWorksPage() {
     getPipeline(draft),
     getFinalCTA(draft),
   ])
+  const blocksData = await loadBlocksData(page?.layout, draft)
   return (
     <HowItWorksPageContent
       page={page}
       pipelineCategories={normalizePipeline(pipeline)}
       pipelineHeading={pipeline?.heading}
       finalCta={finalCta}
+      blocksData={blocksData}
     />
   )
 }

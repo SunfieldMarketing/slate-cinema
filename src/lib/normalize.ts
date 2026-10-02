@@ -149,6 +149,10 @@ export interface IndustryData {
   processHeading: IndustrySectionHeading
   galleryHeading: { eyebrow: string; headline: string }
   redirect?: IndustryRedirect
+  /** The page's Sections list (order/visibility + library sections), as
+      saved in /admin. Absent for a code-only industry and in the copy the
+      root layout hands every page (see layout.tsx). */
+  layout?: Industry['layout']
 }
 
 /*
@@ -301,6 +305,7 @@ export function normalizeIndustry(doc: Industry): IndustryData {
           url: doc.redirectUrl ?? '',
         }
       : undefined,
+    layout: doc.layout ?? undefined,
   }
 }
 

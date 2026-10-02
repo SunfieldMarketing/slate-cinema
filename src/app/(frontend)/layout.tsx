@@ -137,7 +137,9 @@ export default async function RootLayout({
         <ScrollRestoration />
         <PostHogInit />
         <GoogleAdsTag />
-        <SiteDataProvider value={{ navigation, footer, industries, settings }}>
+        {/* Industries go to every page (menu, wheel); each one's Sections list
+            only matters on its own page, which loads it itself. */}
+        <SiteDataProvider value={{ navigation, footer, industries: industries.map((industry) => ({ ...industry, layout: undefined })), settings }}>
           <SmoothScrolling>
             {children}
           </SmoothScrolling>

@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { revalidateGlobalAfterChange } from '@/lib/revalidate'
+import { sectionsField } from '@/blocks/builtin'
 
 /*
   Hero + CustomCalendar copy for /schedule-a-call. The "Book a time on
@@ -31,6 +32,8 @@ export const ScheduleACallPage: GlobalConfig = {
     afterChange: [revalidateGlobalAfterChange],
   },
   fields: [
+    // Order/visibility of this page's sections + library sections in between.
+    sectionsField('scheduleCall'),
     {
       name: 'hero',
       type: 'group',

@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { revalidateGlobalAfterChange } from '@/lib/revalidate'
+import { sectionsField } from '@/blocks/builtin'
 
 /*
   Brings /privacy-policy into the CMS -- previously fully hardcoded (see
@@ -30,6 +31,8 @@ export const PrivacyPolicyPage: GlobalConfig = {
     afterChange: [revalidateGlobalAfterChange],
   },
   fields: [
+    // Order/visibility of this page's sections + library sections in between.
+    sectionsField('privacy'),
     { name: 'title', type: 'text', required: true, defaultValue: 'Privacy Policy' },
     { name: 'dateline', type: 'text', required: true, defaultValue: 'Last updated · 6 August 2026' },
     {

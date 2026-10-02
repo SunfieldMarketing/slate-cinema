@@ -7,6 +7,8 @@ import PageHero from '@/components/ui/PageHero'
 import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
 import GHLBookingWidget from '@/components/GHLBookingWidget'
 import IntakeCTABand from '@/components/IntakeCTABand'
+import PageSections from '@/components/blocks/PageSections'
+import { loadBlocksData } from '@/lib/page-builder-data'
 import { resolveIcon } from '@/lib/icon-map'
 import { getScheduleACallPageGlobal, getReadyToTalk } from '@/lib/payload-data'
 import type { ReadyToTalk as ReadyToTalkGlobal } from '@/payload-types'
@@ -90,7 +92,29 @@ function CallFraming({ copy }: { copy: ReadyToTalkGlobal | null }) {
 export default async function ScheduleACallPage() {
   const draft = (await draftMode()).isEnabled
   const [page, readyToTalk] = await Promise.all([getScheduleACallPageGlobal(draft), getReadyToTalk(draft)])
+  const blocksData = await loadBlocksData(page?.layout, draft)
   const hero = page?.hero
+
+  // Each built-in section, drawn in the order of the page's Sections list
+  // (Schedule A Call Page > Sections in /admin).
+  const builtIns = {
+    hero: (
+      <div data-cms-global="schedule-a-call-page">
+        <PageHero
+          eyebrow={hero?.eyebrow || 'Schedule a Call'}
+          title={[hero?.titleLine1 || "Let's talk", hero?.titleLine2 || 'it through']}
+          subtitle={hero?.subtitle || "Grab a time that works for you. We'll walk through your project, timeline, and budget — and outline exactly what happens next."}
+          accent="#00AEEF"
+          eyebrowFieldPath="hero.eyebrow"
+          titleFieldPaths={['hero.titleLine1', 'hero.titleLine2']}
+          subtitleFieldPath="hero.subtitle"
+        />
+      </div>
+    ),
+    callPrep: <CallFraming copy={readyToTalk} />,
+    calendar: <GHLBookingWidget copy={page?.calendar} />,
+    intakeBand: <IntakeCTABand copy={readyToTalk?.intakeBand} />,
+  }
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-[#00AEEF] selection:text-white">
@@ -98,23 +122,7 @@ export default async function ScheduleACallPage() {
 
       <div className="relative z-10 w-full">
         <Nav />
-        <div data-cms-global="schedule-a-call-page">
-          <PageHero
-            eyebrow={hero?.eyebrow || 'Schedule a Call'}
-            title={[hero?.titleLine1 || "Let's talk", hero?.titleLine2 || 'it through']}
-            subtitle={hero?.subtitle || "Grab a time that works for you. We'll walk through your project, timeline, and budget — and outline exactly what happens next."}
-            accent="#00AEEF"
-            eyebrowFieldPath="hero.eyebrow"
-            titleFieldPaths={['hero.titleLine1', 'hero.titleLine2']}
-            subtitleFieldPath="hero.subtitle"
-          />
-        </div>
-
-        <CallFraming copy={readyToTalk} />
-
-        <GHLBookingWidget copy={page?.calendar} />
-
-        <IntakeCTABand />
+        <PageSections page="scheduleCall" layout={page?.layout} builtIns={builtIns} accent="#00AEEF" cms={{ global: 'schedule-a-call-page' }} data={blocksData} />
 
         <Footer />
       </div>

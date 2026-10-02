@@ -13,6 +13,8 @@ import PortfolioCarousel from '@/components/PortfolioCarousel'
 import FinalCTA from '@/components/FinalCTA'
 import Footer from '@/components/Footer'
 import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
+import PageSections from '@/components/blocks/PageSections'
+import type { BlocksData } from '@/components/blocks/types'
 import type { HomePage, FinalCta } from '@/payload-types'
 import type { PortfolioProjectLocal } from '@/lib/normalize'
 import type { Category } from '@/lib/pipeline-data'
@@ -23,13 +25,34 @@ export default function HomePageContent({
   pipelineHeading,
   portfolioProjects,
   finalCta,
+  blocksData,
 }: {
   homePage: HomePage
   pipelineCategories: Category[]
   pipelineHeading?: { eyebrow?: string | null; title?: string | null; description?: string | null }
   portfolioProjects: PortfolioProjectLocal[]
   finalCta: FinalCta | null
+  blocksData?: BlocksData
 }) {
+  // Each built-in section, drawn in the order of the page's Sections list
+  // (Home Page > Sections in /admin).
+  const builtIns = {
+    hero: <div data-scroll-section="hero" data-cms-global="home-page"><Hero data={homePage?.hero} /></div>,
+    trust: <div data-scroll-section="trust" data-cms-global="home-page"><TrustSection data={homePage?.trustSection} /></div>,
+    pipeline: <div id="how" data-scroll-section="pipeline" data-cms-global="pipeline"><Pipeline categories={pipelineCategories} heading={pipelineHeading} /></div>,
+    mediaVoid: <div data-scroll-section="mediavoid" data-cms-global="home-page"><MediaVoid data={homePage?.mediaVoid} /></div>,
+    // Restored 2026-08-13 at Kauan's explicit request after being removed in
+    // the previous pass over the fake-stats audit finding -- the specific
+    // 120,000,000-views/98.2%-reach numbers are still unverified/placeholder
+    // pending real aggregate figures. Update `viewsTarget`/`reachPercent`
+    // via the HomePage global once real numbers exist.
+    results: <div data-scroll-section="results" data-cms-global="home-page"><Results data={homePage?.results} /></div>,
+    standards: <div data-scroll-section="standards" data-cms-global="home-page"><IndustryStandards data={homePage?.industryStandards} /></div>,
+    reviews: <div data-scroll-section="reviews" data-cms-global="home-page"><Reviews data={homePage?.reviews} /></div>,
+    selectedWork: <div id="reel" data-scroll-section="portfolio"><PortfolioCarousel projects={portfolioProjects} copy={homePage?.selectedWork} /></div>,
+    finalCta: <div data-scroll-section="finalcta" data-cms-global="final-cta"><FinalCTA data={finalCta} /></div>,
+  }
+
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-[#00AEEF] selection:text-white">
       {/* Global Cinematic Overlays */}
@@ -41,22 +64,7 @@ export default function HomePageContent({
       <Nav />
 
       <div className="relative z-10 w-full">
-        <div data-scroll-section="hero" data-cms-global="home-page"><Hero data={homePage?.hero} /></div>
-        <div data-scroll-section="trust" data-cms-global="home-page"><TrustSection data={homePage?.trustSection} /></div>
-        <div id="how" data-scroll-section="pipeline" data-cms-global="pipeline"><Pipeline categories={pipelineCategories} heading={pipelineHeading} /></div>
-        <div data-scroll-section="mediavoid" data-cms-global="home-page"><MediaVoid data={homePage?.mediaVoid} /></div>
-        {/* Restored 2026-08-13 at Kauan's explicit request after being
-            removed in the previous pass over the fake-stats audit finding
-            -- the specific 120,000,000-views/98.2%-reach numbers below are
-            still unverified/placeholder pending real aggregate figures;
-            flagged in chat rather than silently swapped for something
-            else. Update `viewsTarget`/`reachPercent` via the HomePage
-            global once real numbers exist. */}
-        <div data-scroll-section="results" data-cms-global="home-page"><Results data={homePage?.results} /></div>
-        <div data-scroll-section="standards" data-cms-global="home-page"><IndustryStandards data={homePage?.industryStandards} /></div>
-        <div data-scroll-section="reviews" data-cms-global="home-page"><Reviews data={homePage?.reviews} /></div>
-        <div id="reel" data-scroll-section="portfolio"><PortfolioCarousel projects={portfolioProjects} copy={homePage?.selectedWork} /></div>
-        <div data-scroll-section="finalcta" data-cms-global="final-cta"><FinalCTA data={finalCta} /></div>
+        <PageSections page="home" layout={homePage?.layout} builtIns={builtIns} accent="#00AEEF" cms={{ global: 'home-page' }} data={blocksData} />
         <div data-scroll-section="footer"><Footer /></div>
       </div>
     </main>

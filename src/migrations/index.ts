@@ -10,6 +10,7 @@ import * as migration_20260826_140000_publish_new_pages from './20260826_140000_
 import * as migration_20260924_000000_add_changelog from './20260924_000000_add_changelog';
 import * as migration_20261001_000000_cms_full_coverage from './20261001_000000_cms_full_coverage';
 import * as migration_20261002_000000_page_builder from './20261002_000000_page_builder';
+import * as migration_20261002_180000_page_sections from './20261002_180000_page_sections';
 
 export const migrations = [
   {
@@ -71,5 +72,10 @@ export const migrations = [
     up: migration_20261002_000000_page_builder.up,
     down: migration_20261002_000000_page_builder.down,
     name: '20261002_000000_page_builder',
+  },
+  {
+    up: migration_20261002_180000_page_sections.up,
+    down: migration_20261002_180000_page_sections.down,
+    name: '20261002_180000_page_sections',
   },
 ];
