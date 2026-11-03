@@ -13,7 +13,7 @@ import {
   getTermsOfServicePageGlobal,
 } from '@/lib/payload-data'
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://slatecinema.com'
+import { SITE_URL } from '@/lib/site-url'
 
 type Frequency = MetadataRoute.Sitemap[number]['changeFrequency']
 
@@ -36,7 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // A page ticked "Hide from search engines" in /admin stays out.
   const route = (page: { noIndex?: boolean | null } | null, path: string, changeFrequency: Frequency, priority: number) =>
-    page?.noIndex ? [] : [{ url: `${BASE_URL}${path}`, lastModified: new Date(), changeFrequency, priority }]
+    page?.noIndex ? [] : [{ url: `${SITE_URL}${path}`, lastModified: new Date(), changeFrequency, priority }]
 
   const staticRoutes: MetadataRoute.Sitemap = [
     ...route(home, '', 'weekly', 1),
@@ -44,6 +44,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...route(howItWorks, '/how-it-works', 'monthly', 0.8),
     ...route(contact, '/contact', 'monthly', 0.9),
     ...route(scheduleCall, '/schedule-a-call', 'monthly', 0.7),
+    // The project intake form has no CMS document of its own, so it's always listed.
+    ...route(null, '/contact/project', 'monthly', 0.7),
     ...route(journal, '/journal', 'weekly', 0.8),
     ...route(social, '/social-media-management', 'monthly', 0.8),
     ...route(privacy, '/privacy-policy', 'yearly', 0.3),
@@ -51,14 +53,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   const industryRoutes: MetadataRoute.Sitemap = industries.filter((industry) => !industry.seo?.noIndex).map((industry) => ({
-    url: `${BASE_URL}/portfolio/${industry.slug}`,
+    url: `${SITE_URL}/portfolio/${industry.slug}`,
     lastModified: new Date(),
     changeFrequency: 'monthly',
     priority: 0.7,
   }))
 
   const journalRoutes: MetadataRoute.Sitemap = journalPosts.filter((post) => !post.seo?.noIndex).map((post) => ({
-    url: `${BASE_URL}/journal/${post.slug}`,
+    url: `${SITE_URL}/journal/${post.slug}`,
     lastModified: new Date(),
     changeFrequency: 'monthly',
     priority: 0.6,
@@ -68,7 +70,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const customRoutes: MetadataRoute.Sitemap = customPages
     .filter((page) => !page.noIndex)
     .map((page) => ({
-      url: `${BASE_URL}/${page.path}`,
+      url: `${SITE_URL}/${page.path}`,
       lastModified: page.updatedAt ? new Date(page.updatedAt) : new Date(),
       changeFrequency: 'monthly',
       priority: 0.7,

@@ -883,8 +883,11 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
             />
 
             {/* SLATE CINEMA letters */}
-            <div className="flex items-baseline gap-4 md:gap-6 mb-6">
-              <div className="flex" data-cms-field="hero.wordmarkPart1">
+            {/* The page's <h1> (the footer wordmark used to be the only one on
+                the whole site's home page). aria-label reads it as words, not
+                as a row of separate letters. */}
+            <h1 aria-label={`${wordmarkPart1} ${wordmarkPart2}`} className="flex items-baseline gap-4 md:gap-6 mb-6">
+              <span aria-hidden="true" className="flex" data-cms-field="hero.wordmarkPart1">
                 {slateLetters.map((letter, i) => (
                   <span
                     key={`s-${i}`}
@@ -894,8 +897,8 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
                     {letter}
                   </span>
                 ))}
-              </div>
-              <div className="flex" data-cms-field="hero.wordmarkPart2">
+              </span>
+              <span aria-hidden="true" className="flex" data-cms-field="hero.wordmarkPart2">
                 {cinemaLetters.map((letter, i) => (
                   <span
                     key={`c-${i}`}
@@ -905,8 +908,8 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
                     {letter}
                   </span>
                 ))}
-              </div>
-            </div>
+              </span>
+            </h1>
 
             {/* Subtitle */}
             {/* text-center added 2026-08-27: on mobile this wraps to 2

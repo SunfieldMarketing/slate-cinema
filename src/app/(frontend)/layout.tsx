@@ -10,7 +10,8 @@ import GoogleAdsTag from "@/components/GoogleAdsTag";
 import { SiteDataProvider } from "@/lib/site-data-context";
 import { getNavigation, getFooterGlobal, getSiteSettings, mediaUrl } from "@/lib/payload-data";
 import { getNormalizedIndustries } from "@/lib/normalize";
-import { DEFAULT_DESCRIPTION, DEFAULT_TITLE } from "@/lib/seo";
+import { DEFAULT_DESCRIPTION, DEFAULT_SHARE_IMAGE, DEFAULT_TITLE } from "@/lib/seo";
+import { SITE_URL } from "@/lib/site-url";
 import { brandColor } from "@/lib/brand";
 import { preload } from 'react-dom';
 import { draftMode } from 'next/headers';
@@ -20,7 +21,6 @@ const bebas = Bebas_Neue({ subsets: ["latin"], weight: "400", variable: "--font-
 const fraunces = Fraunces({ subsets: ["latin"], style: ["italic", "normal"], variable: "--font-fraunces" });
 const courier = Courier_Prime({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-courier" });
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://slatecinema.com'
 
 // Time-based revalidation for every route under this layout that doesn't
 // set its own `revalidate`. Without this, every page here is fully
@@ -38,10 +38,10 @@ export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings()
   const title = settings.seo?.defaultTitle || DEFAULT_TITLE
   const description = settings.seo?.defaultDescription || DEFAULT_DESCRIPTION
-  const ogImage = mediaUrl(settings.seo?.ogImage)
+  const ogImage = mediaUrl(settings.seo?.ogImage) || DEFAULT_SHARE_IMAGE
 
   return {
-    metadataBase: new URL(BASE_URL),
+    metadataBase: new URL(SITE_URL),
     title: {
       default: title,
       template: settings.seo?.titleTemplate || "%s | Slate Cinema",
@@ -54,7 +54,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      url: BASE_URL,
+      url: SITE_URL,
       siteName: "Slate Cinema",
       locale: "en_US",
       type: "website",
@@ -98,9 +98,9 @@ export default async function RootLayout({
     '@type': 'ProfessionalService',
     name: 'Slate Cinema',
     description: settings.seo?.defaultDescription,
-    url: BASE_URL,
-    logo: `${BASE_URL}/images/logo-mark.webp`,
-    image: `${BASE_URL}/images/logo-mark.webp`,
+    url: SITE_URL,
+    logo: `${SITE_URL}/images/logo-mark.webp`,
+    image: `${SITE_URL}/images/logo-mark.webp`,
     email: contact?.email,
     telephone: contact?.phone,
     address: {

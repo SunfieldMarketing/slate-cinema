@@ -1,17 +1,22 @@
 import type { Metadata } from 'next'
 import Nav from '@/components/Nav'
 import IntakeFrame from '@/components/IntakeFrame'
+import { pageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Project Intake',
-  description:
-    'Tell us about your project — goals, timeline, and budget — and we’ll follow up with a fixed-price proposal within minutes.',
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
+    path: '/contact/project',
+    title: 'Project Intake',
+    description:
+      'Tell us about your project — goals, timeline, and budget — and we’ll follow up with a fixed-price proposal within minutes.',
+  })
 }
 
 export default function ProjectIntakePage() {
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-ink text-white">
       <Nav />
+      <h1 className="sr-only">Project intake: tell us about your project</h1>
       {/* The intake brief is a self-contained bundled app (its own HTML
           document, styling, and multi-step JS) — embedded rather than
           reimplemented so it stays byte-identical to the delivered file.

@@ -34,6 +34,34 @@ const nextConfig: NextConfig = {
       { source: "/podcasts", destination: "/portfolio/podcasts", permanent: true },
     ];
   },
+  // Response headers (Oct 27 audit #27, #32). Headers here are matched before
+  // the filesystem, so they apply to /public files too.
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          // Stops browsers MIME-sniffing a response into something executable.
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          // SAMEORIGIN, not DENY: the admin's Live Preview and the project
+          // intake form (/intake.html) both frame the site from the same
+          // origin. Other sites can't frame it.
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          // Cross-site requests get only the origin, never the full URL.
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+        ],
+      },
+      {
+        // Every video file is served with max-age=0 by default, so a
+        // returning visitor re-checked with the server for each one. A file
+        // here must never be overwritten in place -- ship a changed video
+        // under a new name (post-production-web.mp4, not post-production.mp4
+        // again) or visitors keep the old one for a year.
+        source: '/videos/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+      },
+    ];
+  },
   async rewrites() {
     return [
       {

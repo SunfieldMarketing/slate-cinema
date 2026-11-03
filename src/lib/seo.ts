@@ -2,6 +2,9 @@ import type { Metadata } from 'next'
 import { getSiteSettings } from '@/lib/payload-data'
 import { mediaUrl } from '@/lib/media-url'
 
+/** Branded 1200x630 card used when neither the page nor Site Settings > SEO sets a share image. */
+export const DEFAULT_SHARE_IMAGE = '/images/og-default.jpg'
+
 /** Used when Site Settings > SEO is empty (a fresh database). */
 export const DEFAULT_TITLE = 'Slate Cinema | Video Marketing at Your Fingertips'
 export const DEFAULT_DESCRIPTION =
@@ -52,7 +55,9 @@ export async function pageMetadata({
   // Never undefined: a page's `description: undefined` would wipe out the
   // layout's instead of inheriting it.
   const pageDescription = seo?.metaDescription?.trim() || description || settings.seo?.defaultDescription || DEFAULT_DESCRIPTION
-  const shareImage = mediaUrl(seo?.metaImage) || image || mediaUrl(settings.seo?.ogImage)
+  // Never imageless: a link with no picture previews as a bare text row in
+  // iMessage, Slack and social feeds (Oct 27 audit #14).
+  const shareImage = mediaUrl(seo?.metaImage) || image || mediaUrl(settings.seo?.ogImage) || DEFAULT_SHARE_IMAGE
   const template = settings.seo?.titleTemplate || '%s | Slate Cinema'
   const shareTitle = absoluteTitle ? pageTitle : template.replace('%s', pageTitle)
   const hidden = noIndex || Boolean(seo?.noIndex)
@@ -60,6 +65,8 @@ export async function pageMetadata({
   return {
     title: absoluteTitle ? { absolute: pageTitle } : pageTitle,
     description: pageDescription,
+    // One canonical address per page, on the www host the apex redirects to.
+    alternates: { canonical: path },
     ...(hidden ? { robots: { index: false, follow: false } } : {}),
     openGraph: {
       title: shareTitle,
@@ -68,13 +75,13 @@ export async function pageMetadata({
       siteName: 'Slate Cinema',
       locale: 'en_US',
       type: 'website',
-      ...(shareImage ? { images: [{ url: shareImage }] } : {}),
+      images: [{ url: shareImage }],
     },
     twitter: {
       card: 'summary_large_image',
       title: shareTitle,
       description: pageDescription,
-      ...(shareImage ? { images: [shareImage] } : {}),
+      images: [shareImage],
     },
   }
 }

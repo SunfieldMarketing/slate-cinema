@@ -15,7 +15,7 @@ gsap.registerPlugin(ScrollTrigger)
 export default function Footer() {
   const { footer } = useSiteData()
   const footerRef = useRef<HTMLElement>(null)
-  const textRef = useRef<HTMLHeadingElement>(null)
+  const textRef = useRef<HTMLParagraphElement>(null)
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false)
 
   useGSAP(() => {
@@ -111,14 +111,16 @@ export default function Footer() {
           original. (A stenciled/typewriter face on a film slate's chalk
           board is also just the more on-brand read for "SLATE CINEMA"
           than the marquee-display face.) */}
+      {/* A <p>, not an <h1> (Oct 27 audit #31): as an h1 every page had two. */}
       <div className="footer-wordmark w-full flex items-center justify-center py-3 mb-5 overflow-visible">
-        <h1
+        <p
           ref={textRef}
+          aria-hidden="true"
           data-cms-field="wordmark"
           className="text-[9vw] md:text-[9vw] font-bold text-white/[0.07] font-mono leading-none tracking-tighter whitespace-nowrap select-none"
         >
           {wordmark}
-        </h1>
+        </p>
       </div>
 
       {/* Footer Content Grid - layered OVER the wordmark via negative margin */}

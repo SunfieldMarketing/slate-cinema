@@ -253,24 +253,26 @@ export default function ScrollExpandMedia({
                 </div>
               </div>
 
-              <div
+              {/* One <h1> holding both animated halves (it used to be two,
+                  so the page had two headings for one title). */}
+              <h1
                 className={`flex items-center justify-center text-center gap-4 w-full relative z-10 flex-col ${
                   textBlend ? 'mix-blend-difference' : 'mix-blend-normal'
                 }`}
               >
-                <motion.h1
+                <motion.span
                   className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter text-white"
                   style={{ transform: `translateX(-${textTranslateX}vw)` }}
                 >
                   {firstWord}
-                </motion.h1>
-                <motion.h1
+                </motion.span>
+                <motion.span
                   className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter text-center text-white"
                   style={{ transform: `translateX(${textTranslateX}vw)` }}
                 >
                   {restOfTitle}
-                </motion.h1>
-              </div>
+                </motion.span>
+              </h1>
             </div>
 
             <motion.section
