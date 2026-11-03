@@ -73,14 +73,16 @@ function JournalGrid({ journalPosts, readLabel }: { journalPosts: JournalPostLoc
                 <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
                 <span
                   data-cms-field="category"
-                  className="absolute top-4 left-4 font-mono text-[10px] tracking-widest uppercase px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/15"
+                  // A near-opaque dark pill and 11px+ text (Oct 27 audit #8): at bg-black/40 the coloured label
+                  // sank into bright or busy cover photos (the paint photo, a bright sky).
+                  className="absolute top-4 left-4 font-mono text-[11px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full bg-black/75 backdrop-blur-md border border-white/20"
                   style={{ color: p.accent }}
                 >
                   {p.category}
                 </span>
               </div>
               <div className="flex-1 flex flex-col p-6">
-                <div className="flex items-center gap-3 font-mono text-[10px] tracking-widest text-white/40 uppercase mb-3">
+                <div className="flex items-center gap-3 font-mono text-xs sm:text-[10px] tracking-widest text-white/55 uppercase mb-3">
                   <span data-cms-field="date">{p.date}</span>
                   <span className="w-1 h-1 rounded-full bg-white/30" />
                   <span data-cms-field="readTime">{p.readTime}</span>

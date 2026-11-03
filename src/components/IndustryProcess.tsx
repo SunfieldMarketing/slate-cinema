@@ -84,7 +84,7 @@ export default function IndustryProcess({
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         <div className="proc-fade text-center mb-16">
           {heading.eyebrow && (
-            <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-5" style={{ color: accent }}>
+            <span className="inline-flex items-center gap-3 font-mono text-xs sm:text-[11px] tracking-[0.3em] uppercase mb-5" style={{ color: accent }}>
               <span className="w-8 h-px" style={{ background: `${accent}66` }} /> <span data-cms-field={paths.eyebrow}>{heading.eyebrow}</span>
             </span>
           )}
@@ -120,7 +120,9 @@ export default function IndustryProcess({
           ))}
         </div>
 
-        <div className="proc-fade grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 mt-10">
+        {/* One column on phones (Oct 27 audit #39): two columns left the fifth card sitting
+            alone, and the step label wrapped in the narrow cards. */}
+        <div className="proc-fade grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 mt-10">
           {steps.map((s, i) => {
             const Icon = STEP_ICONS[i % STEP_ICONS.length]
             return (
@@ -138,7 +140,7 @@ export default function IndustryProcess({
                 >
                   <Icon className="w-[18px] h-[18px]" style={{ color: accent }} />
                 </div>
-                <div data-cms-field={`${paths.items}.${i}.week`} className="font-mono text-[9px] tracking-[0.2em] uppercase mb-2.5" style={{ color: accent }}>
+                <div data-cms-field={`${paths.items}.${i}.week`} className="font-mono text-[11px] sm:text-[10px] tracking-[0.14em] leading-snug uppercase mb-2.5" style={{ color: accent }}>
                   Keyframe {String(i + 1).padStart(2, '0')} · {s.week}
                 </div>
                 <h3 data-cms-field={`${paths.items}.${i}.title`} className="text-sm font-semibold text-white mb-1.5">{s.title}</h3>

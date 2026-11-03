@@ -337,7 +337,7 @@ export default function StoryboardHero({ eyebrow = 'The Process', title, subtitl
         {/* Intro — the ONLY thing visible at rest */}
         <div className="sb-text-outer absolute inset-0 z-40 flex flex-col items-center justify-center text-center px-4 pointer-events-none">
           <div className="sb-text-inner">
-            <span data-cms-global="how-it-works-page" className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.35em] uppercase mb-6" style={{ color: accent }}>
+            <span data-cms-global="how-it-works-page" className="inline-flex items-center gap-3 font-mono text-xs sm:text-[11px] tracking-[0.35em] uppercase mb-6" style={{ color: accent }}>
               <span className="w-8 h-px" style={{ background: `${accent}66` }} /> <span data-cms-field="hero.eyebrow">{eyebrow}</span> <span className="w-8 h-px" style={{ background: `${accent}66` }} />
             </span>
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter text-white leading-[1.02]">
@@ -348,7 +348,7 @@ export default function StoryboardHero({ eyebrow = 'The Process', title, subtitl
             {subtitle && <p data-cms-field="hero.subtitle" className="mt-6 text-white/55 text-base sm:text-lg font-light max-w-xl mx-auto leading-relaxed">{subtitle}</p>}
             <div className="mt-10 flex flex-col items-center gap-2 opacity-60">
               {scrollCue && (
-                <span {...labelField('scrollCue')} className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/40">
+                <span {...labelField('scrollCue')} className="font-mono text-xs sm:text-[9px] tracking-[0.3em] uppercase text-white/55">
                   {scrollCue}
                 </span>
               )}
@@ -393,7 +393,7 @@ export default function StoryboardHero({ eyebrow = 'The Process', title, subtitl
             className="absolute bottom-16 left-8 max-w-xs"
             style={{ opacity: 0, visibility: 'hidden', textShadow: '0 2px 10px rgba(0,0,0,0.9)' }}
           >
-            <div className="flex items-baseline gap-2 font-mono text-[10px] tracking-[0.25em] uppercase">
+            <div className="flex items-baseline gap-2 font-mono text-xs sm:text-[10px] tracking-[0.25em] uppercase">
               <span ref={phaseNumberRef} className="text-white/60">01</span>
               <span ref={phaseTitleRef} className="font-bold" style={{ color: accent }}>Pre-Production</span>
             </div>

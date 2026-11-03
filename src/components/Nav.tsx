@@ -124,13 +124,17 @@ export default function Nav() {
           </Link>
 
           {/* Desktop Links */}
-          <div className="hidden md:flex items-center gap-1" style={{ perspective: '800px' }}>
+          {/* The full menu needs ~1050px (logo + 5 links + Client Portal + Schedule Call); between
+              768 and 1024 it wrapped onto a second line and the Client Portal link got crushed
+              (Oct 27 audit #3). So the hamburger now covers everything under 1100px, not just
+              phones. */}
+          <div className="hidden min-[1100px]:flex items-center gap-1" style={{ perspective: '800px' }}>
             <Link
               href="/"
               onMouseMove={handleLinkMove}
               onMouseLeave={handleLinkLeave}
               data-cms-field="homeLabel"
-              className="relative px-4 py-2 text-sm text-white/50 hover:text-white font-medium tracking-wide transition-colors block"
+              className="relative px-4 py-2 text-sm text-white/70 hover:text-white font-medium tracking-wide transition-colors block"
               style={{ transformStyle: 'preserve-3d' }}
             >
               {homeLabel}
@@ -141,17 +145,28 @@ export default function Nav() {
               className="relative"
               onMouseEnter={() => setPortfolioDropdownOpen(true)}
               onMouseLeave={() => setPortfolioDropdownOpen(false)}
+              // Keyboard: Tab into the trigger opens the list; leaving the whole group (not just
+              // moving between its links) or pressing Esc closes it.
+              onFocus={() => setPortfolioDropdownOpen(true)}
+              onBlur={(e) => {
+                if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPortfolioDropdownOpen(false)
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') setPortfolioDropdownOpen(false)
+              }}
             >
               <Link
                 href="/portfolio"
                 onMouseMove={handleLinkMove}
                 onMouseLeave={handleLinkLeave}
                 data-cms-field="portfolioLabel"
-                className="relative px-4 py-2 text-sm text-white/50 hover:text-white font-medium tracking-wide transition-colors flex items-center gap-1"
+                aria-haspopup="true"
+                aria-expanded={portfolioDropdownOpen}
+                className="relative px-4 py-2 text-sm text-white/70 hover:text-white font-medium tracking-wide transition-colors flex items-center gap-1"
                 style={{ transformStyle: 'preserve-3d' }}
               >
                 {portfolioLabel}
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${portfolioDropdownOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown aria-hidden="true" className={`w-3.5 h-3.5 transition-transform duration-300 ${portfolioDropdownOpen ? 'rotate-180' : ''}`} />
               </Link>
 
               {portfolioDropdownOpen && (
@@ -204,7 +219,7 @@ export default function Nav() {
                     data-cms-field={`links.${i}.label`}
                     onMouseMove={handleLinkMove}
                     onMouseLeave={handleLinkLeave}
-                    className="relative px-4 py-2 text-sm text-white/50 hover:text-white font-medium tracking-wide transition-colors block"
+                    className="relative px-4 py-2 text-sm text-white/70 hover:text-white font-medium tracking-wide transition-colors block"
                     style={{ transformStyle: 'preserve-3d' }}
                   >
                     {link.label}
@@ -225,11 +240,11 @@ export default function Nav() {
                     onMouseMove={handleLinkMove}
                     onMouseLeave={handleLinkLeave}
                     aria-expanded={open}
-                    className="relative px-4 py-2 text-sm text-white/50 hover:text-white font-medium tracking-wide transition-colors flex items-center gap-1"
+                    className="relative px-4 py-2 text-sm text-white/70 hover:text-white font-medium tracking-wide transition-colors flex items-center gap-1"
                     style={{ transformStyle: 'preserve-3d' }}
                   >
                     {link.label}
-                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
+                    <ChevronDown aria-hidden="true" className={`w-3.5 h-3.5 transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
                   </Link>
                   {open && (
                     <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 w-64">
@@ -253,17 +268,20 @@ export default function Nav() {
           </div>
 
           {/* CTA + Portal */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden min-[1100px]:flex items-center gap-4">
             {/* Landed here 2026-08-13 after 3 rounds: Jake's Aug 12 call said
                 "make it white"; Kauan then said "bring it back to grey";
                 separately, Jake also posted a screenshot of this exact
                 element to #web-development the same day (Aug 12, 13:03)
                 saying "I like that it's not white but it should be about
-                20% more visible" -- referring to the original text-white/25.
+                20% more visible" -- referring to the original text-white/55.
                 Split the difference on that explicit, quantified feedback
                 rather than picking one instruction over the other: a grey
-                that's meaningfully brighter than /25, nowhere near white/80. */}
-            <a href={clientPortalHref} target="_blank" rel="noopener noreferrer" data-cms-field="clientPortalLabel" className="text-xs font-mono text-white/35 hover:text-white/55 transition-colors tracking-widest uppercase">{clientPortalLabel}</a>
+                that's meaningfully brighter than /25, nowhere near white/80.
+                2026-11-03 (Oct 27 audit #2, #12): /35 measured far below the 4.5:1
+                contrast minimum on the near-black bar and the link nearly vanished;
+                /60 clears it while still reading as secondary to the white button. */}
+            <a href={clientPortalHref} target="_blank" rel="noopener noreferrer" data-cms-field="clientPortalLabel" className="text-xs font-mono text-white/60 hover:text-white transition-colors tracking-widest uppercase">{clientPortalLabel}</a>
             <Link href={ctaHref} data-cms-field="ctaButton.label" className="relative px-5 py-2.5 rounded-full text-sm font-semibold text-[#030305] bg-white overflow-hidden group">
               <div className="absolute inset-0 bg-brand-blue translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
               <span className="relative group-hover:text-white transition-colors">{ctaLabel}</span>
@@ -274,7 +292,7 @@ export default function Nav() {
               brings the real tap target to ~44x44, the standard minimum
               (was a bare 20x20 icon with no hit-area padding at all). */}
           <button
-            className="md:hidden text-white z-50 relative p-3 -m-3"
+            className="min-[1100px]:hidden text-white z-50 relative p-3 -m-3"
             onClick={() => (mobileMenuOpen ? closeMobileMenu() : setMobileMenuOpen(true))}
             aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileMenuOpen}
@@ -296,7 +314,7 @@ export default function Nav() {
         <div
           data-cms-global="navigation"
           data-lenis-prevent
-          className="fixed inset-0 z-30 bg-ink overflow-y-auto overscroll-contain pt-24 pb-16"
+          className="min-[1100px]:hidden fixed inset-0 z-30 bg-ink overflow-y-auto overscroll-contain pt-24 pb-16"
           onClick={(e) => {
             if (e.target === e.currentTarget) closeMobileMenu()
           }}

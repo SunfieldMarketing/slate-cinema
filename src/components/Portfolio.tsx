@@ -125,7 +125,7 @@ export default function Portfolio({
           <div className="pf-head flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 md:mb-12">
             <div>
               {heading.eyebrow && (
-                <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase mb-4">
+                <span className="inline-flex items-center gap-3 font-mono text-xs sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase mb-4">
                   <span className="w-8 h-px bg-brand-blue/40" /> <span data-cms-field={headingFieldPaths?.eyebrow}>{heading.eyebrow}</span>
                 </span>
               )}
@@ -179,17 +179,19 @@ export default function Portfolio({
               <div className="absolute bottom-0 left-0 right-0 z-10 p-5">
                 <div className="flex items-end justify-between gap-3">
                   <div className="min-w-0">
-                    <h3 data-cms-field="title" className="text-white font-bold text-lg leading-tight truncate">{p.title}</h3>
+                    <h3 data-cms-field="title" // line-clamp-2, not truncate: a title could be cut to "Timeless Passover Memori..." with
+                    // plenty of room left (Oct 27 audit #30). Two lines, then an ellipsis.
+                    className="text-white font-bold text-lg leading-tight line-clamp-2">{p.title}</h3>
                     <p data-cms-field="company" className="text-white/50 text-xs font-mono truncate">{p.company}</p>
                   </div>
-                  <ArrowUpRight className="w-5 h-5 text-white/40 group-hover:text-brand-blue group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                  <ArrowUpRight className="w-5 h-5 text-white/55 group-hover:text-brand-blue group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
                 </div>
                 {/* Metrics reveal */}
                 <div className="flex gap-4 mt-3 max-h-0 opacity-0 group-hover:max-h-16 group-hover:opacity-100 transition-all duration-500 overflow-hidden">
                   {p.metrics.map((m, mi) => (
                     <div key={m.label}>
                       <div data-cms-field={`metrics.${mi}.value`} className="text-brand-blue font-bold text-sm">{m.value}</div>
-                      <div data-cms-field={`metrics.${mi}.label`} className="text-white/40 text-[10px] font-mono uppercase tracking-wide">{m.label}</div>
+                      <div data-cms-field={`metrics.${mi}.label`} className="text-white/55 text-xs sm:text-[10px] font-mono uppercase tracking-wide">{m.label}</div>
                     </div>
                   ))}
                 </div>

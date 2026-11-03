@@ -55,7 +55,7 @@ export default function IntakeCTABand({ copy }: { copy?: ReadyToTalk['intakeBand
           />
           <div className="relative text-center sm:text-left">
             {eyebrow && (
-              <span data-cms-field="intakeBand.eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase block mb-3" style={{ color: accent }}>
+              <span data-cms-field="intakeBand.eyebrow" className="font-mono text-xs sm:text-[11px] tracking-[0.3em] uppercase block mb-3" style={{ color: accent }}>
                 {eyebrow}
               </span>
             )}

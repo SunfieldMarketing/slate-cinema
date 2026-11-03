@@ -217,6 +217,13 @@ export default async function SocialMediaManagementPage() {
     .smm-page .twocol { grid-template-columns:1fr; gap:38px; }
     .smm-page .step { grid-template-columns:56px 1fr; }
   }
+  /* Phones (Oct 27 audit #22): the headline ran right up to the film-strip edge, and the
+     eyebrow's .5em tracking wrapped so the lone word "ON" sat on its own second line. */
+  @media (max-width:520px) {
+    .smm-page .hero .wrap { padding-right:42px; }
+    .smm-page .eyebrow { letter-spacing:.28em; font-size:12px; }
+    .smm-page h1 { text-wrap:balance; }
+  }
       `}</style>
 
       <div className="bg-ink antialiased">

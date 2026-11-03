@@ -125,9 +125,13 @@ export default function PageHero({
             variant="background"
             priority={priority}
             coverFit
-            className="w-full h-full object-cover opacity-40"
+            className="w-full h-full object-cover opacity-70"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/40 to-ink" />
+          {/* Lightened 2026-11-03 (Oct 27 audit #2): the video sat at 40% opacity under an
+              80%-dark gradient, so the first screen of every page averaged 6-11% brightness.
+              Still darkens toward the bottom so the next section blends in and the title
+              keeps its contrast. */}
+          <div className="absolute inset-0 bg-gradient-to-b from-ink/55 via-ink/15 to-ink" />
         </div>
       )}
 
@@ -136,7 +140,7 @@ export default function PageHero({
         <div className="w-full">
           <span
             data-cms-field={eyebrowFieldPath}
-            className="ph-fade inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.35em] uppercase mb-6"
+            className="ph-fade inline-flex items-center gap-3 font-mono text-xs sm:text-[11px] tracking-[0.35em] uppercase mb-6"
             style={{ color: accent }}
           >
             <span className="w-8 h-px" style={{ background: `${accent}66` }} />
@@ -147,8 +151,11 @@ export default function PageHero({
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter text-white leading-[1.02]">
             {React.Children.map(
               Array.isArray(title) ? title : [title],
+              // pb/-mb: the reveal mask needs room below the baseline or it slices the
+              // bottom off descenders (the g in "through") -- Oct 27 audit #7. Net layout
+              // effect is zero.
               (child, i) => (
-                <span key={i} className="block overflow-hidden">
+                <span key={i} className="block overflow-hidden pb-[0.16em] -mb-[0.16em]">
                   <span data-cms-field={titleFieldPaths?.[i]} className="ph-line block">{child}</span>
                 </span>
               )
@@ -156,7 +163,7 @@ export default function PageHero({
           </h1>
 
           {subtitle && (
-            <p data-cms-field={subtitleFieldPath} className="ph-fade mt-6 md:mt-8 text-white/55 text-base sm:text-lg font-light max-w-2xl mx-auto leading-relaxed">
+            <p data-cms-field={subtitleFieldPath} className="ph-fade mt-6 md:mt-8 text-white/75 text-base sm:text-lg font-light max-w-2xl mx-auto leading-relaxed">
               {subtitle}
             </p>
           )}
@@ -189,7 +196,7 @@ export default function PageHero({
           )}
 
           {trustNote && (
-            <p data-cms-field={trustNoteFieldPath} data-cms-global={trustNoteGlobal} className="ph-fade mt-6 font-mono text-[10px] tracking-[0.2em] uppercase text-white/55">
+            <p data-cms-field={trustNoteFieldPath} data-cms-global={trustNoteGlobal} className="ph-fade mt-6 font-mono text-[11px] tracking-[0.2em] uppercase text-white/70">
               {trustNote}
             </p>
           )}
@@ -220,7 +227,7 @@ export default function PageHero({
                     <NumberTicker value={s.value} className="font-bold text-white" />
                     <span style={{ color: accent }}>{s.suffix}</span>
                   </div>
-                  <div className="mt-2 font-mono text-[9px] sm:text-[10px] tracking-wide text-white/45 uppercase whitespace-nowrap">
+                  <div className="mt-2 font-mono text-xs sm:text-[10px] tracking-wide text-white/45 uppercase whitespace-nowrap">
                     {s.label}
                   </div>
                 </div>
@@ -230,11 +237,14 @@ export default function PageHero({
         </div>
       )}
 
-      {/* ── Scroll hint (only visible when no stats strip) ── */}
+      {/* ── Scroll hint (only visible when no stats strip) ── In normal flow under the
+          content, not absolutely positioned at the bottom: on a short screen (iPhone SE, a
+          1366x768 laptop) the content is tall enough to reach the bottom and the cue sat
+          on top of the intro paragraph (Oct 27 audit #4). Now it can only ever be below it. */}
       {(!stats || stats.length === 0) && (
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 opacity-60">
+        <div className="relative z-10 mx-auto pb-7 flex flex-col items-center gap-2 opacity-70">
           {scrollCue && (
-            <span {...labelField('scrollCue')} className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/40">
+            <span {...labelField('scrollCue')} className="font-mono text-[11px] tracking-[0.3em] uppercase text-white/60">
               {scrollCue}
             </span>
           )}

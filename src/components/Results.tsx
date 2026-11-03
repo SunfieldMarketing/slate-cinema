@@ -233,7 +233,7 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
                   flash a mismatched "0% Reach" right before it, so this
                   just renders it directly. */}
               <span data-cms-field="results.reachPercent">{reachPercent}</span>
-              <span data-cms-field="results.reachLabel" className="text-xs text-white/40 font-normal ml-1">{reachLabel}</span>
+              <span data-cms-field="results.reachLabel" className="text-xs text-white/55 font-normal ml-1">{reachLabel}</span>
             </div>
             <div className="flex items-center gap-3">
               <ThumbsUp className="w-6 h-6 md:w-10 md:h-10 text-brand-blue" />

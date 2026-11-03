@@ -76,13 +76,13 @@ export default function PostProductionScene({
               style={{ backgroundImage: 'repeating-linear-gradient(to right, rgba(255,255,255,0.14) 0 1px, transparent 1px 12px)' }}
             >
               {RULER_MARKS.map((m, i) => (
-                <span key={m} className="absolute top-0 font-mono text-[6px] md:text-[8px] text-white/40" style={{ left: `${(i / (RULER_MARKS.length - 1)) * 92}%` }}>
+                <span key={m} className="absolute top-0 font-mono text-[6px] md:text-[8px] text-white/55" style={{ left: `${(i / (RULER_MARKS.length - 1)) * 92}%` }}>
                   {m}
                 </span>
               ))}
             </div>
 
-            <span className="font-mono text-[6px] md:text-[8px] text-white/40 self-center">V1</span>
+            <span className="font-mono text-[6px] md:text-[8px] text-white/55 self-center">V1</span>
             <div className="flex gap-1 h-8 md:h-11 min-w-0 overflow-hidden">
               {post.services.map((s, i) => (
                 <div
@@ -99,13 +99,13 @@ export default function PostProductionScene({
               ))}
             </div>
 
-            <span className="font-mono text-[6px] md:text-[8px] text-white/40 self-center hidden md:block">A1</span>
+            <span className="font-mono text-[6px] md:text-[8px] text-white/55 self-center hidden md:block">A1</span>
             <div className="h-7 rounded border border-white/8 bg-white/[0.02] overflow-hidden min-w-0 hidden md:block">
               <svg viewBox="0 0 100 20" preserveAspectRatio="none" className="w-full h-full">
                 <path d={wavePath(16)} fill="none" stroke={post.color} strokeOpacity="0.55" strokeWidth="0.6" vectorEffect="non-scaling-stroke" />
               </svg>
             </div>
-            <span className="font-mono text-[6px] md:text-[8px] text-white/40 self-center hidden md:block">A2</span>
+            <span className="font-mono text-[6px] md:text-[8px] text-white/55 self-center hidden md:block">A2</span>
             <div className="h-7 rounded border border-white/8 bg-white/[0.02] overflow-hidden min-w-0 hidden md:block">
               <svg viewBox="0 0 100 20" preserveAspectRatio="none" className="w-full h-full">
                 <path d={wavePath(10)} fill="none" stroke={post.color} strokeOpacity="0.3" strokeWidth="0.6" vectorEffect="non-scaling-stroke" />

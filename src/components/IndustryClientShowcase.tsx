@@ -79,7 +79,7 @@ export default function IndustryClientShowcase({
         {(heading.eyebrow || heading.headline || heading.intro) && (
           <div className="text-center mb-12 max-w-2xl mx-auto">
             {heading.eyebrow && (
-              <span data-cms-field={paths.eyebrow} className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase block mb-4" style={{ color: accent }}>
+              <span data-cms-field={paths.eyebrow} className="font-mono text-xs sm:text-[11px] tracking-[0.3em] uppercase block mb-4" style={{ color: accent }}>
                 {heading.eyebrow}
               </span>
             )}
@@ -125,7 +125,7 @@ export default function IndustryClientShowcase({
                 <div className="flex items-baseline justify-between gap-3 mb-2">
                   <h3 data-cms-field={`${paths.items}.${c.index}.name`} className="text-white font-bold text-lg">{c.name}</h3>
                   {c.year && (
-                    <span data-cms-field={`${paths.items}.${c.index}.year`} className="font-mono text-[10px] text-white/40 uppercase tracking-wide shrink-0">
+                    <span data-cms-field={`${paths.items}.${c.index}.year`} className="font-mono text-xs sm:text-[10px] text-white/55 uppercase tracking-wide shrink-0">
                       {c.year}
                     </span>
                   )}

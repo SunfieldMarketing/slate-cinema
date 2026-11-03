@@ -25,7 +25,7 @@ export default function PreProductionScene({
     <div className="sb-scene sb-scene-pre absolute inset-0 pointer-events-none" style={{ opacity: 0, visibility: 'hidden' }}>
       {/* Concepts — lower left, lines reaching toward the stage */}
       <div className="absolute left-8 md:left-16 bottom-[26%] flex flex-col gap-4 items-start">
-        <p className="sbs-item font-mono text-[10px] tracking-[0.3em] uppercase mb-1" style={{ color: pre.color }}>
+        <p className="sbs-item font-mono text-xs sm:text-[10px] tracking-[0.3em] uppercase mb-1" style={{ color: pre.color }}>
           {pre.services[0].name}
         </p>
         {LEFT.map((t) => (
@@ -39,7 +39,7 @@ export default function PreProductionScene({
 
       {/* Producing — upper right, mirrored */}
       <div className="absolute right-8 md:right-16 top-[27%] flex flex-col gap-4 items-end">
-        <p className="sbs-item font-mono text-[10px] tracking-[0.3em] uppercase mb-1" style={{ color: pre.color }}>
+        <p className="sbs-item font-mono text-xs sm:text-[10px] tracking-[0.3em] uppercase mb-1" style={{ color: pre.color }}>
           {pre.services[1].name}
         </p>
         {RIGHT.map((t) => (

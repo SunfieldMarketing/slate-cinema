@@ -37,7 +37,7 @@ export default function DistributionScene({
         ))}
       </div>
       <p
-        className="sbs-item md:hidden absolute left-6 right-6 bottom-[22%] text-center font-mono text-[10px] tracking-widest uppercase text-white/85"
+        className="sbs-item md:hidden absolute left-6 right-6 bottom-[22%] text-center font-mono text-xs sm:text-[10px] tracking-widest uppercase text-white/85"
         style={{ textShadow: '0 1px 6px rgba(0,0,0,0.85)' }}
       >
         {dist.services.map((s) => s.name).join(' · ')}
@@ -59,7 +59,7 @@ export default function DistributionScene({
           {PLATFORMS.map((pl) => (
             <span
               key={pl}
-              className="shrink-0 font-mono text-[10px] uppercase tracking-[0.25em] rounded-full px-4 py-1.5 border"
+              className="shrink-0 font-mono text-xs sm:text-[10px] uppercase tracking-[0.25em] rounded-full px-4 py-1.5 border"
               style={{ borderColor: `${dist.color}35`, background: `${dist.color}12`, color: '#fdba74' }}
             >
               {pl}

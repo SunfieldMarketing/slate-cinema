@@ -29,10 +29,10 @@ export default function ProductionScene({
       <span className="absolute left-6 right-6 top-1/3 h-px bg-white/6" />
       <span className="absolute left-6 right-6 top-2/3 h-px bg-white/6" />
 
-      <div className="sbs-item hidden md:block absolute top-[5.5rem] left-1/2 -translate-x-1/2 font-mono text-[10px] tracking-[0.25em] text-white/70 whitespace-nowrap">
+      <div className="sbs-item hidden md:block absolute top-[5.5rem] left-1/2 -translate-x-1/2 font-mono text-xs sm:text-[10px] tracking-[0.25em] text-white/70 whitespace-nowrap">
         A-CAM · 24MM · F/1.8 · ISO 800
       </div>
-      <div className="sbs-item absolute top-[5.5rem] right-20 hidden md:flex items-center gap-1.5 font-mono text-[10px] tracking-widest text-white/65">
+      <div className="sbs-item absolute top-[5.5rem] right-20 hidden md:flex items-center gap-1.5 font-mono text-xs sm:text-[10px] tracking-widest text-white/65">
         BAT 87%
         <span className="inline-flex gap-0.5">
           {[0, 1, 2, 3].map((i) => (
@@ -50,7 +50,7 @@ export default function ProductionScene({
             style={{ height: '100%', transform: `scaleY(${h})`, background: `linear-gradient(to top, ${prod.color}, #f0abfc)` }}
           />
         ))}
-        <span className="ml-2 font-mono text-[8px] tracking-widest text-white/45 self-end pb-0.5">AUD</span>
+        <span className="ml-2 font-mono text-xs sm:text-[8px] tracking-widest text-white/45 self-end pb-0.5">AUD</span>
       </div>
 
       {/* Call sheet — the real crew/talent/set-design groups. The ring
@@ -58,13 +58,13 @@ export default function ProductionScene({
           compact single-line list tucked above it instead of the full
           card list, which would otherwise sit directly over the object. */}
       <div className="hidden md:block absolute left-8 md:left-14 top-1/2 -translate-y-1/2 max-w-[16rem] pointer-events-auto">
-        <p className="sbs-item font-mono text-[10px] tracking-[0.3em] uppercase mb-4" style={{ color: prod.color }}>
+        <p className="sbs-item font-mono text-xs sm:text-[10px] tracking-[0.3em] uppercase mb-4" style={{ color: prod.color }}>
           Call Sheet — Day 01
         </p>
         <div className="flex flex-col gap-2.5">
           {prod.services.map((s, i) => (
             <div key={s.name} className="sbs-item sbs-row rounded-lg px-3 py-2.5 border border-white/10 bg-black/40 backdrop-blur-sm">
-              <p className="font-mono text-[10px] tracking-widest text-white/90 mb-1">
+              <p className="font-mono text-xs sm:text-[10px] tracking-widest text-white/90 mb-1">
                 {String(i + 1).padStart(2, '0')} <span className="ml-1 uppercase">{s.name}</span>
               </p>
               <p className="text-[11px] text-white/65 font-light leading-snug">{s.tags?.join(' · ')}</p>
@@ -73,11 +73,11 @@ export default function ProductionScene({
         </div>
       </div>
       <div className="md:hidden absolute left-6 right-6 top-[29%] flex flex-col gap-1.5">
-        <p className="sbs-item font-mono text-[9px] tracking-[0.3em] uppercase mb-1" style={{ color: prod.color }}>
+        <p className="sbs-item font-mono text-xs sm:text-[9px] tracking-[0.3em] uppercase mb-1" style={{ color: prod.color }}>
           Call Sheet — Day 01
         </p>
         {prod.services.map((s, i) => (
-          <p key={s.name} className="sbs-item font-mono text-[10px] tracking-wide text-white/85" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.85)' }}>
+          <p key={s.name} className="sbs-item font-mono text-xs sm:text-[10px] tracking-wide text-white/85" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.85)' }}>
             {String(i + 1).padStart(2, '0')} <span className="uppercase">{s.name}</span>
           </p>
         ))}

@@ -134,11 +134,14 @@ export default function IndustryStandards({ data }: { data?: HomePage['industryS
       <div className="relative z-10 w-full px-8 flex flex-col items-center justify-center text-center">
         
         {/* Phase 1 */}
-        <div className="phase-1 absolute flex flex-col items-center max-w-7xl">
-          <span data-cms-field="industryStandards.phase1.eyebrow" className="font-mono text-[10px] md:text-xs text-brand-blue tracking-[0.5em] uppercase mb-8">
+        {/* w-full + px: these blocks are absolutely positioned, so the parent's px-8 never
+            applied to them -- on a 375px phone the paragraph started at the screen edge and the
+            60px headline filled the full width (Oct 27 audit #17). */}
+        <div className="phase-1 absolute flex flex-col items-center w-full px-5 sm:px-8 max-w-7xl">
+          <span data-cms-field="industryStandards.phase1.eyebrow" className="font-mono text-xs md:text-xs text-brand-blue tracking-[0.5em] uppercase mb-8">
             {phase1.eyebrow}
           </span>
-          <h2 className="text-6xl md:text-[8rem] font-light leading-none tracking-tighter">
+          <h2 className="text-5xl sm:text-6xl md:text-[8rem] font-light leading-none tracking-tighter">
             <span data-cms-field="industryStandards.phase1.headlineLine1">{phase1.headlineLine1}</span>
             <br />
             <span data-cms-field="industryStandards.phase1.headlineLine2" className="font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-white/50 drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]">
@@ -151,8 +154,8 @@ export default function IndustryStandards({ data }: { data?: HomePage['industryS
         </div>
 
         {/* Phase 2 */}
-        <div className="phase-2 absolute flex flex-col items-center opacity-0 pointer-events-none w-full max-w-7xl">
-          <span data-cms-field="industryStandards.phase2.eyebrow" className="font-mono text-[10px] md:text-xs text-purple-400 tracking-[0.5em] uppercase mb-8">
+        <div className="phase-2 absolute flex flex-col items-center opacity-0 pointer-events-none w-full px-5 sm:px-8 max-w-7xl">
+          <span data-cms-field="industryStandards.phase2.eyebrow" className="font-mono text-xs md:text-xs text-purple-400 tracking-[0.5em] uppercase mb-8">
             {phase2.eyebrow}
           </span>
           <h2 className="text-5xl md:text-[6rem] font-black leading-[0.9] tracking-tighter text-white">
@@ -171,7 +174,7 @@ export default function IndustryStandards({ data }: { data?: HomePage['industryS
 
         {/* Phase 3 - DOMINATE YOUR MARKET */}
         <div className="phase-3 absolute flex flex-col items-center opacity-0 pointer-events-none w-[100vw]">
-          <span data-cms-field="industryStandards.phase3.eyebrow" className="font-mono text-[10px] md:text-xs text-emerald-400 tracking-[0.5em] uppercase mb-6 filter drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]">
+          <span data-cms-field="industryStandards.phase3.eyebrow" className="font-mono text-xs md:text-xs text-emerald-400 tracking-[0.5em] uppercase mb-6 filter drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]">
             {phase3.eyebrow}
           </span>
 

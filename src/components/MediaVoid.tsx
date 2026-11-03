@@ -191,7 +191,7 @@ export default function MediaVoid({ data }: { data?: HomePage['mediaVoid'] }) {
       </div>
 
       {/* Edit timeline markers */}
-      <div className="absolute bottom-20 left-12 z-20 font-mono text-[9px] text-white/15 tracking-widest">
+      <div className="absolute bottom-20 left-12 z-20 font-mono text-xs sm:text-[9px] text-white/55 tracking-widest">
         SEQUENCE: CONTENT_REEL_V3 — DURATION: 02:47
       </div>
     </section>

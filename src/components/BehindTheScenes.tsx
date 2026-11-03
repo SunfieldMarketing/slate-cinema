@@ -39,7 +39,7 @@ export default function BehindTheScenes({ data }: { data?: HowItWorksPage['behin
     <section ref={ref} data-cms-global="how-it-works-page" className="relative w-full bg-ink overflow-hidden py-24 md:py-28">
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
         <div className="bts-head text-center mb-12 md:mb-14 max-w-2xl mx-auto">
-          <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase mb-4">
+          <span className="inline-flex items-center gap-3 font-mono text-xs sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase mb-4">
             <span className="w-8 h-px bg-brand-blue/40" /> <span data-cms-field="behindTheScenes.eyebrow">{eyebrow}</span>
           </span>
           <h2 data-cms-field="behindTheScenes.headline" className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-[1.05] mb-4">

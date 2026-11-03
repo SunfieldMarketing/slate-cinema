@@ -123,7 +123,7 @@ export default function FinalCTA({ data }: { data?: FinalCta | null }) {
                 in IndustryPageContent.tsx. */}
           </div>
 
-          <p data-cms-field="trustNote" className="cta-fade mt-8 font-mono text-[10px] tracking-[0.22em] uppercase text-white/55">
+          <p data-cms-field="trustNote" className="cta-fade mt-8 font-mono text-xs sm:text-[10px] tracking-[0.22em] uppercase text-white/55">
             {trustNote}
           </p>
         </div>

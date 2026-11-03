@@ -147,7 +147,7 @@ export default function ProjectCardModal({
           )}
           <span
             data-cms-field="category"
-            className="absolute top-4 left-4 font-mono text-[10px] tracking-[0.2em] uppercase px-3 py-1.5 rounded-full backdrop-blur-md border text-white pointer-events-none"
+            className="absolute top-4 left-4 font-mono text-xs sm:text-[10px] tracking-[0.2em] uppercase px-3 py-1.5 rounded-full backdrop-blur-md border text-white pointer-events-none"
             style={{ borderColor: `${accent}55`, backgroundColor: 'rgba(5,7,12,0.7)' }}
           >
             {project.category}
@@ -169,7 +169,7 @@ export default function ProjectCardModal({
             {project.metrics.map((m, i) => (
               <div key={m.label} className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3.5">
                 <div data-cms-field={`metrics.${i}.value`} className="text-xl font-bold tracking-tight" style={{ color: accent }}>{m.value}</div>
-                <div data-cms-field={`metrics.${i}.label`} className="mt-0.5 font-mono text-[9px] tracking-[0.18em] uppercase text-white/55">{m.label}</div>
+                <div data-cms-field={`metrics.${i}.label`} className="mt-0.5 font-mono text-xs sm:text-[9px] tracking-[0.18em] uppercase text-white/55">{m.label}</div>
               </div>
             ))}
           </div>

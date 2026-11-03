@@ -176,12 +176,22 @@ export default function Footer() {
                     setNewsletterSubmitted(true)
                   }}
                 >
+                  {/* Oct 27 audit #20: the field had no label, no autocomplete and a 14px font
+                      (iOS Safari zooms the page on focus below 16px). The label is visually
+                      hidden so the layout is unchanged. */}
+                  <label htmlFor="footer-email" className="sr-only">
+                    {newsletter?.placeholder || 'Your email address'}
+                  </label>
                   <input
+                    id="footer-email"
                     type="email"
                     name="footer-email"
+                    required
+                    autoComplete="email"
+                    inputMode="email"
                     placeholder={newsletter?.placeholder || 'Your email address'}
                     data-cms-field="newsletter.placeholder"
-                    className="flex-1 bg-white/5 border border-white/10 border-r-0 rounded-l-full px-5 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-brand-blue transition-colors"
+                    className="min-w-0 flex-1 bg-white/5 border border-white/10 border-r-0 rounded-l-full px-5 py-2.5 text-base sm:text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-brand-blue transition-colors"
                   />
                   <button
                     type="submit"
@@ -223,7 +233,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="w-full flex flex-col md:flex-row justify-between items-center mt-4 text-[10px] font-mono text-white/20 tracking-widest uppercase gap-4">
+        <div className="w-full flex flex-col md:flex-row justify-between items-center mt-4 text-xs font-mono text-white/60 tracking-widest uppercase gap-4">
           <p>&copy; {new Date().getFullYear()} <span data-cms-field="bottomBar.copyrightName">{bottomBar?.copyrightName || 'Slate Cinema'}</span></p>
           <div data-cms-field="bottomBar.craftedWithLoveText" className="flex items-center gap-2">
             {bottomBar?.craftedWithLoveText || 'Crafted with love by Slate Cinema'}
@@ -242,7 +252,7 @@ export default function Footer() {
         </div>
 
         {/* CC-BY attribution for the hero's 3D assets — required by the license */}
-        <p className="w-full mt-6 text-center text-[9px] font-mono text-white/15 tracking-wide leading-relaxed normal-case">
+        <p className="w-full mt-6 text-center text-[11px] font-mono text-white/50 tracking-wide leading-relaxed normal-case">
           {MODEL_CREDITS}
         </p>
       </div>

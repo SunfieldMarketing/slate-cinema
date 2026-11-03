@@ -56,6 +56,10 @@ export default function IndustryWheel({ industries, accent: accentProp }: { indu
   const rOuter = 190
   const rInner = 100
   const labelR = (rOuter + rInner) / 2
+  // Labels run along the radius, so the ring's depth is the room each one has. A mono 13px glyph is
+  // ~8.2 units wide: "ORGANIZATIONS" (13 characters) is ~107 and spilled out of its wedge into the
+  // neighbours (Oct 27 audit #11). Anything longer than the room is squeezed to fit instead.
+  const labelRoom = rOuter - rInner - 8
   const current = industries[active]
   const CurrentIcon = resolveIcon(current.icon)
   const gradId = useId().replace(/[:]/g, '')
@@ -84,6 +88,7 @@ export default function IndustryWheel({ industries, accent: accentProp }: { indu
             const labelPos = polarToCartesian(cx, cy, labelR, mid)
             let rotation = mid
             if (mid > 90 && mid < 270) rotation += 180
+            const squeeze = ind.label.length * 8.2 > labelRoom
 
             return (
               <g key={ind.id}>
@@ -106,6 +111,8 @@ export default function IndustryWheel({ industries, accent: accentProp }: { indu
                   fill={isActive ? '#030305' : 'rgba(226,244,255,0.75)'}
                   fontSize={13}
                   fontWeight={700}
+                  textLength={squeeze ? labelRoom : undefined}
+                  lengthAdjust={squeeze ? 'spacingAndGlyphs' : undefined}
                   style={{ fontFamily: 'var(--font-mono, monospace)', letterSpacing: '0.03em', textTransform: 'uppercase' }}
                 >
                   {ind.label}
@@ -122,7 +129,7 @@ export default function IndustryWheel({ industries, accent: accentProp }: { indu
             style={{ background: `radial-gradient(circle, ${accent}22 0%, transparent 70%)` }}
           />
           <CurrentIcon className="w-8 h-8 sm:w-9 sm:h-9 mb-2.5 transition-colors duration-300" style={{ color: accent }} />
-          <span {...labelField('selectIndustry')} className="font-mono text-[10px] sm:text-xs tracking-widest uppercase text-white/40">
+          <span {...labelField('selectIndustry')} className="font-mono text-xs sm:text-xs tracking-widest uppercase text-white/55">
             {labels.selectIndustry}
           </span>
           <span className="text-lg sm:text-xl font-bold text-white leading-tight mt-1.5">{current.label}</span>
@@ -168,7 +175,7 @@ export default function IndustryWheel({ industries, accent: accentProp }: { indu
           />
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
           <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between">
-            <span className="font-mono text-[10px] tracking-widest uppercase px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/15 text-white/80">
+            <span className="font-mono text-xs sm:text-[10px] tracking-widest uppercase px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/15 text-white/80">
               {current.stat}
             </span>
             <ArrowUpRight className="w-5 h-5 text-white/70 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />

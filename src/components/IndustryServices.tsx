@@ -26,6 +26,37 @@ gsap.registerPlugin(ScrollTrigger)
   deliverables, and carries an explicit booking CTA — this is a menu of
   services someone buys, not a sitemap.
 */
+/*
+  Which grid cells a service card spans, so the last row is always full
+  (Oct 27 audit #35: the grid ended with an empty bottom-right cell).
+
+  The featured card holds 2x2 cells on the left at 4 columns (lg) and a full
+  row at 2 columns (md); the other cards fill what's left, one cell each. Any
+  count that doesn't divide evenly lets the trailing card(s) stretch instead of
+  leaving a hole. Class names are spelled out in full so Tailwind generates them.
+*/
+const LG_COLS = { 1: 'lg:col-span-1', 2: 'lg:col-span-2', 4: 'lg:col-span-4' } as const
+function cardSpan(i: number, n: number): string {
+  let lgCols: keyof typeof LG_COLS = 1
+  let lgRows2 = false
+  if (n === 1) {
+    lgCols = 2
+    lgRows2 = true
+  } else if (n === 2) {
+    lgCols = 2
+  } else if (n === 3) {
+    if (i === 2) lgCols = 2
+  } else {
+    const tail = (n - 4) % 4
+    if (tail === 3 && i === n - 1) lgCols = 2
+    else if (tail === 2 && i >= n - 2) lgCols = 2
+    else if (tail === 1 && i === n - 1) lgCols = 4
+  }
+  // md (2 columns): an odd last card takes the whole row.
+  const mdWide = n % 2 === 1 && i === n - 1
+  return [mdWide ? 'md:col-span-2' : '', LG_COLS[lgCols], lgRows2 ? 'lg:row-span-2' : ''].filter(Boolean).join(' ')
+}
+
 export default function IndustryServices({
   services,
   heading,
@@ -62,7 +93,7 @@ export default function IndustryServices({
         <div className="flex items-end justify-between gap-6 flex-wrap mb-12">
           <div>
             {heading.eyebrow && (
-              <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-4" style={{ color: accent }}>
+              <span className="inline-flex items-center gap-3 font-mono text-xs sm:text-[11px] tracking-[0.3em] uppercase mb-4" style={{ color: accent }}>
                 <span className="w-8 h-px" style={{ background: `${accent}66` }} /> <span data-cms-field={paths.eyebrow}>{heading.eyebrow}</span>
               </span>
             )}
@@ -120,7 +151,7 @@ export default function IndustryServices({
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent" />
             <div className="absolute top-4 left-4 flex items-center gap-2">
-              <span {...labelField('mostBooked')} className="font-mono text-[9px] tracking-[0.2em] uppercase px-2.5 py-1.5 rounded-full border backdrop-blur-md text-white" style={{ borderColor: `${accent}55`, backgroundColor: 'rgba(5,7,12,0.7)' }}>
+              <span {...labelField('mostBooked')} className="font-mono text-xs sm:text-[9px] tracking-[0.2em] uppercase px-2.5 py-1.5 rounded-full border backdrop-blur-md text-white" style={{ borderColor: `${accent}55`, backgroundColor: 'rgba(5,7,12,0.7)' }}>
                 {labels.mostBooked}
               </span>
             </div>
@@ -153,19 +184,19 @@ export default function IndustryServices({
                 ))}
               </ul>
               <div className="flex items-center justify-between gap-4 flex-wrap">
-                <span {...labelField('bookThis')} className="inline-flex items-center gap-2 text-sm font-semibold text-white group-hover:gap-3 transition-all">
+                <span {...labelField('bookThis')} className="inline-flex items-center gap-2 text-sm font-semibold text-white whitespace-nowrap shrink-0 group-hover:gap-3 transition-all">
                   {labels.bookThis} <ArrowRight className="w-4 h-4" style={{ color: accent }} />
                 </span>
-                <span className="font-mono text-[10px] tracking-[0.14em] text-white/55 uppercase">{featured.meta}</span>
+                <span className="font-mono text-xs sm:text-[10px] tracking-[0.14em] text-white/55 uppercase">{featured.meta}</span>
               </div>
             </div>
           </a>
 
-          {rest.map((s) => (
+          {rest.map((s, i) => (
             <a
               key={s.title}
               href="/contact"
-              className="svc-card group relative rounded-2xl overflow-hidden border border-white/10 flex flex-col justify-end min-h-[240px] transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
+              className={`svc-card group relative ${cardSpan(i, rest.length)} rounded-2xl overflow-hidden border border-white/10 flex flex-col justify-end min-h-[240px] transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80`}
               onMouseEnter={(e) => (e.currentTarget.style.borderColor = `${accent}80`)}
               onMouseLeave={(e) => (e.currentTarget.style.borderColor = '')}
             >
@@ -196,10 +227,10 @@ export default function IndustryServices({
                 </ul>
 
                 <div className="flex items-center justify-between gap-3">
-                  <span {...labelField('bookThis')} className="inline-flex items-center gap-1.5 text-xs font-semibold text-white group-hover:gap-2.5 transition-all">
+                  <span {...labelField('bookThis')} className="inline-flex items-center gap-1.5 text-xs font-semibold text-white whitespace-nowrap shrink-0 group-hover:gap-2.5 transition-all">
                     {labels.bookThis} <ArrowRight className="w-3.5 h-3.5" style={{ color: accent }} />
                   </span>
-                  <span className="font-mono text-[9px] tracking-[0.12em] text-white/55 uppercase">{s.meta}</span>
+                  <span className="font-mono text-xs sm:text-[9px] tracking-[0.12em] text-white/55 uppercase">{s.meta}</span>
                 </div>
               </div>
             </a>

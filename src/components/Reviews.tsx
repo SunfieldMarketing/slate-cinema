@@ -150,7 +150,7 @@ function PhoneVideoCard({ t }: { t: IndustryVideoTestimonial }) {
             <div className="text-sm font-bold mb-1" style={{ color: brand }}>{t.outcome}</div>
           )}
           <div className="text-white font-semibold text-sm">{t.name}</div>
-          <div className="text-white/55 text-xs truncate">{t.role} · {t.company}</div>
+          <div className="text-white/65 text-xs leading-snug">{t.role} · {t.company}</div>
         </div>
       </div>
     </button>
@@ -224,7 +224,7 @@ export default function Reviews({ data }: { data?: HomePage['reviews'] }) {
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
         {/* Header */}
         <div className="rv-head text-center mb-12 md:mb-14">
-          <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase mb-5">
+          <span className="inline-flex items-center gap-3 font-mono text-xs sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase mb-5">
             <span className="w-8 h-px bg-brand-blue/40" /> <span data-cms-field="reviews.eyebrow">{eyebrow}</span> <span className="w-8 h-px bg-brand-blue/40" />
           </span>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05]">
@@ -251,7 +251,7 @@ export default function Reviews({ data }: { data?: HomePage['reviews'] }) {
         {showVideoTestimonials && (
           <div className="mb-14 md:mb-16">
             <div className="text-center mb-6">
-              <span className="font-mono text-[10px] tracking-[0.25em] text-white/40 uppercase">{videoTestimonialsLabel}</span>
+              <span className="font-mono text-xs sm:text-[10px] tracking-[0.25em] text-white/55 uppercase">{videoTestimonialsLabel}</span>
             </div>
             <div className="rv-video-row flex justify-start sm:justify-center gap-5 overflow-x-auto snap-x snap-mandatory px-5 sm:px-0 -mx-5 sm:mx-0 pb-2">
               {videoTestimonials.map((t) => (
@@ -263,7 +263,7 @@ export default function Reviews({ data }: { data?: HomePage['reviews'] }) {
 
         {/* Google reviews */}
         <div className="text-center mb-6">
-          <span data-cms-field="reviews.googleReviewsLabel" className="font-mono text-[10px] tracking-[0.25em] text-white/40 uppercase">{googleReviewsLabel}</span>
+          <span data-cms-field="reviews.googleReviewsLabel" className="font-mono text-xs sm:text-[10px] tracking-[0.25em] text-white/55 uppercase">{googleReviewsLabel}</span>
         </div>
         <div className="rv-grid grid grid-cols-1 md:grid-cols-3 gap-5">
           {testimonials.map((t, i) => (
@@ -292,7 +292,7 @@ export default function Reviews({ data }: { data?: HomePage['reviews'] }) {
                   </div>
                   <div className="min-w-0">
                     <div data-cms-field={`reviews.testimonials.${i}.name`} className="text-white font-semibold text-sm truncate">{t.name}</div>
-                    <div className="text-white/40 text-xs truncate"><span data-cms-field={`reviews.testimonials.${i}.role`}>{t.role}</span> · <span data-cms-field={`reviews.testimonials.${i}.company`}>{t.company}</span></div>
+                    <div className="text-white/60 text-xs leading-snug"><span data-cms-field={`reviews.testimonials.${i}.role`}>{t.role}</span> · <span data-cms-field={`reviews.testimonials.${i}.company`}>{t.company}</span></div>
                   </div>
                 </div>
               </article>

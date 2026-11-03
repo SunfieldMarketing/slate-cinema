@@ -140,7 +140,7 @@ export function MediaSection({ block, path }: { block: BlockOfType<'media'>; pat
         {block.caption && (
           <figcaption
             data-cms-field={`${path}.caption`}
-            className={`mt-4 font-mono text-[10px] tracking-[0.2em] uppercase text-white/45 ${size === 'full' ? 'px-5 sm:px-8' : ''}`}
+            className={`mt-4 font-mono text-xs sm:text-[10px] tracking-[0.2em] uppercase text-white/45 ${size === 'full' ? 'px-5 sm:px-8' : ''}`}
           >
             {block.caption}
           </figcaption>
@@ -254,7 +254,7 @@ export function LogoStrip({ block, accent, path }: { block: BlockOfType<'logos'>
           )}
           {block.ratingText && block.label && <div className="hidden sm:block w-px h-4 bg-white/15" />}
           {block.label && (
-            <span data-cms-field={`${path}.label`} className="font-mono text-[10px] tracking-[0.3em] text-white/35 uppercase">
+            <span data-cms-field={`${path}.label`} className="font-mono text-xs sm:text-[10px] tracking-[0.3em] text-white/55 uppercase">
               {block.label}
             </span>
           )}
@@ -317,14 +317,14 @@ export function JournalCards({
                 <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
                 <span
                   data-cms-field="category"
-                  className="absolute top-4 left-4 font-mono text-[10px] tracking-widest uppercase px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/15"
+                  className="absolute top-4 left-4 font-mono text-xs sm:text-[10px] tracking-widest uppercase px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/15"
                   style={{ color: p.accent }}
                 >
                   {p.category}
                 </span>
               </div>
               <div className="flex-1 flex flex-col p-6">
-                <div className="flex items-center gap-3 font-mono text-[10px] tracking-widest text-white/40 uppercase mb-3">
+                <div className="flex items-center gap-3 font-mono text-xs sm:text-[10px] tracking-widest text-white/55 uppercase mb-3">
                   <span>{p.date}</span>
                   <span className="w-1 h-1 rounded-full bg-white/30" />
                   <span>{p.readTime}</span>

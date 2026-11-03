@@ -24,7 +24,11 @@ export default function JournalPostContent({
   page: JournalPage | null
 }) {
   const ref = useRef<HTMLElement>(null)
-  const related = allPosts.filter((p) => p.slug !== post.slug).slice(0, 3)
+  // Same-category posts first, then the newest of the rest (allPosts is newest-first). It
+  // used to be just the newest three, so every post ended with the same three links
+  // (Oct 27 audit #34).
+  const others = allPosts.filter((p) => p.slug !== post.slug)
+  const related = [...others.filter((p) => p.category === post.category), ...others.filter((p) => p.category !== post.category)].slice(0, 3)
   // A database that predates the Journal Page global has no `postCta`
   // group -- keep the original copy then; otherwise an emptied field hides.
   const cta = page?.postCta
@@ -57,7 +61,7 @@ export default function JournalPostContent({
         {/* Article hero */}
         <section className="relative w-full pt-32 pb-10 md:pt-40 md:pb-14 overflow-hidden" data-cms-collection="journal-posts" data-cms-doc-id={post.id}>
           <div className="relative z-10 w-full max-w-3xl mx-auto px-5 sm:px-8 text-center">
-            <div className="jp-hero-in flex items-center justify-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-6" style={{ color: post.accent }} data-cms-field="category">
+            <div className="jp-hero-in flex items-center justify-center gap-3 font-mono text-xs sm:text-[11px] tracking-[0.3em] uppercase mb-6" style={{ color: post.accent }} data-cms-field="category">
               <span className="w-8 h-px" style={{ background: `${post.accent}66` }} />
               {post.category}
               <span className="w-8 h-px" style={{ background: `${post.accent}66` }} />
@@ -65,11 +69,13 @@ export default function JournalPostContent({
             <h1 data-cms-field="title" className="jp-hero-in text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.08] mb-6">
               {post.title}
             </h1>
-            <div className="jp-hero-in flex items-center justify-center gap-3 font-mono text-[11px] text-white/45 uppercase tracking-wide">
+            {/* Stacked on phones, one row from sm up (Oct 27 audit #37): in one row the dot separators
+                dangled at the ends of lines whenever the byline wrapped on a 393px screen. */}
+            <div className="jp-hero-in flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-3 font-mono text-xs text-white/65 uppercase tracking-wide">
               <span>{post.author}</span>
-              <span className="w-1 h-1 rounded-full bg-white/30" />
+              <span aria-hidden="true" className="hidden sm:block w-1 h-1 rounded-full bg-white/30" />
               <span>{post.date}</span>
-              <span className="w-1 h-1 rounded-full bg-white/30" />
+              <span aria-hidden="true" className="hidden sm:block w-1 h-1 rounded-full bg-white/30" />
               <span>{post.readTime}</span>
             </div>
           </div>
@@ -139,7 +145,7 @@ export default function JournalPostContent({
               <span
                 data-cms-global="journal-page"
                 data-cms-field="relatedLabel"
-                className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-white/40 uppercase block mb-8"
+                className="font-mono text-xs sm:text-[11px] tracking-[0.3em] text-white/55 uppercase block mb-8"
               >
                 {page?.relatedLabel || 'More from the Journal'}
               </span>
@@ -162,6 +168,9 @@ export default function JournalPostContent({
                       <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
                     </div>
                     <div className="p-5">
+                      <div className="font-mono text-[11px] tracking-wide text-white/55 uppercase mb-2">
+                        {p.category} · {p.readTime}
+                      </div>
                       <h3 data-cms-field="title" className="text-white font-bold text-sm leading-snug mb-2 group-hover:text-brand-blue transition-colors line-clamp-2">
                         {p.title}
                       </h3>

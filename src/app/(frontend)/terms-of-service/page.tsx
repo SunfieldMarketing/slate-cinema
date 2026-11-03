@@ -88,9 +88,12 @@ export default async function TermsOfServicePage() {
   .legal-page .dateline { font-family:'Courier Prime',monospace; color:var(--orange); font-size:13px;
               letter-spacing:.3em; text-transform:uppercase; margin:0 0 44px; }
   .legal-page h2 { font-family:'Fraunces',Georgia,serif; font-weight:500; font-size:22px;
-       letter-spacing:-.01em; margin:40px 0 10px; }
+       letter-spacing:-.01em; line-height:1.25; margin:40px 0 10px; }
   .legal-page p, .legal-page li { color:var(--muted); }
-  .legal-page p strong { color:var(--text); font-weight:600; }
+  .legal-page p strong, .legal-page li strong { color:var(--text); font-weight:600; }
+  /* Same list fix as the privacy policy (Oct 27 audit #36): bullets restored. */
+  .legal-page ul { padding-left:22px; list-style:disc; } .legal-page ol { padding-left:22px; list-style:decimal; }
+  .legal-page li { margin-bottom:10px; } .legal-page li::marker { color:var(--blue); }
   .legal-page .doc { padding-bottom:40px; }
       `}</style>
 

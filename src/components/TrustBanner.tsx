@@ -49,7 +49,7 @@ export default function TrustBanner() {
           <span data-cms-field="trustBanner.ratingText" className="font-mono text-[11px] text-white/50 tracking-wide">{ratingText}</span>
         </div>
         <div className="hidden sm:block w-px h-4 bg-white/15" />
-        <span data-cms-field="trustBanner.marqueeLabel" className="font-mono text-[10px] tracking-[0.3em] text-white/35 uppercase">{marqueeLabel}</span>
+        <span data-cms-field="trustBanner.marqueeLabel" className="font-mono text-xs sm:text-[10px] tracking-[0.3em] text-white/55 uppercase">{marqueeLabel}</span>
       </div>
 
       {/* Masked (not painted) edge fade — logos dissolve via alpha, so

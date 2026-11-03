@@ -109,6 +109,12 @@ function getFocus(frameIndex: number) {
 // timing race) plus 'canplay'/'loadedmetadata' listeners (retry once real
 // data exists) and a gesture fallback for anything that still blocks it
 // (iOS Low Power Mode, some in-app browsers).
+//
+// It only plays while it's on screen (Oct 27 audit #21): the hero is the
+// first thing on the page, and once you've scrolled past it a looping 500x1080
+// video kept decoding behind everything else for no one, costing battery on
+// a phone. An IntersectionObserver pauses it off screen and resumes it on the
+// way back; every other play() trigger below respects that.
 function attachAutoplayVideo(
   el: HTMLVideoElement | null,
   targetRef: React.RefObject<HTMLVideoElement | null>,
@@ -118,9 +124,16 @@ function attachAutoplayVideo(
   cleanupRef.current?.()
   cleanupRef.current = null
   if (!el) return
+  let onScreen = true
   const tryPlay = () => {
-    if (el.paused) el.play().catch(() => {})
+    if (onScreen && el.paused) el.play().catch(() => {})
   }
+  const observer = new IntersectionObserver(([entry]) => {
+    onScreen = entry.isIntersecting
+    if (onScreen) tryPlay()
+    else el.pause()
+  })
+  observer.observe(el)
   tryPlay()
   el.addEventListener('loadedmetadata', tryPlay)
   el.addEventListener('canplay', tryPlay)
@@ -131,6 +144,7 @@ function attachAutoplayVideo(
   // visitor comes back rather than leaving them on a frozen frame.
   document.addEventListener('visibilitychange', tryPlay)
   cleanupRef.current = () => {
+    observer.disconnect()
     el.removeEventListener('loadedmetadata', tryPlay)
     el.removeEventListener('canplay', tryPlay)
     document.removeEventListener('visibilitychange', tryPlay)
@@ -159,7 +173,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
   const scrollHintRef = useRef<HTMLDivElement>(null)
   const timecodeRef = useRef<HTMLSpanElement>(null)
 
-  // No preload() call for /videos/hero.mp4 here -- that file is only the
+  // No preload() call for /videos/hero-web.mp4 here -- that file is only the
   // SmartVideo fallback for if HERO_MASTER_REEL_VIMEO_ID above is ever
   // cleared. While it's set (the real, current state), what actually
   // renders is the Vimeo iframe, so preloading the local file was pure
@@ -861,7 +875,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
                 loading it before hydration can say no. */}
             {isMobile === false && (
               <SmartVideo
-                src="/videos/hero.mp4"
+                src="/videos/hero-web.mp4"
                 vimeo={HERO_MASTER_REEL_VIMEO_ID}
                 variant="background"
                 priority
@@ -871,8 +885,10 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
           </div>
           {/* Phones: dim the (now un-blended) video behind the wordmark so the
               text stays legible; it dissolves with this layer on scroll. */}
-          {isMobile && <div className="absolute inset-0 z-0 bg-ink/50 pointer-events-none" />}
-          <div className="absolute inset-0 z-0 bg-gradient-to-b from-ink/80 via-transparent to-ink/80 pointer-events-none" />
+          {/* Lightened 2026-11-03 (Oct 27 audit #2): was 50% on phones and 80% at the top and
+              bottom edges. The wordmark and tagline stay legible on the footage at these values. */}
+          {isMobile && <div className="absolute inset-0 z-0 bg-ink/35 pointer-events-none" />}
+          <div className="absolute inset-0 z-0 bg-gradient-to-b from-ink/60 via-transparent to-ink/60 pointer-events-none" />
 
           {/* Main content — centered hero text and CTAs */}
           <div className="hero-content absolute inset-0 z-10 flex flex-col items-center justify-center">
@@ -886,12 +902,15 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
             {/* The page's <h1> (the footer wordmark used to be the only one on
                 the whole site's home page). aria-label reads it as words, not
                 as a row of separate letters. */}
+            {/* clamp(): the wordmark is 6.9x its font size wide, so 12.5vw keeps it inside the
+                viewport at every width (the old fixed 10rem step overflowed at 1024px -- Oct 27
+                audit #3) and still tops out at 10rem on wide screens. */}
             <h1 aria-label={`${wordmarkPart1} ${wordmarkPart2}`} className="flex items-baseline gap-4 md:gap-6 mb-6">
               <span aria-hidden="true" className="flex" data-cms-field="hero.wordmarkPart1">
                 {slateLetters.map((letter, i) => (
                   <span
                     key={`s-${i}`}
-                    className="hero-letter inline-block text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] font-bold text-white tracking-tighter leading-none"
+                    className="hero-letter inline-block text-[clamp(2.5rem,12.5vw,10rem)] font-bold text-white tracking-tighter leading-none"
                     style={{ transformStyle: 'preserve-3d' }}
                   >
                     {letter}
@@ -902,7 +921,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
                 {cinemaLetters.map((letter, i) => (
                   <span
                     key={`c-${i}`}
-                    className="hero-letter inline-block text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] font-bold text-brand-blue tracking-tighter leading-none"
+                    className="hero-letter inline-block text-[clamp(2.5rem,12.5vw,10rem)] font-bold text-brand-blue tracking-tighter leading-none"
                     style={{ transformStyle: 'preserve-3d' }}
                   >
                     {letter}
@@ -921,12 +940,15 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
                 full-width box instead of centering under the wordmark
                 above it (confirmed live: computed text-align was "start",
                 not "center"). */}
-            <p data-cms-field="hero.subtitle" className="hero-subtitle text-xs md:text-sm font-mono tracking-[0.4em] text-white/50 uppercase mb-12 text-center">
+            <p data-cms-field="hero.subtitle" className="hero-subtitle text-xs md:text-sm font-mono tracking-[0.4em] text-white/70 uppercase mb-12 text-center text-balance">
               {subtitle}
             </p>
 
             {/* Cinematic top bar — REC indicator */}
-            <div className="camera-ui absolute top-6 left-8 z-30 flex items-center gap-3">
+            {/* The REC / timecode / battery row and the top corner brackets start below the
+                fixed nav (~80px tall). At top-6 they sat under the logo and the menu button /
+                Schedule Call on every screen size (Oct 27 audit #5). */}
+            <div className="camera-ui absolute top-[7.25rem] left-10 md:left-14 z-30 flex items-center gap-3">
               <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.8)]" />
               <span className="font-mono text-[11px] md:text-sm text-red-500 tracking-[0.3em] font-bold">
                 REC
@@ -934,7 +956,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
             </div>
             
             {/* Battery / Time Indicator */}
-            <div className="camera-ui absolute top-6 right-8 z-30 flex items-center gap-4">
+            <div className="camera-ui absolute top-[7.25rem] right-10 md:right-14 z-30 flex items-center gap-4">
               <span ref={timecodeRef} className="font-mono text-[11px] md:text-sm text-white/70 tracking-widest">
                 00:00:00:00
               </span>
@@ -944,10 +966,10 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
             </div>
 
             {/* Viewfinder Corners */}
-            <div className="camera-ui absolute top-12 left-12 w-16 h-16 border-t-2 border-l-2 border-white/30 z-30 pointer-events-none" />
-            <div className="camera-ui absolute top-12 right-12 w-16 h-16 border-t-2 border-r-2 border-white/30 z-30 pointer-events-none" />
-            <div className="camera-ui absolute bottom-12 left-12 w-16 h-16 border-b-2 border-l-2 border-white/30 z-30 pointer-events-none" />
-            <div className="camera-ui absolute bottom-12 right-12 w-16 h-16 border-b-2 border-r-2 border-white/30 z-30 pointer-events-none" />
+            <div className="camera-ui absolute top-[6.5rem] left-6 md:left-12 w-16 h-16 border-t-2 border-l-2 border-white/30 z-30 pointer-events-none" />
+            <div className="camera-ui absolute top-[6.5rem] right-6 md:right-12 w-16 h-16 border-t-2 border-r-2 border-white/30 z-30 pointer-events-none" />
+            <div className="camera-ui absolute bottom-12 left-6 md:left-12 w-16 h-16 border-b-2 border-l-2 border-white/30 z-30 pointer-events-none" />
+            <div className="camera-ui absolute bottom-12 right-6 md:right-12 w-16 h-16 border-b-2 border-r-2 border-white/30 z-30 pointer-events-none" />
 
             {/* CTA Buttons — Get Started leads, Watch Our Reel is the one secondary option */}
             <div className="flex flex-wrap items-center gap-4 justify-center pointer-events-auto mt-12 z-40 relative">
@@ -962,10 +984,10 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
               <a
                 href={secondaryCtaHref}
                 data-cms-field="hero.secondaryCtaLabel"
-                className="hero-cta group relative px-6 py-3 rounded-full overflow-hidden border border-white/15 bg-white/[0.03]"
+                className="hero-cta group relative px-6 py-3 rounded-full overflow-hidden border border-white/30 bg-white/[0.06]"
               >
                 <div className="absolute inset-0 bg-white/10 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
-                <span className="relative text-sm font-medium text-white/80 group-hover:text-white tracking-wide transition-colors">{secondaryCtaLabel}</span>
+                <span className="relative text-sm font-medium text-white group-hover:text-white tracking-wide transition-colors">{secondaryCtaLabel}</span>
               </a>
             </div>
           </div>
@@ -976,7 +998,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
             className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-30 pointer-events-none transition-opacity duration-100"
           >
             {scrollCue && (
-              <span {...labelField('scrollCue')} className="font-mono text-[9px] text-white/40 tracking-[0.3em] uppercase">
+              <span {...labelField('scrollCue')} className="font-mono text-[11px] text-white/60 tracking-[0.3em] uppercase">
                 {scrollCue}
               </span>
             )}

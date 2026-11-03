@@ -65,7 +65,7 @@ export default function Pipeline({
     <section ref={sectionRef} className="relative w-full overflow-hidden py-24 md:py-28">
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
         <div className="pipe-fade text-center mb-12 md:mb-16">
-          <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase mb-5">
+          <span className="inline-flex items-center gap-3 font-mono text-xs sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase mb-5">
             <span className="w-8 h-px bg-brand-blue/40" /> <span data-cms-field="heading.eyebrow">{eyebrow}</span>
           </span>
           <h2 data-cms-field="heading.title" className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-[1.05]">
@@ -116,7 +116,7 @@ export default function Pipeline({
                     </span>
                   </span>
                   <span className="flex items-center gap-3">
-                    <span className="hidden sm:inline font-mono text-[9px] tracking-widest uppercase transition-colors duration-300" style={{ color: isOpen ? `${cat.color}99` : 'rgba(255,255,255,0.2)' }}>
+                    <span className="hidden sm:inline font-mono text-xs sm:text-[9px] tracking-widest uppercase transition-colors duration-300" style={{ color: isOpen ? `${cat.color}99` : 'rgba(255,255,255,0.2)' }}>
                       {isOpen ? 'Now Playing' : 'Frame'}
                     </span>
                     <ChevronDown
@@ -149,7 +149,7 @@ export default function Pipeline({
                           />
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" />
-                        <div className="absolute bottom-3 left-3 flex items-center gap-1.5 font-mono text-[9px] tracking-widest uppercase px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-sm text-white/80">
+                        <div className="absolute bottom-3 left-3 flex items-center gap-1.5 font-mono text-xs sm:text-[9px] tracking-widest uppercase px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-sm text-white/80">
                           <Play className="w-2.5 h-2.5" fill="currentColor" /> Live Preview
                         </div>
                       </div>

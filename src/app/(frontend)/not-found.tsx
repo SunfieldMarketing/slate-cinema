@@ -37,7 +37,7 @@ export default function NotFound() {
 
         <section className="relative w-full min-h-[78vh] flex items-center justify-center px-5 sm:px-8 pt-28 pb-16 text-center">
           <div className="w-full max-w-2xl">
-            <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.35em] uppercase mb-6 text-brand-blue">
+            <span className="inline-flex items-center gap-3 font-mono text-xs sm:text-[11px] tracking-[0.35em] uppercase mb-6 text-brand-blue">
               <span className="w-8 h-px bg-brand-blue/40" />
               Error 404
               <span className="w-8 h-px bg-brand-blue/40" />

@@ -77,7 +77,7 @@ export default function IndustryFaq({
       >
         <div className="faq-fade">
           {heading.eyebrow && (
-            <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-6" style={{ color: accent }}>
+            <span className="inline-flex items-center gap-3 font-mono text-xs sm:text-[11px] tracking-[0.3em] uppercase mb-6" style={{ color: accent }}>
               <span className="w-8 h-px" style={{ background: `${accent}66` }} /> <span data-cms-field={paths?.eyebrow}>{heading.eyebrow}</span>
             </span>
           )}
@@ -144,7 +144,7 @@ export default function IndustryFaq({
                 </a>
               )}
               {aside.note && (
-                <p data-cms-field={field('note')} className="mt-4 text-center font-mono text-[9px] tracking-[0.18em] uppercase text-white/55">
+                <p data-cms-field={field('note')} className="mt-4 text-center font-mono text-xs sm:text-[9px] tracking-[0.18em] uppercase text-white/55">
                   {aside.note}
                 </p>
               )}

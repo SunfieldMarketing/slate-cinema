@@ -62,7 +62,7 @@ function CallFraming({ copy }: { copy: ReadyToTalkGlobal | null }) {
           <div className="w-12 h-12 shrink-0 rounded-full border border-emerald-400/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.25)]">
             <CalendarClock className="w-5 h-5 text-emerald-400" />
           </div>
-          <span data-cms-field="eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-emerald-400 uppercase">{eyebrow}</span>
+          <span data-cms-field="eyebrow" className="font-mono text-xs sm:text-[11px] tracking-[0.3em] text-emerald-400 uppercase">{eyebrow}</span>
         </div>
         <h2 data-cms-field="headline" className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1] mb-5">{headline}</h2>
         <p data-cms-field="description" className="text-white/60 font-light text-base sm:text-lg leading-relaxed">

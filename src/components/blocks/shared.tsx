@@ -41,7 +41,7 @@ export function SectionHeading({
     <div className={`${className} ${centered ? 'text-center mx-auto max-w-3xl' : 'max-w-3xl'}`}>
       {heading.eyebrow && (
         <span
-          className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-4"
+          className="inline-flex items-center gap-3 font-mono text-xs sm:text-[11px] tracking-[0.3em] uppercase mb-4"
           style={{ color: accent }}
         >
           <span className="w-8 h-px" style={{ background: `${accent}66` }} />

@@ -184,7 +184,15 @@ const Carousel = memo(
               data-cms-doc-id={card.id}
               data-cms-field={card.id ? 'title' : undefined}
               className="group absolute flex h-full origin-center items-center justify-center p-3"
-              style={{ width: `${faceWidth}px`, transform: `rotateY(${i * (360 / faceCount)}deg) translateZ(${radius}px)` }}
+              // backfaceVisibility: cards on the far side of the cylinder face away from the
+              // viewer; WebKit drew them mirrored (Oct 27 audit #18). Hidden = they just
+              // disappear until they rotate round to the front.
+              style={{
+                width: `${faceWidth}px`,
+                transform: `rotateY(${i * (360 / faceCount)}deg) translateZ(${radius}px)`,
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden',
+              }}
               onClick={() => onSelect(i)}
             >
               <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-ink cursor-pointer transition-colors duration-300 group-hover:border-brand-blue/50 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
