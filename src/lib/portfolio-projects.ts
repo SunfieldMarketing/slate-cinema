@@ -33,7 +33,7 @@ export interface PortfolioProject {
 export const portfolioProjects: PortfolioProject[] = [
   {
     title: 'Zero to One',
-    video: '/videos/production.mp4',
+    video: '/videos/production-web.mp4',
     category: 'Brand',
     company: 'CVM Construction',
     url: '/images/portfolio-brand.webp',
@@ -78,7 +78,7 @@ export const portfolioProjects: PortfolioProject[] = [
   },
   {
     title: 'Chairside Calm',
-    video: '/videos/post-production.mp4',
+    video: '/videos/post-production-web.mp4',
     category: 'Healthcare',
     company: 'Park Smiles NYC',
     url: '/images/portfolio_beauty_bright.webp',
@@ -87,7 +87,7 @@ export const portfolioProjects: PortfolioProject[] = [
   },
   {
     title: 'It’s a Hotel',
-    video: '/videos/hero.mp4',
+    video: '/videos/hero-web.mp4',
     category: 'Hospitality',
     company: 'Sleepy Hollow Hotel',
     url: '/images/portfolio_realestate_bright.webp',
@@ -96,7 +96,7 @@ export const portfolioProjects: PortfolioProject[] = [
   },
   {
     title: 'Timeless Passover Memories',
-    video: '/videos/distribution.mp4',
+    video: '/videos/distribution-web.mp4',
     category: 'Nonprofit',
     company: 'Gateways',
     url: '/images/portfolio_impact_bright.webp',

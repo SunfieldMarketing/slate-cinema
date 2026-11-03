@@ -28,7 +28,7 @@ export const categories: Category[] = [
   {
     id: 'production',
     title: 'Production',
-    video: '/videos/production.mp4',
+    video: '/videos/production-web.mp4',
     color: '#a855f7',
     services: [
       { name: 'Crew', tags: ['Directors', 'Camera Crew', 'Sound Crew'] },
@@ -43,7 +43,7 @@ export const categories: Category[] = [
     // instead of the bullet-list format used everywhere else).
     id: 'post-production',
     title: 'Post-Production',
-    video: '/videos/post-production.mp4',
+    video: '/videos/post-production-web.mp4',
     color: '#10b981',
     services: [
       { name: 'Edit + Finish', tags: ['Editing + Revisions', 'Color + Sound Design', 'Delivery + Export Prep'] },
@@ -53,7 +53,7 @@ export const categories: Category[] = [
   {
     id: 'distribution',
     title: 'Distribution',
-    video: '/videos/distribution.mp4',
+    video: '/videos/distribution-web.mp4',
     color: '#f97316',
     services: [
       { name: 'Social Media Marketing', desc: 'Strategically structure your online presence with scheduled posts and account management.' },

@@ -28,8 +28,12 @@ const S3 = 'https://s3.us-east-1.amazonaws.com/slate-cinema-media/slate/'
 // downscaled to 400px wide to match CSS pixels, but phones are 3x -- a
 // 375pt-wide iPhone screen is 1125 real pixels, so 400 still looked soft.
 // The master's visible window is natively 500x1080, the most real detail
-// that exists in the source, so this is that window UNSCALED (8.3MB).
-export const HERO_MOBILE_VIDEO = '/videos/hero-mobile-hq.mp4'
+// that exists in the source, so this is that window UNSCALED.
+// 2026-11-03 (Oct 27 audit #21): re-encoded at CRF 29, same 500x1080 pixels,
+// 8.3MB -> 5.0MB (hero-mobile-hq.mp4 is the old file). CRF 34 would reach
+// ~3MB but visibly softens fine detail, which is exactly the "blurry"
+// complaint above -- step down only if Jake accepts the trade.
+export const HERO_MOBILE_VIDEO = '/videos/hero-mobile-web.mp4'
 export const HERO_MOBILE_POSTER = '/videos/hero-mobile-hq-poster.webp'
 export const HERO_MOBILE_VIDEO_1MB = `${S3}hero-mobile-1mb.mp4`
 

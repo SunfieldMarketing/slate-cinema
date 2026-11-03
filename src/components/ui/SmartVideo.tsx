@@ -23,7 +23,7 @@ import { mobileMediaUrl, useIsMobile } from '@/lib/mobile-media'
   same placeholder-over-blank principle already applied to images via
   PLACEHOLDER_IMAGE in media-url.ts.
 */
-const PLACEHOLDER_VIDEO = '/videos/production.mp4'
+const PLACEHOLDER_VIDEO = '/videos/production-web.mp4'
 interface SmartVideoProps {
   /** Local file path or Payload-Media/Vercel-Blob URL -- today's behavior. */
   src?: string

@@ -13,7 +13,6 @@ import { getNormalizedIndustries } from "@/lib/normalize";
 import { DEFAULT_DESCRIPTION, DEFAULT_SHARE_IMAGE, DEFAULT_TITLE } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site-url";
 import { brandColor } from "@/lib/brand";
-import { preload } from 'react-dom';
 import { draftMode } from 'next/headers';
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -73,7 +72,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  preload('/videos/hero.mp4', { as: 'video', fetchPriority: 'high' });
+  // No preload of the local hero video here (removed 2026-11-03, Oct 27
+  // audit #1): while HERO_MASTER_REEL_VIMEO_ID is set the homepage hero is
+  // the Vimeo embed, so this hinted a 42MB download on every page --
+  // /journal, /contact, the legal pages -- that nothing ever played.
+  // See the matching note in Hero.tsx.
 
   // Draft Mode (set by /api/preview, which every Live Preview iframe URL
   // routes through -- see payload.config.ts's livePreviewURL) is a

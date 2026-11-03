@@ -63,7 +63,7 @@ function ReelCarousel({
     <section ref={ref} data-cms-global="portfolio-index-page" className="relative w-full overflow-hidden py-20 md:py-24">
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
         <div className="rc-head text-center mb-10 md:mb-12">
-          <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#a855f7] uppercase mb-4">
+          <span className="inline-flex items-center gap-3 font-mono text-xs sm:text-[11px] tracking-[0.3em] text-[#a855f7] uppercase mb-4">
             <span className="w-8 h-px bg-[#a855f7]/40" /> <span data-cms-field="reelCarousel.eyebrow">{copy?.eyebrow || 'The Reel'}</span> <span className="w-8 h-px bg-[#a855f7]/40" />
           </span>
           <h2 data-cms-field="reelCarousel.headline" className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05]">
@@ -109,7 +109,7 @@ function Industries({
     <section ref={ref} data-cms-global="portfolio-index-page" className="relative w-full overflow-hidden py-20 md:py-24">
       <div className="relative z-10 w-full max-w-5xl mx-auto px-5 sm:px-8">
         <div className="ind-head text-center mb-14 max-w-2xl mx-auto">
-          <span data-cms-field="industriesSection.eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase block mb-4">{copy?.eyebrow || 'Who We Work With'}</span>
+          <span data-cms-field="industriesSection.eyebrow" className="font-mono text-xs sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase block mb-4">{copy?.eyebrow || 'Who We Work With'}</span>
           <h2 data-cms-field="industriesSection.headline" className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.05]">
             {copy?.headline || 'Cinematic work for every industry'}
           </h2>
@@ -146,7 +146,7 @@ export default function PortfolioPageContent({
   const heroVimeoId = extractVimeoId(hero?.videoVimeoUrl)
   const heroMediaSrc = heroVimeoId
     ? vimeoEmbedUrl(heroVimeoId, 'background')
-    : mediaUrl(hero?.video) || '/videos/hero.mp4'
+    : mediaUrl(hero?.video) || '/videos/hero-web.mp4'
   // Each built-in section, drawn in the order of the page's Sections list
   // (Portfolio Index Page > Sections in /admin). The hero always stays on
   // top: it holds the page's scroll until its video has opened up.

@@ -77,7 +77,7 @@ function ProcessOverview({ copy }: { copy?: HowItWorksPage['processOverview'] })
     <section ref={ref} data-cms-global="how-it-works-page" className="relative w-full overflow-hidden pt-16 pb-6 md:pt-20 md:pb-8">
       <div className="relative z-10 w-full max-w-5xl mx-auto px-5 sm:px-8">
         <div className="po-fade text-center mb-10 md:mb-12">
-          <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase mb-3">
+          <span className="inline-flex items-center gap-3 font-mono text-xs sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase mb-3">
             <span className="w-8 h-px bg-brand-blue/40" /> <span data-cms-field="processOverview.eyebrow">{eyebrow}</span> <span className="w-8 h-px bg-brand-blue/40" />
           </span>
           <h2 data-cms-field="processOverview.headline" className="text-2xl sm:text-3xl font-bold tracking-tight text-white leading-[1.1]">
@@ -136,21 +136,21 @@ const fallbackProcessPhases = [
   {
     title: 'Production',
     color: '#a855f7',
-    video: '/videos/production.mp4',
+    video: '/videos/production-web.mp4',
     videoVimeoUrl: undefined as string | undefined,
     description: 'Directors, camera crew, sound, talent, and set design come together on set. This is where the raw footage is captured, frame by frame.',
   },
   {
     title: 'Post-Production',
     color: '#10b981',
-    video: '/videos/post-production.mp4',
+    video: '/videos/post-production-web.mp4',
     videoVimeoUrl: undefined as string | undefined,
     description: 'Editing, color grading, sound design, motion graphics, and VFX turn raw footage into a finished film — the phase most of the craft lives in.',
   },
   {
     title: 'Distribution',
     color: '#f97316',
-    video: '/videos/distribution.mp4',
+    video: '/videos/distribution-web.mp4',
     videoVimeoUrl: undefined as string | undefined,
     description: 'Platform-native cuts, ad management, and social strategy get the finished piece in front of the right audience, on every channel that matters.',
   },
@@ -183,7 +183,7 @@ function ProcessWalkthrough({ copy }: { copy?: HowItWorksPage['processWalkthroug
     <section ref={ref} data-cms-global="how-it-works-page" className="relative w-full overflow-hidden py-24 md:py-28">
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         <div className="pw-head text-center mb-14 max-w-2xl mx-auto">
-          <span data-cms-field="processWalkthrough.eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase block mb-4">{eyebrow}</span>
+          <span data-cms-field="processWalkthrough.eyebrow" className="font-mono text-xs sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase block mb-4">{eyebrow}</span>
           <h2 data-cms-field="processWalkthrough.headline" className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-[1.05] mb-5">{headline}</h2>
           <p data-cms-field="processWalkthrough.subhead" className="text-white/55 text-sm sm:text-base font-light">{subhead}</p>
         </div>
@@ -245,7 +245,7 @@ function Guarantees({ items }: { items?: HowItWorksPage['guarantees'] }) {
                 <Icon className="w-4 h-4 text-brand-blue shrink-0" />
                 <div>
                   <div data-cms-field={`guarantees.${i}.title`} className="font-semibold text-sm text-white leading-tight">{g.title}</div>
-                  <div data-cms-field={`guarantees.${i}.desc`} className="text-white/40 text-xs font-light leading-tight">{g.desc}</div>
+                  <div data-cms-field={`guarantees.${i}.desc`} className="text-white/55 text-xs font-light leading-tight">{g.desc}</div>
                 </div>
               </div>
               {i < guarantees.length - 1 && <div className="hidden sm:block w-px h-8 bg-white/10" />}

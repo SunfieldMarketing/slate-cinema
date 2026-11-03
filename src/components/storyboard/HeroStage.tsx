@@ -88,7 +88,7 @@ const OBJECTS: {
   // rotate -90° on Y to bring that thin face-axis to point at the camera.
   { key: 'clapperboard', beat: 1, rotationOffset: [0, -Math.PI / 2, 0], turnInDeg: 50 },
   { key: 'studio', beat: 1, backdrop: true },
-  { key: 'workstation', beat: 2, rotationOffset: [0, -Math.PI / 2, 0], screen: { targetName: 'MY SCREEN_MY SCREEN_0', videoSrc: '/videos/post-production.mp4' }, scaleBoost: 1.2, turnInDeg: 50 },
+  { key: 'workstation', beat: 2, rotationOffset: [0, -Math.PI / 2, 0], screen: { targetName: 'MY SCREEN_MY SCREEN_0', videoSrc: '/videos/post-production-web.mp4' }, scaleBoost: 1.2, turnInDeg: 50 },
   { key: 'phone', beat: 3, screen: { targetName: 'Lock_Screen', videoSrc: '/videos/dj-vinyl.mp4' }, turnInDeg: 50 },
 ]
 
@@ -274,9 +274,11 @@ function StageObject({
   // once on mount. It stays paused until the object becomes visible.
   useEffect(() => {
     if (!screen) return
-    // 2026-09-18 mobile-crash fix: these screens use /videos/post-production.mp4
-    // (3840x2160, 33MB) and dj-vinyl.mp4 as live VideoTextures, preloaded
-    // 'auto' on mount. Phones have a small, hard cap on concurrent hardware
+    // 2026-09-18 mobile-crash fix: these screens play post-production-web.mp4
+    // and dj-vinyl.mp4 as live VideoTextures, preloaded 'auto' on mount.
+    // (Until 2026-11-03 the workstation screen was the original 3840x2160
+    // 33MB post-production.mp4 -- now a 720p 0.5MB re-encode, which is
+    // plenty for a monitor that's a few hundred pixels on screen.) Phones have a small, hard cap on concurrent hardware
     // video decoders and a low tab-memory ceiling (iOS Safari especially) --
     // a 4K decode stacked on top of a WebGL context + the GLB models is
     // enough to kill the tab, matching "site crashes on mobile". Skip the

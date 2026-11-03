@@ -137,7 +137,7 @@ export const industries: IndustryData[] = [
     description: 'From explainer videos to fully stylized 2D/3D brand worlds, our AI-assisted animation pipeline turns dense or abstract ideas into something an audience actually wants to watch. Every project starts as a storyboard, moves through rapid AI-assisted style exploration, then gets hand-finished by real animators and ships platform-native — because a great AI-accelerated idea still needs to land in six seconds on a phone screen.',
     stat: 'AI · 2D · 3D',
     heroImage: '/images/ai_hero_anim.webp',
-    heroVideo: '/videos/post-production.mp4',
+    heroVideo: '/videos/post-production-web.mp4',
     gallery: [
       '/images/ai_anim_gal_1.webp',
       '/images/ai_anim_gal_2.webp',
@@ -151,12 +151,12 @@ export const industries: IndustryData[] = [
     ],
     services: ['AI-accelerated explainers', 'Motion brand identity', '2D & 3D character work', 'AI-assisted style exploration'],
     clientShowcase: [
-      { name: 'Tremco CPG', year: '2026', body: "AI-augmented 3D explainer series built from the client's own DWG drawings — a national NYC building-code-change story, in production.", video: '/videos/post-production.mp4' },
+      { name: 'Tremco CPG', year: '2026', body: "AI-augmented 3D explainer series built from the client's own DWG drawings — a national NYC building-code-change story, in production.", video: '/videos/post-production-web.mp4' },
       // Real Vimeo ID confirmed 2026-08-19 via the media tracker
       // (Anochi Workshops - VFX Commercial, vimeo.com/963219647).
       { name: 'Anochi', year: '2024', body: 'A VFX Eye video, part of a 5-part workshop series covering journey, accountability, breathwork and coaching.', video: '963219647' },
-      { name: 'CVM Waste', year: '2025', body: 'An animated logo and brand sting for a second brand launched from scratch alongside the CVM Construction rebuild.', video: '/videos/distribution.mp4' },
-      { name: 'Smash House Burgers', year: '2025', body: 'Recurring animation stitches — the Trolley Problem series — built into a multi-location weekly social engine.', video: '/videos/production.mp4' },
+      { name: 'CVM Waste', year: '2025', body: 'An animated logo and brand sting for a second brand launched from scratch alongside the CVM Construction rebuild.', video: '/videos/distribution-web.mp4' },
+      { name: 'Smash House Burgers', year: '2025', body: 'Recurring animation stitches — the Trolley Problem series — built into a multi-location weekly social engine.', video: '/videos/production-web.mp4' },
     ],
     cinematicStatement: {
       eyebrow: 'AI In Service Of The Story',
@@ -236,7 +236,7 @@ export const industries: IndustryData[] = [
     description: "Sports content lives or dies in the first second. We build hype reels, athlete features, and event coverage engineered around retention — fast cuts, real footage, and a sound design that hits as hard as the content does. This is content built for people who scroll fast and stop for even faster.",
     stat: 'Gotham Rugby · Kids of Courage',
     heroImage: '/images/ind_ath_hero.webp',
-    heroVideo: '/videos/production.mp4',
+    heroVideo: '/videos/production-web.mp4',
     gallery: [
       '/images/ind_ath_gal1.webp',
       '/images/ind_ath_gal2.webp',
@@ -351,11 +351,11 @@ export const industries: IndustryData[] = [
     ],
     services: ['Destination films', 'Aerial cinematography', 'Property showcases', 'Hospitality brand content'],
     clientShowcase: [
-      { name: 'Sleepy Hollow Hotel', year: '2024', body: "Video and drone coverage of a landmark hotel property — AI virtual staging filled in wherever a space wasn't furniture-ready on shoot day.", video: '/videos/hero.mp4' },
+      { name: 'Sleepy Hollow Hotel', year: '2024', body: "Video and drone coverage of a landmark hotel property — AI virtual staging filled in wherever a space wasn't furniture-ready on shoot day.", video: '/videos/hero-web.mp4' },
       // Real Vimeo IDs confirmed 2026-08-19 via the media tracker.
       { name: 'Envision Festival', year: '2024', body: 'Multi-day festival recap coverage in Costa Rica, turned around fast enough to still ride the post-event wave.', video: '932028681' },
       { name: 'Gateways', year: '5 yrs running', body: 'Seasonal Passover program coverage for a nonprofit serving thousands of families, plus year-round event and brochure work.', video: '1174431950' },
-      { name: 'Smash House Burgers', year: '2025', body: 'A recurring social content engine across every location — comedy reels, menu drops, launches, every week.', video: '/videos/production.mp4' },
+      { name: 'Smash House Burgers', year: '2025', body: 'A recurring social content engine across every location — comedy reels, menu drops, launches, every week.', video: '/videos/production-web.mp4' },
     ],
     cinematicStatement: {
       eyebrow: 'Sell The Feeling',
@@ -431,7 +431,7 @@ export const industries: IndustryData[] = [
     description: "Cinematic real estate marketing that sells more than a property. Our flagship story here is CVM Construction — a NYC general contractor with 150+ building permits and zero web presence when we started, now a full brand system with its own site and a second company (CVM Waste) built from the ground up. We shoot property tours, development timelapses, and aerial cinematography that make a space feel real before a buyer ever steps inside.",
     stat: 'CVM · TruBlue · Tremco',
     heroImage: '/images/ind_realestate_hero.webp',
-    heroVideo: '/videos/distribution.mp4',
+    heroVideo: '/videos/distribution-web.mp4',
     gallery: [
       '/images/ind_realestate_gal1.webp',
       '/images/ind_realestate_gal2.webp',
@@ -445,8 +445,8 @@ export const industries: IndustryData[] = [
     ],
     services: ['Cinematic property tours', 'Development timelapses', 'Aerial drone cinematography', 'Agent brand films'],
     clientShowcase: [
-      { name: 'CVM Construction', year: '2025', body: '150+ NYC building permits, top 5% of NY contractors — taken from zero web presence to a full brand system, plus a second brand (CVM Waste) built from scratch.', video: '/videos/distribution.mp4' },
-      { name: 'TruBlue of NW Brooklyn', year: '2025', body: '"Before Your Listing Photos, Fix These First" — concept-titled comedy reels aimed at homeowners and the realtors who list their homes.', video: '/videos/production.mp4' },
+      { name: 'CVM Construction', year: '2025', body: '150+ NYC building permits, top 5% of NY contractors — taken from zero web presence to a full brand system, plus a second brand (CVM Waste) built from scratch.', video: '/videos/distribution-web.mp4' },
+      { name: 'TruBlue of NW Brooklyn', year: '2025', body: '"Before Your Listing Photos, Fix These First" — concept-titled comedy reels aimed at homeowners and the realtors who list their homes.', video: '/videos/production-web.mp4' },
       { name: 'Good Choice Realty', year: '2021', body: 'A dynamic walkthrough and glamour tour built to move listings faster, from stunning aerials to immersive interiors.', video: '501888251' },
       { name: 'Offerman House', year: '2024', body: 'A Brooklyn luxury development, covered end to end.', video: '278155978' },
     ],
@@ -540,7 +540,7 @@ export const industries: IndustryData[] = [
     description: "Product content only works if it converts. We shoot macro-lit spotlights and e-commerce ads with a signature color grade and cuts built to sell in six seconds or less — engineered for conversion first, aesthetics second, though we rarely have to choose between the two. Real client work: EIR NYC's full jewelry & skincare catalog, shot and cut end-to-end.",
     stat: '743 stock clips, 8 markets',
     heroImage: '/images/ind_products_hero.webp',
-    heroVideo: '/videos/production.mp4',
+    heroVideo: '/videos/production-web.mp4',
     gallery: [
       '/images/ind_products_gal1.webp',
       'https://images.unsplash.com/photo-1603219225728-0c9e319d2373?q=80&w=1200',
@@ -642,7 +642,7 @@ export const industries: IndustryData[] = [
       // Real Vimeo ID confirmed 2026-08-19 via the media tracker
       // (MPower Recruiter Video, vimeo.com/936451661).
       { name: 'MPower', year: '2024', body: 'A recruiter video plus event recap, built to attract talent, not just document an event.', video: '936451661' },
-      { name: 'QotaPro', year: '2025', body: 'Brand film work for a contractor-focused platform.', video: '/videos/production.mp4' },
+      { name: 'QotaPro', year: '2025', body: 'Brand film work for a contractor-focused platform.', video: '/videos/production-web.mp4' },
       { name: 'Skyline Capital', year: '2025', body: 'Executive-facing brand communications for a capital firm.', video: '/videos/pre-production.mp4' },
     ],
     cinematicStatement: {
@@ -729,7 +729,7 @@ export const industries: IndustryData[] = [
       { name: 'Gateways', year: '5 yrs running', body: 'Seasonal Passover program coverage for a nonprofit serving thousands of families, plus year-round event and brochure work.', video: '1174431950' },
       { name: 'Chai Lifeline', year: '2025', body: 'Mission-driven storytelling for a nonprofit serving families in crisis.', video: '/videos/pre-production.mp4' },
       { name: 'HASC', year: '2025', body: 'Program and community coverage for a nonprofit serving people with disabilities.', video: '521940131' },
-      { name: 'NCSY', year: '2025', body: 'Event and community-impact coverage for a national youth movement.', video: '/videos/post-production.mp4' },
+      { name: 'NCSY', year: '2025', body: 'Event and community-impact coverage for a national youth movement.', video: '/videos/post-production-web.mp4' },
     ],
     cinematicStatement: {
       eyebrow: 'Mission, Not Just Message',
@@ -804,7 +804,7 @@ export const industries: IndustryData[] = [
     description: "Prospective students decide whether they can see themselves on a campus in the first few seconds of a video. We build course and program trailers, campus tour films, faculty and student spotlights, and e-learning content engineered for enrollment marketing. Five years running with Gateways alone, plus HANC, CSUSA, Bais Rivkah, Camp Mesorah, and Heichal HaTorah — the same pre-production, production, post-production and distribution discipline we bring to every industry we work in.",
     stat: 'Gateways · HANC · CSUSA',
     heroImage: '/images/ind_corporate_hero.webp',
-    heroVideo: '/videos/production.mp4',
+    heroVideo: '/videos/production-web.mp4',
     gallery: [
       '/images/mediavoid_creative_bright.webp',
       '/images/portfolio-social.webp',
@@ -900,7 +900,7 @@ export const industries: IndustryData[] = [
     description: 'Podcast production as a service, proven on our own show every single week — full episode, three concept-titled reels, thumbnails, captions and carousels, on a real release calendar. Set design, multi-cam filming, and editing run the way an in-house team would run it, for your show instead of ours.',
     stat: 'Real Talk · World Within',
     heroImage: '/images/portfolio-brand.webp',
-    heroVideo: '/videos/post-production.mp4',
+    heroVideo: '/videos/post-production-web.mp4',
     gallery: [
       '/images/portfolio-social.webp',
       '/images/portfolio-production.webp',
@@ -914,14 +914,14 @@ export const industries: IndustryData[] = [
     ],
     services: ['Set design + studio build', 'Multi-cam filming', 'Full-episode edit', 'Distribution-ready exports'],
     clientShowcase: [
-      { name: 'Real Talk', year: 'S1, 2025–26', body: 'A weekly conversation show produced end-to-end by Slate — full episode plus 3 reels, every single week, 15 episodes without missing one. Guests ranged from rabbis to an OB-GYN to a DJ.', video: '/videos/post-production.mp4' },
-      { name: 'World Within', year: '2025', body: 'A client-side show run the same way we run our own: multi-camera filming with dedicated per-guest audio. Your show, our crew.', video: '/videos/production.mp4' },
+      { name: 'Real Talk', year: 'S1, 2025–26', body: 'A weekly conversation show produced end-to-end by Slate — full episode plus 3 reels, every single week, 15 episodes without missing one. Guests ranged from rabbis to an OB-GYN to a DJ.', video: '/videos/post-production-web.mp4' },
+      { name: 'World Within', year: '2025', body: 'A client-side show run the same way we run our own: multi-camera filming with dedicated per-guest audio. Your show, our crew.', video: '/videos/production-web.mp4' },
     ],
     cinematicStatement: {
       eyebrow: 'A Real Release Calendar',
       lines: ['A full episode and', 'three reels — every week.'],
       body: 'Most agencies can’t show you a real release-ops calendar. We can — because we run one on ourselves, every week, without missing a Sunday.',
-      videoSrc: '/videos/post-production.mp4',
+      videoSrc: '/videos/post-production-web.mp4',
     },
     serviceCards: [
       {

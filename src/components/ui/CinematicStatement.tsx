@@ -56,7 +56,7 @@ export default function CinematicStatement({ eyebrow, lines, body, videoSrc, acc
         {/* videoSrc doubles as the Vimeo source too -- IndustryCinematicStatement.videoSrc
             is a plain string in src/lib/industries.ts, so a Vimeo URL/ID pasted directly
             into that same field works with zero interface change (extractVimeoId returns
-            null for an ordinary local path like "/videos/hero.mp4" and this falls through
+            null for an ordinary local path like "/videos/hero-web.mp4" and this falls through
             to the file-based video exactly as before). */}
         <SmartVideo
           src={videoSrc}
@@ -71,7 +71,7 @@ export default function CinematicStatement({ eyebrow, lines, body, videoSrc, acc
 
       <div className="relative z-10 w-full max-w-5xl mx-auto px-6 text-center">
         {eyebrow && (
-          <span data-cms-field={fieldPaths?.eyebrow} className="cs-fade inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.35em] uppercase mb-8" style={{ color: accent }}>
+          <span data-cms-field={fieldPaths?.eyebrow} className="cs-fade inline-flex items-center gap-3 font-mono text-xs sm:text-[11px] tracking-[0.35em] uppercase mb-8" style={{ color: accent }}>
             <span className="w-8 h-px" style={{ background: `${accent}66` }} /> {eyebrow} <span className="w-8 h-px" style={{ background: `${accent}66` }} />
           </span>
         )}

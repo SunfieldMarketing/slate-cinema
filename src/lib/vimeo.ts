@@ -13,7 +13,7 @@
     "https://vimeo.com/862067416"             -> "862067416"
     "vimeo.com/862067416"                     -> "862067416"
     "https://player.vimeo.com/video/862067416" -> "862067416"
-  Returns null for anything else (a local file path like "/videos/hero.mp4",
+  Returns null for anything else (a local file path like "/videos/hero-web.mp4",
   empty string, undefined) -- callers use that to fall back to the existing
   file-based rendering unchanged.
 */
