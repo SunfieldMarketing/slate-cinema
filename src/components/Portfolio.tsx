@@ -19,8 +19,8 @@ gsap.registerPlugin(ScrollTrigger)
   list has grown past 8 since that design, so this now CYCLES: every
   complete group of 8 gets the same mixed wide/tall/normal tiling, each
   group's row-starts shifted down by 3 to stack under the previous group.
-  Any trailing partial group (list length not a multiple of 8) falls back
-  to plain uniform cards, which can never gap regardless of count.
+  Any trailing partial group (list length not a multiple of 8) is laid out
+  by trailingTileClass below, whose spans always fill whole rows.
 
   Tailwind class names must appear as literal source text for the compiler
   to pick them up -- they can't be assembled from runtime numbers -- so
@@ -74,6 +74,34 @@ const BENTO_GROUP_SIZE = 8
 function bentoCoveredCount(total: number): number {
   const fullGroups = Math.min(Math.floor(total / BENTO_GROUP_SIZE), bentoGroups.length)
   return fullGroups * BENTO_GROUP_SIZE
+}
+
+/*
+  Tiles after the last complete bento group (or ALL of them when a page shows fewer than
+  8 -- an industry's hand-picked gallery, say). Plain equal squares left an empty cell
+  whenever the count wasn't a multiple of 4 (3 picks = an empty slot on the right, 5 =
+  one tile alone on the second row: Oct 27 audit #10). These spans always sum to whole
+  rows of the 4 desktop columns, so the grid ends flush however many tiles there are.
+  Everything past a multiple-of-4 head is laid out by the table below (1-7 tiles).
+*/
+const TRAILING_SPANS: Record<number, number[]> = {
+  1: [4],
+  2: [2, 2],
+  3: [2, 1, 1],
+  4: [1, 1, 1, 1],
+  5: [2, 1, 1, 2, 2],
+  6: [1, 1, 1, 1, 2, 2],
+  7: [1, 1, 1, 1, 2, 1, 1],
+}
+// Literal class names, for the same reason as the bento groups above.
+const LG_SPAN: Record<number, string> = { 1: 'lg:col-span-1', 2: 'lg:col-span-2', 4: 'lg:col-span-4' }
+
+function trailingTileClass(position: number, trailingCount: number, isLastOfOdd: boolean): string {
+  const tail = trailingCount < 4 ? trailingCount : 4 + (trailingCount % 4)
+  const head = trailingCount - tail
+  const span = position < head ? 1 : TRAILING_SPANS[tail][position - head]
+  // Two-column tablet layout: an odd final tile spans both columns instead of leaving a hole.
+  return `${isLastOfOdd ? 'sm:col-span-2 ' : ''}${LG_SPAN[span]}`
 }
 
 export default function Portfolio({
@@ -139,8 +167,9 @@ export default function Portfolio({
         )}
 
         {/* Cinematic bento grid — hand-tiled in cycles of 8 so it fills
-            every cell with no gaps; any trailing partial group falls back
-            to plain squares, which can never gap regardless of count. */}
+            every cell with no gaps; any trailing partial group (or a short
+            hand-picked list) uses trailingTileClass, whose spans always end
+            the grid flush. */}
         <div className="pf-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-[240px] sm:auto-rows-[260px] gap-4">
           {visible.map((p, i) => (
             <article
@@ -148,7 +177,7 @@ export default function Portfolio({
               onClick={() => setOpenProject(i)}
               data-cms-collection="portfolio-projects"
               data-cms-doc-id={p.id}
-              className={`pf-card group relative rounded-2xl overflow-hidden border border-white/10 cursor-pointer transition-all duration-500 hover:border-brand-blue/50 ${i < bentoCovered ? bentoGroups[Math.floor(i / BENTO_GROUP_SIZE)][i % BENTO_GROUP_SIZE] : ''}`}
+              className={`pf-card group relative rounded-2xl overflow-hidden border border-white/10 cursor-pointer transition-all duration-500 hover:border-brand-blue/50 ${i < bentoCovered ? bentoGroups[Math.floor(i / BENTO_GROUP_SIZE)][i % BENTO_GROUP_SIZE] : trailingTileClass(i - bentoCovered, visible.length - bentoCovered, i === visible.length - 1 && visible.length % 2 === 1)}`}
             >
               {/* Image */}
               <img
