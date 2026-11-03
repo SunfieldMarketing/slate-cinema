@@ -290,7 +290,7 @@ function StageRouter({ copy }: { copy?: ContactPage['stageRouter'] }) {
     <section ref={ref} id="get-started" data-cms-global="contact-page" className="relative w-full overflow-hidden py-16 md:py-20">
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         <div className="sr-head text-center mb-10 max-w-2xl mx-auto">
-          <span data-cms-field="stageRouter.eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase block mb-4">{eyebrow}</span>
+          <span data-cms-field="stageRouter.eyebrow" className="font-mono text-xs sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase block mb-4">{eyebrow}</span>
           <h2 data-cms-field="stageRouter.headline" className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1]">{headline}</h2>
           <p data-cms-field="stageRouter.subhead" className="mt-5 text-white/55 font-light text-sm sm:text-base">{subhead}</p>
         </div>
@@ -310,7 +310,7 @@ function StageRouter({ copy }: { copy?: ContactPage['stageRouter'] }) {
                 gradientSize={240}
               >
                 <div className="relative flex flex-col h-full p-8 sm:p-9 border-t-2 rounded-t-3xl overflow-hidden" style={{ borderColor: `${s.accent}55` }}>
-                  <span className="absolute top-8 right-8 sm:top-9 sm:right-9 font-mono text-[10px] tracking-widest text-white/25">{s.step}</span>
+                  <span className="absolute top-8 right-8 sm:top-9 sm:right-9 font-mono text-xs sm:text-[10px] tracking-widest text-white/55">{s.step}</span>
                   <div className="flex flex-col items-center text-center flex-1">
                     <div className="w-16 h-16 rounded-full border bg-ink flex items-center justify-center" style={{ borderColor: `${s.accent}66`, boxShadow: `0 0 20px ${s.accent}33` }}>
                       <Icon className="w-7 h-7" style={accentClass} />
@@ -360,8 +360,8 @@ function StageRouter({ copy }: { copy?: ContactPage['stageRouter'] }) {
 
 /* ── Shared field styles ───────────────────────────────────────────── */
 const fieldClass =
-  'w-full bg-white/5 border border-white/15 rounded-xl px-5 py-3.5 text-white placeholder:text-white/30 focus:outline-none focus:border-brand-blue transition-colors'
-const labelClass = 'block font-mono text-[10px] tracking-widest text-white/40 uppercase mb-2'
+  'w-full bg-white/5 border border-white/15 rounded-xl px-5 py-3.5 text-white placeholder:text-white/50 focus:outline-none focus:border-brand-blue transition-colors'
+const labelClass = 'block font-mono text-xs sm:text-[10px] tracking-widest text-white/55 uppercase mb-2'
 
 function SuccessNote({ title, text }: { title: string; text: string }) {
   return (
@@ -441,7 +441,7 @@ function LeadForm({ copy }: { copy?: ContactPage['leadForm'] }) {
             <div className="w-12 h-12 shrink-0 rounded-full border border-brand-blue/40 bg-ink flex items-center justify-center shadow-[0_0_20px_color-mix(in_srgb,var(--color-brand-blue)_20%,transparent)]">
               {React.createElement(resolveIcon('HelpCircle'), { className: 'w-5 h-5 text-brand-blue' })}
             </div>
-            <span data-cms-field="leadForm.eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase">{eyebrow}</span>
+            <span data-cms-field="leadForm.eyebrow" className="font-mono text-xs sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase">{eyebrow}</span>
           </div>
           <h2 data-cms-field="leadForm.headline" className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1] mb-5">{headline}</h2>
           <p data-cms-field="leadForm.description" className="text-white/55 font-light text-sm sm:text-base max-w-xl mx-auto mb-6">
@@ -461,26 +461,26 @@ function LeadForm({ copy }: { copy?: ContactPage['leadForm'] }) {
               <div className="grid sm:grid-cols-2 gap-5">
                 <div>
                   <label className={labelClass} htmlFor="lead-name" data-cms-field="leadForm.nameLabel">{field.name.label}</label>
-                  <input id="lead-name" required type="text" value={data.name} onChange={set('name')} placeholder={field.name.placeholder} className={fieldClass} />
+                  <input id="lead-name" name="name" autoComplete="name" required type="text" value={data.name} onChange={set('name')} placeholder={field.name.placeholder} className={fieldClass} />
                 </div>
                 <div>
                   <label className={labelClass} htmlFor="lead-company" data-cms-field="leadForm.companyLabel">{field.company.label}</label>
-                  <input id="lead-company" type="text" value={data.company} onChange={set('company')} placeholder={field.company.placeholder} className={fieldClass} />
+                  <input id="lead-company" name="company" autoComplete="organization" type="text" value={data.company} onChange={set('company')} placeholder={field.company.placeholder} className={fieldClass} />
                 </div>
               </div>
               <div className="grid sm:grid-cols-2 gap-5">
                 <div>
                   <label className={labelClass} htmlFor="lead-email" data-cms-field="leadForm.emailLabel">{field.email.label}</label>
-                  <input id="lead-email" required type="email" value={data.email} onChange={set('email')} placeholder={field.email.placeholder} className={fieldClass} />
+                  <input id="lead-email" name="email" autoComplete="email" inputMode="email" required type="email" value={data.email} onChange={set('email')} placeholder={field.email.placeholder} className={fieldClass} />
                 </div>
                 <div>
                   <label className={labelClass} htmlFor="lead-phone" data-cms-field="leadForm.phoneLabel">{field.phone.label}</label>
-                  <input id="lead-phone" required type="tel" value={data.phone} onChange={set('phone')} placeholder={field.phone.placeholder} className={fieldClass} />
+                  <input id="lead-phone" name="phone" autoComplete="tel" required type="tel" value={data.phone} onChange={set('phone')} placeholder={field.phone.placeholder} className={fieldClass} />
                 </div>
               </div>
               <div>
                 <label className={labelClass} htmlFor="lead-message" data-cms-field="leadForm.messageLabel">{field.message.label}</label>
-                <input id="lead-message" type="text" value={data.message} onChange={set('message')} placeholder={field.message.placeholder} className={fieldClass} />
+                <input id="lead-message" name="message" autoComplete="off" type="text" value={data.message} onChange={set('message')} placeholder={field.message.placeholder} className={fieldClass} />
               </div>
               <button
                 type="submit"
@@ -513,7 +513,7 @@ function StageDivider() {
     <div ref={ref} className="relative w-full flex items-center justify-center py-6 md:py-9">
       <div className="sd-line w-px h-10 md:h-14 bg-gradient-to-b from-transparent via-white/15 to-transparent" />
       <div className="sd-dot absolute w-9 h-9 rounded-full border border-white/15 bg-ink flex items-center justify-center shadow-[0_0_20px_color-mix(in_srgb,var(--color-brand-blue)_12%,transparent)]">
-        <ChevronDown className="w-4 h-4 text-white/40" />
+        <ChevronDown className="w-4 h-4 text-white/55" />
       </div>
     </div>
   )
@@ -558,7 +558,7 @@ function ReadyToTalkSection({ copy }: { copy?: ReadyToTalkGlobal | null }) {
             <div className="w-12 h-12 shrink-0 rounded-full border border-emerald-400/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.25)]">
               <CalendarClock className="w-5 h-5 text-emerald-400" />
             </div>
-            <span data-cms-field="eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-emerald-400 uppercase">{eyebrow}</span>
+            <span data-cms-field="eyebrow" className="font-mono text-xs sm:text-[11px] tracking-[0.3em] text-emerald-400 uppercase">{eyebrow}</span>
           </div>
           <h2 data-cms-field="headline" className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1] mb-5">{headline}</h2>
           <p data-cms-field="description" className="text-white/55 font-light text-sm sm:text-base max-w-xl mx-auto mb-6">
@@ -596,7 +596,7 @@ function ReadyToTalkSection({ copy }: { copy?: ReadyToTalkGlobal | null }) {
               {buttonLabel}
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
-            <span data-cms-field="note" className="text-white/40 text-xs font-light">{note}</span>
+            <span data-cms-field="note" className="text-white/55 text-xs font-light">{note}</span>
           </div>
         </div>
       </div>
@@ -634,7 +634,7 @@ function WhatHappensNext({ copy }: { copy?: ContactPage['whatHappensNext'] }) {
     <section ref={ref} data-cms-global="contact-page" className="relative w-full overflow-hidden mt-6 md:mt-12 pt-28 md:pt-40 pb-16 md:pb-20">
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
         <div className="whn-head text-center mb-12 max-w-2xl mx-auto">
-          <span data-cms-field="whatHappensNext.eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase block mb-4">{eyebrow}</span>
+          <span data-cms-field="whatHappensNext.eyebrow" className="font-mono text-xs sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase block mb-4">{eyebrow}</span>
           <h2 data-cms-field="whatHappensNext.headline" className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1]">{headline}</h2>
           <p data-cms-field="whatHappensNext.subhead" className="mt-5 text-white/55 font-light text-sm sm:text-base">
             {subhead}
@@ -656,7 +656,7 @@ function WhatHappensNext({ copy }: { copy?: ContactPage['whatHappensNext'] }) {
                 <div className="relative z-10 w-14 h-14 mx-auto rounded-full border border-brand-blue/40 bg-ink flex items-center justify-center mb-5 shadow-[0_0_20px_color-mix(in_srgb,var(--color-brand-blue)_20%,transparent)]">
                   <Icon className="w-6 h-6 text-brand-blue" />
                 </div>
-                <div className="font-mono text-[10px] tracking-widest text-white/30 mb-2">{s.step}</div>
+                <div className="font-mono text-xs sm:text-[10px] tracking-widest text-white/55 mb-2">{s.step}</div>
                 <h3 data-cms-field={`whatHappensNext.steps.${i}.title`} className="text-white font-bold text-lg mb-2">{s.title}</h3>
                 <p data-cms-field={`whatHappensNext.steps.${i}.desc`} className="text-white/50 text-sm font-light leading-relaxed max-w-[240px] mx-auto">{s.desc}</p>
               </div>
@@ -684,6 +684,15 @@ function StudioLocation({ copy }: { copy?: ContactPage['studioLocation'] }) {
   const hours = contact?.hours || 'Mon–Fri · 9am – 7pm ET · On-location by appointment'
   const email = contact?.email || 'info@slatecinema.com'
   const fullAddress = `${addressLine}, ${city}, ${state} ${postalCode}`
+  // Coordinates from Site Settings > Contact; a cleared field hides the map. (A database that
+  // predates the fields has no `contact` values yet -- use the studio's.)
+  const lat = contact ? contact.mapLatitude : 40.6568049
+  const lon = contact ? contact.mapLongitude : -74.0029213
+  const hasMap = typeof lat === 'number' && typeof lon === 'number'
+  const mapSrc = hasMap
+    ? `https://www.openstreetmap.org/export/embed.html?bbox=${lon - 0.009}%2C${lat - 0.0048}%2C${lon + 0.009}%2C${lat + 0.0048}&layer=mapnik&marker=${lat}%2C${lon}`
+    : ''
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -696,26 +705,36 @@ function StudioLocation({ copy }: { copy?: ContactPage['studioLocation'] }) {
     <section ref={ref} className="relative w-full overflow-hidden py-16 md:py-20">
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         <div className="sl-inner grid lg:grid-cols-2 gap-6 items-stretch">
-          {/* Real studio location */}
-          <div className="relative rounded-3xl overflow-hidden border border-white/10 min-h-[320px] group">
-            <iframe
-              title="Slate Cinema Studio location"
-              src={`https://www.google.com/maps?q=${encodeURIComponent(fullAddress)}&output=embed&z=14`}
-              className="absolute inset-0 w-full h-full grayscale-[0.3] opacity-90"
-              style={{ border: 0 }}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-            <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-ink via-transparent to-transparent" />
-            <div className="absolute bottom-5 left-5 flex items-center gap-2 font-mono text-[11px] tracking-widest text-white/80 uppercase pointer-events-none [text-shadow:0_1px_6px_rgba(0,0,0,0.9)]">
-              <Navigation className="w-4 h-4 text-[#22d3ee]" /> {fullAddress}
+          {/* Real studio location. OpenStreetMap, not Google: Google's keyless embed now sends
+              X-Frame-Options: SAMEORIGIN, so browsers refuse to show it inside this page and the panel was
+              an empty dark box on every device (Oct 27 audit #15). The dark filter turns the light
+              tiles into a map that sits on the dark page (hue-rotate keeps water bluish). */}
+          {hasMap && (
+            <div className="relative rounded-3xl overflow-hidden border border-white/10 min-h-[320px] group">
+              <iframe
+                title="Slate Cinema Studio location"
+                src={mapSrc}
+                className="absolute inset-0 w-full h-full"
+                style={{ border: 0, filter: 'invert(1) hue-rotate(180deg) grayscale(0.35) brightness(0.92) contrast(0.95)' }}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+              <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-ink via-transparent to-transparent" />
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="absolute bottom-5 left-5 flex items-center gap-2 font-mono text-[11px] tracking-widest text-white/90 hover:text-white uppercase [text-shadow:0_1px_6px_rgba(0,0,0,0.9)]"
+              >
+                <Navigation className="w-4 h-4 text-[#22d3ee]" /> {fullAddress}
+              </a>
             </div>
-          </div>
+          )}
 
           {/* Studio details */}
-          <div data-cms-global="contact-page" className="relative flex flex-col justify-center rounded-3xl border border-white/[0.14] bg-white/[0.05] backdrop-blur-md p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden">
+          <div data-cms-global="contact-page" className={`relative flex flex-col justify-center rounded-3xl border border-white/[0.14] bg-white/[0.05] backdrop-blur-md p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden ${hasMap ? '' : 'lg:col-span-2'}`}>
             <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#22d3ee] to-transparent" />
-            <span data-cms-field="studioLocation.eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#22d3ee] uppercase mb-4">{eyebrow}</span>
+            <span data-cms-field="studioLocation.eyebrow" className="font-mono text-xs sm:text-[11px] tracking-[0.3em] text-[#22d3ee] uppercase mb-4">{eyebrow}</span>
             <h2 className="text-3xl sm:text-4xl font-black tracking-tighter text-white mb-5"><span data-cms-field="studioLocation.headlineLine1">{headlineLine1}</span><br /><span data-cms-field="studioLocation.headlineLine2">{headlineLine2}</span></h2>
             <div className="mb-6 flex flex-wrap gap-3">
               <TrustBadge icon={Navigation} label="On-Location Nationwide" accent="#22d3ee" />
@@ -758,11 +777,14 @@ function ContactMethods({ copy }: { copy?: ContactPage['contactMethods'] }) {
   const phone = contact?.phone || '+1 732 930 1934'
   const city = contact?.city || 'Brooklyn'
   const state = contact?.state || 'NY'
+  // The Studio card used to link to "#" (it just jumped to the top -- Oct 27 audit #25).
+  const studioAddress = [contact?.addressLine || '132 32nd St', city, state, contact?.postalCode || '11232'].filter(Boolean).join(', ')
+  const studioMapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(studioAddress)}`
 
   const contactCards = [
-    { icon: Mail, label: 'Email', value: email, href: `mailto:${email}` },
-    { icon: Phone, label: 'Phone', value: phone, href: `tel:${phone.replace(/[^+\d]/g, '')}` },
-    { icon: MapPin, label: 'Studio', value: `${city}, ${state}`, href: '#' },
+    { icon: Mail, label: 'Email', value: email, href: `mailto:${email}`, external: false },
+    { icon: Phone, label: 'Phone', value: phone, href: `tel:${phone.replace(/[^+\d]/g, '')}`, external: false },
+    { icon: MapPin, label: 'Studio', value: `${city}, ${state}`, href: studioMapUrl, external: true },
   ]
 
   useGSAP(() => {
@@ -776,7 +798,7 @@ function ContactMethods({ copy }: { copy?: ContactPage['contactMethods'] }) {
     <section ref={ref} data-cms-global="contact-page" className="relative w-full overflow-hidden mt-8 md:mt-20 pt-16 md:pt-24 pb-14 md:pb-16">
       <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-8">
         <div className="cm-head text-center mb-10 max-w-xl mx-auto">
-          <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#fbbf24] uppercase mb-4">
+          <span className="inline-flex items-center gap-3 font-mono text-xs sm:text-[11px] tracking-[0.3em] text-[#fbbf24] uppercase mb-4">
             <span className="w-8 h-px bg-[#fbbf24]/40" /> <span data-cms-field="contactMethods.eyebrow">{eyebrow}</span> <span className="w-8 h-px bg-[#fbbf24]/40" />
           </span>
           <h2 data-cms-field="contactMethods.headline" className="text-3xl sm:text-4xl font-black tracking-tighter text-white leading-[1.1] mb-4">{headline}</h2>
@@ -798,13 +820,20 @@ function ContactMethods({ copy }: { copy?: ContactPage['contactMethods'] }) {
             gradientOpacity={0.15}
             gradientSize={180}
           >
-            <a href={c.href} onClick={() => posthog.capture('contact_method_clicked', { method: c.label })} className="group flex items-center gap-4 p-5">
+            <a
+              href={c.href}
+              {...(c.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+              onClick={() => posthog.capture('contact_method_clicked', { method: c.label })}
+              className="group flex items-center gap-4 p-5"
+            >
               <div className="w-11 h-11 rounded-full border border-white/15 flex items-center justify-center group-hover:border-[#fbbf24]/50 group-hover:bg-[#fbbf24]/10 transition-colors shrink-0">
                 <c.icon className="w-5 h-5 text-white/80 group-hover:text-[#fbbf24] transition-colors" />
               </div>
               <div className="min-w-0">
-                <div className="font-mono text-[10px] tracking-widest text-white/40 uppercase mb-0.5">{c.label}</div>
-                <div className="text-white font-medium text-sm truncate">{c.value}</div>
+                <div className="font-mono text-xs sm:text-[10px] tracking-widest text-white/55 uppercase mb-0.5">{c.label}</div>
+                {/* Wraps instead of truncating (Oct 27 audit #23): an email cut off with "..." can't be read or
+                    copied. overflow-wrap:anywhere only breaks when the address truly doesn't fit. */}
+                <div className="text-white font-medium text-sm [overflow-wrap:anywhere]">{c.value}</div>
               </div>
             </a>
           </MagicCard>

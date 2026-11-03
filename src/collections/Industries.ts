@@ -297,7 +297,7 @@ export const Industries: CollectionConfig = {
     {
       type: 'collapsible',
       label: 'Project gallery',
-      admin: { description: 'Heading over the grid of portfolio projects near the bottom of the page.' },
+      admin: { description: 'The grid of portfolio projects near the bottom of the page, and the heading over it.' },
       fields: [
         {
           name: 'galleryEyebrow',
@@ -307,6 +307,22 @@ export const Industries: CollectionConfig = {
           admin: { description: 'Leave blank to hide it.' },
         },
         { name: 'galleryHeadline', label: 'Headline', type: 'text', defaultValue: 'A Gallery of Impact' },
+        {
+          // Every industry page used to end with the same 22-tile gallery of all work, so the Travel
+          // page showed AI and real-estate projects (Oct 27 audit #6). Projects have no industry of their
+          // own (their "type" is Brand / Documentary / ...), so each industry picks its own. maxDepth 0:
+          // industries load on every page and only the IDs are needed here.
+          name: 'galleryProjects',
+          label: 'Projects shown',
+          type: 'relationship',
+          relationTo: 'portfolio-projects',
+          hasMany: true,
+          maxDepth: 0,
+          admin: {
+            description:
+              "Pick the projects this page's gallery shows, in this order. Leave empty to show all of our work.",
+          },
+        },
       ],
     },
     {

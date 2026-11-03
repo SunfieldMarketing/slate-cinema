@@ -14,6 +14,7 @@ import * as migration_20261002_180000_page_sections from './20261002_180000_page
 import * as migration_20261002_200000_page_seo from './20261002_200000_page_seo';
 import * as migration_20261002_220000_remaining_copy from './20261002_220000_remaining_copy';
 import * as migration_20261002_230000_brand_color from './20261002_230000_brand_color';
+import * as migration_20261103_000000_gallery_and_map from './20261103_000000_gallery_and_map';
 
 export const migrations = [
   {
@@ -95,5 +96,10 @@ export const migrations = [
     up: migration_20261002_230000_brand_color.up,
     down: migration_20261002_230000_brand_color.down,
     name: '20261002_230000_brand_color',
+  },
+  {
+    up: migration_20261103_000000_gallery_and_map.up,
+    down: migration_20261103_000000_gallery_and_map.down,
+    name: '20261103_000000_gallery_and_map',
   },
 ];

@@ -86,6 +86,21 @@ export const SiteSettings: GlobalConfig = {
         { name: 'state', type: 'text', defaultValue: 'NY' },
         { name: 'postalCode', type: 'text', defaultValue: '11232' },
         { name: 'hours', type: 'text', defaultValue: 'Mon–Fri · 9am – 7pm ET · On-location by appointment' },
+        {
+          // The Contact page map is an OpenStreetMap embed, which places its pin by
+          // coordinates rather than by address (Google's keyless embed is blocked
+          // from being framed, so it showed an empty box -- Oct 27 audit #15).
+          name: 'mapLatitude',
+          label: 'Map latitude',
+          type: 'number',
+          defaultValue: 40.6568049,
+          admin: {
+            step: 0.0000001,
+            description:
+              'Where the pin goes on the Contact page map. To find a spot: right-click it in Google Maps and click the numbers at the top of the menu (latitude, longitude). Clear both to hide the map.',
+          },
+        },
+        { name: 'mapLongitude', label: 'Map longitude', type: 'number', defaultValue: -74.0029213, admin: { step: 0.0000001 } },
       ],
     },
     {

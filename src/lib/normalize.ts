@@ -149,6 +149,8 @@ export interface IndustryData {
   cta: IndustryCta
   processHeading: IndustrySectionHeading
   galleryHeading: { eyebrow: string; headline: string }
+  /** Projects picked for this page's gallery (IDs, in order). Empty/absent = show all work. */
+  galleryProjectIds?: string[]
   redirect?: IndustryRedirect
   /** The page's Sections list (order/visibility + library sections), as
       saved in /admin. Absent for a code-only industry and in the copy the
@@ -299,6 +301,7 @@ export function normalizeIndustry(doc: Industry): IndustryData {
       accent: doc.processHeadlineAccent ?? '',
     },
     galleryHeading: { eyebrow: doc.galleryEyebrow ?? '', headline: doc.galleryHeadline ?? '' },
+    galleryProjectIds: (doc.galleryProjects ?? []).map((p) => String(typeof p === 'object' && p ? p.id : p)),
     redirect: doc.redirectEnabled
       ? {
           eyebrow: doc.redirectEyebrow ?? '',

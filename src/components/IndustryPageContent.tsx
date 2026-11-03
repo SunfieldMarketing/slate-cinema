@@ -69,7 +69,7 @@ function SisterBrandRedirect({ industry, redirect }: { industry: IndustryData; r
             <div className="wc-fade relative z-10 w-full max-w-2xl mx-auto px-5 sm:px-8 text-center">
               {redirect.eyebrow && (
                 <span
-                  className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-6"
+                  className="inline-flex items-center gap-3 font-mono text-xs sm:text-[11px] tracking-[0.3em] uppercase mb-6"
                   style={{ color: industry.accent }}
                 >
                   <span className="w-8 h-px" style={{ background: `${industry.accent}66` }} />
@@ -140,6 +140,12 @@ export default function IndustryPageContent({
   // > Labels for the shared button text); each wrapper below tells Live
   // Preview's click-to-edit which doc a click belongs to.
   const cms = { 'data-cms-collection': 'industries', 'data-cms-doc-id': industry.id }
+  // The gallery shows the projects picked on the industry doc (Project gallery > Projects shown),
+  // in that order; nothing picked -- or none of the picks is published -- shows all work.
+  const picked = (industry.galleryProjectIds ?? [])
+    .map((id) => portfolioProjects.find((p) => p.id === id))
+    .filter((p): p is PortfolioProjectLocal => Boolean(p))
+  const galleryProjects = picked.length ? picked : portfolioProjects
   const builtIns = {
     hero: (
       <div {...cms}>
@@ -203,7 +209,7 @@ export default function IndustryPageContent({
     gallery: (
       <div id="gallery" {...cms}>
         <Portfolio
-          projects={portfolioProjects}
+          projects={galleryProjects}
           heading={industry.galleryHeading}
           headingFieldPaths={{ eyebrow: 'galleryEyebrow', headline: 'galleryHeadline' }}
         />

@@ -1566,6 +1566,10 @@ export interface Industry {
    */
   galleryEyebrow?: string | null;
   galleryHeadline?: string | null;
+  /**
+   * Pick the projects this page's gallery shows, in this order. Leave empty to show all of our work.
+   */
+  galleryProjects?: (number | PortfolioProject)[] | null;
   redirectEnabled?: boolean | null;
   redirectEyebrow?: string | null;
   redirectHeadline?: string | null;
@@ -2828,6 +2832,7 @@ export interface IndustriesSelect<T extends boolean = true> {
       };
   galleryEyebrow?: T;
   galleryHeadline?: T;
+  galleryProjects?: T;
   redirectEnabled?: T;
   redirectEyebrow?: T;
   redirectHeadline?: T;
@@ -3288,6 +3293,11 @@ export interface SiteSetting {
     state?: string | null;
     postalCode?: string | null;
     hours?: string | null;
+    /**
+     * Where the pin goes on the Contact page map. To find a spot: right-click it in Google Maps and click the numbers at the top of the menu (latitude, longitude). Clear both to hide the map.
+     */
+    mapLatitude?: number | null;
+    mapLongitude?: number | null;
   };
   /**
    * The credibility strip under the hero on every industry page (src/components/TrustBanner.tsx) -- was fully hardcoded (rating text, tagline, and all 5 client logos on local /public files) until this field was added. Same idea as Home's trustSection, just a single-row layout with no flagship logos.
@@ -5350,6 +5360,8 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         state?: T;
         postalCode?: T;
         hours?: T;
+        mapLatitude?: T;
+        mapLongitude?: T;
       };
   trustBanner?:
     | T
