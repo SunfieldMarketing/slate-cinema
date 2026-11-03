@@ -158,7 +158,7 @@ export default async function SocialMediaManagementPage() {
   .smm-page {
     --ink:#0b0c0e; --panel:#101216; --line:#22262d;
     --text:#f4f5f7; --muted:#9aa1ab;
-    --blue:#00AEEF; --orange:#f97316; --orange-soft:rgba(249,115,22,.12);
+    --blue:var(--color-brand-blue); --orange:#f97316; --orange-soft:rgba(249,115,22,.12);
   }
   .smm-page * { box-sizing:border-box; }
   .smm-page { background:var(--ink); -webkit-font-smoothing:antialiased; }

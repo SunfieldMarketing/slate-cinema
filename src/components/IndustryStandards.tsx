@@ -110,9 +110,9 @@ export default function IndustryStandards({ data }: { data?: HomePage['industryS
       
       {/* Background Visuals */}
       <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
-        <div className="bg-visual-1 absolute min-w-[150vw] min-h-[150vh] border-[1px] border-[#00AEEF]/10 rounded-full flex items-center justify-center">
-           <div className="w-[120vw] h-[120vh] border-[1px] border-[#00AEEF]/20 rounded-full flex items-center justify-center">
-             <div className="w-[80vw] h-[80vh] border-[1px] border-[#00AEEF]/30 rounded-full bg-[#00AEEF]/5 blur-3xl" />
+        <div className="bg-visual-1 absolute min-w-[150vw] min-h-[150vh] border-[1px] border-brand-blue/10 rounded-full flex items-center justify-center">
+           <div className="w-[120vw] h-[120vh] border-[1px] border-brand-blue/20 rounded-full flex items-center justify-center">
+             <div className="w-[80vw] h-[80vh] border-[1px] border-brand-blue/30 rounded-full bg-brand-blue/5 blur-3xl" />
            </div>
         </div>
         
@@ -135,7 +135,7 @@ export default function IndustryStandards({ data }: { data?: HomePage['industryS
         
         {/* Phase 1 */}
         <div className="phase-1 absolute flex flex-col items-center max-w-7xl">
-          <span data-cms-field="industryStandards.phase1.eyebrow" className="font-mono text-[10px] md:text-xs text-[#00AEEF] tracking-[0.5em] uppercase mb-8">
+          <span data-cms-field="industryStandards.phase1.eyebrow" className="font-mono text-[10px] md:text-xs text-brand-blue tracking-[0.5em] uppercase mb-8">
             {phase1.eyebrow}
           </span>
           <h2 className="text-6xl md:text-[8rem] font-light leading-none tracking-tighter">

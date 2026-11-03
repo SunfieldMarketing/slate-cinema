@@ -7,7 +7,7 @@ import { useGSAP } from '@gsap/react'
 import { NumberTicker } from '@/components/ui/number-ticker'
 import SmartVideo from '@/components/ui/SmartVideo'
 import { extractVimeoId } from '@/lib/vimeo'
-import { labelField, useSiteLabels } from '@/lib/site-data-context'
+import { labelField, useBrandColor, useSiteLabels } from '@/lib/site-data-context'
 
 /*
   Shared cinematic hero for interior pages. A full-viewport video/gradient
@@ -70,7 +70,7 @@ export default function PageHero({
   videoSrc,
   videoVimeoUrl,
   posterSrc,
-  accent = '#00AEEF',
+  accent: accentProp,
   cta,
   secondaryCta,
   trustNote,
@@ -87,6 +87,8 @@ export default function PageHero({
 }: Props) {
   const ref = useRef<HTMLElement>(null)
   const { scrollCue } = useSiteLabels()
+  const brand = useBrandColor()
+  const accent = accentProp ?? brand
 
   // Preload media immediately with high priority so it's ready instantly
   if (posterSrc) {

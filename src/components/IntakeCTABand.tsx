@@ -6,6 +6,7 @@ import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { ArrowRight } from 'lucide-react'
 import type { ReadyToTalk } from '@/payload-types'
+import { useBrandColor } from '@/lib/site-data-context'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -30,7 +31,7 @@ export default function IntakeCTABand({ copy }: { copy?: ReadyToTalk['intakeBand
     return () => ctx.revert()
   }, { scope: ref })
 
-  const accent = '#00AEEF'
+  const accent = useBrandColor()
   const eyebrow = copy?.eyebrow ?? '// Already Know?'
   const headline = copy?.headline ?? 'Already know exactly what you want?'
   const body = copy?.body ?? "Skip the call — walk us through the project details directly and we'll follow up with a plan."

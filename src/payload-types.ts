@@ -3264,6 +3264,12 @@ export interface Footer {
  */
 export interface SiteSetting {
   id: number;
+  theme?: {
+    /**
+     * The site-wide highlight color -- buttons, links, glows, the backdrop -- as a 6-digit hex code. Industry pages, journal posts, custom pages and single sections keep their own colors. Blank goes back to the original blue (#00AEEF).
+     */
+    brandColor?: string | null;
+  };
   seo?: {
     titleTemplate?: string | null;
     /**
@@ -5320,6 +5326,11 @@ export interface FooterSelect<T extends boolean = true> {
  * via the `definition` "site-settings_select".
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
+  theme?:
+    | T
+    | {
+        brandColor?: T;
+      };
   seo?:
     | T
     | {

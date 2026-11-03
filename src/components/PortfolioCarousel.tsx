@@ -59,8 +59,8 @@ export default function PortfolioCarousel({
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
         <div className="pc-head text-center mb-10 md:mb-12" data-cms-global="home-page">
           {eyebrow && (
-            <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase mb-4">
-              <span className="w-8 h-px bg-[#00AEEF]/40" /> <span data-cms-field="selectedWork.eyebrow">{eyebrow}</span> <span className="w-8 h-px bg-[#00AEEF]/40" />
+            <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase mb-4">
+              <span className="w-8 h-px bg-brand-blue/40" /> <span data-cms-field="selectedWork.eyebrow">{eyebrow}</span> <span className="w-8 h-px bg-brand-blue/40" />
             </span>
           )}
           {headline && (
@@ -82,7 +82,6 @@ export default function PortfolioCarousel({
 
       <ProjectCardModal
         project={openProject === null ? null : projects[openProject]}
-        accent="#00AEEF"
         onClose={() => setOpenProject(null)}
       />
     </section>

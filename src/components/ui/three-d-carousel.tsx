@@ -187,7 +187,7 @@ const Carousel = memo(
               style={{ width: `${faceWidth}px`, transform: `rotateY(${i * (360 / faceCount)}deg) translateZ(${radius}px)` }}
               onClick={() => onSelect(i)}
             >
-              <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-ink cursor-pointer transition-colors duration-300 group-hover:border-[#00AEEF]/50 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+              <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-ink cursor-pointer transition-colors duration-300 group-hover:border-brand-blue/50 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
                 <motion.img
                   src={(() => {
                     const light = mobileMediaUrl(card.image)

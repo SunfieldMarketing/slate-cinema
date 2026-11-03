@@ -879,7 +879,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
             {/* Subtle blue radial glow */}
             <div
               className="absolute inset-0 pointer-events-none"
-              style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,174,239,0.08) 0%, transparent 70%)' }}
+              style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 50%, color-mix(in srgb, var(--color-brand-blue) 8%, transparent) 0%, transparent 70%)' }}
             />
 
             {/* SLATE CINEMA letters */}
@@ -899,7 +899,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
                 {cinemaLetters.map((letter, i) => (
                   <span
                     key={`c-${i}`}
-                    className="hero-letter inline-block text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] font-bold text-[#00AEEF] tracking-tighter leading-none"
+                    className="hero-letter inline-block text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] font-bold text-brand-blue tracking-tighter leading-none"
                     style={{ transformStyle: 'preserve-3d' }}
                   >
                     {letter}
@@ -953,7 +953,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
                 data-cms-field="hero.ctaLabel"
                 className="hero-cta group relative px-7 py-3.5 rounded-full overflow-hidden bg-white"
               >
-                <div className="absolute inset-0 bg-[#00AEEF] scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
+                <div className="absolute inset-0 bg-brand-blue scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
                 <span className="relative text-sm font-semibold text-black group-hover:text-white tracking-wide transition-colors">{ctaLabel}</span>
               </a>
               <a
@@ -983,7 +983,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
               height="20"
               viewBox="0 0 20 20"
               fill="none"
-              className="animate-bounce text-[#00AEEF]/60"
+              className="animate-bounce text-brand-blue/60"
             >
               <path
                 d="M4 7l6 6 6-6"

@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { revalidateGlobalAfterChange } from '@/lib/revalidate'
+import { validateHex } from '@/lib/brand'
 
 /*
   Site-wide SEO defaults + the contact details reused across the JSON-LD
@@ -30,6 +31,26 @@ export const SiteSettings: GlobalConfig = {
     afterChange: [revalidateGlobalAfterChange],
   },
   fields: [
+    {
+      // 2026-10-02: the one design setting -- see src/lib/brand.ts.
+      name: 'theme',
+      type: 'group',
+      label: 'Brand color',
+      fields: [
+        {
+          name: 'brandColor',
+          label: 'Brand color',
+          type: 'text',
+          defaultValue: '#00AEEF',
+          validate: validateHex,
+          admin: {
+            placeholder: '#00AEEF',
+            description:
+              'The site-wide highlight color -- buttons, links, glows, the backdrop -- as a 6-digit hex code. Industry pages, journal posts, custom pages and single sections keep their own colors. Blank goes back to the original blue (#00AEEF).',
+          },
+        },
+      ],
+    },
     {
       name: 'seo',
       type: 'group',

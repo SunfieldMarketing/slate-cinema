@@ -21,7 +21,7 @@ import {
   SCENES,
 } from '@/components/storyboard/config'
 import type { HeroStageHandle } from '@/components/storyboard/HeroStage'
-import { labelField, useSiteLabels } from '@/lib/site-data-context'
+import { labelField, useBrandColor, useSiteLabels } from '@/lib/site-data-context'
 import type { HowItWorksPage } from '@/payload-types'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -79,8 +79,10 @@ interface Props {
   storyboard?: NonNullable<HowItWorksPage['hero']>['storyboard']
 }
 
-export default function StoryboardHero({ eyebrow = 'The Process', title, subtitle, accent = '#00AEEF', cta, storyboard }: Props) {
+export default function StoryboardHero({ eyebrow = 'The Process', title, subtitle, accent: accentProp, cta, storyboard }: Props) {
   const { scrollCue } = useSiteLabels()
+  const brand = useBrandColor()
+  const accent = accentProp ?? brand
   const closingHeadline = storyboard?.closingHeadline ?? "Let's make something great."
   const closingText =
     storyboard?.closingText ?? "Every project starts with a conversation — reach out and we'll walk you through exactly how it works."

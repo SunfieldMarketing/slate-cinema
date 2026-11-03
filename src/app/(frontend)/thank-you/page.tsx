@@ -91,7 +91,7 @@ export default async function ThankYouPage() {
             <Link
               href={primaryCtaHref}
               data-cms-field="primaryCtaLabel"
-              className="group inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full text-sm font-semibold text-black bg-white hover:bg-[#00AEEF] hover:text-white transition-colors duration-300 w-full sm:w-auto"
+              className="group inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full text-sm font-semibold text-black bg-white hover:bg-brand-blue hover:text-white transition-colors duration-300 w-full sm:w-auto"
             >
               {primaryCtaLabel}
             </Link>
@@ -109,7 +109,7 @@ export default async function ThankYouPage() {
   }
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-[#00AEEF] selection:text-white">
+    <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-brand-blue selection:text-white">
       <AmbientBackdrop accent="#10b981" />
       <Suspense fallback={null}>
         <ThankYouTracking />

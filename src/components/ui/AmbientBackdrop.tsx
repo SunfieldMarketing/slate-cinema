@@ -1,5 +1,7 @@
 'use client'
 
+import { useBrandColor } from '@/lib/site-data-context'
+
 /*
   AmbientBackdrop — a quiet, mostly-static backdrop mounted once per page so
   sections share one continuous canvas instead of each painting its own
@@ -11,7 +13,9 @@ interface Props {
   accent?: string
 }
 
-export default function AmbientBackdrop({ accent = '#00AEEF' }: Props) {
+export default function AmbientBackdrop({ accent: accentProp }: Props) {
+  const brand = useBrandColor()
+  const accent = accentProp ?? brand
   return (
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden>
       <div className="absolute inset-0 bg-ink" />

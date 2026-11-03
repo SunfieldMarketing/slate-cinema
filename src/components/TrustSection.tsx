@@ -9,6 +9,7 @@ import { Marquee } from '@/components/ui/marquee'
 import type { HomePage } from '@/payload-types'
 import { mediaUrl } from '@/lib/media-url'
 import { mobileMediaUrl } from '@/lib/mobile-media'
+import { useBrandColor } from '@/lib/site-data-context'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -57,6 +58,7 @@ function FlagshipLogo({ name, src }: { name: string; src: string }) {
 }
 
 export default function TrustSection({ data }: { data?: HomePage['trustSection'] }) {
+  const brand = useBrandColor()
   const sectionRef = useRef<HTMLElement>(null)
   const eyebrow = data?.eyebrow || 'Join the leaders who worked with Slate Cinema'
   const ratingText = data?.ratingText || '5.0/5 · 44 Google reviews'
@@ -108,7 +110,7 @@ export default function TrustSection({ data }: { data?: HomePage['trustSection']
           <div className="flex items-center gap-2 shrink-0">
             <div className="flex">
               {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} className="w-3.5 h-3.5" fill="#00AEEF" stroke="#00AEEF" />
+                <Star key={i} className="w-3.5 h-3.5" fill={brand} stroke={brand} />
               ))}
             </div>
             <span data-cms-field="trustSection.ratingText" className="font-mono text-[11px] text-white/50 tracking-wide">{ratingText}</span>

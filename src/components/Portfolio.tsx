@@ -125,8 +125,8 @@ export default function Portfolio({
           <div className="pf-head flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 md:mb-12">
             <div>
               {heading.eyebrow && (
-                <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase mb-4">
-                  <span className="w-8 h-px bg-[#00AEEF]/40" /> <span data-cms-field={headingFieldPaths?.eyebrow}>{heading.eyebrow}</span>
+                <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase mb-4">
+                  <span className="w-8 h-px bg-brand-blue/40" /> <span data-cms-field={headingFieldPaths?.eyebrow}>{heading.eyebrow}</span>
                 </span>
               )}
               {heading.headline && (
@@ -148,7 +148,7 @@ export default function Portfolio({
               onClick={() => setOpenProject(i)}
               data-cms-collection="portfolio-projects"
               data-cms-doc-id={p.id}
-              className={`pf-card group relative rounded-2xl overflow-hidden border border-white/10 cursor-pointer transition-all duration-500 hover:border-[#00AEEF]/50 ${i < bentoCovered ? bentoGroups[Math.floor(i / BENTO_GROUP_SIZE)][i % BENTO_GROUP_SIZE] : ''}`}
+              className={`pf-card group relative rounded-2xl overflow-hidden border border-white/10 cursor-pointer transition-all duration-500 hover:border-brand-blue/50 ${i < bentoCovered ? bentoGroups[Math.floor(i / BENTO_GROUP_SIZE)][i % BENTO_GROUP_SIZE] : ''}`}
             >
               {/* Image */}
               <img
@@ -166,7 +166,7 @@ export default function Portfolio({
               />
               {/* Grade + gradient */}
               <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
-              <div className="absolute inset-0 mix-blend-overlay bg-[#00AEEF]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute inset-0 mix-blend-overlay bg-brand-blue/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
               {/* Play button on hover */}
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
@@ -182,13 +182,13 @@ export default function Portfolio({
                     <h3 data-cms-field="title" className="text-white font-bold text-lg leading-tight truncate">{p.title}</h3>
                     <p data-cms-field="company" className="text-white/50 text-xs font-mono truncate">{p.company}</p>
                   </div>
-                  <ArrowUpRight className="w-5 h-5 text-white/40 group-hover:text-[#00AEEF] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                  <ArrowUpRight className="w-5 h-5 text-white/40 group-hover:text-brand-blue group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
                 </div>
                 {/* Metrics reveal */}
                 <div className="flex gap-4 mt-3 max-h-0 opacity-0 group-hover:max-h-16 group-hover:opacity-100 transition-all duration-500 overflow-hidden">
                   {p.metrics.map((m, mi) => (
                     <div key={m.label}>
-                      <div data-cms-field={`metrics.${mi}.value`} className="text-[#00AEEF] font-bold text-sm">{m.value}</div>
+                      <div data-cms-field={`metrics.${mi}.value`} className="text-brand-blue font-bold text-sm">{m.value}</div>
                       <div data-cms-field={`metrics.${mi}.label`} className="text-white/40 text-[10px] font-mono uppercase tracking-wide">{m.label}</div>
                     </div>
                   ))}
@@ -215,7 +215,6 @@ export default function Portfolio({
 
       <ProjectCardModal
         project={openProject === null ? null : visible[openProject]}
-        accent="#00AEEF"
         onClose={() => setOpenProject(null)}
       />
     </section>

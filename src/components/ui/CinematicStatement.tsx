@@ -5,6 +5,7 @@ import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import SmartVideo from '@/components/ui/SmartVideo'
+import { useBrandColor } from '@/lib/site-data-context'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -24,7 +25,9 @@ interface Props {
   fieldPaths?: { eyebrow?: string; lines?: string; body?: string }
 }
 
-export default function CinematicStatement({ eyebrow, lines, body, videoSrc, accent = '#00AEEF', fieldPaths }: Props) {
+export default function CinematicStatement({ eyebrow, lines, body, videoSrc, accent: accentProp, fieldPaths }: Props) {
+  const brand = useBrandColor()
+  const accent = accentProp ?? brand
   const ref = useRef<HTMLElement>(null)
 
   useGSAP(() => {

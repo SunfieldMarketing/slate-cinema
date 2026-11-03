@@ -13,10 +13,10 @@ import PageSections from '@/components/blocks/PageSections'
 import type { BlocksData } from '@/components/blocks/types'
 import type { JournalPostLocal } from '@/lib/normalize'
 import type { JournalPage } from '@/payload-types'
+import { useBrandColor } from '@/lib/site-data-context'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const JOURNAL_ACCENT = '#00AEEF'
 
 function JournalGrid({ journalPosts, readLabel }: { journalPosts: JournalPostLocal[]; readLabel: string }) {
   const ref = useRef<HTMLElement>(null)
@@ -45,7 +45,7 @@ function JournalGrid({ journalPosts, readLabel }: { journalPosts: JournalPostLoc
               onClick={() => setFilter(c)}
               className={`px-4 py-2 rounded-full text-xs font-mono tracking-wide transition-all duration-300 border ${
                 filter === c
-                  ? 'bg-[#00AEEF] text-black border-[#00AEEF]'
+                  ? 'bg-brand-blue text-black border-brand-blue'
                   : 'bg-white/[0.03] text-white/60 border-white/10 hover:border-white/30 hover:text-white'
               }`}
             >
@@ -85,7 +85,7 @@ function JournalGrid({ journalPosts, readLabel }: { journalPosts: JournalPostLoc
                   <span className="w-1 h-1 rounded-full bg-white/30" />
                   <span data-cms-field="readTime">{p.readTime}</span>
                 </div>
-                <h3 data-cms-field="title" className="text-white font-bold text-lg leading-snug mb-2 group-hover:text-[#00AEEF] transition-colors">
+                <h3 data-cms-field="title" className="text-white font-bold text-lg leading-snug mb-2 group-hover:text-brand-blue transition-colors">
                   {p.title}
                 </h3>
                 <p data-cms-field="excerpt" className="text-white/50 text-sm font-light leading-relaxed line-clamp-3 flex-1">{p.excerpt}</p>
@@ -111,6 +111,7 @@ export default function JournalPageContent({
   page: JournalPage | null
   blocksData?: BlocksData
 }) {
+  const accent = useBrandColor()
   // Copy: the Journal Page global (2026-10-01). These fallbacks only cover
   // a database that predates it.
   const hero = page?.hero
@@ -131,7 +132,7 @@ export default function JournalPageContent({
             hero?.subtitle ??
             'Field notes from inside our own production process — on story, strategy, and the craft decisions that decide whether someone keeps watching or scrolls past.'
           }
-          accent={JOURNAL_ACCENT}
+          accent={accent}
           eyebrowFieldPath="hero.eyebrow"
           titleFieldPaths={titleLines.map((l) => l.path)}
           subtitleFieldPath="hero.subtitle"
@@ -142,13 +143,13 @@ export default function JournalPageContent({
   }
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-[#00AEEF] selection:text-white">
-      <AmbientBackdrop accent={JOURNAL_ACCENT} />
+    <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-brand-blue selection:text-white">
+      <AmbientBackdrop accent={accent} />
 
       <div className="relative z-10 w-full">
         <Nav />
 
-        <PageSections page="journal" layout={page?.layout} builtIns={builtIns} accent={JOURNAL_ACCENT} cms={{ global: 'journal-page' }} data={blocksData} />
+        <PageSections page="journal" layout={page?.layout} builtIns={builtIns} accent={accent} cms={{ global: 'journal-page' }} data={blocksData} />
 
         <Footer />
       </div>

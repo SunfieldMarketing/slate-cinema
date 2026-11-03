@@ -2,7 +2,7 @@
 
 import { Star } from 'lucide-react'
 import { Marquee } from '@/components/ui/marquee'
-import { useSiteData } from '@/lib/site-data-context'
+import { useBrandColor, useSiteData } from '@/lib/site-data-context'
 import { mediaUrl } from '@/lib/media-url'
 
 /*
@@ -29,6 +29,7 @@ const fallbackClients = [
 
 export default function TrustBanner() {
   const { settings } = useSiteData()
+  const brand = useBrandColor()
   const data = settings?.trustBanner
   const ratingText = data?.ratingText || '5.0/5 · 44 Google reviews'
   const marqueeLabel = data?.marqueeLabel || 'More collaborations & partnerships'
@@ -42,7 +43,7 @@ export default function TrustBanner() {
         <div className="flex items-center gap-2 shrink-0">
           <div className="flex">
             {Array.from({ length: 5 }).map((_, i) => (
-              <Star key={i} className="w-3.5 h-3.5" fill="#00AEEF" stroke="#00AEEF" />
+              <Star key={i} className="w-3.5 h-3.5" fill={brand} stroke={brand} />
             ))}
           </div>
           <span data-cms-field="trustBanner.ratingText" className="font-mono text-[11px] text-white/50 tracking-wide">{ratingText}</span>

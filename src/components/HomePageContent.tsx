@@ -54,17 +54,17 @@ export default function HomePageContent({
   }
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-[#00AEEF] selection:text-white">
+    <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-brand-blue selection:text-white">
       {/* Global Cinematic Overlays */}
 
       <div className="fixed inset-0 z-50 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(11,12,14,0.4)_100%)]" />
 
-      <AmbientBackdrop accent="#00AEEF" />
+      <AmbientBackdrop />
 
       <Nav />
 
       <div className="relative z-10 w-full">
-        <PageSections page="home" layout={homePage?.layout} builtIns={builtIns} accent="#00AEEF" cms={{ global: 'home-page' }} data={blocksData} />
+        <PageSections page="home" layout={homePage?.layout} builtIns={builtIns} cms={{ global: 'home-page' }} data={blocksData} />
         <div data-scroll-section="footer"><Footer /></div>
       </div>
     </main>

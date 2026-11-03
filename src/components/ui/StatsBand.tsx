@@ -45,7 +45,7 @@ export default function StatsBand({
                   enough to wrap here (e.g. a 4-digit value plus a long
                   suffix) is a data problem to fix at the source, not
                   something that should ever visibly break mid-number. */}
-              <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-none whitespace-nowrap" style={{ textShadow: '0 0 60px rgba(0,174,239,0.25)' }}>
+              <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-none whitespace-nowrap" style={{ textShadow: '0 0 60px color-mix(in srgb, var(--color-brand-blue) 25%, transparent)' }}>
                 <NumberTicker value={s.value} className="font-bold text-white" />
                 <span className="text-brand-blue">{s.suffix}</span>
               </div>

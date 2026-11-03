@@ -62,7 +62,7 @@ export default async function TermsOfServicePage() {
     <>
       <style>{`
   .legal-page { --ink:#0b0c0e; --panel:#101216; --line:#22262d; --text:#f4f5f7; --muted:#9aa1ab;
-          --blue:#00AEEF; --orange:#f97316; }
+          --blue:var(--color-brand-blue); --orange:#f97316; }
   .legal-page * { box-sizing:border-box; }
   .legal-page { background:var(--ink); -webkit-font-smoothing:antialiased; }
   .legal-page .wrap { max-width:780px; margin:0 auto; padding:0 28px; }
@@ -97,7 +97,7 @@ export default async function TermsOfServicePage() {
       <div className="bg-ink antialiased">
         <Nav />
 
-        <PageSections page="terms" layout={page?.layout} builtIns={builtIns} accent="#00AEEF" cms={{ global: 'terms-of-service-page' }} data={blocksData} />
+        <PageSections page="terms" layout={page?.layout} builtIns={builtIns} cms={{ global: 'terms-of-service-page' }} data={blocksData} />
 
         <Footer />
       </div>

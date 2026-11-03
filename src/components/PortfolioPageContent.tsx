@@ -116,7 +116,7 @@ function Industries({
         </div>
 
         <div className="ind-wheel">
-          <IndustryWheel industries={industries} accent="#00AEEF" />
+          <IndustryWheel industries={industries} />
         </div>
       </div>
     </section>

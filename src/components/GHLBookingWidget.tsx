@@ -57,7 +57,7 @@ export default function GHLBookingWidget({
     <section className="relative w-full pt-10 pb-20 md:pt-14 md:pb-24 overflow-hidden">
       <div className="relative z-10 max-w-3xl mx-auto px-5 sm:px-6" data-cms-global={cms.global}>
         <div className="text-center mb-10">
-          <span data-cms-field={`${cms.prefix}.eyebrow`} className="font-mono text-[10px] text-[#00AEEF] tracking-[0.4em] uppercase block mb-4">{eyebrow}</span>
+          <span data-cms-field={`${cms.prefix}.eyebrow`} className="font-mono text-[10px] text-brand-blue tracking-[0.4em] uppercase block mb-4">{eyebrow}</span>
           <h2 data-cms-field={`${cms.prefix}.headline`} className="text-4xl md:text-6xl font-bold text-white tracking-tight mb-3">{headline}</h2>
           <p className="text-white/40 text-sm">
             <span data-cms-field={`${cms.prefix}.sessionLabel`}>{sessionLabel}</span> · <span data-cms-field={`${cms.prefix}.durationLabel`}>{durationLabel}</span>

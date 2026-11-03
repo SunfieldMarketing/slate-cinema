@@ -13,6 +13,7 @@ import * as migration_20261002_000000_page_builder from './20261002_000000_page_
 import * as migration_20261002_180000_page_sections from './20261002_180000_page_sections';
 import * as migration_20261002_200000_page_seo from './20261002_200000_page_seo';
 import * as migration_20261002_220000_remaining_copy from './20261002_220000_remaining_copy';
+import * as migration_20261002_230000_brand_color from './20261002_230000_brand_color';
 
 export const migrations = [
   {
@@ -89,5 +90,10 @@ export const migrations = [
     up: migration_20261002_220000_remaining_copy.up,
     down: migration_20261002_220000_remaining_copy.down,
     name: '20261002_220000_remaining_copy',
+  },
+  {
+    up: migration_20261002_230000_brand_color.up,
+    down: migration_20261002_230000_brand_color.down,
+    name: '20261002_230000_brand_color',
   },
 ];

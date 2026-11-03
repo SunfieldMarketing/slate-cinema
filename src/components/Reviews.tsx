@@ -6,7 +6,7 @@ import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { Star, Quote, Play, Volume2 } from 'lucide-react'
 import { MagicCard } from '@/components/ui/magic-card'
-import { useSiteData } from '@/lib/site-data-context'
+import { useBrandColor, useSiteData } from '@/lib/site-data-context'
 import type { HomePage } from '@/payload-types'
 import type { IndustryVideoTestimonial } from '@/lib/normalize'
 import { extractVimeoId } from '@/lib/vimeo'
@@ -53,10 +53,11 @@ function initials(name: string) {
 }
 
 function StarRow({ n }: { n: number }) {
+  const brand = useBrandColor()
   return (
     <div className="flex gap-0.5">
       {Array.from({ length: 5 }).map((_, i) => (
-        <Star key={i} className="w-3.5 h-3.5" fill={i < n ? '#00AEEF' : 'transparent'} stroke={i < n ? '#00AEEF' : 'rgba(255,255,255,0.25)'} strokeWidth={1.5} />
+        <Star key={i} className="w-3.5 h-3.5" fill={i < n ? brand : 'transparent'} stroke={i < n ? brand : 'rgba(255,255,255,0.25)'} strokeWidth={1.5} />
       ))}
     </div>
   )
@@ -66,6 +67,7 @@ function StarRow({ n }: { n: number }) {
    selfie-style client testimonial, framed as a mobile screen so it reads
    immediately as video proof rather than another text card. */
 function PhoneVideoCard({ t }: { t: IndustryVideoTestimonial }) {
+  const brand = useBrandColor()
   const [playing, setPlaying] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
   // The clip itself (several MB) is only fetched once someone actually
@@ -102,7 +104,7 @@ function PhoneVideoCard({ t }: { t: IndustryVideoTestimonial }) {
     <button
       type="button"
       onClick={toggle}
-      className="rv-video group relative w-[220px] sm:w-[240px] shrink-0 snap-center rounded-[2rem] border-[6px] border-white/10 bg-black overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-transform duration-300 hover:-translate-y-1 hover:border-[#00AEEF]/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
+      className="rv-video group relative w-[220px] sm:w-[240px] shrink-0 snap-center rounded-[2rem] border-[6px] border-white/10 bg-black overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-transform duration-300 hover:-translate-y-1 hover:border-brand-blue/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
       aria-label={playing ? `Pause testimonial from ${t.name}` : `Play testimonial from ${t.name}`}
     >
       <div className="relative aspect-[9/16] w-full">
@@ -134,7 +136,7 @@ function PhoneVideoCard({ t }: { t: IndustryVideoTestimonial }) {
         <div className={`absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/10 to-black/30 transition-opacity duration-500 ${playing ? 'opacity-40' : 'opacity-100'}`} />
         {!playing ? (
           <span className="absolute inset-0 flex items-center justify-center">
-            <span className="w-12 h-12 rounded-full backdrop-blur-md border border-[#00AEEF]/60 bg-[rgba(5,7,12,0.55)] flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+            <span className="w-12 h-12 rounded-full backdrop-blur-md border border-brand-blue/60 bg-[rgba(5,7,12,0.55)] flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
               <Play className="w-4 h-4 text-white ml-0.5" fill="currentColor" />
             </span>
           </span>
@@ -145,7 +147,7 @@ function PhoneVideoCard({ t }: { t: IndustryVideoTestimonial }) {
         )}
         <div className="absolute bottom-0 left-0 right-0 p-4">
           {t.outcome && (
-            <div className="text-sm font-bold mb-1" style={{ color: '#00AEEF' }}>{t.outcome}</div>
+            <div className="text-sm font-bold mb-1" style={{ color: brand }}>{t.outcome}</div>
           )}
           <div className="text-white font-semibold text-sm">{t.name}</div>
           <div className="text-white/55 text-xs truncate">{t.role} · {t.company}</div>
@@ -158,6 +160,7 @@ function PhoneVideoCard({ t }: { t: IndustryVideoTestimonial }) {
 export default function Reviews({ data }: { data?: HomePage['reviews'] }) {
   const sectionRef = useRef<HTMLElement>(null)
   const { industries } = useSiteData()
+  const brand = useBrandColor()
 
   const eyebrow = data?.eyebrow || 'Client Feedback'
   const headlineLine1 = data?.headlineLine1 || 'Trusted by leaders'
@@ -221,8 +224,8 @@ export default function Reviews({ data }: { data?: HomePage['reviews'] }) {
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
         {/* Header */}
         <div className="rv-head text-center mb-12 md:mb-14">
-          <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase mb-5">
-            <span className="w-8 h-px bg-[#00AEEF]/40" /> <span data-cms-field="reviews.eyebrow">{eyebrow}</span> <span className="w-8 h-px bg-[#00AEEF]/40" />
+          <span className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase mb-5">
+            <span className="w-8 h-px bg-brand-blue/40" /> <span data-cms-field="reviews.eyebrow">{eyebrow}</span> <span className="w-8 h-px bg-brand-blue/40" />
           </span>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-[1.05]">
             <span data-cms-field="reviews.headlineLine1">{headlineLine1}</span>
@@ -267,15 +270,15 @@ export default function Reviews({ data }: { data?: HomePage['reviews'] }) {
             <MagicCard
               key={i}
               className="rv-card rounded-2xl transition-transform duration-500 hover:-translate-y-1 h-full"
-              gradientFrom="#00AEEF"
+              gradientFrom={brand}
               gradientTo="#0369A1"
-              gradientColor="#00AEEF"
+              gradientColor={brand}
               gradientOpacity={0.15}
               gradientSize={220}
             >
               <article className="relative z-10 flex flex-col h-full min-h-[260px] p-6 sm:p-7">
                 <div className="flex items-center justify-between mb-4">
-                  <Quote className="w-7 h-7 text-[#00AEEF]/40" fill="currentColor" />
+                  <Quote className="w-7 h-7 text-brand-blue/40" fill="currentColor" />
                   <StarRow n={t.rating} />
                 </div>
 
@@ -284,8 +287,8 @@ export default function Reviews({ data }: { data?: HomePage['reviews'] }) {
                 </p>
 
                 <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
-                  <div className="w-11 h-11 rounded-full border border-white/15 bg-[#00AEEF]/10 flex items-center justify-center shrink-0">
-                    <span className="font-mono text-xs font-bold text-[#00AEEF]">{initials(t.name)}</span>
+                  <div className="w-11 h-11 rounded-full border border-white/15 bg-brand-blue/10 flex items-center justify-center shrink-0">
+                    <span className="font-mono text-xs font-bold text-brand-blue">{initials(t.name)}</span>
                   </div>
                   <div className="min-w-0">
                     <div data-cms-field={`reviews.testimonials.${i}.name`} className="text-white font-semibold text-sm truncate">{t.name}</div>

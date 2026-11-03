@@ -6,7 +6,7 @@ import { ArrowRight, X } from 'lucide-react'
 import type { PortfolioProjectLocal } from '@/lib/normalize'
 import SmartVideo from '@/components/ui/SmartVideo'
 import { PLACEHOLDER_IMAGE } from '@/lib/media-url'
-import { labelField, useSiteLabels } from '@/lib/site-data-context'
+import { labelField, useBrandColor, useSiteLabels } from '@/lib/site-data-context'
 
 /*
   ProjectCardModal — the breakdown card opened by clicking a frame on the
@@ -21,14 +21,17 @@ import { labelField, useSiteLabels } from '@/lib/site-data-context'
 */
 export default function ProjectCardModal({
   project,
-  accent,
+  accent: accentProp,
   onClose,
 }: {
   project: PortfolioProjectLocal | null
-  accent: string
+  /** Defaults to Site Settings > Brand color. */
+  accent?: string
   onClose: () => void
 }) {
   const labels = useSiteLabels()
+  const brand = useBrandColor()
+  const accent = accentProp ?? brand
   const cardRef = useRef<HTMLDivElement>(null)
   const backdropRef = useRef<HTMLButtonElement>(null)
   // The Vimeo iframe (player variant) takes a beat to boot -- its own JS,

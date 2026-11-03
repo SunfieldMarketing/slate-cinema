@@ -48,7 +48,7 @@ export default function JournalPostContent({
   }, { scope: ref })
 
   return (
-    <main ref={ref} className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-[#00AEEF] selection:text-white">
+    <main ref={ref} className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-brand-blue selection:text-white">
       <AmbientBackdrop accent={post.accent} />
 
       <div className="relative z-10 w-full">
@@ -162,7 +162,7 @@ export default function JournalPostContent({
                       <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
                     </div>
                     <div className="p-5">
-                      <h3 data-cms-field="title" className="text-white font-bold text-sm leading-snug mb-2 group-hover:text-[#00AEEF] transition-colors line-clamp-2">
+                      <h3 data-cms-field="title" className="text-white font-bold text-sm leading-snug mb-2 group-hover:text-brand-blue transition-colors line-clamp-2">
                         {p.title}
                       </h3>
                       <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/60 group-hover:text-white transition-colors">

@@ -109,7 +109,7 @@ export default function Nav() {
     <>
       <nav ref={navRef} data-cms-global="navigation" className="fixed top-0 left-0 w-full z-40">
         {/* Progress bar */}
-        <div className="nav-progress absolute top-0 left-0 h-[2px] bg-[#00AEEF] w-full origin-left scale-x-0 z-50" />
+        <div className="nav-progress absolute top-0 left-0 h-[2px] bg-brand-blue w-full origin-left scale-x-0 z-50" />
         
         {/* Background blur layer */}
         <div className="nav-bg absolute inset-0 opacity-0 pointer-events-none transition-opacity" style={{ background: 'rgba(11,12,14,0.85)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.04)' }} />
@@ -265,7 +265,7 @@ export default function Nav() {
                 that's meaningfully brighter than /25, nowhere near white/80. */}
             <a href={clientPortalHref} target="_blank" rel="noopener noreferrer" data-cms-field="clientPortalLabel" className="text-xs font-mono text-white/35 hover:text-white/55 transition-colors tracking-widest uppercase">{clientPortalLabel}</a>
             <Link href={ctaHref} data-cms-field="ctaButton.label" className="relative px-5 py-2.5 rounded-full text-sm font-semibold text-[#030305] bg-white overflow-hidden group">
-              <div className="absolute inset-0 bg-[#00AEEF] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+              <div className="absolute inset-0 bg-brand-blue translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
               <span className="relative group-hover:text-white transition-colors">{ctaLabel}</span>
             </Link>
           </div>
@@ -305,7 +305,7 @@ export default function Nav() {
             <Link
               href="/"
               data-cms-field="homeLabel"
-              className="block py-3 text-2xl font-bold text-white hover:text-[#00AEEF] transition-colors tracking-wider"
+              className="block py-3 text-2xl font-bold text-white hover:text-brand-blue transition-colors tracking-wider"
               onClick={closeMobileMenu}
             >
               {homeLabel}
@@ -316,7 +316,7 @@ export default function Nav() {
                 type="button"
                 onClick={() => setMobilePortfolioOpen(!mobilePortfolioOpen)}
                 aria-expanded={mobilePortfolioOpen}
-                className="w-full flex items-center justify-center gap-2 py-3 text-2xl font-bold text-white hover:text-[#00AEEF] transition-colors tracking-wider"
+                className="w-full flex items-center justify-center gap-2 py-3 text-2xl font-bold text-white hover:text-brand-blue transition-colors tracking-wider"
               >
                 <span data-cms-field="portfolioLabel">{portfolioLabel}</span>
                 <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${mobilePortfolioOpen ? 'rotate-180' : ''}`} />
@@ -327,7 +327,7 @@ export default function Nav() {
                     href="/portfolio"
                     data-cms-field="allWorkLabel"
                     onClick={closeMobileMenu}
-                    className="block py-2.5 text-sm font-semibold text-white/80 hover:text-[#00AEEF] transition-colors"
+                    className="block py-2.5 text-sm font-semibold text-white/80 hover:text-brand-blue transition-colors"
                   >
                     {allWorkLabel}
                   </Link>
@@ -341,7 +341,7 @@ export default function Nav() {
                         data-cms-collection="industries"
                         data-cms-doc-id={ind.id}
                         data-cms-field="label"
-                        className="flex items-center justify-center gap-2 py-2.5 text-sm text-white/55 hover:text-[#00AEEF] transition-colors"
+                        className="flex items-center justify-center gap-2 py-2.5 text-sm text-white/55 hover:text-brand-blue transition-colors"
                       >
                         <Icon className="w-3.5 h-3.5 shrink-0" style={{ color: ind.accent }} />
                         {ind.label}
@@ -360,7 +360,7 @@ export default function Nav() {
                     key={`${i}-${link.label}`}
                     href={link.href}
                     data-cms-field={`links.${i}.label`}
-                    className="block py-3 text-2xl font-bold text-white hover:text-[#00AEEF] transition-colors tracking-wider"
+                    className="block py-3 text-2xl font-bold text-white hover:text-brand-blue transition-colors tracking-wider"
                     onClick={closeMobileMenu}
                   >
                     {link.label}
@@ -374,7 +374,7 @@ export default function Nav() {
                     type="button"
                     onClick={() => setMobileOpenGroup(open ? null : i)}
                     aria-expanded={open}
-                    className="w-full flex items-center justify-center gap-2 py-3 text-2xl font-bold text-white hover:text-[#00AEEF] transition-colors tracking-wider"
+                    className="w-full flex items-center justify-center gap-2 py-3 text-2xl font-bold text-white hover:text-brand-blue transition-colors tracking-wider"
                   >
                     <span data-cms-field={`links.${i}.label`}>{link.label}</span>
                     <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
@@ -385,7 +385,7 @@ export default function Nav() {
                       <Link
                         href={link.href}
                         onClick={closeMobileMenu}
-                        className="block py-2.5 text-sm font-semibold text-white/80 hover:text-[#00AEEF] transition-colors"
+                        className="block py-2.5 text-sm font-semibold text-white/80 hover:text-brand-blue transition-colors"
                       >
                         {link.label}
                       </Link>
@@ -395,7 +395,7 @@ export default function Nav() {
                           href={child.href}
                           onClick={closeMobileMenu}
                           data-cms-field={`links.${i}.children.${j}.label`}
-                          className="block py-2.5 text-sm text-white/55 hover:text-[#00AEEF] transition-colors"
+                          className="block py-2.5 text-sm text-white/55 hover:text-brand-blue transition-colors"
                         >
                           {child.label}
                         </Link>
@@ -421,7 +421,7 @@ export default function Nav() {
               href={ctaHref}
               data-cms-field="ctaButton.label"
               onClick={closeMobileMenu}
-              className="self-center bg-[#00AEEF] text-white px-8 py-4 rounded-full text-lg font-semibold mt-2 shadow-[0_0_20px_rgba(0,174,239,0.3)]"
+              className="self-center bg-brand-blue text-white px-8 py-4 rounded-full text-lg font-semibold mt-2 shadow-[0_0_20px_color-mix(in_srgb,var(--color-brand-blue)_30%,transparent)]"
             >
               {ctaLabel}
             </Link>

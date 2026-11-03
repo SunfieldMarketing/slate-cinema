@@ -2,6 +2,7 @@
 
 import type { ReactNode } from 'react'
 import { PAGE_SECTIONS, builtInKey, builtInSlug, type BuiltInSection, type PageKey } from '@/lib/page-sections'
+import { useBrandColor } from '@/lib/site-data-context'
 import { BlockShell, RenderBlock } from './RenderBlocks'
 import type { BlocksData, ContentBlock } from './types'
 
@@ -55,10 +56,13 @@ export default function PageSections({
   layout?: readonly SectionRow[] | null
   /** Each built-in section, by key. A missing or empty one renders nothing. */
   builtIns: Record<string, ReactNode>
-  accent: string
+  /** Highlight color for library sections; defaults to Site Settings > Brand color. */
+  accent?: string
   cms: CmsTarget
   data?: BlocksData
 }) {
+  const brand = useBrandColor()
+  const pageAccent = accent ?? brand
   const sections = PAGE_SECTIONS[page] as BuiltInSection[]
   const info = (row: SectionRow) => {
     const key = builtInKey(page, row.blockType)
@@ -85,7 +89,7 @@ export default function PageSections({
             <RenderBlock
               block={row as ContentBlock}
               index={index}
-              accent={accent}
+              accent={pageAccent}
               prefix="layout"
               data={data}
               isFirst={row === first?.row}

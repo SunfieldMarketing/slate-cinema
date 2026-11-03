@@ -3,6 +3,7 @@
 import React, { createContext, useContext } from 'react'
 import type { Navigation, Footer, SiteSetting } from '@/payload-types'
 import type { IndustryData } from '@/lib/normalize'
+import { brandColor } from '@/lib/brand'
 
 /*
   Nav and Footer are both 'use client' (dropdown state, scroll-linked
@@ -75,4 +76,10 @@ export function useSiteLabels(): SiteLabels {
     click-to-edit (it lives in a different document from the page). */
 export function labelField(key: keyof SiteLabels) {
   return { 'data-cms-global': 'site-settings', 'data-cms-field': `labels.${key}` } as const
+}
+
+/** Site Settings > Brand color as a hex string, for colors CSS can't take
+    from --color-brand-blue (hex-alpha suffixes, SVG fills, data attributes). */
+export function useBrandColor(): string {
+  return brandColor(useSiteData().settings?.theme?.brandColor)
 }

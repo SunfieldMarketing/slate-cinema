@@ -11,6 +11,7 @@ import { SiteDataProvider } from "@/lib/site-data-context";
 import { getNavigation, getFooterGlobal, getSiteSettings, mediaUrl } from "@/lib/payload-data";
 import { getNormalizedIndustries } from "@/lib/normalize";
 import { DEFAULT_DESCRIPTION, DEFAULT_TITLE } from "@/lib/seo";
+import { brandColor } from "@/lib/brand";
 import { preload } from 'react-dom';
 import { draftMode } from 'next/headers';
 
@@ -115,7 +116,12 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en" className={`dark ${inter.variable} ${bebas.variable} ${fraunces.variable} ${courier.variable}`}>
+    <html
+      lang="en"
+      className={`dark ${inter.variable} ${bebas.variable} ${fraunces.variable} ${courier.variable}`}
+      // Site Settings > Brand color, over globals.css's --color-brand-blue.
+      style={{ ['--color-brand-blue' as string]: brandColor(settings.theme?.brandColor) }}
+    >
       <head>
         {/* Every Vimeo embed on the site (background heroes + the
             click-to-watch project modal) hits these same three hosts.

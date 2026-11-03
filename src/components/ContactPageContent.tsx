@@ -29,7 +29,7 @@ import type { BlocksData } from '@/components/blocks/types'
 import { MagicCard } from '@/components/ui/magic-card'
 import IntakeCTABand from '@/components/IntakeCTABand'
 import { resolveIcon } from '@/lib/icon-map'
-import { useSiteData } from '@/lib/site-data-context'
+import { useBrandColor, useSiteData } from '@/lib/site-data-context'
 import type { ContactPage, ReadyToTalk as ReadyToTalkGlobal } from '@/payload-types'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -142,7 +142,7 @@ function PageBackdrop({ rootRef }: { rootRef: React.RefObject<HTMLDivElement | n
       <div
         className="absolute top-0 inset-x-0 h-screen"
         style={{
-          background: 'linear-gradient(180deg, rgba(0,174,239,0.16) 0%, rgba(0,174,239,0.04) 35%, transparent 55%, rgba(3,3,5,0.55) 100%)',
+          background: 'linear-gradient(180deg, color-mix(in srgb, var(--color-brand-blue) 16%, transparent) 0%, color-mix(in srgb, var(--color-brand-blue) 4%, transparent) 35%, transparent 55%, rgba(3,3,5,0.55) 100%)',
           maskImage: 'linear-gradient(to bottom, black 0, black 75vh, transparent 100vh)',
           WebkitMaskImage: 'linear-gradient(to bottom, black 0, black 75vh, transparent 100vh)',
         }}
@@ -216,7 +216,9 @@ function PageBackdrop({ rootRef }: { rootRef: React.RefObject<HTMLDivElement | n
 }
 
 /* ── Shared: trust badge — a small credibility pill ─────────────────── */
-function TrustBadge({ icon: Icon, label, accent = '#00AEEF' }: { icon: LucideIcon; label: string; accent?: string }) {
+function TrustBadge({ icon: Icon, label, accent: accentProp }: { icon: LucideIcon; label: string; accent?: string }) {
+  const brand = useBrandColor()
+  const accent = accentProp ?? brand
   return (
     <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/[0.16] bg-white/[0.06] backdrop-blur-sm text-white/70 text-[11px] font-mono tracking-wide uppercase shadow-[0_4px_16px_rgba(0,0,0,0.25)]">
       <Icon className="w-3.5 h-3.5" style={{ color: accent }} />
@@ -288,7 +290,7 @@ function StageRouter({ copy }: { copy?: ContactPage['stageRouter'] }) {
     <section ref={ref} id="get-started" data-cms-global="contact-page" className="relative w-full overflow-hidden py-16 md:py-20">
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         <div className="sr-head text-center mb-10 max-w-2xl mx-auto">
-          <span data-cms-field="stageRouter.eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{eyebrow}</span>
+          <span data-cms-field="stageRouter.eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase block mb-4">{eyebrow}</span>
           <h2 data-cms-field="stageRouter.headline" className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1]">{headline}</h2>
           <p data-cms-field="stageRouter.subhead" className="mt-5 text-white/55 font-light text-sm sm:text-base">{subhead}</p>
         </div>
@@ -358,13 +360,13 @@ function StageRouter({ copy }: { copy?: ContactPage['stageRouter'] }) {
 
 /* ── Shared field styles ───────────────────────────────────────────── */
 const fieldClass =
-  'w-full bg-white/5 border border-white/15 rounded-xl px-5 py-3.5 text-white placeholder:text-white/30 focus:outline-none focus:border-[#00AEEF] transition-colors'
+  'w-full bg-white/5 border border-white/15 rounded-xl px-5 py-3.5 text-white placeholder:text-white/30 focus:outline-none focus:border-brand-blue transition-colors'
 const labelClass = 'block font-mono text-[10px] tracking-widest text-white/40 uppercase mb-2'
 
 function SuccessNote({ title, text }: { title: string; text: string }) {
   return (
-    <div className="flex items-start gap-4 rounded-2xl border border-[#00AEEF]/30 bg-[#00AEEF]/10 p-6 sm:p-8">
-      <CheckCircle2 className="w-6 h-6 text-[#00AEEF] shrink-0 mt-0.5" />
+    <div className="flex items-start gap-4 rounded-2xl border border-brand-blue/30 bg-brand-blue/10 p-6 sm:p-8">
+      <CheckCircle2 className="w-6 h-6 text-brand-blue shrink-0 mt-0.5" />
       <div>
         <div data-cms-field="leadForm.successTitle" className="text-white font-bold text-lg mb-1">{title}</div>
         <p data-cms-field="leadForm.successMessage" className="text-white/60 text-sm font-light">{text}</p>
@@ -436,10 +438,10 @@ function LeadForm({ copy }: { copy?: ContactPage['leadForm'] }) {
       <div className="lf-inner relative z-10 w-full max-w-3xl mx-auto px-5 sm:px-8">
         <div className="text-center mb-8 md:mb-9">
           <div className="inline-flex items-center gap-4 mb-6">
-            <div className="w-12 h-12 shrink-0 rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(0,174,239,0.2)]">
-              {React.createElement(resolveIcon('HelpCircle'), { className: 'w-5 h-5 text-[#00AEEF]' })}
+            <div className="w-12 h-12 shrink-0 rounded-full border border-brand-blue/40 bg-ink flex items-center justify-center shadow-[0_0_20px_color-mix(in_srgb,var(--color-brand-blue)_20%,transparent)]">
+              {React.createElement(resolveIcon('HelpCircle'), { className: 'w-5 h-5 text-brand-blue' })}
             </div>
-            <span data-cms-field="leadForm.eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase">{eyebrow}</span>
+            <span data-cms-field="leadForm.eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase">{eyebrow}</span>
           </div>
           <h2 data-cms-field="leadForm.headline" className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1] mb-5">{headline}</h2>
           <p data-cms-field="leadForm.description" className="text-white/55 font-light text-sm sm:text-base max-w-xl mx-auto mb-6">
@@ -451,7 +453,7 @@ function LeadForm({ copy }: { copy?: ContactPage['leadForm'] }) {
         </div>
 
         <div className="relative rounded-3xl border border-white/[0.14] bg-white/[0.05] backdrop-blur-md p-8 sm:p-10 max-w-2xl mx-auto shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#00AEEF] to-transparent" />
+          <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-brand-blue to-transparent" />
           {submitted ? (
             <SuccessNote title={successTitle} text={successMessage} />
           ) : (
@@ -483,7 +485,7 @@ function LeadForm({ copy }: { copy?: ContactPage['leadForm'] }) {
               <button
                 type="submit"
                 data-cms-field="leadForm.submitLabel"
-                className="group mt-2 inline-flex items-center justify-center gap-2.5 self-start px-8 py-4 rounded-full text-sm font-semibold text-black bg-white hover:bg-[#00AEEF] hover:text-white transition-colors duration-300"
+                className="group mt-2 inline-flex items-center justify-center gap-2.5 self-start px-8 py-4 rounded-full text-sm font-semibold text-black bg-white hover:bg-brand-blue hover:text-white transition-colors duration-300"
               >
                 {submitLabel}
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -510,7 +512,7 @@ function StageDivider() {
   return (
     <div ref={ref} className="relative w-full flex items-center justify-center py-6 md:py-9">
       <div className="sd-line w-px h-10 md:h-14 bg-gradient-to-b from-transparent via-white/15 to-transparent" />
-      <div className="sd-dot absolute w-9 h-9 rounded-full border border-white/15 bg-ink flex items-center justify-center shadow-[0_0_20px_rgba(0,174,239,0.12)]">
+      <div className="sd-dot absolute w-9 h-9 rounded-full border border-white/15 bg-ink flex items-center justify-center shadow-[0_0_20px_color-mix(in_srgb,var(--color-brand-blue)_12%,transparent)]">
         <ChevronDown className="w-4 h-4 text-white/40" />
       </div>
     </div>
@@ -574,8 +576,8 @@ function ReadyToTalkSection({ copy }: { copy?: ReadyToTalkGlobal | null }) {
               const Icon = resolveIcon(p.icon)
               return (
                 <div key={p.label} className="rounded-2xl border border-white/[0.12] bg-white/[0.03] p-5">
-                  <div className="w-9 h-9 rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center mb-3.5 shadow-[0_0_20px_rgba(0,174,239,0.2)]">
-                    <Icon className="w-4 h-4 text-[#00AEEF]" />
+                  <div className="w-9 h-9 rounded-full border border-brand-blue/40 bg-ink flex items-center justify-center mb-3.5 shadow-[0_0_20px_color-mix(in_srgb,var(--color-brand-blue)_20%,transparent)]">
+                    <Icon className="w-4 h-4 text-brand-blue" />
                   </div>
                   <div data-cms-field={`prepItems.${i}.label`} className="text-white font-bold text-sm mb-1">{p.label}</div>
                   <p data-cms-field={`prepItems.${i}.desc`} className="text-white/50 text-xs font-light leading-relaxed">{p.desc}</p>
@@ -589,7 +591,7 @@ function ReadyToTalkSection({ copy }: { copy?: ReadyToTalkGlobal | null }) {
               href={buttonHref}
               data-cms-field="buttonLabel"
               onClick={() => posthog.capture('ready_to_talk_clicked', { source: 'contact_page' })}
-              className="group inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full text-sm font-semibold text-black bg-white hover:bg-[#00AEEF] hover:text-white transition-colors duration-300"
+              className="group inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full text-sm font-semibold text-black bg-white hover:bg-brand-blue hover:text-white transition-colors duration-300"
             >
               {buttonLabel}
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -632,12 +634,12 @@ function WhatHappensNext({ copy }: { copy?: ContactPage['whatHappensNext'] }) {
     <section ref={ref} data-cms-global="contact-page" className="relative w-full overflow-hidden mt-6 md:mt-12 pt-28 md:pt-40 pb-16 md:pb-20">
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8">
         <div className="whn-head text-center mb-12 max-w-2xl mx-auto">
-          <span data-cms-field="whatHappensNext.eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-[#00AEEF] uppercase block mb-4">{eyebrow}</span>
+          <span data-cms-field="whatHappensNext.eyebrow" className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] text-brand-blue uppercase block mb-4">{eyebrow}</span>
           <h2 data-cms-field="whatHappensNext.headline" className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white leading-[1.1]">{headline}</h2>
           <p data-cms-field="whatHappensNext.subhead" className="mt-5 text-white/55 font-light text-sm sm:text-base">
             {subhead}
           </p>
-          <p data-cms-field="whatHappensNext.formPrompt" className="mt-2 font-mono text-[11px] tracking-[0.15em] text-[#00AEEF] uppercase">
+          <p data-cms-field="whatHappensNext.formPrompt" className="mt-2 font-mono text-[11px] tracking-[0.15em] text-brand-blue uppercase">
             {formPrompt}
           </p>
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
@@ -646,13 +648,13 @@ function WhatHappensNext({ copy }: { copy?: ContactPage['whatHappensNext'] }) {
         </div>
         <div className="whn-grid relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {/* connecting line on desktop */}
-          <div className="whn-line hidden lg:block absolute top-7 left-[12%] right-[12%] h-px bg-gradient-to-r from-[#00AEEF]/50 via-white/20 to-[#00AEEF]/50" />
+          <div className="whn-line hidden lg:block absolute top-7 left-[12%] right-[12%] h-px bg-gradient-to-r from-brand-blue/50 via-white/20 to-brand-blue/50" />
           {nextSteps.map((s, i) => {
             const Icon = resolveIcon(s.icon)
             return (
               <div key={s.step} className="whn-step relative text-center">
-                <div className="relative z-10 w-14 h-14 mx-auto rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(0,174,239,0.2)]">
-                  <Icon className="w-6 h-6 text-[#00AEEF]" />
+                <div className="relative z-10 w-14 h-14 mx-auto rounded-full border border-brand-blue/40 bg-ink flex items-center justify-center mb-5 shadow-[0_0_20px_color-mix(in_srgb,var(--color-brand-blue)_20%,transparent)]">
+                  <Icon className="w-6 h-6 text-brand-blue" />
                 </div>
                 <div className="font-mono text-[10px] tracking-widest text-white/30 mb-2">{s.step}</div>
                 <h3 data-cms-field={`whatHappensNext.steps.${i}.title`} className="text-white font-bold text-lg mb-2">{s.title}</h3>
@@ -824,6 +826,7 @@ export default function ContactPageContent({
 }) {
   const backdropRootRef = useRef<HTMLDivElement>(null)
   const hero = page?.hero
+  const brand = useBrandColor()
 
   // Each built-in section, drawn in the order of the page's Sections list
   // (Contact Page > Sections in /admin). The data-glow-* wrappers feed the
@@ -836,7 +839,6 @@ export default function ContactPageContent({
           eyebrow={hero?.eyebrow || 'Get Started'}
           title={[hero?.titleLine1 || "Let's get", hero?.titleLine2 || 'you started']}
           subtitle={hero?.subtitle || "Tell us where you're at and we'll point you to the right next step. We reply within minutes."}
-          accent="#00AEEF"
           titleFieldPaths={['hero.titleLine1', 'hero.titleLine2']}
           eyebrowFieldPath="hero.eyebrow"
           subtitleFieldPath="hero.subtitle"
@@ -844,19 +846,19 @@ export default function ContactPageContent({
       </div>
     ),
     whatHappensNext: (
-      <div data-glow-color="#00AEEF" data-glow-size="32" data-glow-opacity="0.12">
+      <div data-glow-color={brand} data-glow-size="32" data-glow-opacity="0.12">
         <WhatHappensNext copy={page?.whatHappensNext} />
       </div>
     ),
     stageRouter: (
-      <div data-glow-color="#00AEEF" data-glow-size="38" data-glow-opacity="0.13">
+      <div data-glow-color={brand} data-glow-size="38" data-glow-opacity="0.13">
         <StageRouter copy={page?.stageRouter} />
       </div>
     ),
     leadForm: (
       <>
         <StageDivider />
-        <div data-glow-color="#00AEEF" data-glow-size="34" data-glow-opacity="0.12">
+        <div data-glow-color={brand} data-glow-size="34" data-glow-opacity="0.12">
           <LeadForm copy={page?.leadForm} />
         </div>
       </>
@@ -870,7 +872,7 @@ export default function ContactPageContent({
       </>
     ),
     intakeBand: (
-      <div data-glow-color="#00AEEF" data-glow-size="34" data-glow-opacity="0.12">
+      <div data-glow-color={brand} data-glow-size="34" data-glow-opacity="0.12">
         <IntakeCTABand copy={readyToTalk?.intakeBand} />
       </div>
     ),
@@ -887,8 +889,8 @@ export default function ContactPageContent({
   }
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-[#00AEEF] selection:text-white">
-      <AmbientBackdrop accent="#00AEEF" />
+    <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-brand-blue selection:text-white">
+      <AmbientBackdrop />
 
       <div className="relative z-10 w-full">
         <Nav />
@@ -896,7 +898,7 @@ export default function ContactPageContent({
         <div className="relative" ref={backdropRootRef}>
           <PageBackdrop rootRef={backdropRootRef} />
 
-          <PageSections page="contact" layout={page?.layout} builtIns={builtIns} accent="#00AEEF" cms={{ global: 'contact-page' }} data={blocksData} />
+          <PageSections page="contact" layout={page?.layout} builtIns={builtIns} cms={{ global: 'contact-page' }} data={blocksData} />
         </div>
 
         <Footer />

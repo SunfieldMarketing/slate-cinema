@@ -56,11 +56,11 @@ body {
   background: var(--color-ink);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 174, 239, 0.2);
+  background: color-mix(in srgb, var(--color-brand-blue) 20%, transparent);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 174, 239, 0.5);
+  background: color-mix(in srgb, var(--color-brand-blue) 50%, transparent);
 }
 
 /* Glass panel utility */
@@ -81,7 +81,7 @@ body {
 
 /* Selection color */
 ::selection {
-  background-color: rgba(0, 174, 239, 0.3);
+  background-color: color-mix(in srgb, var(--color-brand-blue) 30%, transparent);
   color: #F7F8FF;
 }
 
@@ -159,12 +159,12 @@ body {
   --secondary-foreground: var(--color-foreground);
   --muted: rgba(255, 255, 255, 0.05);
   --muted-foreground: #9A9488;
-  --accent: rgba(0, 174, 239, 0.12);
+  --accent: color-mix(in srgb, var(--color-brand-blue) 12%, transparent);
   --accent-foreground: var(--color-foreground);
   --destructive: #C4554A;
   --border: rgba(255, 255, 255, 0.1);
   --input: rgba(255, 255, 255, 0.1);
-  --ring: rgba(0, 174, 239, 0.5);
+  --ring: color-mix(in srgb, var(--color-brand-blue) 50%, transparent);
   --sidebar: var(--color-ink);
   --sidebar-foreground: var(--color-foreground);
   --sidebar-primary: var(--color-brand-blue);
@@ -172,7 +172,7 @@ body {
   --sidebar-accent: rgba(255, 255, 255, 0.06);
   --sidebar-accent-foreground: var(--color-foreground);
   --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-ring: rgba(0, 174, 239, 0.5);
+  --sidebar-ring: color-mix(in srgb, var(--color-brand-blue) 50%, transparent);
 }
 /*
   Ambient background videos (hero, highlight reel, page backdrops) must never

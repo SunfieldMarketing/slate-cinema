@@ -7,6 +7,7 @@ import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
 import RenderBlocks from '@/components/blocks/RenderBlocks'
 import type { BlocksData } from '@/components/blocks/types'
 import type { Page } from '@/payload-types'
+import { useBrandColor } from '@/lib/site-data-context'
 
 /*
   Shell for pages built in /admin (Custom pages): the site's nav, backdrop
@@ -15,7 +16,8 @@ import type { Page } from '@/payload-types'
   start underneath the fixed nav bar.
 */
 export default function CustomPageContent({ page, data }: { page: Page; data: BlocksData }) {
-  const accent = page.accent?.trim() || '#00AEEF'
+  const brand = useBrandColor()
+  const accent = page.accent?.trim() || brand
   const blocks = page.layout ?? []
   const first = blocks.find((b) => !b.hidden)
   const startsWithHero = first?.blockType === 'hero'

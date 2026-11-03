@@ -8,10 +8,12 @@ import { ArrowRight } from 'lucide-react'
 import { BorderBeam } from '@/components/ui/border-beam'
 import posthog from 'posthog-js'
 import type { FinalCta } from '@/payload-types'
+import { useBrandColor } from '@/lib/site-data-context'
 
 gsap.registerPlugin(ScrollTrigger)
 
 export default function FinalCTA({ data }: { data?: FinalCta | null }) {
+  const brand = useBrandColor()
   const sectionRef = useRef<HTMLElement>(null)
   const eyebrow = data?.eyebrow || '// Ready To Scale?'
   const headlineLine1 = data?.headlineLine1 || 'Your next era'
@@ -76,10 +78,10 @@ export default function FinalCTA({ data }: { data?: FinalCta | null }) {
       <div className="relative z-10 w-full max-w-5xl mx-auto flex flex-col items-center">
         {/* Geometric Glassmorphism Card */}
         <div className="cta-card relative w-full bg-white/[0.02] backdrop-blur-3xl border border-white/10 rounded-3xl p-12 md:p-24 flex flex-col items-center text-center shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden" style={{ transformStyle: 'preserve-3d' }}>
-          <BorderBeam size={140} duration={10} colorFrom="#00AEEF" colorTo="#7FA88A" />
+          <BorderBeam size={140} duration={10} colorFrom={brand} colorTo="#7FA88A" />
 
           {/* Subtle Ambient Light inside the card */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[100px] bg-[#00AEEF]/10 blur-[80px] pointer-events-none rounded-full" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[100px] bg-brand-blue/10 blur-[80px] pointer-events-none rounded-full" />
 
           <span data-cms-field="eyebrow" className="cta-fade font-mono text-xs md:text-sm text-white/50 tracking-[0.4em] uppercase mb-8">
             {eyebrow}
@@ -105,7 +107,7 @@ export default function FinalCTA({ data }: { data?: FinalCta | null }) {
               onMouseMove={handleMagneticMove}
               onMouseLeave={handleMagneticLeave}
               onClick={() => posthog.capture('book_call_clicked', { source: 'final_cta' })}
-              className="group relative px-7 py-4 sm:px-10 sm:py-5 whitespace-nowrap bg-[#00AEEF] text-black font-semibold rounded-full overflow-hidden transition-shadow duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80 shadow-[0_0_40px_rgba(0,174,239,0.35)] hover:shadow-[0_0_56px_rgba(0,174,239,0.55)]"
+              className="group relative px-7 py-4 sm:px-10 sm:py-5 whitespace-nowrap bg-brand-blue text-black font-semibold rounded-full overflow-hidden transition-shadow duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80 shadow-[0_0_40px_color-mix(in_srgb,var(--color-brand-blue)_35%,transparent)] hover:shadow-[0_0_56px_color-mix(in_srgb,var(--color-brand-blue)_55%,transparent)]"
             >
               <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <span className="relative z-10 flex items-center transition-colors">

@@ -13,7 +13,7 @@ import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
 import type { IndustryData } from '@/lib/normalize'
 import { resolveIcon } from '@/lib/icon-map'
-import { labelField, useSiteLabels } from '@/lib/site-data-context'
+import { labelField, useBrandColor, useSiteLabels } from '@/lib/site-data-context'
 
 function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
   const angleRad = ((angleDeg - 90) * Math.PI) / 180
@@ -44,7 +44,9 @@ function segmentPath(cx: number, cy: number, rOuter: number, rInner: number, sta
   ].join(' ')
 }
 
-export default function IndustryWheel({ industries, accent = '#00AEEF' }: { industries: IndustryData[]; accent?: string }) {
+export default function IndustryWheel({ industries, accent: accentProp }: { industries: IndustryData[]; accent?: string }) {
+  const brand = useBrandColor()
+  const accent = accentProp ?? brand
   const [active, setActive] = useState(0)
   const n = industries.length
   const gap = 1.4

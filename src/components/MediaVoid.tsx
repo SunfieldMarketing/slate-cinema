@@ -152,7 +152,7 @@ export default function MediaVoid({ data }: { data?: HomePage['mediaVoid'] }) {
           { src: '/images/mediavoid_award_bright.webp', cls: 'bottom-[20%] left-[15%] w-48 h-28' },
         ].map((item, i) => (
           <div key={i} className={`media-thumb absolute ${item.cls}`} style={{ transformStyle: 'preserve-3d' }}>
-            <div className="w-full h-full rounded-lg overflow-hidden border border-white/10 cursor-pointer group hover:shadow-[0_0_30px_rgba(0,174,239,0.3)] hover:border-white/30 transition-all duration-500 hover:scale-[1.05] relative bg-ink">
+            <div className="w-full h-full rounded-lg overflow-hidden border border-white/10 cursor-pointer group hover:shadow-[0_0_30px_color-mix(in_srgb,var(--color-brand-blue)_30%,transparent)] hover:border-white/30 transition-all duration-500 hover:scale-[1.05] relative bg-ink">
               <img src={item.src} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100" />
               <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent opacity-80" />
               {/* Play button overlay */}
@@ -186,7 +186,7 @@ export default function MediaVoid({ data }: { data?: HomePage['mediaVoid'] }) {
       {/* Audio waveform at bottom */}
       <div className="absolute bottom-8 left-12 right-12 z-20 flex items-end gap-[1px] h-6 opacity-20">
         {Array.from({ length: 120 }).map((_, i) => (
-          <div key={i} className="wave-bar flex-1 bg-[#00AEEF] rounded-t-[1px] origin-bottom" style={{ height: `${(Math.sin(i * 0.3) * 50 + 50).toFixed(2)}%` }} />
+          <div key={i} className="wave-bar flex-1 bg-brand-blue rounded-t-[1px] origin-bottom" style={{ height: `${(Math.sin(i * 0.3) * 50 + 50).toFixed(2)}%` }} />
         ))}
       </div>
 

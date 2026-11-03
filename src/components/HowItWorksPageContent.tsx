@@ -292,7 +292,6 @@ export default function HowItWorksPageContent({
         eyebrow={hero?.eyebrow || 'The Process'}
         title={[hero?.title || 'How It Works']}
         subtitle={hero?.subtitle || 'A clear, structured process designed to take your project from idea to final delivery — seamlessly, efficiently, and cinematically.'}
-        accent="#00AEEF"
         cta={{ label: hero?.ctaLabel || 'Get Started', href: hero?.ctaHref || '/contact' }}
         storyboard={hero?.storyboard}
       />
@@ -321,12 +320,12 @@ export default function HowItWorksPageContent({
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-brand-blue selection:text-white">
-      <AmbientBackdrop accent="#00AEEF" />
+      <AmbientBackdrop />
 
       <div className="relative z-10 w-full">
         <Nav />
 
-        <PageSections page="howItWorks" layout={page?.layout} builtIns={builtIns} accent="#00AEEF" cms={{ global: 'how-it-works-page' }} data={blocksData} />
+        <PageSections page="howItWorks" layout={page?.layout} builtIns={builtIns} cms={{ global: 'how-it-works-page' }} data={blocksData} />
 
         <Footer />
       </div>

@@ -79,8 +79,8 @@ function CallFraming({ copy }: { copy: ReadyToTalkGlobal | null }) {
             const Icon = resolveIcon(p.icon)
             return (
               <div key={p.label} className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-6">
-                <div className="w-10 h-10 mx-auto rounded-full border border-[#00AEEF]/40 bg-ink flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(0,174,239,0.2)]">
-                  <Icon className="w-4 h-4 text-[#00AEEF]" />
+                <div className="w-10 h-10 mx-auto rounded-full border border-brand-blue/40 bg-ink flex items-center justify-center mb-4 shadow-[0_0_20px_color-mix(in_srgb,var(--color-brand-blue)_20%,transparent)]">
+                  <Icon className="w-4 h-4 text-brand-blue" />
                 </div>
                 <div data-cms-field={`prepItems.${i}.label`} className="text-white font-bold text-sm mb-1.5">{p.label}</div>
                 <p data-cms-field={`prepItems.${i}.desc`} className="text-white/50 text-xs font-light leading-relaxed">{p.desc}</p>
@@ -108,7 +108,6 @@ export default async function ScheduleACallPage() {
           eyebrow={hero?.eyebrow || 'Schedule a Call'}
           title={[hero?.titleLine1 || "Let's talk", hero?.titleLine2 || 'it through']}
           subtitle={hero?.subtitle || "Grab a time that works for you. We'll walk through your project, timeline, and budget — and outline exactly what happens next."}
-          accent="#00AEEF"
           eyebrowFieldPath="hero.eyebrow"
           titleFieldPaths={['hero.titleLine1', 'hero.titleLine2']}
           subtitleFieldPath="hero.subtitle"
@@ -121,12 +120,12 @@ export default async function ScheduleACallPage() {
   }
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-[#00AEEF] selection:text-white">
-      <AmbientBackdrop accent="#00AEEF" />
+    <main className="relative min-h-screen overflow-x-hidden bg-ink text-white selection:bg-brand-blue selection:text-white">
+      <AmbientBackdrop />
 
       <div className="relative z-10 w-full">
         <Nav />
-        <PageSections page="scheduleCall" layout={page?.layout} builtIns={builtIns} accent="#00AEEF" cms={{ global: 'schedule-a-call-page' }} data={blocksData} />
+        <PageSections page="scheduleCall" layout={page?.layout} builtIns={builtIns} cms={{ global: 'schedule-a-call-page' }} data={blocksData} />
 
         <Footer />
       </div>

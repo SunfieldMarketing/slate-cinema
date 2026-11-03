@@ -183,7 +183,7 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
       {/* Parallax grid + orbs */}
       <div className="parallax-bg absolute inset-0 z-0 pointer-events-none w-full h-[120%] -top-[10%]">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:60px_60px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_70%)]" />
-        <div className="absolute top-1/3 left-1/4 w-[50vw] h-[50vw] bg-[#00AEEF]/5 rounded-full blur-[140px] mix-blend-screen" />
+        <div className="absolute top-1/3 left-1/4 w-[50vw] h-[50vw] bg-brand-blue/5 rounded-full blur-[140px] mix-blend-screen" />
         <div className="absolute bottom-1/3 right-1/4 w-[45vw] h-[45vw] bg-blue-600/10 rounded-full blur-[120px] mix-blend-screen" />
       </div>
 
@@ -201,7 +201,7 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
                 reached 9 digits (118,077,000 clipped off both edges). 14vw
                 keeps the widest value inside the screen at any phone width;
                 whitespace-nowrap stops it wrapping mid-number. md+ unchanged. */}
-            <div className="text-[clamp(2.5rem,14vw,5rem)] md:text-[8rem] lg:text-[11rem] font-bold text-white tracking-tighter leading-none whitespace-nowrap" style={{ textShadow: '0 0 100px rgba(0,174,239,0.25), 0 10px 40px rgba(0,0,0,0.5)' }}>
+            <div className="text-[clamp(2.5rem,14vw,5rem)] md:text-[8rem] lg:text-[11rem] font-bold text-white tracking-tighter leading-none whitespace-nowrap" style={{ textShadow: '0 0 100px color-mix(in srgb, var(--color-brand-blue) 25%, transparent), 0 10px 40px rgba(0,0,0,0.5)' }}>
               {views.toLocaleString()}
             </div>
             <div data-cms-field="results.viewsLabel" className="text-3xl md:text-5xl lg:text-7xl font-light text-white/90 uppercase tracking-widest">
@@ -211,7 +211,7 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
 
           {/* Separator */}
           <div className="w-full max-w-2xl h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent my-10 shadow-[0_0_15px_rgba(255,255,255,0.1)] relative">
-             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-[2px] bg-[#00AEEF] shadow-[0_0_10px_rgba(0,174,239,0.8)]" />
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-[2px] bg-brand-blue shadow-[0_0_10px_color-mix(in_srgb,var(--color-brand-blue)_80%,transparent)]" />
           </div>
 
           {/* Engagement Row (3D comments and likes elements brought back) --
@@ -224,7 +224,7 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
               overflow check, only in an actual screenshot. */}
           <div className="flex flex-wrap gap-6 sm:gap-12 md:gap-20 items-center justify-center text-white/90 text-xl md:text-3xl font-bold mb-10">
             <div className="flex items-center gap-3">
-              <Eye className="w-6 h-6 md:w-10 md:h-10 text-[#00AEEF]" />
+              <Eye className="w-6 h-6 md:w-10 md:h-10 text-brand-blue" />
               {/* 2026-09-11: the views>0 ? reachPercent : '0%' placeholder
                   only made sense while reachPercent held an actual
                   percentage -- it stood in a neutral "0%" until the counter
@@ -236,11 +236,11 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
               <span data-cms-field="results.reachLabel" className="text-xs text-white/40 font-normal ml-1">{reachLabel}</span>
             </div>
             <div className="flex items-center gap-3">
-              <ThumbsUp className="w-6 h-6 md:w-10 md:h-10 text-[#00AEEF]" />
+              <ThumbsUp className="w-6 h-6 md:w-10 md:h-10 text-brand-blue" />
               <span>{likes.toLocaleString()}</span>
             </div>
             <div className="flex items-center gap-3">
-              <MessageSquare className="w-6 h-6 md:w-10 md:h-10 text-[#00AEEF]" />
+              <MessageSquare className="w-6 h-6 md:w-10 md:h-10 text-brand-blue" />
               <span>{comments.toLocaleString()}</span>
             </div>
           </div>

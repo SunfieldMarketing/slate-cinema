@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useMotionValueEvent, useScroll, useTransform, useSpring, motion } from "motion/react";
 import { cn } from "@/lib/utils";
+import { useBrandColor } from "@/lib/site-data-context";
 
 export const StickyScroll = ({
   content,
@@ -68,7 +69,8 @@ export const StickyScroll = ({
     setActiveCard(closestBreakpointIndex);
   });
 
-  const activeColor = content[activeCard]?.color ?? "#00AEEF";
+  const brand = useBrandColor();
+  const activeColor = content[activeCard]?.color ?? brand;
 
   return (
     <div

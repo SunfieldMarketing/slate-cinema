@@ -12,6 +12,7 @@
 import { useEffect, useRef, useState, ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { pauseLenis, resumeLenis } from '@/lib/scroll'
+import { useBrandColor } from '@/lib/site-data-context'
 
 interface ScrollExpandMediaProps {
   mediaType?: 'video' | 'image'
@@ -35,13 +36,15 @@ export default function ScrollExpandMedia({
   mediaSrc,
   posterSrc,
   bgImageSrc,
-  accent = '#00AEEF',
+  accent: accentProp,
   title,
   date,
   scrollToExpand,
   textBlend,
   children,
 }: ScrollExpandMediaProps) {
+  const brand = useBrandColor()
+  const accent = accentProp ?? brand
   const [scrollProgress, setScrollProgress] = useState(0)
   const [showContent, setShowContent] = useState(false)
   const [mediaFullyExpanded, setMediaFullyExpanded] = useState(false)
@@ -187,7 +190,7 @@ export default function ScrollExpandMedia({
                   height: `${mediaHeight}px`,
                   maxWidth: '95vw',
                   maxHeight: '85vh',
-                  boxShadow: '0px 0px 60px rgba(0,174,239,0.15), 0 0 0 1px rgba(255,255,255,0.1)',
+                  boxShadow: '0px 0px 60px color-mix(in srgb, var(--color-brand-blue) 15%, transparent), 0 0 0 1px rgba(255,255,255,0.1)',
                 }}
               >
                 {mediaType === 'video' ? (
@@ -238,12 +241,12 @@ export default function ScrollExpandMedia({
 
                 <div className="flex flex-col items-center text-center relative z-10 mt-4">
                   {date && (
-                    <p className="text-xl sm:text-2xl text-[#00AEEF]" style={{ transform: `translateX(-${textTranslateX}vw)` }}>
+                    <p className="text-xl sm:text-2xl text-brand-blue" style={{ transform: `translateX(-${textTranslateX}vw)` }}>
                       {date}
                     </p>
                   )}
                   {scrollToExpand && (
-                    <p className="text-[#00AEEF] font-mono text-xs tracking-widest uppercase text-center" style={{ transform: `translateX(${textTranslateX}vw)` }}>
+                    <p className="text-brand-blue font-mono text-xs tracking-widest uppercase text-center" style={{ transform: `translateX(${textTranslateX}vw)` }}>
                       {scrollToExpand}
                     </p>
                   )}

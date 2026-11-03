@@ -87,12 +87,12 @@ export default function Footer() {
     <footer ref={footerRef} data-cms-global="footer" className="relative w-full bg-ink pt-14 pb-6 overflow-hidden" style={{ perspective: '1000px' }}>
 
       {/* Marquee */}
-      <div className="w-full border-y border-white/10 py-3 mb-8 overflow-hidden flex whitespace-nowrap bg-[#00AEEF]/5">
+      <div className="w-full border-y border-white/10 py-3 mb-8 overflow-hidden flex whitespace-nowrap bg-brand-blue/5">
         <div className="marquee-content flex gap-12 px-6 items-center w-max">
           {marqueeItems.map((item, idx) => (
             <div key={idx} className="flex items-center gap-12">
               <span className="text-lg md:text-2xl font-bold text-white tracking-wider">{item}</span>
-              <span className="text-[#00AEEF] text-2xl">
+              <span className="text-brand-blue text-2xl">
                 <svg className="inline w-4 h-4" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0l2.5 5.5L16 8l-5.5 2.5L8 16l-2.5-5.5L0 8l5.5-2.5z"/></svg>
               </span>
             </div>
@@ -139,7 +139,7 @@ export default function Footer() {
                   data-cms-field="cta.buttonLabel"
                   onMouseMove={handleMagneticMove}
                   onMouseLeave={handleMagneticLeave}
-                  className="footer-btn px-6 py-2.5 bg-[#00AEEF] text-[#030305] font-bold rounded-full hover:bg-white transition-colors text-center text-sm"
+                  className="footer-btn px-6 py-2.5 bg-brand-blue text-[#030305] font-bold rounded-full hover:bg-white transition-colors text-center text-sm"
                 >
                   {cta?.buttonLabel || 'Get Started'}
                 </Link>
@@ -152,7 +152,7 @@ export default function Footer() {
                 {newsletter?.sentence}
               </p>
               {newsletterSubmitted ? (
-                <p data-cms-field="newsletter.successMessage" className="text-sm text-[#00AEEF]">
+                <p data-cms-field="newsletter.successMessage" className="text-sm text-brand-blue">
                   {newsletter?.successMessage || 'Thanks — you’re on the list.'}
                 </p>
               ) : (
@@ -179,12 +179,12 @@ export default function Footer() {
                     name="footer-email"
                     placeholder={newsletter?.placeholder || 'Your email address'}
                     data-cms-field="newsletter.placeholder"
-                    className="flex-1 bg-white/5 border border-white/10 border-r-0 rounded-l-full px-5 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#00AEEF] transition-colors"
+                    className="flex-1 bg-white/5 border border-white/10 border-r-0 rounded-l-full px-5 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-brand-blue transition-colors"
                   />
                   <button
                     type="submit"
                     data-cms-field="newsletter.buttonLabel"
-                    className="bg-[#00AEEF] text-[#030305] font-bold px-6 py-2.5 text-sm rounded-r-full hover:bg-white transition-colors whitespace-nowrap"
+                    className="bg-brand-blue text-[#030305] font-bold px-6 py-2.5 text-sm rounded-r-full hover:bg-white transition-colors whitespace-nowrap"
                   >
                     {newsletter?.buttonLabel || 'Sign Up'}
                   </button>
@@ -202,17 +202,17 @@ export default function Footer() {
               <h4 data-cms-field="sitemapColumn.heading" className="text-white font-bold mb-3 uppercase tracking-wider text-sm">{sitemap?.heading || 'Studio'}</h4>
               <div className="flex flex-col gap-2.5">
                 {(sitemap?.links ?? []).map((link, i) => (
-                  <Link key={link.label} href={link.href} data-cms-field={`sitemapColumn.links.${i}.label`} className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm py-1.5 -my-1.5">
+                  <Link key={link.label} href={link.href} data-cms-field={`sitemapColumn.links.${i}.label`} className="footer-link text-white/60 hover:text-brand-blue transition-colors text-sm py-1.5 -my-1.5">
                     {link.label}
                   </Link>
                 ))}
-                <a href={sitemap?.supportHref || '/contact#get-started'} data-cms-field="sitemapColumn.supportLabel" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm py-1.5 -my-1.5">
+                <a href={sitemap?.supportHref || '/contact#get-started'} data-cms-field="sitemapColumn.supportLabel" className="footer-link text-white/60 hover:text-brand-blue transition-colors text-sm py-1.5 -my-1.5">
                   {sitemap?.supportLabel || 'Support'}
                 </a>
-                <a href={bottomBar?.privacyHref || '/privacy-policy'} data-cms-field="sitemapColumn.privacyLabel" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm py-1.5 -my-1.5">
+                <a href={bottomBar?.privacyHref || '/privacy-policy'} data-cms-field="sitemapColumn.privacyLabel" className="footer-link text-white/60 hover:text-brand-blue transition-colors text-sm py-1.5 -my-1.5">
                   {sitemap?.privacyLabel || 'Privacy Policy'}
                 </a>
-                <a href={bottomBar?.termsHref || '/terms-of-service'} data-cms-field="sitemapColumn.termsLabel" className="footer-link text-white/60 hover:text-[#00AEEF] transition-colors text-sm py-1.5 -my-1.5">
+                <a href={bottomBar?.termsHref || '/terms-of-service'} data-cms-field="sitemapColumn.termsLabel" className="footer-link text-white/60 hover:text-brand-blue transition-colors text-sm py-1.5 -my-1.5">
                   {sitemap?.termsLabel || 'Terms of Service'}
                 </a>
               </div>
@@ -225,7 +225,7 @@ export default function Footer() {
           <p>&copy; {new Date().getFullYear()} <span data-cms-field="bottomBar.copyrightName">{bottomBar?.copyrightName || 'Slate Cinema'}</span></p>
           <div data-cms-field="bottomBar.craftedWithLoveText" className="flex items-center gap-2">
             {bottomBar?.craftedWithLoveText || 'Crafted with love by Slate Cinema'}
-            <Heart size={12} className="text-[#00AEEF]" />
+            <Heart size={12} className="text-brand-blue" />
           </div>
           {/* 2026-09-11 audit follow-up: this bottom-bar row has its own
               separate links from the sitemap column above (different
@@ -235,7 +235,7 @@ export default function Footer() {
           <div className="flex gap-4">
             <a href={bottomBar?.privacyHref || '/privacy-policy'} data-cms-field="bottomBar.privacyLabel" className="py-1.5 -my-1.5 hover:text-white transition-colors">{bottomBar?.privacyLabel || 'Privacy'}</a>
             <a href={bottomBar?.termsHref || '/terms-of-service'} data-cms-field="bottomBar.termsLabel" className="py-1.5 -my-1.5 hover:text-white transition-colors">{bottomBar?.termsLabel || 'Terms'}</a>
-            <a href={bottomBar?.clientPortalHref || 'https://my.slatecinema.com/'} target="_blank" rel="noopener noreferrer" data-cms-field="bottomBar.clientPortalLabel" className="py-1.5 -my-1.5 hover:text-[#00AEEF] transition-colors">{bottomBar?.clientPortalLabel || 'Client Portal'}</a>
+            <a href={bottomBar?.clientPortalHref || 'https://my.slatecinema.com/'} target="_blank" rel="noopener noreferrer" data-cms-field="bottomBar.clientPortalLabel" className="py-1.5 -my-1.5 hover:text-brand-blue transition-colors">{bottomBar?.clientPortalLabel || 'Client Portal'}</a>
           </div>
         </div>
 
@@ -246,7 +246,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom glow */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[300px] pointer-events-none z-0" style={{ background: 'radial-gradient(ellipse at bottom, rgba(0,174,239,0.15) 0%, transparent 60%)' }} />
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[300px] pointer-events-none z-0" style={{ background: 'radial-gradient(ellipse at bottom, color-mix(in srgb, var(--color-brand-blue) 15%, transparent) 0%, transparent 60%)' }} />
     </footer>
   )
 }
