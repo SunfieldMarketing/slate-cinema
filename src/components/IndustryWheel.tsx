@@ -129,7 +129,7 @@ export default function IndustryWheel({ industries, accent: accentProp }: { indu
             style={{ background: `radial-gradient(circle, ${accent}22 0%, transparent 70%)` }}
           />
           <CurrentIcon className="w-8 h-8 sm:w-9 sm:h-9 mb-2.5 transition-colors duration-300" style={{ color: accent }} />
-          <span {...labelField('selectIndustry')} className="font-mono text-xs sm:text-xs tracking-widest uppercase text-white/55">
+          <span {...labelField('selectIndustry')} className="font-mono text-xs tracking-widest uppercase text-white/55">
             {labels.selectIndustry}
           </span>
           <span className="text-lg sm:text-xl font-bold text-white leading-tight mt-1.5">{current.label}</span>
@@ -137,7 +137,7 @@ export default function IndustryWheel({ industries, accent: accentProp }: { indu
       </div>
 
       <div className="w-full max-w-lg mx-auto lg:mx-0">
-        <span className="font-mono text-[11px] sm:text-xs tracking-[0.3em] uppercase mb-3 block text-center lg:text-left" style={{ color: accent }}>
+        <span className="font-mono text-xs tracking-[0.3em] uppercase mb-3 block text-center lg:text-left" style={{ color: accent }}>
           {current.label}
         </span>
 
@@ -169,7 +169,7 @@ export default function IndustryWheel({ industries, accent: accentProp }: { indu
           <img
             key={current.id}
             src={current.heroImage}
-            alt={current.label}
+            alt=""
             loading="lazy"
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           />

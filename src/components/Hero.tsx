@@ -950,14 +950,14 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
                 Schedule Call on every screen size (Oct 27 audit #5). */}
             <div className="camera-ui absolute top-[7.25rem] left-10 md:left-14 z-30 flex items-center gap-3">
               <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.8)]" />
-              <span className="font-mono text-[11px] md:text-sm text-red-500 tracking-[0.3em] font-bold">
+              <span className="font-mono text-xs md:text-sm text-red-500 tracking-[0.3em] font-bold">
                 REC
               </span>
             </div>
             
             {/* Battery / Time Indicator */}
             <div className="camera-ui absolute top-[7.25rem] right-10 md:right-14 z-30 flex items-center gap-4">
-              <span ref={timecodeRef} className="font-mono text-[11px] md:text-sm text-white/70 tracking-widest">
+              <span ref={timecodeRef} className="font-mono text-xs md:text-sm text-white/70 tracking-widest">
                 00:00:00:00
               </span>
               <div className="w-8 h-4 border border-white/40 rounded-sm p-[1px] flex justify-end">
@@ -998,7 +998,7 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
             className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-30 pointer-events-none transition-opacity duration-100"
           >
             {scrollCue && (
-              <span {...labelField('scrollCue')} className="font-mono text-[11px] text-white/60 tracking-[0.3em] uppercase">
+              <span {...labelField('scrollCue')} className="font-mono text-xs sm:text-[11px] text-white/60 tracking-[0.3em] uppercase">
                 {scrollCue}
               </span>
             )}

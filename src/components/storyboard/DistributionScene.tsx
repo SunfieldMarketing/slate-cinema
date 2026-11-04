@@ -30,7 +30,7 @@ export default function DistributionScene({
           <div key={s.name} className="sbs-item flex items-start gap-3 text-right">
             <div>
               <p className="text-white text-sm font-semibold">{s.name}</p>
-              <p className="text-white/65 text-[11px] font-light leading-snug hidden md:block">{s.desc}</p>
+              <p className="text-white/65 text-xs sm:text-[11px] font-light leading-snug hidden md:block">{s.desc}</p>
             </div>
             <span className="hidden md:block w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: dist.color }} />
           </div>

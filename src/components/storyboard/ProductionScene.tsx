@@ -50,7 +50,7 @@ export default function ProductionScene({
             style={{ height: '100%', transform: `scaleY(${h})`, background: `linear-gradient(to top, ${prod.color}, #f0abfc)` }}
           />
         ))}
-        <span className="ml-2 font-mono text-xs sm:text-[8px] tracking-widest text-white/45 self-end pb-0.5">AUD</span>
+        <span className="ml-2 font-mono text-xs sm:text-[8px] tracking-widest text-white/55 self-end pb-0.5">AUD</span>
       </div>
 
       {/* Call sheet — the real crew/talent/set-design groups. The ring
@@ -67,13 +67,13 @@ export default function ProductionScene({
               <p className="font-mono text-xs sm:text-[10px] tracking-widest text-white/90 mb-1">
                 {String(i + 1).padStart(2, '0')} <span className="ml-1 uppercase">{s.name}</span>
               </p>
-              <p className="text-[11px] text-white/65 font-light leading-snug">{s.tags?.join(' · ')}</p>
+              <p className="text-xs sm:text-[11px] text-white/65 font-light leading-snug">{s.tags?.join(' · ')}</p>
             </div>
           ))}
         </div>
       </div>
       <div className="md:hidden absolute left-6 right-6 top-[29%] flex flex-col gap-1.5">
-        <p className="sbs-item font-mono text-xs sm:text-[9px] tracking-[0.3em] uppercase mb-1" style={{ color: prod.color }}>
+        <p className="sbs-item font-mono text-xs sm:text-[10px] tracking-[0.3em] uppercase mb-1" style={{ color: prod.color }}>
           Call Sheet — Day 01
         </p>
         {prod.services.map((s, i) => (

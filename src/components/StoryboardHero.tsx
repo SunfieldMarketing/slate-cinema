@@ -348,7 +348,7 @@ export default function StoryboardHero({ eyebrow = 'The Process', title, subtitl
             {subtitle && <p data-cms-field="hero.subtitle" className="mt-6 text-white/55 text-base sm:text-lg font-light max-w-xl mx-auto leading-relaxed">{subtitle}</p>}
             <div className="mt-10 flex flex-col items-center gap-2 opacity-60">
               {scrollCue && (
-                <span {...labelField('scrollCue')} className="font-mono text-xs sm:text-[9px] tracking-[0.3em] uppercase text-white/55">
+                <span {...labelField('scrollCue')} className="font-mono text-xs sm:text-[10px] tracking-[0.3em] uppercase text-white/55">
                   {scrollCue}
                 </span>
               )}
@@ -380,12 +380,15 @@ export default function StoryboardHero({ eyebrow = 'The Process', title, subtitl
 
         {/* Persistent HUD chrome */}
         <div className="absolute inset-0 z-50 pointer-events-none">
-          <div className="absolute top-6 left-8 flex items-center gap-3" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.85)' }}>
+          {/* REC / timecode sit inside the top corner brackets, below the fixed nav (2026-11-04
+              re-audit): at top-6 they landed on the logo and under the menu button on phones --
+              the same collision the home hero's viewfinder had (Oct 27 audit #5). */}
+          <div className="absolute top-[7.25rem] left-12 md:left-14 flex items-center gap-3" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.85)' }}>
             <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.8)]" />
-            <span className="font-mono text-[11px] md:text-sm text-red-500 tracking-[0.3em] font-bold">REC</span>
+            <span className="font-mono text-xs md:text-sm text-red-500 tracking-[0.3em] font-bold">REC</span>
           </div>
-          <div className="absolute top-6 right-8" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.85)' }}>
-            <span ref={timecodeRef} className="font-mono text-[11px] md:text-sm text-white/85 tracking-widest">00:00:00:00</span>
+          <div className="absolute top-[7.25rem] right-12 md:right-14" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.85)' }}>
+            <span ref={timecodeRef} className="font-mono text-xs md:text-sm text-white/85 tracking-widest">00:00:00:00</span>
           </div>
 
           <div

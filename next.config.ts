@@ -49,6 +49,17 @@ const nextConfig: NextConfig = {
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
           // Cross-site requests get only the origin, never the full URL.
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          // 2026-11-04 re-audit (finishing #27). Nothing on the site uses these device
+          // APIs, so no page -- or anything embedded in one -- can ask for them.
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), usb=()' },
+          // Only directives that can't break the Vimeo / booking-widget / analytics embeds:
+          // no framing by other sites (same rule as X-Frame-Options, in its modern form), no
+          // plugins, no <base> hijacking, and any stray http:// asset is upgraded to https.
+          // A script-src allowlist is the next step but needs a report-only trial first.
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors 'self'; object-src 'none'; base-uri 'self'; upgrade-insecure-requests",
+          },
         ],
       },
       {

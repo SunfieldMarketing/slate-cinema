@@ -144,7 +144,7 @@ export default function IndustryFaq({
                 </a>
               )}
               {aside.note && (
-                <p data-cms-field={field('note')} className="mt-4 text-center font-mono text-xs sm:text-[9px] tracking-[0.18em] uppercase text-white/55">
+                <p data-cms-field={field('note')} className="mt-4 text-center font-mono text-xs sm:text-[10px] tracking-[0.18em] uppercase text-white/55">
                   {aside.note}
                 </p>
               )}

@@ -27,6 +27,7 @@ import { categories as defaultPipelineCategories } from '@/lib/pipeline-data'
 import { industries as staticIndustries, type IndustryData as StaticIndustryData } from '@/lib/industries'
 import { extractVimeoId } from '@/lib/vimeo'
 import { PLACEHOLDER_IMAGE } from '@/lib/media-url'
+import { readableAccent } from '@/lib/brand'
 
 /*
   IMPORTANT: `icon` stays a plain string key (e.g. "Film"), never
@@ -208,7 +209,8 @@ export function normalizeIndustry(doc: Industry): IndustryData {
     slug: doc.slug,
     label: doc.label,
     icon: doc.icon,
-    accent: doc.accent,
+    // Lifted just enough to read as small text on the dark page -- see readableAccent.
+    accent: readableAccent(doc.accent),
     blurb: doc.blurb,
     description: doc.description,
     stat: doc.stat,
@@ -440,6 +442,7 @@ function staticToNormalized(industry: StaticIndustryData, index: number): Indust
   const cardCount = industry.serviceCards?.length ?? 0
   return {
     ...rest,
+    accent: readableAccent(industry.accent),
     icon: iconName,
     order: 1000 + index,
     clientsHeading: STATIC_DEFAULTS.clientsHeading,

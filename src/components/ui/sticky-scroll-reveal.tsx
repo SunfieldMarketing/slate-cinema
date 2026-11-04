@@ -81,10 +81,14 @@ export const StickyScroll = ({
         <div className="max-w-xl" ref={textColRef}>
           {content.map((item, index) => (
             <div key={item.title + index} className="my-44 sm:my-56 first:mt-0">
+              {/* Inactive steps are dimmed by colour, not opacity (2026-11-04 re-audit): the
+                  old opacity 0.3 put the text at 1.8:1-2.8:1 contrast, unreadable for anyone
+                  who doesn't scroll each step into the spotlight. 50% white still reads as
+                  "not the current step" but passes 4.5:1 on this panel. */}
               <motion.h2
                 data-cms-field={item.titleFieldPath}
                 initial={{ opacity: 0 }}
-                animate={{ opacity: activeCard === index ? 1 : 0.3 }}
+                animate={{ opacity: 1, color: activeCard === index ? "rgba(255,255,255,1)" : "rgba(255,255,255,0.5)" }}
                 transition={{ duration: 0.6, ease: "easeInOut" }}
                 className="text-2xl sm:text-3xl font-bold tracking-tight text-white"
               >
@@ -93,7 +97,7 @@ export const StickyScroll = ({
               <motion.p
                 data-cms-field={item.descriptionFieldPath}
                 initial={{ opacity: 0 }}
-                animate={{ opacity: activeCard === index ? 1 : 0.3 }}
+                animate={{ opacity: 1, color: activeCard === index ? "rgba(255,255,255,0.8)" : "rgba(255,255,255,0.5)" }}
                 transition={{ duration: 0.6, ease: "easeInOut" }}
                 className="mt-4 max-w-sm text-white/60 font-light leading-relaxed"
               >

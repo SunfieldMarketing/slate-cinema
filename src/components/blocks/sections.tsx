@@ -140,7 +140,7 @@ export function MediaSection({ block, path }: { block: BlockOfType<'media'>; pat
         {block.caption && (
           <figcaption
             data-cms-field={`${path}.caption`}
-            className={`mt-4 font-mono text-xs sm:text-[10px] tracking-[0.2em] uppercase text-white/45 ${size === 'full' ? 'px-5 sm:px-8' : ''}`}
+            className={`mt-4 font-mono text-xs sm:text-[10px] tracking-[0.2em] uppercase text-white/55 ${size === 'full' ? 'px-5 sm:px-8' : ''}`}
           >
             {block.caption}
           </figcaption>
@@ -176,7 +176,7 @@ export function CardsSection({ block, accent, path }: { block: BlockOfType<'card
                 {image && (
                   <div className="relative aspect-video overflow-hidden" data-cms-field={`${path}.cards.${i}.image`}>
                     {/* eslint-disable-next-line @next/next/no-img-element -- same plain <img> convention as the rest of the site */}
-                    <img src={image} alt={c.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <img src={image} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                   </div>
                 )}
                 <div className="p-6 flex-1 flex flex-col">
@@ -247,7 +247,7 @@ export function LogoStrip({ block, accent, path }: { block: BlockOfType<'logos'>
                   <Star key={i} className="w-3.5 h-3.5" fill={accent} stroke={accent} />
                 ))}
               </div>
-              <span data-cms-field={`${path}.ratingText`} className="font-mono text-[11px] text-white/50 tracking-wide">
+              <span data-cms-field={`${path}.ratingText`} className="font-mono text-xs sm:text-[11px] text-white/50 tracking-wide">
                 {block.ratingText}
               </span>
             </div>
@@ -310,7 +310,7 @@ export function JournalCards({
                 {/* eslint-disable-next-line @next/next/no-img-element -- same plain <img> convention as JournalPageContent.tsx */}
                 <img
                   src={p.coverImage}
-                  alt={p.title}
+                  alt=""
                   loading="lazy"
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110 opacity-90 group-hover:opacity-100"
                 />

@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { createElement, useRef } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -78,11 +78,14 @@ export default function IndustryClientShowcase({
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         {(heading.eyebrow || heading.headline || heading.intro) && (
           <div className="text-center mb-12 max-w-2xl mx-auto">
-            {heading.eyebrow && (
-              <span data-cms-field={paths.eyebrow} className="font-mono text-xs sm:text-[11px] tracking-[0.3em] uppercase block mb-4" style={{ color: accent }}>
-                {heading.eyebrow}
-              </span>
-            )}
+            {/* With no headline the eyebrow is the section's only title, so it becomes the h2 --
+                otherwise the client cards' h3s follow the page h1 directly (2026-11-04 re-audit). */}
+            {heading.eyebrow &&
+              createElement(
+                heading.headline ? 'span' : 'h2',
+                { 'data-cms-field': paths.eyebrow, className: 'font-mono text-xs sm:text-[11px] tracking-[0.3em] uppercase block mb-4', style: { color: accent } },
+                heading.eyebrow,
+              )}
             {heading.headline && (
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.05]">
                 <span data-cms-field={paths.headline}>{heading.headline}</span>

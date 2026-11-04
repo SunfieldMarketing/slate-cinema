@@ -26,7 +26,10 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const { slug } = await params
   const draft = (await draftMode()).isEnabled
   const page = await getPageByPath(toPath(slug), draft)
-  if (!page) return {}
+  // Every unmatched address lands here and renders not-found.tsx -- whose own `metadata`
+  // export this Next version ignores (only global-not-found supports it), so the tab just
+  // said "Slate Cinema" (2026-11-04 re-audit).
+  if (!page) return { title: 'Page not found' }
   return pageMetadata({ path: `/${page.path}`, seo: page, title: page.title })
 }
 

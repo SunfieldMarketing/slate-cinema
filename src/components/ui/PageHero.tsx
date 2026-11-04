@@ -196,7 +196,7 @@ export default function PageHero({
           )}
 
           {trustNote && (
-            <p data-cms-field={trustNoteFieldPath} data-cms-global={trustNoteGlobal} className="ph-fade mt-6 font-mono text-[11px] tracking-[0.2em] uppercase text-white/70">
+            <p data-cms-field={trustNoteFieldPath} data-cms-global={trustNoteGlobal} className="ph-fade mt-6 font-mono text-xs sm:text-[11px] tracking-[0.2em] uppercase text-white/70">
               {trustNote}
             </p>
           )}
@@ -227,7 +227,7 @@ export default function PageHero({
                     <NumberTicker value={s.value} className="font-bold text-white" />
                     <span style={{ color: accent }}>{s.suffix}</span>
                   </div>
-                  <div className="mt-2 font-mono text-xs sm:text-[10px] tracking-wide text-white/45 uppercase whitespace-nowrap">
+                  <div className="mt-2 font-mono text-xs sm:text-[10px] tracking-wide text-white/55 uppercase whitespace-nowrap">
                     {s.label}
                   </div>
                 </div>
@@ -244,7 +244,7 @@ export default function PageHero({
       {(!stats || stats.length === 0) && (
         <div className="relative z-10 mx-auto pb-7 flex flex-col items-center gap-2 opacity-70">
           {scrollCue && (
-            <span {...labelField('scrollCue')} className="font-mono text-[11px] tracking-[0.3em] uppercase text-white/60">
+            <span {...labelField('scrollCue')} className="font-mono text-xs sm:text-[11px] tracking-[0.3em] uppercase text-white/60">
               {scrollCue}
             </span>
           )}

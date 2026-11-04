@@ -202,7 +202,7 @@ const Carousel = memo(
                     if (!light) return card.image
                     return isPhone === null ? undefined : isPhone ? light : card.image
                   })()}
-                  alt={card.title}
+                  alt=""
                   loading="lazy"
                   decoding="async"
                   draggable={false}

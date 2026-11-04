@@ -140,7 +140,7 @@ export default function IndustryProcess({
                 >
                   <Icon className="w-[18px] h-[18px]" style={{ color: accent }} />
                 </div>
-                <div data-cms-field={`${paths.items}.${i}.week`} className="font-mono text-[11px] sm:text-[10px] tracking-[0.14em] leading-snug uppercase mb-2.5" style={{ color: accent }}>
+                <div data-cms-field={`${paths.items}.${i}.week`} className="font-mono text-xs sm:text-[10px] tracking-[0.14em] leading-snug uppercase mb-2.5" style={{ color: accent }}>
                   Keyframe {String(i + 1).padStart(2, '0')} · {s.week}
                 </div>
                 <h3 data-cms-field={`${paths.items}.${i}.title`} className="text-sm font-semibold text-white mb-1.5">{s.title}</h3>

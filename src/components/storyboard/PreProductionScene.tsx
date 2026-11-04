@@ -30,7 +30,7 @@ export default function PreProductionScene({
         </p>
         {LEFT.map((t) => (
           <div key={t} className="sbs-item flex items-center gap-3">
-            <span className="font-mono text-[11px] md:text-xs text-white/85 tracking-wide" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.8)' }}>{t}</span>
+            <span className="font-mono text-xs md:text-xs text-white/85 tracking-wide" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.8)' }}>{t}</span>
             <span className="hidden md:block h-px w-14 lg:w-24" style={{ background: `${pre.color}55` }} />
             <span className="hidden md:block w-1.5 h-1.5 rounded-full" style={{ background: pre.color }} />
           </div>
@@ -46,7 +46,7 @@ export default function PreProductionScene({
           <div key={t} className="sbs-item flex items-center gap-3">
             <span className="hidden md:block w-1.5 h-1.5 rounded-full" style={{ background: pre.color }} />
             <span className="hidden md:block h-px w-14 lg:w-24" style={{ background: `${pre.color}55` }} />
-            <span className="font-mono text-[11px] md:text-xs text-white/85 tracking-wide" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.8)' }}>{t}</span>
+            <span className="font-mono text-xs md:text-xs text-white/85 tracking-wide" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.8)' }}>{t}</span>
           </div>
         ))}
       </div>

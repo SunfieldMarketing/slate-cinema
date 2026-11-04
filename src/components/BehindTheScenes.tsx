@@ -60,7 +60,7 @@ export default function BehindTheScenes({ data }: { data?: HowItWorksPage['behin
             >
               <img
                 src={s.url}
-                alt={s.label}
+                alt=""
                 loading="lazy"
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110 opacity-70 group-hover:opacity-90"
               />

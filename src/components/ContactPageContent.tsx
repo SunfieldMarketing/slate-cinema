@@ -133,7 +133,7 @@ function PageBackdrop({ rootRef }: { rootRef: React.RefObject<HTMLDivElement | n
             maskImage: 'linear-gradient(to bottom, black 0, black 75vh, transparent 100vh)',
             WebkitMaskImage: 'linear-gradient(to bottom, black 0, black 75vh, transparent 100vh)',
           }}
-          src={isMobile ? REEL_MOBILE_VIDEO : '/videos/performance.mp4'}
+          src={isMobile ? REEL_MOBILE_VIDEO : '/videos/performance-web.mp4'}
         />
       )}
       {/* Color-grade wash on the video itself — a blue duotone rather than
@@ -220,7 +220,7 @@ function TrustBadge({ icon: Icon, label, accent: accentProp }: { icon: LucideIco
   const brand = useBrandColor()
   const accent = accentProp ?? brand
   return (
-    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/[0.16] bg-white/[0.06] backdrop-blur-sm text-white/70 text-[11px] font-mono tracking-wide uppercase shadow-[0_4px_16px_rgba(0,0,0,0.25)]">
+    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/[0.16] bg-white/[0.06] backdrop-blur-sm text-white/70 text-xs sm:text-[11px] font-mono tracking-wide uppercase shadow-[0_4px_16px_rgba(0,0,0,0.25)]">
       <Icon className="w-3.5 h-3.5" style={{ color: accent }} />
       {label}
     </span>
@@ -361,7 +361,7 @@ function StageRouter({ copy }: { copy?: ContactPage['stageRouter'] }) {
 /* ── Shared field styles ───────────────────────────────────────────── */
 const fieldClass =
   'w-full bg-white/5 border border-white/15 rounded-xl px-5 py-3.5 text-white placeholder:text-white/50 focus:outline-none focus:border-brand-blue transition-colors'
-const labelClass = 'block font-mono text-xs sm:text-[10px] tracking-widest text-white/55 uppercase mb-2'
+const labelClass = 'block font-mono text-xs tracking-widest text-white/55 uppercase mb-2'
 
 function SuccessNote({ title, text }: { title: string; text: string }) {
   return (
@@ -639,7 +639,7 @@ function WhatHappensNext({ copy }: { copy?: ContactPage['whatHappensNext'] }) {
           <p data-cms-field="whatHappensNext.subhead" className="mt-5 text-white/55 font-light text-sm sm:text-base">
             {subhead}
           </p>
-          <p data-cms-field="whatHappensNext.formPrompt" className="mt-2 font-mono text-[11px] tracking-[0.15em] text-brand-blue uppercase">
+          <p data-cms-field="whatHappensNext.formPrompt" className="mt-2 font-mono text-xs sm:text-[11px] tracking-[0.15em] text-brand-blue uppercase">
             {formPrompt}
           </p>
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
@@ -709,24 +709,29 @@ function StudioLocation({ copy }: { copy?: ContactPage['studioLocation'] }) {
               X-Frame-Options: SAMEORIGIN, so browsers refuse to show it inside this page and the panel was
               an empty dark box on every device (Oct 27 audit #15). The dark filter turns the light
               tiles into a map that sits on the dark page (hue-rotate keeps water bluish). */}
+          {/* The address is its own strip under the map, not laid over it (2026-11-04 re-audit):
+              on top of the map it covered OpenStreetMap's credit line -- which their terms require
+              to stay visible -- with the credit showing through behind the text, and the link was
+              only 17px tall on a phone. Now a full-width ~48px tap target. */}
           {hasMap && (
-            <div className="relative rounded-3xl overflow-hidden border border-white/10 min-h-[320px] group">
-              <iframe
-                title="Slate Cinema Studio location"
-                src={mapSrc}
-                className="absolute inset-0 w-full h-full"
-                style={{ border: 0, filter: 'invert(1) hue-rotate(180deg) grayscale(0.35) brightness(0.92) contrast(0.95)' }}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-              <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-ink via-transparent to-transparent" />
+            <div className="relative rounded-3xl overflow-hidden border border-white/10 min-h-[320px] flex flex-col">
+              <div className="relative flex-1 min-h-[260px]">
+                <iframe
+                  title="Slate Cinema Studio location"
+                  src={mapSrc}
+                  className="absolute inset-0 w-full h-full"
+                  style={{ border: 0, filter: 'invert(1) hue-rotate(180deg) grayscale(0.35) brightness(0.92) contrast(0.95)' }}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
               <a
                 href={mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="absolute bottom-5 left-5 flex items-center gap-2 font-mono text-[11px] tracking-widest text-white/90 hover:text-white uppercase [text-shadow:0_1px_6px_rgba(0,0,0,0.9)]"
+                className="flex items-center gap-2 px-5 py-4 border-t border-white/10 bg-white/[0.04] font-mono text-xs sm:text-[11px] tracking-widest text-white/90 hover:text-white hover:bg-white/[0.07] uppercase transition-colors"
               >
-                <Navigation className="w-4 h-4 text-[#22d3ee]" /> {fullAddress}
+                <Navigation className="w-4 h-4 shrink-0 text-[#22d3ee]" /> {fullAddress}
               </a>
             </div>
           )}

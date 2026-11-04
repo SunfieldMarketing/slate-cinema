@@ -58,7 +58,7 @@ export default function StatsBand({
                   number/suffix split fix. text-center means any residual
                   overflow spills evenly into the gap on both sides
                   rather than clipping or colliding with a neighbor. */}
-              <div data-cms-field={fieldPathPrefix ? `${fieldPathPrefix}.${i}.label` : undefined} className="mt-3 font-mono text-xs sm:text-[10px] tracking-wide text-white/45 uppercase whitespace-nowrap">{s.label}</div>
+              <div data-cms-field={fieldPathPrefix ? `${fieldPathPrefix}.${i}.label` : undefined} className="mt-3 font-mono text-xs sm:text-[10px] tracking-wide text-white/55 uppercase whitespace-nowrap">{s.label}</div>
             </div>
           ))}
         </div>

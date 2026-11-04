@@ -137,7 +137,7 @@ export default function IndustryServices({
                 once it can play, so the card never renders empty. */}
             <img
               src={featured.image}
-              alt={featured.title}
+              alt=""
               loading="lazy"
               className="absolute inset-0 w-full h-full object-cover opacity-50 transition-transform duration-[1400ms] ease-out group-hover:scale-105"
             />
@@ -151,7 +151,7 @@ export default function IndustryServices({
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent" />
             <div className="absolute top-4 left-4 flex items-center gap-2">
-              <span {...labelField('mostBooked')} className="font-mono text-xs sm:text-[9px] tracking-[0.2em] uppercase px-2.5 py-1.5 rounded-full border backdrop-blur-md text-white" style={{ borderColor: `${accent}55`, backgroundColor: 'rgba(5,7,12,0.7)' }}>
+              <span {...labelField('mostBooked')} className="font-mono text-xs sm:text-[10px] tracking-[0.2em] uppercase px-2.5 py-1.5 rounded-full border backdrop-blur-md text-white" style={{ borderColor: `${accent}55`, backgroundColor: 'rgba(5,7,12,0.7)' }}>
                 {labels.mostBooked}
               </span>
             </div>
@@ -202,7 +202,7 @@ export default function IndustryServices({
             >
               <img
                 src={s.image}
-                alt={s.title}
+                alt=""
                 loading="lazy"
                 className="absolute inset-0 w-full h-full object-cover opacity-40 transition-all duration-[1200ms] ease-out group-hover:scale-110 group-hover:opacity-55"
               />
@@ -220,7 +220,7 @@ export default function IndustryServices({
                     request while keeping the deliverables list itself. */}
                 <ul className="mb-3">
                   {s.deliverables.map((d) => (
-                    <li key={d} className="flex items-center gap-1.5 text-[11px] text-white/65 py-0.5">
+                    <li key={d} className="flex items-center gap-1.5 text-xs sm:text-[11px] text-white/65 py-0.5">
                       <Check className="w-3 h-3 shrink-0" style={{ color: accent }} /> {d}
                     </li>
                   ))}
@@ -230,7 +230,7 @@ export default function IndustryServices({
                   <span {...labelField('bookThis')} className="inline-flex items-center gap-1.5 text-xs font-semibold text-white whitespace-nowrap shrink-0 group-hover:gap-2.5 transition-all">
                     {labels.bookThis} <ArrowRight className="w-3.5 h-3.5" style={{ color: accent }} />
                   </span>
-                  <span className="font-mono text-xs sm:text-[9px] tracking-[0.12em] text-white/55 uppercase">{s.meta}</span>
+                  <span className="font-mono text-xs sm:text-[10px] tracking-[0.12em] text-white/55 uppercase">{s.meta}</span>
                 </div>
               </div>
             </a>

@@ -134,7 +134,7 @@ export default function Footer() {
           {/* CTA + Newsletter */}
           <div className="w-full lg:max-w-md flex flex-col gap-6">
             <div>
-              <h3 data-cms-field="cta.heading" className="text-xl font-bold text-white mb-3">{cta?.heading || 'Ready to create?'}</h3>
+              <h2 data-cms-field="cta.heading" className="text-xl font-bold text-white mb-3">{cta?.heading || 'Ready to create?'}</h2>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
                   href={cta?.buttonHref || '/contact'}
@@ -149,8 +149,8 @@ export default function Footer() {
             </div>
 
             <div>
-              <h4 data-cms-field="newsletter.heading" className="text-sm font-semibold text-white mb-2">{newsletter?.heading || 'Subscribe to our Newsletter'}</h4>
-              <p data-cms-field="newsletter.sentence" className="text-white/45 text-xs font-light leading-relaxed mb-3 max-w-md">
+              <h3 data-cms-field="newsletter.heading" className="text-sm font-semibold text-white mb-2">{newsletter?.heading || 'Subscribe to our Newsletter'}</h3>
+              <p data-cms-field="newsletter.sentence" className="text-white/55 text-xs font-light leading-relaxed mb-3 max-w-md">
                 {newsletter?.sentence}
               </p>
               {newsletterSubmitted ? (
@@ -211,7 +211,7 @@ export default function Footer() {
               in an oversized gap next to the CTA column. */}
           <div className="w-full lg:w-auto flex flex-col sm:flex-row justify-between lg:justify-end gap-8 lg:gap-24 pt-2 lg:pt-0">
             <div className="flex flex-col">
-              <h4 data-cms-field="sitemapColumn.heading" className="text-white font-bold mb-3 uppercase tracking-wider text-sm">{sitemap?.heading || 'Studio'}</h4>
+              <h3 data-cms-field="sitemapColumn.heading" className="text-white font-bold mb-3 uppercase tracking-wider text-sm">{sitemap?.heading || 'Studio'}</h3>
               <div className="flex flex-col gap-2.5">
                 {(sitemap?.links ?? []).map((link, i) => (
                   <Link key={link.label} href={link.href} data-cms-field={`sitemapColumn.links.${i}.label`} className="footer-link text-white/60 hover:text-brand-blue transition-colors text-sm py-1.5 -my-1.5">
@@ -243,16 +243,18 @@ export default function Footer() {
               separate links from the sitemap column above (different
               className, missed by that earlier tap-target fix) -- same
               padding + matching negative margin trick, same reasoning:
-              10px/uppercase text rendered these at only 15px tall. */}
+              10px/uppercase text rendered these at only 15px tall. Taller still
+              since the 2026-11-04 re-audit: 44px touch targets (were 28px); the
+              matching negative margin keeps the row exactly where it was. */}
           <div className="flex gap-4">
-            <a href={bottomBar?.privacyHref || '/privacy-policy'} data-cms-field="bottomBar.privacyLabel" className="py-1.5 -my-1.5 hover:text-white transition-colors">{bottomBar?.privacyLabel || 'Privacy'}</a>
-            <a href={bottomBar?.termsHref || '/terms-of-service'} data-cms-field="bottomBar.termsLabel" className="py-1.5 -my-1.5 hover:text-white transition-colors">{bottomBar?.termsLabel || 'Terms'}</a>
-            <a href={bottomBar?.clientPortalHref || 'https://my.slatecinema.com/'} target="_blank" rel="noopener noreferrer" data-cms-field="bottomBar.clientPortalLabel" className="py-1.5 -my-1.5 hover:text-brand-blue transition-colors">{bottomBar?.clientPortalLabel || 'Client Portal'}</a>
+            <a href={bottomBar?.privacyHref || '/privacy-policy'} data-cms-field="bottomBar.privacyLabel" className="inline-block py-3.5 -my-3.5 hover:text-white transition-colors">{bottomBar?.privacyLabel || 'Privacy'}</a>
+            <a href={bottomBar?.termsHref || '/terms-of-service'} data-cms-field="bottomBar.termsLabel" className="inline-block py-3.5 -my-3.5 hover:text-white transition-colors">{bottomBar?.termsLabel || 'Terms'}</a>
+            <a href={bottomBar?.clientPortalHref || 'https://my.slatecinema.com/'} target="_blank" rel="noopener noreferrer" data-cms-field="bottomBar.clientPortalLabel" className="inline-block py-3.5 -my-3.5 hover:text-brand-blue transition-colors">{bottomBar?.clientPortalLabel || 'Client Portal'}</a>
           </div>
         </div>
 
         {/* CC-BY attribution for the hero's 3D assets — required by the license */}
-        <p className="w-full mt-6 text-center text-[11px] font-mono text-white/50 tracking-wide leading-relaxed normal-case">
+        <p className="w-full mt-6 text-center text-xs sm:text-[11px] font-mono text-white/50 tracking-wide leading-relaxed normal-case">
           {MODEL_CREDITS}
         </p>
       </div>

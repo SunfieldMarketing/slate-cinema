@@ -34,7 +34,7 @@ const fallbackPrepItems = [
    Talk" section so this page's framing carries the same visual language. */
 function TrustBadge({ icon: Icon, label }: { icon: typeof CalendarClock; label: string }) {
   return (
-    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-400/30 bg-white/[0.06] backdrop-blur-sm text-white/70 text-[11px] font-mono tracking-wide uppercase shadow-[0_4px_16px_rgba(0,0,0,0.25)]">
+    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-400/30 bg-white/[0.06] backdrop-blur-sm text-white/70 text-xs sm:text-[11px] font-mono tracking-wide uppercase shadow-[0_4px_16px_rgba(0,0,0,0.25)]">
       <Icon className="w-3.5 h-3.5 text-emerald-400" />
       {label}
     </span>

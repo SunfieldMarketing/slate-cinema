@@ -106,7 +106,7 @@ export default function Pipeline({
                 >
                   <span className="flex items-baseline gap-3 sm:gap-4">
                     <span
-                      className="font-mono text-[11px] sm:text-xs tracking-widest tabular-nums transition-colors duration-300"
+                      className="font-mono text-xs tracking-widest tabular-nums transition-colors duration-300"
                       style={{ color: isOpen ? cat.color : 'rgba(255,255,255,0.25)' }}
                     >
                       {String(i + 1).padStart(2, '0')}
@@ -116,7 +116,7 @@ export default function Pipeline({
                     </span>
                   </span>
                   <span className="flex items-center gap-3">
-                    <span className="hidden sm:inline font-mono text-xs sm:text-[9px] tracking-widest uppercase transition-colors duration-300" style={{ color: isOpen ? `${cat.color}99` : 'rgba(255,255,255,0.2)' }}>
+                    <span className="hidden sm:inline font-mono text-xs sm:text-[10px] tracking-widest uppercase transition-colors duration-300" style={{ color: isOpen ? `${cat.color}99` : 'rgba(255,255,255,0.2)' }}>
                       {isOpen ? 'Now Playing' : 'Frame'}
                     </span>
                     <ChevronDown
@@ -149,7 +149,7 @@ export default function Pipeline({
                           />
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" />
-                        <div className="absolute bottom-3 left-3 flex items-center gap-1.5 font-mono text-xs sm:text-[9px] tracking-widest uppercase px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-sm text-white/80">
+                        <div className="absolute bottom-3 left-3 flex items-center gap-1.5 font-mono text-xs sm:text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-sm text-white/80">
                           <Play className="w-2.5 h-2.5" fill="currentColor" /> Live Preview
                         </div>
                       </div>

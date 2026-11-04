@@ -84,7 +84,7 @@ export default function JournalPostContent({
         {/* Cover image */}
         <section className="relative w-full max-w-5xl mx-auto px-5 sm:px-8 mb-14 md:mb-20">
           <div className="jp-hero-in relative aspect-[16/9] rounded-3xl overflow-hidden border border-white/10">
-            <img src={post.coverImage} alt={post.title} className="absolute inset-0 w-full h-full object-cover" />
+            <img src={post.coverImage} alt="" className="absolute inset-0 w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent" />
           </div>
         </section>
@@ -161,14 +161,14 @@ export default function JournalPostContent({
                     <div className="relative aspect-[16/10] overflow-hidden">
                       <img
                         src={p.coverImage}
-                        alt={p.title}
+                        alt=""
                         loading="lazy"
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
                     </div>
                     <div className="p-5">
-                      <div className="font-mono text-[11px] tracking-wide text-white/55 uppercase mb-2">
+                      <div className="font-mono text-xs sm:text-[11px] tracking-wide text-white/55 uppercase mb-2">
                         {p.category} · {p.readTime}
                       </div>
                       <h3 data-cms-field="title" className="text-white font-bold text-sm leading-snug mb-2 group-hover:text-brand-blue transition-colors line-clamp-2">

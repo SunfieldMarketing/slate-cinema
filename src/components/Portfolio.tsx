@@ -179,10 +179,12 @@ export default function Portfolio({
               data-cms-doc-id={p.id}
               className={`pf-card group relative rounded-2xl overflow-hidden border border-white/10 cursor-pointer transition-all duration-500 hover:border-brand-blue/50 ${i < bentoCovered ? bentoGroups[Math.floor(i / BENTO_GROUP_SIZE)][i % BENTO_GROUP_SIZE] : trailingTileClass(i - bentoCovered, visible.length - bentoCovered, i === visible.length - 1 && visible.length % 2 === 1)}`}
             >
-              {/* Image */}
+              {/* Image. alt="" because the card's own title (h3 below) already names it --
+                  alt={p.title} made screen readers read every title twice (Oct 27 audit #12;
+                  the same change on every card grid with a visible caption). */}
               <img
                 src={p.url}
-                alt={p.title}
+                alt=""
                 loading="lazy"
                 onError={(e) => {
                   // The media doc can exist and still 404/403 at the storage

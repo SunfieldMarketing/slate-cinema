@@ -158,7 +158,7 @@ export default function ProjectCardModal({
           <div className="flex items-start justify-between gap-6 flex-wrap mb-4">
             <div>
               <h3 data-cms-field="title" className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{project.title}</h3>
-              <div data-cms-field="company" className="mt-1.5 font-mono text-[11px] tracking-[0.18em] uppercase text-white/55">{project.company}</div>
+              <div data-cms-field="company" className="mt-1.5 font-mono text-xs sm:text-[11px] tracking-[0.18em] uppercase text-white/55">{project.company}</div>
             </div>
           </div>
 
@@ -169,7 +169,7 @@ export default function ProjectCardModal({
             {project.metrics.map((m, i) => (
               <div key={m.label} className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3.5">
                 <div data-cms-field={`metrics.${i}.value`} className="text-xl font-bold tracking-tight" style={{ color: accent }}>{m.value}</div>
-                <div data-cms-field={`metrics.${i}.label`} className="mt-0.5 font-mono text-xs sm:text-[9px] tracking-[0.18em] uppercase text-white/55">{m.label}</div>
+                <div data-cms-field={`metrics.${i}.label`} className="mt-0.5 font-mono text-xs sm:text-[10px] tracking-[0.18em] uppercase text-white/55">{m.label}</div>
               </div>
             ))}
           </div>

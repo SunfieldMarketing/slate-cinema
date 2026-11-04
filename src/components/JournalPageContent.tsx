@@ -66,7 +66,7 @@ function JournalGrid({ journalPosts, readLabel }: { journalPosts: JournalPostLoc
               <div className="relative aspect-[16/10] overflow-hidden">
                 <img
                   src={p.coverImage}
-                  alt={p.title}
+                  alt=""
                   loading="lazy"
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110 opacity-90 group-hover:opacity-100"
                 />
@@ -75,7 +75,7 @@ function JournalGrid({ journalPosts, readLabel }: { journalPosts: JournalPostLoc
                   data-cms-field="category"
                   // A near-opaque dark pill and 11px+ text (Oct 27 audit #8): at bg-black/40 the coloured label
                   // sank into bright or busy cover photos (the paint photo, a bright sky).
-                  className="absolute top-4 left-4 font-mono text-[11px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full bg-black/75 backdrop-blur-md border border-white/20"
+                  className="absolute top-4 left-4 font-mono text-xs sm:text-[11px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full bg-black/75 backdrop-blur-md border border-white/20"
                   style={{ color: p.accent }}
                 >
                   {p.category}
@@ -87,9 +87,9 @@ function JournalGrid({ journalPosts, readLabel }: { journalPosts: JournalPostLoc
                   <span className="w-1 h-1 rounded-full bg-white/30" />
                   <span data-cms-field="readTime">{p.readTime}</span>
                 </div>
-                <h3 data-cms-field="title" className="text-white font-bold text-lg leading-snug mb-2 group-hover:text-brand-blue transition-colors">
+                <h2 data-cms-field="title" className="text-white font-bold text-lg leading-snug mb-2 group-hover:text-brand-blue transition-colors">
                   {p.title}
-                </h3>
+                </h2>
                 <p data-cms-field="excerpt" className="text-white/50 text-sm font-light leading-relaxed line-clamp-3 flex-1">{p.excerpt}</p>
                 <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white/80 group-hover:text-white transition-colors">
                   <span data-cms-global="journal-page" data-cms-field="readLabel">{readLabel}</span>
