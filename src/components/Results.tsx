@@ -173,7 +173,7 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
             disablePictureInPicture
             disableRemotePlayback
             className="bg-video absolute w-full h-full object-cover top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-70"
-            src={isMobile ? REEL_MOBILE_VIDEO : '/videos/performance.mp4'}
+            src={isMobile ? REEL_MOBILE_VIDEO : '/videos/performance-web.mp4'}
           />
         )}
         <div className="absolute inset-0 bg-ink/60 mix-blend-multiply" />

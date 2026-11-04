@@ -42,7 +42,7 @@ export const portfolioProjects: PortfolioProject[] = [
   },
   {
     title: 'The Weekly Engine',
-    video: '/videos/performance.mp4',
+    video: '/videos/performance-web.mp4',
     category: 'Podcast',
     company: 'Real Talk',
     url: '/images/portfolio-social.webp',
@@ -51,7 +51,7 @@ export const portfolioProjects: PortfolioProject[] = [
   },
   {
     title: 'Before Your Listing Photos',
-    video: '/videos/pre-production.mp4',
+    video: '/videos/pre-production-web.mp4',
     category: 'Social',
     company: 'TruBlue of NW Brooklyn',
     url: '/images/portfolio-production.webp',

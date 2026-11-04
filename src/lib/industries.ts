@@ -516,7 +516,7 @@ export const industries: IndustryData[] = [
     description: "Healthcare content has to earn trust before it earns attention. We build patient stories, facility films, and explainer content that stay clear, compliant, and human — content built for an audience that needs to trust you before they'll listen to you. Dedicated healthcare-facility work (nursing homes, care networks) runs under Wavecare, our sister brand — see wavecare.io.",
     stat: 'Park Smiles NYC · EKGx',
     heroImage: '/images/ind_health_hero.webp',
-    heroVideo: '/videos/pre-production.mp4',
+    heroVideo: '/videos/pre-production-web.mp4',
     gallery: [
       '/images/ind_health_gal1.webp',
       '/images/ind_health_gal2.webp',
@@ -625,7 +625,7 @@ export const industries: IndustryData[] = [
     description: "Corporate content is where most brands get boring. We build brand films, culture reels, and executive communications engineered to make a company feel like the people inside it — because the companies that feel human are the ones people actually want to work with.",
     stat: 'QotaPro · Skyline Capital',
     heroImage: '/images/ind_corporate_hero.webp',
-    heroVideo: '/videos/performance.mp4',
+    heroVideo: '/videos/performance-web.mp4',
     gallery: [
       '/images/portfolio-production.webp',
       'https://images.unsplash.com/photo-1611149974482-764b0c2a211a?q=80&w=1200',
@@ -643,7 +643,7 @@ export const industries: IndustryData[] = [
       // (MPower Recruiter Video, vimeo.com/936451661).
       { name: 'MPower', year: '2024', body: 'A recruiter video plus event recap, built to attract talent, not just document an event.', video: '936451661' },
       { name: 'QotaPro', year: '2025', body: 'Brand film work for a contractor-focused platform.', video: '/videos/production-web.mp4' },
-      { name: 'Skyline Capital', year: '2025', body: 'Executive-facing brand communications for a capital firm.', video: '/videos/pre-production.mp4' },
+      { name: 'Skyline Capital', year: '2025', body: 'Executive-facing brand communications for a capital firm.', video: '/videos/pre-production-web.mp4' },
     ],
     cinematicStatement: {
       eyebrow: 'People, Not Just Product',
@@ -711,7 +711,7 @@ export const industries: IndustryData[] = [
     description: "Mission-driven work needs to move people to actually do something — donate, volunteer, show up. We build storytelling for nonprofits and institutions engineered around a single call to action, shot with the same craft as any commercial campaign because your mission deserves it. Organizations is Slate's deepest historic vertical, spanning Chai Lifeline, HASC, NCSY, National Menorah, Israel Day Parade, Renewal, and Gateways — 5 years running with Gateways alone.",
     stat: 'Chai Lifeline · HASC · NCSY',
     heroImage: '/images/ind_orgs_hero.webp',
-    heroVideo: '/videos/pre-production.mp4',
+    heroVideo: '/videos/pre-production-web.mp4',
     gallery: [
       'https://images.unsplash.com/photo-1461532257246-777de18cd58b?q=80&w=1200',
       'https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?q=80&w=1200',
@@ -727,7 +727,7 @@ export const industries: IndustryData[] = [
     clientShowcase: [
       // Real Vimeo ID confirmed 2026-08-19 via the media tracker.
       { name: 'Gateways', year: '5 yrs running', body: 'Seasonal Passover program coverage for a nonprofit serving thousands of families, plus year-round event and brochure work.', video: '1174431950' },
-      { name: 'Chai Lifeline', year: '2025', body: 'Mission-driven storytelling for a nonprofit serving families in crisis.', video: '/videos/pre-production.mp4' },
+      { name: 'Chai Lifeline', year: '2025', body: 'Mission-driven storytelling for a nonprofit serving families in crisis.', video: '/videos/pre-production-web.mp4' },
       { name: 'HASC', year: '2025', body: 'Program and community coverage for a nonprofit serving people with disabilities.', video: '521940131' },
       { name: 'NCSY', year: '2025', body: 'Event and community-impact coverage for a national youth movement.', video: '/videos/post-production-web.mp4' },
     ],

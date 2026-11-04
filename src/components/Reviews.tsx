@@ -112,7 +112,7 @@ function PhoneVideoCard({ t }: { t: IndustryVideoTestimonial }) {
         {vimeoId ? (
           playing && (
             <iframe
-              src={`https://player.vimeo.com/video/${vimeoId}?autoplay=1&muted=0&title=0&byline=0&portrait=0`}
+              src={`https://player.vimeo.com/video/${vimeoId}?autoplay=1&muted=0&title=0&byline=0&portrait=0&dnt=1`}
               className="absolute inset-0 w-full h-full"
               style={{ border: 0 }}
               allow="autoplay; fullscreen; picture-in-picture"

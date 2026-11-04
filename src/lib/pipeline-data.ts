@@ -18,7 +18,7 @@ export const categories: Category[] = [
   {
     id: 'pre-production',
     title: 'Pre-Production',
-    video: '/videos/pre-production.mp4',
+    video: '/videos/pre-production-web.mp4',
     color: '#00AEEF',
     services: [
       { name: 'Concepts', tags: ['Scripts + Storyboards', 'Call Sheet + Schedules', 'Outlines + Shotlists'] },

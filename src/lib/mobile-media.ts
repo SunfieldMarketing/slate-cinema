@@ -66,7 +66,7 @@ const MOBILE_FILES: Record<string, string> = {
 export function mobileMediaUrl(url?: string | null): string | undefined {
   if (!url) return undefined
   const clean = url.split('?')[0]
-  if (clean === '/videos/performance.mp4') return REEL_MOBILE_VIDEO
+  if (clean === '/videos/performance.mp4' || clean === '/videos/performance-web.mp4') return REEL_MOBILE_VIDEO
   if (!clean.startsWith(S3)) return undefined
   const mapped = MOBILE_FILES[clean.slice(S3.length)]
   return mapped ? S3 + mapped : undefined

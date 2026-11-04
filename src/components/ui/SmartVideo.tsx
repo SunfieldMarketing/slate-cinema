@@ -24,6 +24,31 @@ import { mobileMediaUrl, useIsMobile } from '@/lib/mobile-media'
   PLACEHOLDER_IMAGE in media-url.ts.
 */
 const PLACEHOLDER_VIDEO = '/videos/production-web.mp4'
+
+/*
+  Exact "cover" box for a Vimeo embed (2026-10-02, "the hero section video on mobile should
+  fit size of hero section"): Vimeo letterboxes its 16:9 picture inside the iframe, so the
+  iframe itself has to be wide enough for the box's height and tall enough for its width.
+
+  2026-11-04 re-audit: this used to be measured in JavaScript after hydration, with a 200%
+  oversize until then -- on a phone the iframe snapped to its real size ~2.7s in, which
+  Lighthouse scored as a 0.42-0.67 layout shift on every industry page (good is < 0.1).
+  It's now pure CSS from the first paint: a size container around the iframe, and
+  container-query units (cqw/cqh = 1% of that box) for the same max() maths, so nothing
+  ever resizes. Positioned with left/top, not a transform, so scroll animations that
+  transform the iframe (CinematicStatement's parallax) still compose.
+*/
+const COVER_BOX: CSSProperties = { position: 'absolute', inset: 0, overflow: 'hidden', containerType: 'size' }
+const COVER_W = 'max(100cqw, 177.78cqh)'
+const COVER_H = 'max(100cqh, 56.25cqw)'
+const COVER_IFRAME: CSSProperties = {
+  border: 0,
+  position: 'absolute',
+  width: `calc(${COVER_W} + 2px)`,
+  height: `calc(${COVER_H} + 2px)`,
+  left: `calc((100cqw - ${COVER_W}) / 2 - 1px)`,
+  top: `calc((100cqh - ${COVER_H}) / 2 - 1px)`,
+}
 interface SmartVideoProps {
   /** Local file path or Payload-Media/Vercel-Blob URL -- today's behavior. */
   src?: string
@@ -142,51 +167,15 @@ export default function SmartVideo({
     return () => io.disconnect()
   }, [nearView, vimeoId, src])
 
-  // Exact "cover" box for a Vimeo embed (2026-10-02, "the hero section video
-  // on mobile should fit size of hero section"). The old fixed 200%
-  // oversize covered wide desktop heroes, but a phone hero is tall and
-  // narrow: Vimeo letterboxes its 16:9 picture inside the iframe, so the
-  // video showed as a band across the middle with dark gaps above and
-  // below. Sizing the iframe from the container's real dimensions -- wide
-  // enough for the height, tall enough for the width -- covers any shape.
-  // Positioned with left/top, not a transform, so scroll animations that
-  // transform the iframe (CinematicStatement's parallax) still compose.
-  const [cover, setCover] = useState<CSSProperties | null>(null)
-  useEffect(() => {
-    const parent = coverFit && vimeoId ? iframeRef.current?.parentElement : null
-    if (!parent) return
-    const RATIO = 16 / 9
-    const measure = () => {
-      const W = parent.clientWidth
-      const H = parent.clientHeight
-      if (!W || !H) return
-      const w = Math.ceil(Math.max(W, H * RATIO)) + 2
-      const h = Math.ceil(Math.max(H, W / RATIO)) + 2
-      setCover({ width: w, height: h, left: Math.floor((W - w) / 2), top: Math.floor((H - h) / 2) })
-    }
-    measure()
-    const ro = new ResizeObserver(measure)
-    ro.observe(parent)
-    return () => ro.disconnect()
-  }, [coverFit, vimeoId])
-
   if (vimeoId) {
     // CSS object-fit only affects replaced elements (<video>/<img>), never
     // an <iframe>'s content -- a plain w-full/h-full className just
     // stretches or letterboxes the player instead of covering. coverFit
-    // sizes it from the container (see `cover` above), with the old fixed
-    // 200% oversize only until the first measurement. Opt-in rather than
-    // automatic, since Hero.tsx's own className already does its own
+    // makes it an exact "cover" box (see COVER_IFRAME below). Opt-in rather
+    // than automatic, since Hero.tsx's own className already does its own
     // (viewport-relative) version of this and an inline style here would
     // win specificity and clobber it.
-    const coverStyle: CSSProperties = coverFit
-      ? {
-          border: 0,
-          position: 'absolute',
-          ...(cover ?? { top: '-50%', left: '-50%', width: '200%', height: '200%' }),
-        }
-      : { border: 0 }
-    return (
+    const iframe = (
       <iframe
         ref={iframeRef}
         // No src until it's near the viewport (see nearView above). The
@@ -196,7 +185,7 @@ export default function SmartVideo({
         // statement) let Vimeo pick a size that fits the box.
         src={nearView ? vimeoEmbedUrl(vimeoId, variant, { hd: priority }) : undefined}
         className={className}
-        style={coverStyle}
+        style={coverFit ? COVER_IFRAME : { border: 0 }}
         allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
         allowFullScreen
         loading={priority ? 'eager' : 'lazy'}
@@ -213,6 +202,7 @@ export default function SmartVideo({
         onLoad={onLoadedData}
       />
     )
+    return coverFit ? <div style={COVER_BOX}>{iframe}</div> : iframe
   }
 
   if (src) {

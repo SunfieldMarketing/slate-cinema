@@ -43,9 +43,13 @@ export function vimeoEmbedUrl(
   // instead of a full 1080p stream per card. Heroes keep the default.
   { hd = true }: { hd?: boolean } = {},
 ) {
+  // dnt=1 on every variant (2026-11-04 re-audit): Vimeo's "do not track" switch. Without it
+  // each ambient background loop set Vimeo's `vuid` analytics cookie -- a third-party cookie
+  // Lighthouse flags (Best Practices 77) and browsers increasingly block anyway. The player
+  // variant already had it.
   const params =
     variant === 'background' && !hd
-      ? 'background=1&autoplay=1&loop=1&muted=1&byline=0&title=0&portrait=0'
+      ? 'background=1&autoplay=1&loop=1&muted=1&byline=0&title=0&portrait=0&dnt=1'
       : variant === 'background'
       // quality=1080p -- added 2026-08-27 per "video looks blurry, not
       // crisp 1080p" report. This is a real, documented Vimeo Player
@@ -62,7 +66,7 @@ export function vimeoEmbedUrl(
       // video's own opacity-40 + mix-blend-screen treatment (see
       // Hero.tsx) makes any footage look softer/hazier by design,
       // independent of its actual encoded resolution.
-      ? 'background=1&autoplay=1&loop=1&muted=1&byline=0&title=0&portrait=0&quality=1080p'
+      ? 'background=1&autoplay=1&loop=1&muted=1&byline=0&title=0&portrait=0&quality=1080p&dnt=1'
       : 'byline=0&title=0&portrait=0&dnt=1'
   return `https://player.vimeo.com/video/${id}?${params}`
 }

@@ -129,7 +129,7 @@ const fallbackProcessPhases = [
   {
     title: 'Pre-Production',
     color: '#00AEEF',
-    video: '/videos/pre-production.mp4',
+    video: '/videos/pre-production-web.mp4',
     videoVimeoUrl: undefined as string | undefined,
     description: 'Every shoot starts on paper. Scripts, storyboards, shotlists, casting, locations, and a full production schedule — locked before a single camera rolls.',
   },
