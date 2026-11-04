@@ -58,8 +58,57 @@ export default function IntakeFrame() {
       }
     }
 
+    // Main-site look (2026-11-04, Oct 27 audit #29). The brief ships with its own Montserrat /
+    // Hanken Grotesk type and a navy palette, so it read as a different site. Its stylesheet
+    // is built on CSS variables, so one injected <style> re-themes it -- intake.html itself
+    // stays byte-identical. Inter's @font-face rules are copied from this page (same-origin
+    // font files), the navy tones become the site's ink, and --accent (which the app sets
+    // inline at runtime, hence !important) becomes the brand colour.
+    const restyle = () => {
+      try {
+        const doc = iframe.contentDocument
+        if (!doc?.head || doc.getElementById('sc-site-theme')) return
+        const faces: string[] = []
+        for (const sheet of Array.from(document.styleSheets)) {
+          let rules: CSSRuleList
+          try { rules = sheet.cssRules } catch { continue }
+          const base = sheet.href || location.href
+          for (const rule of Array.from(rules)) {
+            if (rule instanceof CSSFontFaceRule && /Inter/.test(rule.style.getPropertyValue('font-family'))) {
+              // Font URLs are relative to the stylesheet; inside /intake.html they'd resolve
+              // against the wrong path, so make them absolute first.
+              faces.push(rule.cssText.replace(/url\((['"]?)([^'")]+)\1\)/g, (_m, q, u) => `url(${q}${new URL(u, base).href}${q})`))
+            }
+          }
+        }
+        const brand = getComputedStyle(document.documentElement).getPropertyValue('--color-brand-blue').trim() || '#00AEEF'
+        const style = doc.createElement('style')
+        style.id = 'sc-site-theme'
+        style.textContent = `${faces.join('\n')}
+:root, .sc-app {
+  --display: 'Inter', 'Inter Fallback', system-ui, sans-serif !important;
+  --body: 'Inter', 'Inter Fallback', system-ui, sans-serif !important;
+  --navy-900: #0b0c0e !important; --navy-800: #101216 !important; --navy-700: #1b1e23 !important;
+  --slate: #3b4048 !important;
+  --accent: ${brand} !important;
+}
+.sc-step__title, .sc-hero__line, .sc-app h1, .sc-app h2 { font-weight: 900; letter-spacing: -0.04em; }
+.sc-btn { border-radius: 999px; }
+@media (min-width: 1100px) { .sc-card, .sc-app[data-layout="centered"] .sc-card { max-width: 780px; } }`
+        doc.head.appendChild(style)
+      } catch {
+        // Cross-origin or not ready -- the brief still works in its original look.
+      }
+    }
+
     iframe.addEventListener('load', patch)
-    return () => iframe.removeEventListener('load', patch)
+    iframe.addEventListener('load', restyle)
+    // The iframe can finish loading before this effect runs (cached file).
+    if (iframe.contentDocument?.readyState === 'complete') restyle()
+    return () => {
+      iframe.removeEventListener('load', patch)
+      iframe.removeEventListener('load', restyle)
+    }
   }, [])
 
   return (

@@ -26,9 +26,18 @@ export default function ProjectIntakePage() {
           IntakeFrame (not a plain <iframe>) mirrors each submission into
           the CMS without touching intake.html itself -- see its own
           comment for how. */}
+      {/* 2026-11-04 (Oct 27 audit #29): grows on wide screens (it was a 896px panel floating in
+          an empty 1920px page) and gets the site's viewfinder corner brackets; IntakeFrame
+          re-themes the brief itself to the site's type and colours. */}
       <div className="pt-20 pb-4 px-2 sm:pt-28 sm:pb-16 sm:px-6">
-        <div className="max-w-4xl mx-auto rounded-xl sm:rounded-2xl overflow-hidden border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.4)]">
-          <IntakeFrame />
+        <div className="relative max-w-4xl xl:max-w-6xl mx-auto">
+          <span aria-hidden className="hidden sm:block absolute -top-3 -left-3 w-6 h-6 border-l border-t border-white/25" />
+          <span aria-hidden className="hidden sm:block absolute -top-3 -right-3 w-6 h-6 border-r border-t border-white/25" />
+          <span aria-hidden className="hidden sm:block absolute -bottom-3 -left-3 w-6 h-6 border-l border-b border-white/25" />
+          <span aria-hidden className="hidden sm:block absolute -bottom-3 -right-3 w-6 h-6 border-r border-b border-white/25" />
+          <div className="rounded-xl sm:rounded-2xl overflow-hidden border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.4)]">
+            <IntakeFrame />
+          </div>
         </div>
       </div>
     </main>

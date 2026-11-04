@@ -82,26 +82,31 @@ export default async function PrivacyPolicyPage() {
      leaking into the real <Nav />'s own links (also nested inside
      .legal-page), turning them blue instead of their normal white/50
      styling. That was the "its blue" bug Kauan flagged. */
-  .legal-page .wrap a { color:var(--blue); }
+  .legal-page .wrap a { color:var(--blue); text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:1px; }
+  /* Underlined (2026-11-04 re-audit): colour alone (1.02:1 against the grey body text) didn't
+     mark these as links for anyone who can't tell the blue apart. */
   /* color/font also scoped to .wrap only, not the bare .legal-page -- same
      leak as the link-color bug above, but for typography: it was
      cascading into the real shared <Footer /> (also nested inside
      .legal-page), giving it a different typeface/size than every other
      page's footer. */
   .legal-page .wrap { color:var(--text);
-         font:16.5px/1.75 -apple-system,'Segoe UI',system-ui,sans-serif; }
+         font:16.5px/1.75 var(--font-inter),system-ui,sans-serif; }
 
   /* TikTok requirement: app icon + wordmark in the page header, above the
      H1. Top margin cleared for the fixed shared Nav (see header comment). */
   .legal-page .docmark { display:flex; align-items:center; gap:12px; margin:144px 0 26px; }
   .legal-page .docmark img { width:44px; height:44px; }
-  .legal-page .docmark span { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:.14em; }
-  .legal-page h1 { font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:clamp(38px,6vw,58px);
-       letter-spacing:.02em; line-height:1; margin:0 0 10px; }
-  .legal-page .dateline { font-family:'Courier Prime',monospace; color:var(--orange); font-size:13px;
+  /* Main-site type (2026-11-04, Oct 27 audit #16): Inter headings like every other page, the
+     brand colour for the dateline, instead of Bebas Neue / Fraunces / orange. The app icon +
+     wordmark above the H1 stay -- that part is a TikTok review requirement. */
+  .legal-page .docmark span { font-family:var(--font-inter),sans-serif; font-weight:700; font-size:16px; letter-spacing:.18em; }
+  .legal-page h1 { font-family:var(--font-inter),sans-serif; font-weight:900; font-size:clamp(38px,6vw,60px);
+       letter-spacing:-.045em; line-height:1.02; margin:0 0 14px; }
+  .legal-page .dateline { font-family:'Courier Prime',monospace; color:var(--blue); font-size:13px;
               letter-spacing:.3em; text-transform:uppercase; margin:0 0 44px; }
-  .legal-page h2 { font-family:'Fraunces',Georgia,serif; font-weight:500; font-size:22px;
-       letter-spacing:-.01em; line-height:1.25; margin:40px 0 10px; }
+  .legal-page h2 { font-family:var(--font-inter),sans-serif; font-weight:700; font-size:22px;
+       letter-spacing:-.02em; line-height:1.25; margin:40px 0 10px; }
   .legal-page p, .legal-page li { color:var(--muted); }
   .legal-page p strong, .legal-page li strong { color:var(--text); font-weight:600; }
   /* Oct 27 audit #36: the global reset strips list bullets, so every list item read as an
@@ -115,7 +120,9 @@ export default async function PrivacyPolicyPage() {
       <div className="bg-ink antialiased">
         <Nav />
 
-        <PageSections page="privacy" layout={page?.layout} builtIns={builtIns} cms={{ global: 'privacy-policy-page' }} data={blocksData} />
+        <main>
+          <PageSections page="privacy" layout={page?.layout} builtIns={builtIns} cms={{ global: 'privacy-policy-page' }} data={blocksData} />
+        </main>
 
         <Footer />
       </div>

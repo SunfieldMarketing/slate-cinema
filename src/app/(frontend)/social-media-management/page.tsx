@@ -155,10 +155,16 @@ export default async function SocialMediaManagementPage() {
   return (
     <>
       <style>{`
+  /* 2026-11-04 (Oct 27 audit #16): this page used its own type system -- Bebas Neue
+     display, a Fraunces serif lede, orange mono labels and an orange button -- so it read
+     as a separate site. It now uses the main site's: Inter for headings and copy, the
+     brand colour for labels and markers, and the site's white pill button. Layout is
+     unchanged. --orange is kept as the variable name but now carries the brand colour. */
   .smm-page {
     --ink:#0b0c0e; --panel:#101216; --line:#22262d;
     --text:#f4f5f7; --muted:#9aa1ab;
-    --blue:var(--color-brand-blue); --orange:#f97316; --orange-soft:rgba(249,115,22,.12);
+    --blue:var(--color-brand-blue); --orange:var(--color-brand-blue);
+    --orange-soft:color-mix(in srgb, var(--color-brand-blue) 12%, transparent);
   }
   .smm-page * { box-sizing:border-box; }
   .smm-page { background:var(--ink); -webkit-font-smoothing:antialiased; }
@@ -166,15 +172,15 @@ export default async function SocialMediaManagementPage() {
   .smm-page .wrap { max-width:1100px; margin:0 auto; padding:0 28px; }
   .smm-page .wrap a { color:var(--blue); }
   .smm-page .hero, .smm-page section { color:var(--text);
-         font:16.5px/1.7 -apple-system,'Segoe UI',system-ui,sans-serif; }
+         font:16.5px/1.7 var(--font-inter),system-ui,sans-serif; }
 
   .smm-page .hero { padding:168px 0 64px; border-bottom:1px solid var(--line); position:relative; overflow:hidden; }
   .smm-page .eyebrow { font-family:'Courier Prime',monospace; color:var(--orange); font-size:13px;
              letter-spacing:.5em; text-transform:uppercase; margin-bottom:22px; }
-  .smm-page h1 { font-family:'Bebas Neue',sans-serif; font-weight:400; letter-spacing:.015em;
-       font-size:clamp(46px,7.5vw,88px); line-height:.98; margin:0 0 24px; }
-  .smm-page h1 em { font-style:normal; color:var(--blue); white-space:nowrap; }
-  .smm-page .lede { font-family:'Fraunces',Georgia,serif; font-size:clamp(17px,2.1vw,21px);
+  .smm-page h1 { font-family:var(--font-inter),sans-serif; font-weight:900; letter-spacing:-.045em;
+       font-size:clamp(40px,6.4vw,80px); line-height:1.02; margin:0 0 24px; text-wrap:balance; }
+  .smm-page h1 em { font-style:normal; color:var(--blue); }
+  .smm-page .lede { font-family:var(--font-inter),sans-serif; font-weight:300; font-size:clamp(17px,2vw,20px);
           color:var(--muted); max-width:62ch; margin:0; }
   .smm-page .lede p { margin: 0; }
   .smm-page .lede strong { color:var(--text); font-weight:500; }
@@ -206,12 +212,14 @@ export default async function SocialMediaManagementPage() {
   .smm-page .cta { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:34px; }
   .smm-page .cta .mono-tag { font-family:'Courier Prime',monospace; color:var(--orange); font-size:12px;
                    letter-spacing:.4em; text-transform:uppercase; margin-bottom:14px; }
-  .smm-page .cta h3 { font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:34px;
-            letter-spacing:.02em; margin:0 0 12px; }
+  .smm-page .cta h3 { font-family:var(--font-inter),sans-serif; font-weight:900; font-size:30px;
+            letter-spacing:-.035em; line-height:1.1; margin:0 0 12px; }
   .smm-page .cta p { color:var(--muted); margin:0 0 24px; }
-  .smm-page .cta a.go { display:inline-block; border-radius:30px; background:var(--orange); color:#0b0c0e;
-              font-weight:700; padding:13px 26px; text-decoration:none; }
-  .smm-page .cta .alt { display:block; margin-top:14px; font-size:14.5px; }
+  .smm-page .cta a.go { display:inline-block; border-radius:30px; background:#fff; color:#0b0c0e;
+              font-weight:600; font-size:14px; padding:15px 30px; text-decoration:none; transition:background-color .3s,color .3s; }
+  .smm-page .cta a.go:hover { background:var(--blue); color:#fff; }
+  .smm-page .cta .alt { display:block; margin-top:6px; font-size:14.5px; }
+  .smm-page .cta .alt a { display:inline-block; padding:12px 0; }
 
   @media (max-width:860px) {
     .smm-page .twocol { grid-template-columns:1fr; gap:38px; }
@@ -229,7 +237,10 @@ export default async function SocialMediaManagementPage() {
       <div className="bg-ink antialiased">
         <Nav />
 
-        <PageSections page="socialMedia" layout={page?.layout} builtIns={builtIns} accent="#f97316" cms={{ global: 'social-media-management-page' }} data={blocksData} />
+        {/* <main> landmark so screen readers can jump past the nav (2026-11-04 re-audit). */}
+        <main>
+          <PageSections page="socialMedia" layout={page?.layout} builtIns={builtIns} cms={{ global: 'social-media-management-page' }} data={blocksData} />
+        </main>
 
         <Footer />
       </div>
