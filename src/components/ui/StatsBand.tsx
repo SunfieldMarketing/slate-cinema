@@ -38,7 +38,13 @@ export default function StatsBand({
     <section ref={ref} className="relative w-full overflow-hidden py-20 md:py-24">
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-6">
-          {stats.map((s, i) => (
+          {stats.map((s, i) => {
+            // A suffix with its own detail (".0★ / 44 Reviews") put a 17-character run of
+            // display-size type in one cell: it overran its neighbour at every width (2026-11-05
+            // visual audit, How It Works: "4.0★ / 44 Re101ws"). The part after " / " now sits
+            // under the label in the label style; the number keeps only its short suffix.
+            const [suffix, detail] = s.suffix.split(/\s+\/\s+/, 2)
+            return (
             <div key={s.label} className="stat-col text-center">
               {/* whitespace-nowrap: the number+suffix must read as one
                   unit ("4yrs", "5.0") -- a value/suffix combination wide
@@ -47,7 +53,7 @@ export default function StatsBand({
                   something that should ever visibly break mid-number. */}
               <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-none whitespace-nowrap" style={{ textShadow: '0 0 60px color-mix(in srgb, var(--color-brand-blue) 25%, transparent)' }}>
                 <NumberTicker value={s.value} className="font-bold text-white" />
-                <span className="text-brand-blue">{s.suffix}</span>
+                <span className="text-brand-blue">{suffix}</span>
               </div>
               {/* whitespace-nowrap + tighter tracking/size than the rest
                   of the site's label style: a long label (e.g. a stat
@@ -58,9 +64,11 @@ export default function StatsBand({
                   number/suffix split fix. text-center means any residual
                   overflow spills evenly into the gap on both sides
                   rather than clipping or colliding with a neighbor. */}
-              <div data-cms-field={fieldPathPrefix ? `${fieldPathPrefix}.${i}.label` : undefined} className="mt-3 font-mono text-xs sm:text-[10px] tracking-wide text-white/55 uppercase whitespace-nowrap">{s.label}</div>
+              <div data-cms-field={fieldPathPrefix ? `${fieldPathPrefix}.${i}.label` : undefined} className="mt-3 font-mono text-xs sm:text-[10px] tracking-wide text-white/55 uppercase text-balance sm:whitespace-nowrap">{s.label}</div>
+              {detail && <div className="mt-1.5 font-mono text-xs sm:text-[10px] tracking-wide text-brand-blue uppercase text-balance sm:whitespace-nowrap">{detail}</div>}
             </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>

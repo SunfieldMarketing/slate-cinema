@@ -16,10 +16,30 @@ export default function StickyCta({ accent }: { accent: string }) {
   const labels = useSiteLabels()
 
   useEffect(() => {
-    const onScroll = () => setVisible(window.scrollY > window.innerHeight * 0.9)
+    // Steps aside once the footer is on screen (2026-11-05 visual audit): on phones it sat on
+    // top of the footer's newsletter "Sign Up" button and the "Client Portal" link, and the
+    // footer has its own "Get Started" right there anyway.
+    let pastHero = false
+    let footerInView = false
+    const update = () => setVisible(pastHero && !footerInView)
+    const onScroll = () => {
+      pastHero = window.scrollY > window.innerHeight * 0.9
+      update()
+    }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    const footer = document.querySelector('footer')
+    const io = footer
+      ? new IntersectionObserver(([entry]) => {
+          footerInView = entry.isIntersecting
+          update()
+        })
+      : null
+    if (footer && io) io.observe(footer)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      io?.disconnect()
+    }
   }, [])
 
   return (

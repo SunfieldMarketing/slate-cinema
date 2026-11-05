@@ -435,11 +435,13 @@ export default function Nav() {
             >
               {clientPortalLabel}
             </a>
+            {/* Dark label on the blue (2026-11-05 visual audit): white on #00AEEF measures 2.5:1,
+                under the 4.5:1 minimum; dark text is what every other blue button on the site uses. */}
             <Link
               href={ctaHref}
               data-cms-field="ctaButton.label"
               onClick={closeMobileMenu}
-              className="self-center bg-brand-blue text-white px-8 py-4 rounded-full text-lg font-semibold mt-2 shadow-[0_0_20px_color-mix(in_srgb,var(--color-brand-blue)_30%,transparent)]"
+              className="self-center bg-brand-blue text-[#030305] px-8 py-4 rounded-full text-lg font-semibold mt-2 shadow-[0_0_20px_color-mix(in_srgb,var(--color-brand-blue)_30%,transparent)]"
             >
               {ctaLabel}
             </Link>

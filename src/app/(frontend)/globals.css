@@ -48,6 +48,13 @@ body {
   color: var(--color-foreground);
 }
 
+/* Headings even out their lines (2026-11-05 visual audit): fifty headings across the industry,
+   contact, journal and legal pages ended on one orphaned word at some screen width ("Four ways
+   it shows up — pick / yours."). In the base layer so a utility class can still override it. */
+@layer base {
+  h1, h2, h3 { text-wrap: balance; }
+}
+
 /* Premium scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

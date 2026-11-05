@@ -44,7 +44,7 @@ export default function DistributionScene({
       </p>
 
       <p
-        className="sbs-item absolute top-[15%] left-6 right-6 md:max-w-[18rem] md:left-16 md:right-auto text-center md:text-left text-white/90 text-xl md:text-3xl font-semibold tracking-tight"
+        className="sbs-item absolute top-[max(15%,9.5rem)] left-6 right-6 md:max-w-[18rem] md:left-16 md:right-auto text-center md:text-left text-white/90 text-xl md:text-3xl font-semibold tracking-tight"
         style={{ textShadow: '0 2px 14px rgba(0,0,0,0.9)' }}
         data-cms-field="hero.storyboard.distributionCaption"
       >
@@ -53,8 +53,10 @@ export default function DistributionScene({
 
       {/* Platform marquee — plain text chips, no brand marks. Pinned flush
           to the bottom edge on mobile so it never touches the persistent
-          phase-label chrome sitting just above it. */}
-      <div className="sbs-item absolute bottom-1 md:bottom-[10%] left-1/2 -translate-x-1/2 w-[92vw] max-w-3xl [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] pointer-events-auto">
+          phase-label chrome sitting just above it. From md to xl it starts to
+          the right of that label (2026-11-05 visual audit: centered on a 1024px
+          screen the chips ran into "04 DISTRIBUTION" and its one-liner). */}
+      <div className="sbs-item absolute bottom-1 md:bottom-[10%] left-1/2 -translate-x-1/2 w-[92vw] max-w-3xl md:max-xl:left-auto md:max-xl:right-8 md:max-xl:translate-x-0 md:max-xl:w-[calc(100vw-24rem)] [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] pointer-events-auto">
         <Marquee reverse pauseOnHover className="[--duration:26s] [--gap:1.25rem]">
           {PLATFORMS.map((pl) => (
             <span

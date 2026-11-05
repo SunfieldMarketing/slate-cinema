@@ -21,13 +21,20 @@ export default function MediaVoid({ data }: { data?: HomePage['mediaVoid'] }) {
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
+      // 2026-11-05 visual audit: pinned for +=90% with the text flying off at 0.85, the full
+      // sentence was readable for ~80px of scrolling, the screen was empty while the section
+      // scrolled in (nothing moved until it pinned), and it scrolled away as one to two empty
+      // screens. Now the pin is longer and separate from the animation, which starts while the
+      // section is still coming up the screen: the sentence assembles, holds, and leaves with
+      // the section instead of vanishing first.
+      ScrollTrigger.create({ trigger: containerRef.current, start: 'top top', end: '+=160%', pin: true })
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
-          start: 'top top',
-          end: '+=90%',
-          pin: true,
+          start: 'top 70%',
+          end: () => `+=${window.innerHeight * (0.7 + 1.6)}`,
           scrub: 1,
+          invalidateOnRefresh: true,
         }
       })
 
@@ -37,7 +44,7 @@ export default function MediaVoid({ data }: { data?: HomePage['mediaVoid'] }) {
       // Each line of text assembles from scattered 3D positions
       lines.forEach((_, i) => {
         const words = gsap.utils.toArray<HTMLElement>(`.mv-word-${i}`)
-        const start = i * 0.2
+        const start = i * 0.12
 
         tl.fromTo(words,
           {
@@ -65,30 +72,24 @@ export default function MediaVoid({ data }: { data?: HomePage['mediaVoid'] }) {
         )
       })
 
-      // After all text is assembled, everything flies past camera
-      tl.to('.mv-all-text', {
-        z: 2000,
-        opacity: 0,
-        scale: 3,
-        duration: 0.15,
-        ease: 'power2.in'
-      }, 0.85)
-
       // Media thumbnails float in from deep Z at different parallax rates
       const thumbs = gsap.utils.toArray<HTMLElement>('.media-thumb')
       thumbs.forEach((thumb, i) => {
         const startZ = -1500 - (i * 500)
         const parallaxRate = 0.15 + (i * 0.05)
         
+        // They stay behind the text plane (z < 0) and dim while the sentence holds (2026-11-05
+        // visual audit): drifting forward to z 300 they were depth-sorted in front of the words,
+        // and one sat on top of "actually want to watch." once the sentence stayed on screen.
         tl.fromTo(thumb,
           { z: startZ, opacity: 0, rotateY: (i % 2 === 0 ? 30 : -30), rotateX: gsap.utils.random(-15, 15), scale: 0.5 },
-          { z: 100, opacity: 1, rotateY: 0, rotateX: 0, scale: 1, ease: 'none', duration: parallaxRate },
+          { z: -80, opacity: 1, rotateY: 0, rotateX: 0, scale: 1, ease: 'none', duration: parallaxRate },
           0.1 + (i * 0.08)
         )
 
         // Then they gently drift, creating a subtle parallax, instead of flying out
         tl.to(thumb,
-          { z: 300, y: (i % 2 === 0 ? -40 : 40), rotateY: (i % 2 === 0 ? 5 : -5), ease: 'none', duration: 0.5 },
+          { z: -30, opacity: 0.4, y: (i % 2 === 0 ? -40 : 40), rotateY: (i % 2 === 0 ? 5 : -5), ease: 'none', duration: 0.5 },
           0.5 + (i * 0.03)
         )
       })
@@ -191,7 +192,7 @@ export default function MediaVoid({ data }: { data?: HomePage['mediaVoid'] }) {
       </div>
 
       {/* Edit timeline markers */}
-      <div className="absolute bottom-20 left-12 z-20 font-mono text-xs sm:text-[10px] text-white/55 tracking-widest">
+      <div className="absolute bottom-20 left-6 right-6 md:left-12 md:right-auto z-20 font-mono text-xs sm:text-[10px] text-white/55 tracking-widest">
         SEQUENCE: CONTENT_REEL_V3 — DURATION: 02:47
       </div>
     </section>

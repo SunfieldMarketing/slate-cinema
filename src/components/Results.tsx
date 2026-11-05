@@ -62,13 +62,18 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
+      // Pin and animation are separate (2026-11-05 visual audit): with the timeline starting at
+      // 'top top', the block only began to appear once the section had pinned, so it scrolled
+      // up as a screen of background photo with nothing on it. The animation now starts while
+      // the section is still coming up the screen; the pin itself is unchanged.
+      ScrollTrigger.create({ trigger: containerRef.current, start: 'top top', end: '+=80%', pin: true })
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
-          start: 'top top',
-          end: '+=80%',
-          pin: true,
+          start: 'top 70%',
+          end: () => `+=${window.innerHeight * (0.7 + 0.8)}`,
           scrub: 1,
+          invalidateOnRefresh: true,
         }
       })
 
@@ -200,17 +205,22 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
             {/* clamp(): a fixed 5rem overflowed a 375px phone once the count
                 reached 9 digits (118,077,000 clipped off both edges). 14vw
                 keeps the widest value inside the screen at any phone width;
-                whitespace-nowrap stops it wrapping mid-number. md+ unchanged. */}
-            <div className="text-[clamp(2.5rem,14vw,5rem)] md:text-[8rem] lg:text-[11rem] font-bold text-white tracking-tighter leading-none whitespace-nowrap" style={{ textShadow: '0 0 100px color-mix(in srgb, var(--color-brand-blue) 25%, transparent), 0 10px 40px rgba(0,0,0,0.5)' }}>
+                whitespace-nowrap stops it wrapping mid-number. md+ unchanged.
+                2026-11-05 visual audit: on a short landscape screen (1024x768 iPad, 1366x768
+                laptop) the block was taller than the pinned screen -- the eyebrow sat under the
+                nav and the top fade, and "See Case Studies" under the bottom fade. Number and
+                label now also cap at a share of the screen height, and short screens get
+                tighter spacing below. Tall screens are unchanged. */}
+            <div className="text-[clamp(2.5rem,14vw,5rem)] md:text-[min(8rem,17vh)] lg:text-[min(11rem,20vh)] font-bold text-white tracking-tighter leading-none whitespace-nowrap" style={{ textShadow: '0 0 100px color-mix(in srgb, var(--color-brand-blue) 25%, transparent), 0 10px 40px rgba(0,0,0,0.5)' }}>
               {views.toLocaleString()}
             </div>
-            <div data-cms-field="results.viewsLabel" className="text-3xl md:text-5xl lg:text-7xl font-light text-white/90 uppercase tracking-widest">
+            <div data-cms-field="results.viewsLabel" className="text-3xl md:text-5xl lg:text-[min(4.5rem,8vh)] font-light text-white/90 uppercase tracking-widest">
               {viewsLabel}
             </div>
           </div>
 
           {/* Separator */}
-          <div className="w-full max-w-2xl h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent my-10 shadow-[0_0_15px_rgba(255,255,255,0.1)] relative">
+          <div className="w-full max-w-2xl h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent my-10 [@media(max-height:820px)]:my-6 shadow-[0_0_15px_rgba(255,255,255,0.1)] relative">
              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-[2px] bg-brand-blue shadow-[0_0_10px_color-mix(in_srgb,var(--color-brand-blue)_80%,transparent)]" />
           </div>
 
@@ -222,7 +232,7 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
               3rd stat (comments) off the right edge invisibly rather than
               causing a scrollbar, so it never showed up in a page-width
               overflow check, only in an actual screenshot. */}
-          <div className="flex flex-wrap gap-6 sm:gap-12 md:gap-20 items-center justify-center text-white/90 text-xl md:text-3xl font-bold mb-10">
+          <div className="flex flex-wrap gap-6 sm:gap-12 md:gap-20 items-center justify-center text-white/90 text-xl md:text-3xl font-bold mb-10 [@media(max-height:820px)]:mb-6">
             <div className="flex items-center gap-3">
               <Eye className="w-6 h-6 md:w-10 md:h-10 text-brand-blue" />
               {/* 2026-09-11: the views>0 ? reachPercent : '0%' placeholder
@@ -251,7 +261,7 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
           </p>
 
           {/* CTA */}
-          <div className="results-cta mt-12" style={{ transform: 'translateZ(40px)' }}>
+          <div className="results-cta mt-12 [@media(max-height:820px)]:mt-6" style={{ transform: 'translateZ(40px)' }}>
             <a
               ref={buttonRef}
               href={ctaHref}

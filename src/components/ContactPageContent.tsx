@@ -295,7 +295,10 @@ function StageRouter({ copy }: { copy?: ContactPage['stageRouter'] }) {
           <p data-cms-field="stageRouter.subhead" className="mt-5 text-white/55 font-light text-sm sm:text-base">{subhead}</p>
         </div>
 
-        <div className="sr-grid grid grid-cols-1 md:grid-cols-3 gap-5">
+        {/* Three across from lg (2026-11-05 visual audit): at md (768px) each card was ~215px
+            wide and all three buttons broke onto two lines ("Start the Intake / Form").
+            Stacked below lg, in a centered column so the buttons don't stretch edge to edge. */}
+        <div className="sr-grid grid grid-cols-1 lg:grid-cols-3 gap-5 max-w-xl mx-auto lg:max-w-none">
           {stages.map((s, i) => {
             const Icon = resolveIcon(s.icon)
             const accentClass = { color: s.accent }
@@ -814,7 +817,9 @@ function ContactMethods({ copy }: { copy?: ContactPage['contactMethods'] }) {
             <BadgeRow badges={badges} accent="#fbbf24" />
           </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* Three across from lg (2026-11-05 visual audit): from 640 to 1023px a third of the row
+            left ~130px for the value, and the email broke as "info@slatecinema / .com". */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 max-w-md mx-auto lg:max-w-none">
         {contactCards.map((c) => (
           <MagicCard
             key={c.label}

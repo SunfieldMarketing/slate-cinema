@@ -227,7 +227,10 @@ export default function PageHero({
                     <NumberTicker value={s.value} className="font-bold text-white" />
                     <span style={{ color: accent }}>{s.suffix}</span>
                   </div>
-                  <div className="mt-2 font-mono text-xs sm:text-[10px] tracking-wide text-white/55 uppercase whitespace-nowrap">
+                  {/* Labels may wrap below sm (2026-11-05 visual audit): in a 148px phone column
+                      "HUMAN-FINISHED, EVERY FRAME" ran ~25px off the screen edge on 360-390px
+                      phones. From sm up there is room and they stay on one line. */}
+                  <div className="mt-2 font-mono text-xs sm:text-[10px] tracking-wide text-white/55 uppercase text-balance sm:whitespace-nowrap">
                     {s.label}
                   </div>
                 </div>
