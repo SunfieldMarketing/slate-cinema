@@ -71,6 +71,9 @@ interface SmartVideoProps {
       available and enough to know the player's own chrome has replaced
       a blank/loading state). */
   onLoadedData?: () => void
+  /** The file-based video failed to load (a missing or blocked file). Lets a caller drop its
+      loading state and fall back to the poster instead of spinning forever. */
+  onError?: () => void
   /** Set on every page's actual hero -- the one video that should win the
       race against everything else on the page (frame sequences, gallery
       thumbnails, etc.) instead of loading whenever the browser gets to it. */
@@ -93,6 +96,7 @@ export default function SmartVideo({
   variant = 'background',
   className,
   onLoadedData,
+  onError,
   priority = false,
   coverFit = false,
 }: SmartVideoProps) {
@@ -226,6 +230,7 @@ export default function SmartVideo({
         // any native play button WebKit paints when autoplay is blocked.
         className={variant === 'player' ? className : `bg-video ${className ?? ''}`}
         onLoadedData={onLoadedData}
+        onError={onError}
         preload={priority ? 'auto' : swappable && isMobile ? 'metadata' : undefined}
         // @ts-expect-error -- same as the iframe path above.
         fetchPriority={priority ? 'high' : undefined}

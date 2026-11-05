@@ -44,10 +44,15 @@ export default function ProjectCardModal({
   // causes, and the flash of the previous project's loaded state that
   // briefly rendered before it.
   const [videoLoaded, setVideoLoaded] = useState(false)
+  // A project whose video file is missing from storage (seven did on Nov 4: their S3 objects
+  // return 403) used to leave the spinner turning forever over the poster, with a dead play
+  // control. On error the modal just shows the poster still.
+  const [videoFailed, setVideoFailed] = useState(false)
   const [trackedProject, setTrackedProject] = useState(project)
   if (project !== trackedProject) {
     setTrackedProject(project)
     setVideoLoaded(false)
+    setVideoFailed(false)
   }
 
   useEffect(() => {
@@ -128,7 +133,7 @@ export default function ProjectCardModal({
             }}
             className="absolute inset-0 w-full h-full object-cover"
           />
-          {(project.video || project.videoVimeoUrl) && (
+          {(project.video || project.videoVimeoUrl) && !videoFailed && (
             <>
               {!videoLoaded && (
                 <div className="absolute inset-0 z-[1] flex items-center justify-center bg-black/50">
@@ -142,6 +147,7 @@ export default function ProjectCardModal({
                 variant="player"
                 className="absolute inset-0 w-full h-full object-cover"
                 onLoadedData={() => setVideoLoaded(true)}
+                onError={() => setVideoFailed(true)}
               />
             </>
           )}
