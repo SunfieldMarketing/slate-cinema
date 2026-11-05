@@ -54,11 +54,12 @@ const nextConfig: NextConfig = {
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), usb=()' },
           // Only directives that can't break the Vimeo / booking-widget / analytics embeds:
           // no framing by other sites (same rule as X-Frame-Options, in its modern form), no
-          // plugins, no <base> hijacking, and any stray http:// asset is upgraded to https.
+          // plugins, no <base> hijacking. (No upgrade-insecure-requests: the site is HTTPS-only via HSTS
+          // already, and Safari applies it to http://localhost too, which broke local previews.)
           // A script-src allowlist is the next step but needs a report-only trial first.
           {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self'; object-src 'none'; base-uri 'self'; upgrade-insecure-requests",
+            value: "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
           },
         ],
       },

@@ -82,6 +82,23 @@ const Carousel = memo(
     const faceWidth = baseFaceWidth
     const radius = cylinderWidth / (2 * Math.PI)
     const rotation = useMotionValue(0)
+
+    // Cards turned away from the viewer are hidden outright (2026-11-05, Oct 27 audit #18).
+    // backface-visibility alone wasn't enough in Safari's engine: each card's image and text get
+    // their own compositing layers, which don't inherit the hidden backface, so the far side of
+    // the ring showed mirrored ("REGION CAPITAL" reversed) on iPhone. A card faces the viewer
+    // when its own angle plus the ring's rotation points forward (cos > 0).
+    const ringRef = useRef<HTMLDivElement>(null)
+    useEffect(() => {
+      const apply = (r: number) => {
+        ringRef.current?.querySelectorAll<HTMLElement>(':scope > [data-card-index]').forEach((el) => {
+          const angle = ((Number(el.dataset.cardIndex) * 360) / faceCount + r) * (Math.PI / 180)
+          el.style.visibility = Math.cos(angle) > 0.02 ? 'visible' : 'hidden'
+        })
+      }
+      apply(rotation.get())
+      return rotation.on('change', apply)
+    }, [rotation, faceCount])
     // Scaled by cylinder width so the same physical drag distance always
     // sweeps roughly the same fraction of the ring, regardless of breakpoint.
     const dragSensitivity = 175 / cylinderWidth
@@ -168,6 +185,7 @@ const Carousel = memo(
     return (
       <div className="flex h-full items-center justify-center" style={{ perspective: '1800px', transformStyle: 'preserve-3d' }}>
         <motion.div
+          ref={ringRef}
           className="relative flex h-full origin-center cursor-grab justify-center active:cursor-grabbing touch-none select-none"
           style={{ rotateY: rotation, width: cylinderWidth, transformStyle: 'preserve-3d' }}
           onPointerDown={onPointerDown}
