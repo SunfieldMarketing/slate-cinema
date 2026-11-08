@@ -64,7 +64,7 @@ export default function BehindTheScenes({ data }: { data?: HowItWorksPage['behin
                 loading="lazy"
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110 opacity-70 group-hover:opacity-90"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/25 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent pointer-events-none" />
               <div className="absolute bottom-0 left-0 right-0 p-5 pointer-events-none">
                 <h3 data-cms-field={`behindTheScenes.stills.${i}.label`} className="font-mono text-white font-bold text-sm tracking-wide uppercase mb-1.5">{s.label}</h3>
                 <p data-cms-field={`behindTheScenes.stills.${i}.desc`} className="font-serif-accent italic text-white/60 text-sm leading-relaxed max-h-0 opacity-0 group-hover:max-h-16 group-hover:opacity-100 transition-all duration-500 overflow-hidden">

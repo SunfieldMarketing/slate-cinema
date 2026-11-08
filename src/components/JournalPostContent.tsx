@@ -204,7 +204,7 @@ export default function JournalPostContent({
                         loading="lazy"
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/15 to-transparent" />
                     </div>
                     <div className="p-5">
                       <div className="font-mono text-xs sm:text-[11px] tracking-wide text-white/55 uppercase mb-2">

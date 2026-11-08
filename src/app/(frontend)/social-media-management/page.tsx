@@ -161,7 +161,7 @@ export default async function SocialMediaManagementPage() {
      brand colour for labels and markers, and the site's white pill button. Layout is
      unchanged. --orange is kept as the variable name but now carries the brand colour. */
   .smm-page {
-    --ink:#0b0c0e; --panel:#101216; --line:#22262d;
+    --ink:#15171b; --panel:#101216; --line:#22262d;
     --text:#f4f5f7; --muted:#9aa1ab;
     --blue:var(--color-brand-blue); --orange:var(--color-brand-blue);
     --orange-soft:color-mix(in srgb, var(--color-brand-blue) 12%, transparent);

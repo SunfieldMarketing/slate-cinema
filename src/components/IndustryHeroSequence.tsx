@@ -161,7 +161,7 @@ export default function IndustryHeroSequence({
   return (
     <div className="absolute inset-0 z-0 overflow-hidden bg-ink">
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" style={{ opacity }} />
-      <div className="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/40 to-ink" />
+      <div className="absolute inset-0 bg-gradient-to-b from-ink/55 via-ink/25 to-ink" />
     </div>
   )
 }

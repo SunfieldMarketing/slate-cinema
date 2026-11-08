@@ -232,7 +232,7 @@ const Carousel = memo(
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/15 to-transparent" />
 
                 {/* Play affordance on hover — signals "click to open", not
                     just "drag to spin". */}

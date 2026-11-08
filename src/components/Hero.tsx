@@ -887,8 +887,8 @@ export default function Hero({ data }: { data?: HomePage['hero'] }) {
               text stays legible; it dissolves with this layer on scroll. */}
           {/* Lightened 2026-11-03 (Oct 27 audit #2): was 50% on phones and 80% at the top and
               bottom edges. The wordmark and tagline stay legible on the footage at these values. */}
-          {isMobile && <div className="absolute inset-0 z-0 bg-ink/35 pointer-events-none" />}
-          <div className="absolute inset-0 z-0 bg-gradient-to-b from-ink/60 via-transparent to-ink/60 pointer-events-none" />
+          {isMobile && <div className="absolute inset-0 z-0 bg-ink/25 pointer-events-none" />}
+          <div className="absolute inset-0 z-0 bg-gradient-to-b from-ink/40 via-transparent to-ink/40 pointer-events-none" />
 
           {/* Main content — centered hero text and CTAs */}
           <div className="hero-content absolute inset-0 z-10 flex flex-col items-center justify-center">

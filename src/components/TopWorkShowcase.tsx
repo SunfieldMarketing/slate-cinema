@@ -119,7 +119,7 @@ export default function TopWorkShowcase() {
 
               <div className="relative w-full h-64 sm:h-80 overflow-hidden rounded-t-3xl">
                 <img src={expanded.image} alt={expanded.industry.label} className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/15 to-transparent" />
                 <div
                   className="absolute top-5 left-5 font-mono text-[10px] tracking-widest uppercase px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border text-white/80"
                   style={{ borderColor: `${expanded.industry.accent}40` }}

@@ -13,7 +13,8 @@
   Courier — the literal screenwriting typeface — for shot-list/slate data.
 */
 @theme {
-  --color-ink: #0B0C0E;
+  /* #0B0C0E until 2026-11-07: Levi asked for the site ~20% brighter, keeping the dark look. */
+  --color-ink: #15171B;
   --color-ink-raised: #131417;
   --color-paper: #F3EEE2;
   --color-paper-line: #D8CFBC;

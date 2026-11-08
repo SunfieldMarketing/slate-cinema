@@ -173,7 +173,7 @@ export default function IndustryWheel({ industries, accent: accentProp }: { indu
             loading="lazy"
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/15 to-transparent" />
           <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between">
             <span className="font-mono text-xs sm:text-[10px] tracking-widest uppercase px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/15 text-white/80">
               {current.stat}

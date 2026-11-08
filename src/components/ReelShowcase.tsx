@@ -59,7 +59,7 @@ export default function ReelShowcase() {
                   alt="Slate Cinema showreel poster"
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-ink/40" />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/65 via-ink/15 to-ink/25" />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white/10 backdrop-blur-md border border-white/30 flex items-center justify-center group-hover:scale-110 group-hover:bg-[#00AEEF]/80 group-hover:border-[#00AEEF] transition-all duration-400 shadow-[0_0_40px_rgba(0,174,239,0.3)]">
                     <Play className="w-8 h-8 sm:w-9 sm:h-9 text-white ml-1.5" fill="currentColor" />

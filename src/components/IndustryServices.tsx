@@ -149,7 +149,7 @@ export default function IndustryServices({
                 className="absolute inset-0 w-full h-full object-cover opacity-50 transition-transform duration-[1400ms] ease-out group-hover:scale-105"
               />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/35 to-transparent" />
             <div className="absolute top-4 left-4 flex items-center gap-2">
               <span {...labelField('mostBooked')} className="font-mono text-xs sm:text-[10px] tracking-[0.2em] uppercase px-2.5 py-1.5 rounded-full border backdrop-blur-md text-white" style={{ borderColor: `${accent}55`, backgroundColor: 'rgba(5,7,12,0.7)' }}>
                 {labels.mostBooked}
@@ -206,7 +206,7 @@ export default function IndustryServices({
                 loading="lazy"
                 className="absolute inset-0 w-full h-full object-cover opacity-40 transition-all duration-[1200ms] ease-out group-hover:scale-110 group-hover:opacity-55"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/60 to-ink/10" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/45 to-ink/10" />
 
               <div className="relative p-5">
                 <div data-cms-field={`${paths.items}.${services.indexOf(s)}.outcome`} className="font-mono text-xs font-bold tracking-tight mb-1.5" style={{ color: accent }}>

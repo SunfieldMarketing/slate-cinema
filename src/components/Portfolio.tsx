@@ -196,7 +196,7 @@ export default function Portfolio({
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110 opacity-80 group-hover:opacity-100"
               />
               {/* Grade + gradient */}
-              <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
               <div className="absolute inset-0 mix-blend-overlay bg-brand-blue/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
               {/* Play button on hover */}

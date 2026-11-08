@@ -27,7 +27,7 @@ export function brandColor(value?: string | null): string {
   recognisably the same hue (#6366F1 -> #696CF2, 4.69:1). Colours that already pass are returned
   unchanged.
 */
-const PAGE_BG = '#0B0C0E'
+const PAGE_BG = '#15171B'
 const luminance = (hex: string) => {
   const [r, g, b] = [1, 3, 5].map((i) => {
     const v = parseInt(hex.slice(i, i + 2), 16) / 255

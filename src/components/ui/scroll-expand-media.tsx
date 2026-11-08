@@ -178,7 +178,7 @@ export default function ScrollExpandMedia({
                 style={{ backgroundImage: `radial-gradient(ellipse 70% 55% at 50% 35%, ${accent}26, transparent 70%)` }}
               />
             )}
-            <div className="absolute inset-0 bg-ink/40" />
+            <div className="absolute inset-0 bg-ink/25" />
           </motion.div>
 
           <div className="container mx-auto flex flex-col items-center justify-start relative z-10">
@@ -221,7 +221,7 @@ export default function ScrollExpandMedia({
                       />
                     )}
                     <motion.div
-                      className="absolute inset-0 bg-black/30"
+                      className="absolute inset-0 bg-black/20"
                       initial={{ opacity: 0.7 }}
                       animate={{ opacity: 0.5 - scrollProgress * 0.3 }}
                       transition={{ duration: 0.2 }}
@@ -231,7 +231,7 @@ export default function ScrollExpandMedia({
                   <div className="relative w-full h-full">
                     <img src={mediaSrc} alt={title || 'Media content'} className="w-full h-full object-cover rounded-xl" />
                     <motion.div
-                      className="absolute inset-0 bg-black/50 rounded-xl"
+                      className="absolute inset-0 bg-black/35 rounded-xl"
                       initial={{ opacity: 0.7 }}
                       animate={{ opacity: 0.7 - scrollProgress * 0.3 }}
                       transition={{ duration: 0.2 }}

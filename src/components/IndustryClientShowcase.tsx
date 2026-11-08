@@ -122,7 +122,7 @@ export default function IndustryClientShowcase({
                 <div className={FRAME[c.orientation] ?? FRAME.landscape}>
                   <SmartVideo vimeo={c.vimeo} variant="background" className="w-full h-full object-cover" />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/15 to-transparent pointer-events-none" />
               </div>
               <div className="p-6">
                 <div className="flex items-baseline justify-between gap-3 mb-2">

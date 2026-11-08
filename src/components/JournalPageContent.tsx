@@ -70,7 +70,7 @@ function JournalGrid({ journalPosts, readLabel }: { journalPosts: JournalPostLoc
                   loading="lazy"
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110 opacity-90 group-hover:opacity-100"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/15 to-transparent" />
                 <span
                   data-cms-field="category"
                   // A near-opaque dark pill and 11px+ text (Oct 27 audit #8): at bg-black/40 the coloured label

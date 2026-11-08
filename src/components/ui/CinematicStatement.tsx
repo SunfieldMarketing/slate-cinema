@@ -65,7 +65,7 @@ export default function CinematicStatement({ eyebrow, lines, body, videoSrc, acc
           coverFit
           className="cs-media absolute inset-0 w-full h-full object-cover scale-110 opacity-35"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/60 to-ink/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-ink/55 via-ink/40 to-ink/90" />
         <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse 60% 50% at 50% 50%, ${accent}14 0%, transparent 70%)` }} />
       </div>
 

@@ -181,7 +181,7 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
             src={isMobile ? REEL_MOBILE_VIDEO : '/videos/performance-web.mp4'}
           />
         )}
-        <div className="absolute inset-0 bg-ink/60 mix-blend-multiply" />
+        <div className="absolute inset-0 bg-ink/40 mix-blend-multiply" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink opacity-80" />
       </div>
 
@@ -278,8 +278,8 @@ export default function Results({ data }: { data?: HomePage['results'] }) {
       </div>
 
       {/* Edge fades */}
-      <div className="absolute top-0 left-0 right-0 h-24 z-20 pointer-events-none" style={{ background: 'linear-gradient(to bottom, #0B0C0E, transparent)' }} />
-      <div className="absolute bottom-0 left-0 right-0 h-24 z-20 pointer-events-none" style={{ background: 'linear-gradient(to top, #0B0C0E, transparent)' }} />
+      <div className="absolute top-0 left-0 right-0 h-24 z-20 pointer-events-none" style={{ background: 'linear-gradient(to bottom, var(--color-ink), transparent)' }} />
+      <div className="absolute bottom-0 left-0 right-0 h-24 z-20 pointer-events-none" style={{ background: 'linear-gradient(to top, var(--color-ink), transparent)' }} />
     </section>
   )
 }

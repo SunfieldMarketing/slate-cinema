@@ -60,7 +60,7 @@ function FlipCard({
                         alt={`portfolio-${index}`}
                         className="h-full w-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                     />
-                    <div className="absolute inset-0 bg-ink/40 transition-colors group-hover:bg-transparent" />
+                    <div className="absolute inset-0 bg-ink/25 transition-colors group-hover:bg-transparent" />
                 </div>
 
                 {/* Back Face */}

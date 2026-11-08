@@ -131,7 +131,7 @@ export default function PageHero({
               80%-dark gradient, so the first screen of every page averaged 6-11% brightness.
               Still darkens toward the bottom so the next section blends in and the title
               keeps its contrast. */}
-          <div className="absolute inset-0 bg-gradient-to-b from-ink/55 via-ink/15 to-ink" />
+          <div className="absolute inset-0 bg-gradient-to-b from-ink/40 via-ink/10 to-ink" />
         </div>
       )}
 

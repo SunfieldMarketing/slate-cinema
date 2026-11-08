@@ -88,7 +88,7 @@ export default function IntakeFrame() {
 :root, .sc-app {
   --display: 'Inter', 'Inter Fallback', system-ui, sans-serif !important;
   --body: 'Inter', 'Inter Fallback', system-ui, sans-serif !important;
-  --navy-900: #0b0c0e !important; --navy-800: #101216 !important; --navy-700: #1b1e23 !important;
+  --navy-900: #15171b !important; --navy-800: #101216 !important; --navy-700: #1b1e23 !important;
   --slate: #3b4048 !important;
   --accent: ${brand} !important;
 }

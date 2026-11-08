@@ -155,7 +155,7 @@ export default function MediaVoid({ data }: { data?: HomePage['mediaVoid'] }) {
           <div key={i} className={`media-thumb absolute ${item.cls}`} style={{ transformStyle: 'preserve-3d' }}>
             <div className="w-full h-full rounded-lg overflow-hidden border border-white/10 cursor-pointer group hover:shadow-[0_0_30px_color-mix(in_srgb,var(--color-brand-blue)_30%,transparent)] hover:border-white/30 transition-all duration-500 hover:scale-[1.05] relative bg-ink">
               <img src={item.src} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100" />
-              <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent opacity-80" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-transparent opacity-80" />
               {/* Play button overlay */}
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110">
                 <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/30 flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.2)]">

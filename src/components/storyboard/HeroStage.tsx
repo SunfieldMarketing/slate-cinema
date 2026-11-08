@@ -575,7 +575,7 @@ const HeroStage = forwardRef<HeroStageHandle, { className?: string }>(function H
         gl.compile(scene, camera)
       }}
     >
-      <fog attach="fog" args={['#0B0C0E', 8, 16]} />
+      <fog attach="fog" args={['#15171B', 8, 16]} />
       <ambientLight intensity={0.85} />
       <directionalLight position={[4, 6, 5]} intensity={1.5} color="#fff5e8" />
       <directionalLight position={[-5, 2, 4]} intensity={0.5} color="#dbeafe" />
