@@ -1,112 +1,151 @@
-# Graph Report - slate-cinema-github  (2026-08-06)
+# Graph Report - slate-cinema-github  (2026-11-03)
 
 ## Corpus Check
-- 122 files · ~2,686,882 words
+- 215 files · ~1,077,592 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1264 nodes · 3149 edges · 100 communities (68 shown, 32 thin omitted)
-- Extraction: 87% EXTRACTED · 13% INFERRED · 0% AMBIGUOUS · INFERRED: 409 edges (avg confidence: 0.78)
+- 1897 nodes · 4775 edges · 137 communities (83 shown, 54 thin omitted)
+- Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 335 edges (avg confidence: 0.77)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a132ef73`
+- Built from commit: `1640a56a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- [[_COMMUNITY_Scroll Storytelling Sections|Scroll Storytelling Sections]]
-- [[_COMMUNITY_TypeScript Config|TypeScript Config]]
-- [[_COMMUNITY_Landing Page Sections|Landing Page Sections]]
-- [[_COMMUNITY_Runtime Dependencies|Runtime Dependencies]]
-- [[_COMMUNITY_Project Docs & Agent Rules|Project Docs & Agent Rules]]
-- [[_COMMUNITY_Dev Dependencies|Dev Dependencies]]
-- [[_COMMUNITY_magic-card.tsx|magic-card.tsx]]
-- [[_COMMUNITY_Portfolio Circular Gallery|Portfolio Circular Gallery]]
-- [[_COMMUNITY_Video Frame Extraction Script|Video Frame Extraction Script]]
-- [[_COMMUNITY_Scroll Morph Hero UI|Scroll Morph Hero UI]]
-- [[_COMMUNITY_Root Layout & Smooth Scroll|Root Layout & Smooth Scroll]]
-- [[_COMMUNITY_Scene3D Cinematic Elements|Scene3D Cinematic Elements]]
-- [[_COMMUNITY_page.tsx|page.tsx]]
-- [[_COMMUNITY_Scene3D Wrapper|Scene3D Wrapper]]
-- [[_COMMUNITY_ESLint Config|ESLint Config]]
-- [[_COMMUNITY_Next.js Config|Next.js Config]]
-- [[_COMMUNITY_PostCSS Config|PostCSS Config]]
-- [[_COMMUNITY_Preloader|Preloader]]
-- [[_COMMUNITY_Quote Calculator|Quote Calculator]]
-- [[_COMMUNITY_Schedule Call Widget|Schedule Call Widget]]
-- [[_COMMUNITY_Original Hero Backup|Original Hero Backup]]
-- [[_COMMUNITY_node_modulesnextdistdocs|node_modules/next/dist/docs/]]
-- [[_COMMUNITY_CLAUDE.md (includes AGENTS.md)|CLAUDE.md (includes AGENTS.md)]]
-- [[_COMMUNITY_apppage.tsx|app/page.tsx]]
-- [[_COMMUNITY_create-next-app CLI|create-next-app CLI]]
-- [[_COMMUNITY_Development Server (npmyarnpnpmbun dev)|Development Server (npm/yarn/pnpm/bun dev)]]
-- [[_COMMUNITY_Geist Font (Vercel)|Geist Font (Vercel)]]
-- [[_COMMUNITY_Learn Next.js Tutorial|Learn Next.js Tutorial]]
-- [[_COMMUNITY_nextfont|next/font]]
-- [[_COMMUNITY_Next.js Deployment Documentation|Next.js Deployment Documentation]]
-- [[_COMMUNITY_Next.js Documentation (nextjs.orgdocs)|Next.js Documentation (nextjs.org/docs)]]
-- [[_COMMUNITY_Next.js GitHub Repository (vercelnext.js)|Next.js GitHub Repository (vercel/next.js)]]
-- [[_COMMUNITY_Slate Cinema (Next.js project bootstrapped with create-next-app)|Slate Cinema (Next.js project bootstrapped with create-next-app)]]
-- [[_COMMUNITY_Vercel Platform (deployment)|Vercel Platform (deployment)]]
-- [[_COMMUNITY_cn|cn]]
-- [[_COMMUNITY_three-d-carousel.tsx|three-d-carousel.tsx]]
-- [[_COMMUNITY_layout.tsx|layout.tsx]]
-- [[_COMMUNITY_shader-lens-blur.tsx|shader-lens-blur.tsx]]
-- [[_COMMUNITY_CinemaCamera.tsx|CinemaCamera.tsx]]
-- [[_COMMUNITY_CinematicStatement.tsx|CinematicStatement.tsx]]
-- [[_COMMUNITY_draco_encoder.js|draco_encoder.js]]
-- [[_COMMUNITY_aq|aq]]
-- [[_COMMUNITY_A|A]]
-- [[_COMMUNITY_draco_decoder.js|draco_decoder.js]]
-- [[_COMMUNITY_abort|abort]]
-- [[_COMMUNITY_getCache|getCache]]
-- [[_COMMUNITY_mi|mi]]
-- [[_COMMUNITY_bj|bj]]
-- [[_COMMUNITY_ExceptionInfo|ExceptionInfo]]
-- [[_COMMUNITY_fi|fi]]
-- [[_COMMUNITY_page.tsx|page.tsx]]
-- [[_COMMUNITY_gh|gh]]
-- [[_COMMUNITY_getCache|getCache]]
-- [[_COMMUNITY_HeroStage.tsx|HeroStage.tsx]]
-- [[_COMMUNITY_layout.tsx|layout.tsx]]
-- [[_COMMUNITY_callRuntimeCallbacks|callRuntimeCallbacks]]
-- [[_COMMUNITY_fp|fp]]
-- [[_COMMUNITY_callRuntimeCallbacks|callRuntimeCallbacks]]
-- [[_COMMUNITY_getBinary|getBinary]]
-- [[_COMMUNITY_kp|kp]]
-- [[_COMMUNITY_marquee.tsx|marquee.tsx]]
-- [[_COMMUNITY__emscripten_resize_heap|_emscripten_resize_heap]]
-- [[_COMMUNITY_tryParseAsDataURI|tryParseAsDataURI]]
-- [[_COMMUNITY_intArrayFromString|intArrayFromString]]
-- [[_COMMUNITY_rj|rj]]
-- [[_COMMUNITY_mj|mj]]
-- [[_COMMUNITY_xd|xd]]
-- [[_COMMUNITY_to|to]]
-- [[_COMMUNITY_StageErrorBoundary|StageErrorBoundary]]
-- [[_COMMUNITY_payload.config.ts|payload.config.ts]]
-- [[_COMMUNITY_tq|tq]]
-- [[_COMMUNITY_demangle|demangle]]
-- [[_COMMUNITY_importMap.js|importMap.js]]
-- [[_COMMUNITY_iq|iq]]
-- [[_COMMUNITY_devDependencies|devDependencies]]
-- [[_COMMUNITY_qn|qn]]
-- [[_COMMUNITY_Slate Cinema → Payload CMS 3 Migration — Phase 0 Inventory|Slate Cinema → Payload CMS 3 Migration — Phase 0 Inventory]]
-- [[_COMMUNITY_scripts|scripts]]
-- [[_COMMUNITY_mi|mi]]
-- [[_COMMUNITY_df|df]]
-- [[_COMMUNITY_fp|fp]]
-- [[_COMMUNITY_FinalCTA.tsx|FinalCTA.tsx]]
-- [[_COMMUNITY_fp|fp]]
-- [[_COMMUNITY_ve|ve]]
-- [[_COMMUNITY_pm|pm]]
-- [[_COMMUNITY_package.json|package.json]]
-- [[_COMMUNITY_wj|wj]]
-- [[_COMMUNITY_zo|zo]]
-- [[_COMMUNITY_page.tsx|page.tsx]]
-- [[_COMMUNITY_yc|yc]]
-- [[_COMMUNITY_route.ts|route.ts]]
-- [[_COMMUNITY_gj|gj]]
+- mediaUrl
+- compilerOptions
+- industries.ts
+- dependencies
+- Next.js Agent Rules (Not the Next.js You Know)
+- k
+- fk
+- HowItWorksPageContent.tsx
+- extract_frames.js
+- scroll-morph-hero.tsx
+- payload-data.ts
+- README.md
+- .mcp.json
+- components.json
+- ha
+- next.config.ts
+- postcss.config.mjs
+- thank-you/page.tsx
+- ci
+- migrations/index.ts
+- AGENTS.md
+- node_modules/next/dist/docs/
+- CLAUDE.md (includes AGENTS.md)
+- app/page.tsx
+- create-next-app CLI
+- Development Server (npm/yarn/pnpm/bun dev)
+- Geist Font (Vercel)
+- Learn Next.js Tutorial
+- next/font
+- Next.js Deployment Documentation
+- Next.js Documentation (nextjs.org/docs)
+- Next.js GitHub Repository (vercel/next.js)
+- Slate Cinema (Next.js project bootstrapped with create-next-app)
+- Vercel Platform (deployment)
+- cn
+- PortfolioPageContent.tsx
+- blocks/index.ts
+- shader-lens-blur.tsx
+- StoryboardHero.tsx
+- aq
+- draco_encoder.js
+- normalize.ts
+- draco_wasm_wrapper.js
+- draco_decoder.js
+- assert
+- getCache
+- RenderBlocks.tsx
+- site-data-context.tsx
+- ExceptionInfo
+- A
+- ContactPageContent.tsx
+- f
+- getCache
+- l
+- seed/index.ts
+- callRuntimeCallbacks
+- circular-gallery.tsx
+- callRuntimeCallbacks
+- getBinary
+- 20261002_180000_page_sections.ts
+- 20261002_000000_page_builder.ts
+- pj
+- n
+- tryParseAsDataURI
+- intArrayFromString
+- Migrations
+- payload-types.ts
+- 20261002_220000_remaining_copy.ts
+- react
+- Pages.ts
+- 20261001_000000_cms_full_coverage.ts
+- payload.config.ts
+- changelog.ts
+- ln
+- importMap.js
+- lens.tsx
+- devDependencies
+- 20261002_200000_page_seo.ts
+- Slate Cinema — Project Context
+- IndustryHeroSequence.tsx
+- vimeo-api.ts
+- 20261103_000000_gallery_and_map.ts
+- 20261103_010000_light_statement_video.ts
+- PageHero.tsx
+- SiteSettings.ts
+- [...slug]/route.ts
+- revalidate.ts
+- @base-ui/react
+- Hero.tsx
+- class-variance-authority
+- 20261002_230000_brand_color.ts
+- emscripten_realloc_buffer
+- magic-card.tsx
+- eslint.config.mjs
+- simpleRichText
+- framer-motion
+- graphql
+- gsap
+- @gsap/react
+- jotai
+- lenis
+- lucide-react
+- next-themes
+- @payloadcms/db-postgres
+- @payloadcms/db-sqlite
+- @payloadcms/next
+- graphql/route.ts
+- @payloadcms/richtext-lexical
+- @payloadcms/storage-s3
+- @payloadcms/storage-vercel-blob
+- posthog-js
+- react-dom
+- motion
+- @react-three/fiber
+- @react-three/postprocessing
+- sharp
+- @studio-freight/react-lenis
+- next
+- payload
+- tw-animate-css
+- @types/three
+- wrapPointer
+- Config
+- TopWorkShowcase.tsx
+- pushConversion
+- number-ticker.tsx
+- 20260826_130000_add_privacy_terms_thankyou_smm_pages.ts
+- 20260822_062619_add_vimeo_hookups.ts
+- 20260824_000000_add_trust_banner.ts
+- 20260924_000000_add_changelog.ts
+- page-meta.ts
 
 ## God Nodes (most connected - your core abstractions)
 1. `ln()` - 159 edges
@@ -114,174 +153,173 @@
 3. `aq()` - 135 edges
 4. `sj()` - 87 edges
 5. `kh()` - 60 edges
-6. `X()` - 51 edges
-7. `un()` - 37 edges
+6. `useBrandColor()` - 40 edges
+7. `un()` - 36 edges
 8. `I()` - 34 edges
-9. `J()` - 33 edges
-10. `im()` - 29 edges
+9. `loadBlocksData()` - 31 edges
+10. `pageMetadata()` - 31 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `flatten()` --indirect_call--> `k()`  [INFERRED]
+  src/lib/changelog.ts → public/draco/draco_wasm_wrapper.js
+- `LeadForm()` --references--> `react`  [EXTRACTED]
+  src/components/ContactPageContent.tsx → package.json
+- `StickyScroll()` --references--> `react`  [EXTRACTED]
+  src/components/ui/sticky-scroll-reveal.tsx → package.json
 - `ha()` --indirect_call--> `mh()`  [INFERRED]
   public/draco/draco_decoder.js → public/draco/draco_encoder.js
 - `ha()` --indirect_call--> `nh()`  [INFERRED]
   public/draco/draco_decoder.js → public/draco/draco_encoder.js
-- `ha()` --indirect_call--> `vf()`  [INFERRED]
-  public/draco/draco_decoder.js → public/draco/draco_encoder.js
-- `ik()` --indirect_call--> `I()`  [INFERRED]
-  public/draco/draco_encoder.js → public/draco/draco_wasm_wrapper.js
-- `zk()` --calls--> `J()`  [INFERRED]
-  public/draco/draco_encoder.js → public/draco/draco_wasm_wrapper.js
 
 ## Import Cycles
-- 1-file cycle: `src/components/ui/accordion.tsx -> src/components/ui/accordion.tsx`
-- 1-file cycle: `src/components/ui/button.tsx -> src/components/ui/button.tsx`
+- None detected.
 
 ## Hyperedges (group relationships)
 - **Next.js Documentation Navigation Pattern** — readme_nextjs_docs_link, readme_learn_nextjs, readme_nextjs_deployment_docs, agents_nextjs_docs [INFERRED 0.75]
 
-## Communities (100 total, 32 thin omitted)
+## Communities (137 total, 54 thin omitted)
 
-### Community 0 - "Scroll Storytelling Sections"
-Cohesion: 0.12
-Nodes (9): metadata, generateMetadata(), JournalPostPage(), AmbientBackdrop(), Props, getJournalPostBySlug(), JournalBlock, JournalPost (+1 more)
-
-### Community 1 - "TypeScript Config"
-Cohesion: 0.10
-Nodes (20): compilerOptions, allowJs, esModuleInterop, incremental, isolatedModules, jsx, lib, module (+12 more)
-
-### Community 2 - "Landing Page Sections"
-Cohesion: 0.07
-Nodes (19): generateMetadata(), IndustryPage(), IndustryHeroSequence(), Props, IndustryPageContent(), STEP_ICONS, polarToCartesian(), segmentPath() (+11 more)
-
-### Community 3 - "Runtime Dependencies"
-Cohesion: 0.06
-Nodes (34): dependencies, animejs, @base-ui/react, class-variance-authority, clsx, framer-motion, graphql, gsap (+26 more)
-
-### Community 5 - "Dev Dependencies"
-Cohesion: 0.06
-Nodes (174): ha(), ab(), Ac(), ad(), Ae(), af(), ag(), ah() (+166 more)
-
-### Community 6 - "magic-card.tsx"
-Cohesion: 0.17
-Nodes (9): Testimonial, testimonials, isOrbMode(), MagicCard(), MagicCardBaseProps, MagicCardGradientProps, MagicCardOrbProps, MagicCardProps (+1 more)
-
-### Community 8 - "Video Frame Extraction Script"
-Cohesion: 0.29
-Nodes (6): { execSync }, ffmpeg, fs, outputDir, path, videoPath
-
-### Community 9 - "Scroll Morph Hero UI"
-Cohesion: 0.29
-Nodes (3): AnimationPhase, FlipCardProps, IMAGES
-
-### Community 10 - "Root Layout & Smooth Scroll"
+### Community 0 - "mediaUrl"
 Cohesion: 0.16
-Nodes (12): SmoothScrolling(), ScrollExpandMediaProps, LenisLike, measureSections(), pauseLenis(), publishScroll(), registerLenis(), resumeLenis() (+4 more)
+Nodes (14): BehindTheScenes(), fallbackStills, MediaFrame(), ProcessWalkthrough(), fallbackClients, TrustBanner(), fallbackClients, fallbackFlagship (+6 more)
 
-### Community 11 - "Scene3D Cinematic Elements"
+### Community 1 - "compilerOptions"
+Cohesion: 0.06
+Nodes (32): _abort(), warnOnce(), dom, dom.iterable, esnext, **/*.mts, .next/dev/types/**/*.ts, next-env.d.ts (+24 more)
+
+### Community 2 - "industries.ts"
+Cohesion: 0.17
+Nodes (9): TestimonialCard(), IndustryCinematicStatement, IndustryClient, IndustryData, IndustryFaq, IndustryProcessStep, IndustryServiceCard, IndustryStat (+1 more)
+
+### Community 3 - "dependencies"
+Cohesion: 0.15
+Nodes (13): animejs, clsx, dependencies, animejs, clsx, @payloadcms/plugin-form-builder, @react-three/drei, tailwind-merge (+5 more)
+
+### Community 5 - "k"
+Cohesion: 0.33
+Nodes (7): lh(), mg(), vn(), ye(), C(), k(), q()
+
+### Community 6 - "fk"
+Cohesion: 0.15
+Nodes (14): fk(), hi(), ij(), je(), Kc(), np(), og(), pd() (+6 more)
+
+### Community 7 - "HowItWorksPageContent.tsx"
+Cohesion: 0.11
+Nodes (25): cmsAttributes(), CmsTarget, PageSections(), resolveSections(), SectionRow, BlockShell(), BlockOfType, BlocksData (+17 more)
+
+### Community 8 - "extract_frames.js"
+Cohesion: 0.22
+Nodes (8): { execSync }, ffmpeg, fs, outputDir, path, videoPath, ___syscall140(), ___syscall6()
+
+### Community 9 - "scroll-morph-hero.tsx"
+Cohesion: 0.38
+Nodes (5): AnimationPhase, FlipCardProps, IMAGES, IntroAnimation(), lerp()
+
+### Community 10 - "payload-data.ts"
+Cohesion: 0.05
+Nodes (82): ContactPage(), generateMetadata(), generateMetadata(), generateMetadata(), HowItWorksPage(), generateMetadata(), JournalPage(), generateMetadata() (+74 more)
+
+### Community 11 - "README.md"
 Cohesion: 0.50
 Nodes (3): Deploy on Vercel, Getting Started, Learn More
 
-### Community 12 - "page.tsx"
+### Community 12 - ".mcp.json"
 Cohesion: 0.47
 Nodes (5): npx, chrome-devtools, magicui, shadcn, @magicuidesign/mcp
 
-### Community 13 - "Scene3D Wrapper"
+### Community 13 - "components.json"
 Cohesion: 0.09
 Nodes (22): aliases, components, hooks, lib, ui, utils, iconLibrary, menuAccent (+14 more)
 
-### Community 14 - "ESLint Config"
-Cohesion: 0.24
-Nodes (6): SCENES, HeroStageHandle, RingHUD, RingHUDHandle, HeroStage, Props
+### Community 14 - "ha"
+Cohesion: 0.10
+Nodes (68): ha(), ad(), ag(), bd(), bg(), _c(), cd(), ce() (+60 more)
 
-### Community 18 - "Quote Calculator"
+### Community 17 - "thank-you/page.tsx"
+Cohesion: 0.14
+Nodes (18): links, metadata, NOTE: bare title, no manual "| Slate Cinema" suffix -- the root layout's, fallbackNextSteps, ICONS, RenderBlocks(), CustomPageContent(), Footer() (+10 more)
+
+### Community 18 - "ci"
 Cohesion: 0.11
-Nodes (38): bh(), bn(), bq(), ci(), dd(), dg(), dj(), _e() (+30 more)
-
-### Community 19 - "Schedule Call Widget"
-Cohesion: 0.15
-Nodes (5): metadata, prepItems, HeroStat, PageHero(), Props
+Nodes (37): af(), bh(), bn(), bq(), ci(), dd(), dj(), _e() (+29 more)
 
 ### Community 37 - "cn"
-Cohesion: 0.16
-Nodes (13): shots, Accordion(), AccordionContent(), AccordionItem(), AccordionTrigger(), BorderBeam(), BorderBeamProps, Button() (+5 more)
+Cohesion: 0.20
+Nodes (13): DEFAULT_ASIDE, DEFAULT_HEADING, FaqAside, IndustryFaq(), Accordion(), AccordionContent(), AccordionItem(), AccordionTrigger() (+5 more)
 
-### Community 38 - "three-d-carousel.tsx"
-Cohesion: 0.07
-Nodes (19): metadata, metadata, navLinks, bentoPlacement, filters, PortfolioCarousel(), Carousel, CarouselCard (+11 more)
+### Community 38 - "PortfolioPageContent.tsx"
+Cohesion: 0.18
+Nodes (14): bentoCoveredCount(), bentoGroups, LG_SPAN, Portfolio(), TRAILING_SPANS, trailingTileClass(), ProjectCardModal(), Carousel (+6 more)
 
-### Community 39 - "layout.tsx"
-Cohesion: 0.13
-Nodes (9): guarantees, processPhases, processStats, timelineSteps, stills, NumberTicker(), NumberTickerProps, Stat (+1 more)
+### Community 39 - "blocks/index.ts"
+Cohesion: 0.08
+Nodes (28): BookingBlock, CardsBlock, ClientCardsBlock, CtaBandBlock, EmbedBlock, FaqBlock, FinalCtaBlock, HeroBlock (+20 more)
 
 ### Community 40 - "shader-lens-blur.tsx"
 Cohesion: 0.40
 Nodes (3): configAtom, initialState, ShaderConfig
 
-### Community 41 - "CinemaCamera.tsx"
-Cohesion: 0.21
-Nodes (4): PLATFORMS, categories, Category, Service
+### Community 41 - "StoryboardHero.tsx"
+Cohesion: 0.07
+Nodes (34): CTA_ENTER, INTRO_EXIT, MODEL_CREDITS, MODELS, RANGE_MULTIPLIER, SCENE_CLASSES, SCENE_ENTERS, SCENE_EXITS (+26 more)
+
+### Community 42 - "aq"
+Cohesion: 0.12
+Nodes (59): ab(), Ac(), Ae(), aq(), _b(), bb(), be(), cb() (+51 more)
 
 ### Community 43 - "draco_encoder.js"
-Cohesion: 0.02
-Nodes (17): $a(), fo(), ik(), li(), mh(), mk(), nh(), qk() (+9 more)
+Cohesion: 0.01
+Nodes (93): c(), aj(), ak(), am(), bi(), bo(), cm(), demangle() (+85 more)
 
-### Community 44 - "aq"
-Cohesion: 0.50
-Nodes (4): PostProductionScene(), RULER_MARKS, WAVE_POINTS, wavePath()
+### Community 44 - "normalize.ts"
+Cohesion: 0.10
+Nodes (26): INDUSTRY_PATHS, MidCtaBand(), mediaUrlOrPlaceholder(), IndustryClientCard, IndustryCta, IndustryData, IndustryRedirect, IndustryStat (+18 more)
 
-### Community 45 - "A"
-Cohesion: 0.06
-Nodes (40): bg(), bm(), fn(), ii(), kd(), kn(), lh(), mg() (+32 more)
+### Community 45 - "draco_wasm_wrapper.js"
+Cohesion: 0.20
+Nodes (18): kd(), od(), qb(), ul(), B(), E(), G(), H() (+10 more)
 
 ### Community 46 - "draco_decoder.js"
-Cohesion: 0.07
-Nodes (12): addRunDependency(), castObject(), createWasm(), ensureString(), intArrayFromString(), l(), lengthBytesUTF8(), p() (+4 more)
+Cohesion: 0.08
+Nodes (10): addRunDependency(), createWasm(), ensureString(), intArrayFromString(), l(), lengthBytesUTF8(), p(), stringToUTF8Array() (+2 more)
 
-### Community 47 - "abort"
-Cohesion: 0.12
-Nodes (22): abort(), assert(), abortOnCannotGrowMemory(), allocate(), assert(), ccall(), dynamicAlloc(), enlargeMemory() (+14 more)
+### Community 47 - "assert"
+Cohesion: 0.15
+Nodes (17): alignUp(), allocate(), assert(), ccall(), dynamicAlloc(), enlargeMemory(), getCFunc(), getNativeTypeSize() (+9 more)
 
 ### Community 48 - "getCache"
 Cohesion: 0.10
 Nodes (20): AttributeOctahedronTransform(), AttributeQuantizationTransform(), AttributeTransformData(), Decoder(), DecoderBuffer(), destroy(), DracoFloat32Array(), DracoInt16Array() (+12 more)
 
-### Community 49 - "mi"
+### Community 49 - "RenderBlocks.tsx"
+Cohesion: 0.12
+Nodes (25): lines(), RenderBlock(), accentVar(), ASPECT, CardsSection(), COLUMNS, EmbedSection(), JournalCards() (+17 more)
+
+### Community 50 - "site-data-context.tsx"
+Cohesion: 0.13
+Nodes (22): IndustryPageContent(), INDUSTRY_PATHS, IndustryProcess(), STEP_ICONS, cardSpan(), INDUSTRY_PATHS, IndustryServices(), LG_COLS (+14 more)
+
+### Community 53 - "ContactPageContent.tsx"
 Cohesion: 0.09
-Nodes (23): c(), an(), bo(), cm(), go(), gq(), hn(), ho() (+15 more)
+Nodes (29): CallFraming(), fallbackPrepItems, Badge, BadgeRow(), bokehDots, ContactMethods(), ContactPageContent(), fallbackNextSteps (+21 more)
 
-### Community 50 - "bj"
-Cohesion: 0.33
-Nodes (6): ej(), om(), _p(), pp(), qo(), sn()
-
-### Community 52 - "fi"
-Cohesion: 0.14
-Nodes (14): dm(), en(), fl(), gl(), ip(), nj(), pg(), qi() (+6 more)
-
-### Community 53 - "page.tsx"
-Cohesion: 0.09
-Nodes (10): metadata, bokehDots, contactCards, Glow, LeadFormData, nextSteps, PageBackdrop(), prepItems (+2 more)
-
-### Community 54 - "gh"
-Cohesion: 0.18
-Nodes (14): am(), gh(), hj(), il(), jj(), lj(), ll(), pq() (+6 more)
+### Community 54 - "f"
+Cohesion: 0.17
+Nodes (15): an(), bm(), en(), fn(), kn(), lq(), _m(), on() (+7 more)
 
 ### Community 55 - "getCache"
 Cohesion: 0.14
 Nodes (14): castObject(), destroy(), DracoInt8Array(), Encoder(), GeometryAttribute(), getCache(), Mesh(), MeshBuilder() (+6 more)
 
-### Community 56 - "HeroStage.tsx"
-Cohesion: 0.12
-Nodes (10): eslintConfig, MODELS, SCENE_CLASSES, SCENE_ENTERS, SCENE_EXITS, HeroStage, OBJECTS, PartInfo (+2 more)
-
-### Community 57 - "layout.tsx"
-Cohesion: 0.20
-Nodes (8): bebas, caveat, courier, fraunces, inter, metadata, organizationSchema, ScrollRestoration()
+### Community 57 - "seed/index.ts"
+Cohesion: 0.15
+Nodes (13): JournalBlock, JournalPost, journalPosts, PortfolioProject, portfolioProjects, blocksToLexical(), ICON_NAME_BY_INDUSTRY_ID, IconName (+5 more)
 
 ### Community 58 - "callRuntimeCallbacks"
 Cohesion: 0.20
 Nodes (10): addOnPostRun(), addOnPreRun(), callRuntimeCallbacks(), ensureInitRuntime(), exit(), exitRuntime(), postRun(), preMain() (+2 more)
 
-### Community 59 - "fp"
+### Community 59 - "circular-gallery.tsx"
 Cohesion: 0.40
 Nodes (3): CircularGallery, CircularGalleryProps, GalleryItem
 
@@ -290,20 +328,24 @@ Cohesion: 0.29
 Nodes (7): addOnPostRun(), addOnPreRun(), callRuntimeCallbacks(), initRuntime(), postRun(), preRun(), run()
 
 ### Community 61 - "getBinary"
+Cohesion: 0.25
+Nodes (8): abort(), assert(), getBinary(), getBinaryPromise(), intArrayFromBase64(), isDataURI(), isFileURI(), tryParseAsDataURI()
+
+### Community 62 - "20261002_180000_page_sections.ts"
+Cohesion: 0.26
+Nodes (11): addColumn(), down(), dropColumn(), errorText(), GLOBAL_SECTIONS, INDUSTRY_SECTIONS, INTAKE_BAND_COLUMNS, MigrationDB (+3 more)
+
+### Community 63 - "20261002_000000_page_builder.ts"
 Cohesion: 0.33
-Nodes (6): getBinary(), getBinaryPromise(), intArrayFromBase64(), isDataURI(), isFileURI(), tryParseAsDataURI()
+Nodes (9): addColumn(), BOOLEAN_COLUMNS, camel(), copyFormFields(), down(), errorText(), FORM_BLOCK_TYPES, MigrationDB (+1 more)
 
-### Community 62 - "kp"
-Cohesion: 0.33
-Nodes (6): bp(), eo(), jk(), jn(), kp(), mp()
+### Community 64 - "pj"
+Cohesion: 0.09
+Nodes (30): ai(), ao(), bf(), bk(), ch(), cj(), dg(), dp() (+22 more)
 
-### Community 64 - "marquee.tsx"
-Cohesion: 0.13
-Nodes (17): cf(), ff(), fk(), hi(), ij(), kj(), _n(), np() (+9 more)
-
-### Community 65 - "_emscripten_resize_heap"
-Cohesion: 0.40
-Nodes (5): emscripten_realloc_buffer(), _emscripten_resize_heap(), getHeapMax(), updateMemoryViews(), alignUp()
+### Community 65 - "n"
+Cohesion: 0.39
+Nodes (3): ii(), n(), p()
 
 ### Community 66 - "tryParseAsDataURI"
 Cohesion: 0.40
@@ -313,93 +355,157 @@ Nodes (5): doBrowserLoad(), intArrayFromBase64(), isDataURI(), tryParseAsDataURI
 Cohesion: 0.40
 Nodes (5): ensureString(), intArrayFromString(), lengthBytesUTF8(), stringToUTF8(), stringToUTF8Array()
 
-### Community 70 - "rj"
-Cohesion: 0.06
-Nodes (34): Auth, CollectionsWidget, Config, Footer, FooterSelect, Form, FormsSelect, FormSubmission (+26 more)
+### Community 69 - "Migrations"
+Cohesion: 0.20
+Nodes (9): `20260819_203145_initial_schema_baseline`, `20260819_203226_add_api_key_auth`, `20260820_233310_add_drafts_versions_live_preview`, Going forward, Migrations, The other prompt: "you've run Payload in dev mode", The `tsx`/Node 24 trap, The two bugs this migration actually shipped with, found after promoting (+1 more)
 
-### Community 71 - "mj"
-Cohesion: 0.50
-Nodes (4): lm(), mj(), nm(), yp()
+### Community 70 - "payload-types.ts"
+Cohesion: 0.02
+Nodes (92): Auth, BookingBlock, BookingBlockSelect, CardsBlock, CardsBlockSelect, Changelog, ChangelogSelect, ClientCardsBlock (+84 more)
 
-### Community 72 - "xd"
-Cohesion: 0.67
-Nodes (3): dq(), xd(), yo()
+### Community 71 - "20261002_220000_remaining_copy.ts"
+Cohesion: 0.39
+Nodes (7): addColumn(), COLUMNS, down(), errorText(), MigrationDB, quote(), up()
 
-### Community 73 - "to"
-Cohesion: 0.67
-Nodes (3): ml(), rn(), to()
+### Community 72 - "react"
+Cohesion: 0.33
+Nodes (3): react, react, ContainerScroll()
+
+### Community 73 - "Pages.ts"
+Cohesion: 0.43
+Nodes (6): contentBlocks, formatPath(), normalizePath(), Pages, RESERVED_PATHS, validatePath()
+
+### Community 74 - "20261001_000000_cms_full_coverage.ts"
+Cohesion: 0.14
+Nodes (19): addColumn(), backfillIndustry(), ClientSeed, COLUMNS, createTables(), down(), errorText(), INDUSTRY_SEED (+11 more)
 
 ### Community 75 - "payload.config.ts"
-Cohesion: 0.11
-Nodes (12): GET, ICON_OPTIONS, Industries, JournalPosts, Media, PortfolioProjects, Users, Footer (+4 more)
+Cohesion: 0.08
+Nodes (24): GET, Changelog, Users, ContactPage, FinalCTA, Footer, HomePage, HowItWorksPage (+16 more)
+
+### Community 76 - "changelog.ts"
+Cohesion: 0.29
+Nodes (14): actionFor(), describe(), diff(), Flat, flatten(), IGNORED_KEYS, isRichText(), labelOf() (+6 more)
+
+### Community 77 - "ln"
+Cohesion: 0.07
+Nodes (51): $a(), ah(), Bc(), bj(), bp(), Cc(), cf(), cg() (+43 more)
 
 ### Community 78 - "importMap.js"
-Cohesion: 0.19
-Nodes (5): importMap, Args, Args, AdminIcon(), AdminLogo()
+Cohesion: 0.11
+Nodes (13): importMap, Args, Args, Args, AdminIcon(), AdminLogo(), CmsFieldClickMessage, isCmsFieldClickMessage() (+5 more)
 
 ### Community 80 - "devDependencies"
-Cohesion: 0.17
-Nodes (12): devDependencies, cross-env, eslint, eslint-config-next, ffmpeg-static, shadcn, tailwindcss, @tailwindcss/postcss (+4 more)
+Cohesion: 0.05
+Nodes (38): cross-env, eslint, eslint-config-next, ffmpeg-static, devDependencies, cross-env, eslint, eslint-config-next (+30 more)
 
-### Community 82 - "Slate Cinema → Payload CMS 3 Migration — Phase 0 Inventory"
-Cohesion: 0.18
-Nodes (10): Dynamic / repeatable content, Forms, ⚠️ Most important finding — read this first, Notes on current codebase state, Pages, Per-page block inventory, Reusable globals, Slate Cinema → Payload CMS 3 Migration — Phase 0 Inventory (+2 more)
+### Community 81 - "20261002_200000_page_seo.ts"
+Cohesion: 0.43
+Nodes (6): addColumn(), down(), errorText(), MigrationDB, TABLES, up()
 
-### Community 83 - "scripts"
-Cohesion: 0.25
-Nodes (8): scripts, build, dev, generate:importmap, generate:types, lint, seed, start
+### Community 82 - "Slate Cinema — Project Context"
+Cohesion: 0.06
+Nodes (29): Dynamic / repeatable content, Forms, ⚠️ Most important finding — read this first, Notes on current codebase state, Pages, Per-page block inventory, Reusable globals, Slate Cinema → Payload CMS 3 Migration — Phase 0 Inventory (+21 more)
 
-### Community 84 - "mi"
+### Community 84 - "vimeo-api.ts"
+Cohesion: 0.27
+Nodes (10): getPublicVideo(), getToken(), listPublicVideos(), pickThumbnail(), RawVimeoVideo, toSummary(), VimeoConfigError, vimeoFetch() (+2 more)
+
+### Community 85 - "20261103_000000_gallery_and_map.ts"
+Cohesion: 0.43
+Nodes (6): addColumn(), down(), errorText(), GALLERY_PICKS, MigrationDB, up()
+
+### Community 86 - "20261103_010000_light_statement_video.ts"
+Cohesion: 0.47
+Nodes (5): COLUMNS, down(), RENAMES, rewrite(), up()
+
+### Community 87 - "PageHero.tsx"
+Cohesion: 0.14
+Nodes (19): FRAME, INDUSTRY_PATHS, IndustryClientShowcase(), PortfolioPageContent(), fallbackTestimonials, initials(), PhoneVideoCard(), Reviews() (+11 more)
+
+### Community 88 - "SiteSettings.ts"
 Cohesion: 0.50
-Nodes (4): dh(), gp(), hl(), sp()
+Nodes (3): SiteSettings, DEFAULT_BRAND, validateHex()
 
-### Community 85 - "df"
-Cohesion: 0.67
-Nodes (3): ef(), jl(), yj()
-
-### Community 86 - "fp"
-Cohesion: 0.33
-Nodes (6): ao(), dp(), io(), ji(), op(), yg()
-
-### Community 87 - "FinalCTA.tsx"
-Cohesion: 0.24
-Nodes (5): clients, clients, flagship, Marquee(), MarqueeProps
-
-### Community 88 - "fp"
-Cohesion: 0.29
-Nodes (8): dl(), eh(), fp(), hm(), oh(), qj(), rl(), sk()
-
-### Community 89 - "ve"
+### Community 89 - "[...slug]/route.ts"
 Cohesion: 0.29
 Nodes (6): DELETE, GET, OPTIONS, PATCH, POST, PUT
 
-### Community 91 - "package.json"
-Cohesion: 0.40
-Nodes (4): name, private, type, version
+### Community 90 - "revalidate.ts"
+Cohesion: 0.23
+Nodes (9): ICON_OPTIONS, Industries, ORIENTATION_OPTIONS, JournalPosts, Media, PortfolioProjects, revalidateCollectionAfterChange(), revalidateCollectionAfterDelete() (+1 more)
 
-### Community 95 - "yc"
-Cohesion: 0.67
-Nodes (3): oq(), xn(), yc()
+### Community 92 - "Hero.tsx"
+Cohesion: 0.11
+Nodes (26): attachAutoplayVideo(), FOCUS_KEYFRAMES, getFocus(), Hero(), lerp(), mobileFrameSlot(), smoothstep(), Results() (+18 more)
+
+### Community 94 - "20261002_230000_brand_color.ts"
+Cohesion: 0.60
+Nodes (4): COLUMNS, down(), errorText(), up()
+
+### Community 95 - "emscripten_realloc_buffer"
+Cohesion: 0.50
+Nodes (4): emscripten_realloc_buffer(), _emscripten_resize_heap(), getHeapMax(), updateMemoryViews()
+
+### Community 96 - "magic-card.tsx"
+Cohesion: 0.38
+Nodes (6): isOrbMode(), MagicCardBaseProps, MagicCardGradientProps, MagicCardOrbProps, MagicCardProps, ResetReason
+
+### Community 98 - "simpleRichText"
+Cohesion: 0.37
+Nodes (7): POST(), POST(), POST(), POST(), forwardToGHL(), splitName(), simpleRichText()
+
+### Community 129 - "TopWorkShowcase.tsx"
+Cohesion: 0.38
+Nodes (4): shots, DraggableCardBody(), DraggableCardContainer(), industries
+
+### Community 130 - "pushConversion"
+Cohesion: 0.39
+Nodes (5): IntakeFrame(), ThankYouTracking(), ConversionEvent, pushConversion(), Window
+
+### Community 132 - "number-ticker.tsx"
+Cohesion: 0.40
+Nodes (4): NumberTicker(), NumberTickerProps, Stat, StatsBand()
+
+### Community 133 - "20260826_130000_add_privacy_terms_thankyou_smm_pages.ts"
+Cohesion: 0.47
+Nodes (4): createTableIfNotExists(), isTableExistsError(), MigrationDB, up()
+
+### Community 135 - "20260822_062619_add_vimeo_hookups.ts"
+Cohesion: 0.50
+Nodes (3): ADDS, isDuplicateColumnError(), up()
+
+### Community 136 - "20260824_000000_add_trust_banner.ts"
+Cohesion: 0.60
+Nodes (3): isDuplicateColumnError(), isTableExistsError(), up()
+
+### Community 137 - "20260924_000000_add_changelog.ts"
+Cohesion: 0.83
+Nodes (3): down(), errorText(), up()
+
+### Community 138 - "page-meta.ts"
+Cohesion: 0.23
+Nodes (15): builtInBlock(), defaultSections(), sectionsField(), seoFields(), CONTACT_ICONS, GUARANTEE_ICONS, ICON_OPTIONS, OriginalPage (+7 more)
 
 ## Knowledge Gaps
-- **258 isolated node(s):** `@magicuidesign/mcp`, `$schema`, `style`, `rsc`, `tsx` (+253 more)
+- **441 isolated node(s):** `@magicuidesign/mcp`, `$schema`, `style`, `rsc`, `tsx` (+436 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **32 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **54 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `ha()` connect `Dev Dependencies` to `marquee.tsx`, `gj`, `xd`, `draco_encoder.js`, `A`, `draco_decoder.js`, `mi`, `Quote Calculator`, `mi`, `df`, `gh`, `fi`, `fp`, `fp`?**
-  _High betweenness centrality (0.071) - this node is a cross-community bridge._
-- **Why does `A()` connect `A` to `mi`, `Quote Calculator`, `Dev Dependencies`?**
-  _High betweenness centrality (0.026) - this node is a cross-community bridge._
-- **Why does `ExceptionInfo()` connect `ExceptionInfo` to `draco_decoder.js`?**
-  _High betweenness centrality (0.018) - this node is a cross-community bridge._
+- **Why does `k()` connect `k` to `pj`, `n`, `fk`, `draco_encoder.js`, `changelog.ts`, `draco_wasm_wrapper.js`, `ha`, `f`?**
+  _High betweenness centrality (0.383) - this node is a cross-community bridge._
+- **Why does `flatten()` connect `changelog.ts` to `k`?**
+  _High betweenness centrality (0.383) - this node is a cross-community bridge._
+- **Why does `ha()` connect `ha` to `pj`, `n`, `k`, `fk`, `aq`, `draco_encoder.js`, `ln`, `draco_decoder.js`, `ci`?**
+  _High betweenness centrality (0.114) - this node is a cross-community bridge._
 - **Are the 153 inferred relationships involving `ha()` (e.g. with `Ac()` and `ad()`) actually correct?**
   _`ha()` has 153 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `@magicuidesign/mcp`, `$schema`, `style` to the rest of the system?**
-  _259 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Scroll Storytelling Sections` be split into smaller, more focused modules?**
-  _Cohesion score 0.12333333333333334 - nodes in this community are weakly interconnected._
-- **Should `TypeScript Config` be split into smaller, more focused modules?**
-  _Cohesion score 0.09523809523809523 - nodes in this community are weakly interconnected._
+  _441 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `compilerOptions` be split into smaller, more focused modules?**
+  _Cohesion score 0.06060606060606061 - nodes in this community are weakly interconnected._
+- **Should `HowItWorksPageContent.tsx` be split into smaller, more focused modules?**
+  _Cohesion score 0.10793650793650794 - nodes in this community are weakly interconnected._
