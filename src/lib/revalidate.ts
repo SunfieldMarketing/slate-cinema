@@ -1,5 +1,6 @@
 import { revalidatePath } from 'next/cache'
 import type { CollectionAfterChangeHook, CollectionAfterDeleteHook, GlobalAfterChangeHook } from 'payload'
+import { docPaths, globalPaths, notifyIndexNow } from '@/lib/indexnow'
 
 /*
   Real-time publish: without this, a save in /admin only reaches visitors
@@ -43,13 +44,18 @@ function revalidateSite(reason: string) {
   }
 }
 
-export const revalidateGlobalAfterChange: GlobalAfterChangeHook = ({ global, doc }) => {
+// A draft save changes nothing public, so only published saves are announced to IndexNow.
+const published = (doc: { _status?: string } | null | undefined) => doc?._status !== 'draft'
+
+export const revalidateGlobalAfterChange: GlobalAfterChangeHook = async ({ global, doc }) => {
   revalidateSite(`global "${global.slug}" saved`)
+  if (published(doc)) await notifyIndexNow(globalPaths(global.slug))
   return doc
 }
 
-export const revalidateCollectionAfterChange: CollectionAfterChangeHook = ({ collection, doc }) => {
+export const revalidateCollectionAfterChange: CollectionAfterChangeHook = async ({ collection, doc }) => {
   revalidateSite(`"${collection.slug}" doc ${doc?.id ?? ''} saved`)
+  if (published(doc)) await notifyIndexNow(docPaths(collection.slug, doc ?? {}))
   return doc
 }
 

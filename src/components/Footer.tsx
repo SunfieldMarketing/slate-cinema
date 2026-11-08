@@ -2,6 +2,7 @@
 
 import React, { useRef, useState } from 'react'
 import Link from 'next/link'
+import { SOCIAL_PROFILES } from '@/lib/social-profiles'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -227,6 +228,19 @@ export default function Footer() {
                 <a href={bottomBar?.termsHref || '/terms-of-service'} data-cms-field="sitemapColumn.termsLabel" className="footer-link text-white/60 hover:text-brand-blue transition-colors text-sm py-1.5 -my-1.5">
                   {sitemap?.termsLabel || 'Terms of Service'}
                 </a>
+              </div>
+            </div>
+            {/* Official profiles (2026-11-07, Levi's AI-search list #12): the same list as the
+                site's structured data (`sameAs`), so search and AI engines can tie the
+                profiles to this site. rel="me" marks them as the studio's own. */}
+            <div className="flex flex-col">
+              <h3 className="text-white font-bold mb-3 uppercase tracking-wider text-sm">Follow</h3>
+              <div className="flex flex-col gap-2.5">
+                {SOCIAL_PROFILES.map((p) => (
+                  <a key={p.href} href={p.href} target="_blank" rel="me noopener noreferrer" className="footer-link text-white/60 hover:text-brand-blue transition-colors text-sm py-1.5 -my-1.5">
+                    {p.label}
+                  </a>
+                ))}
               </div>
             </div>
           </div>

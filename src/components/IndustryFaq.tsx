@@ -104,7 +104,9 @@ export default function IndustryFaq({
                 <AccordionTrigger className="text-base sm:text-lg font-medium text-white py-5 hover:no-underline">
                   <span data-cms-field={paths ? `${paths.items}.${i}.question` : undefined}>{f.question}</span>
                 </AccordionTrigger>
-                <AccordionContent className="pb-5">
+                {/* keepMounted: closed answers stay in the page HTML (hidden), so search and AI
+                    crawlers can read them without running JavaScript (2026-11-07). */}
+                <AccordionContent keepMounted className="pb-5">
                   <p data-cms-field={paths ? `${paths.items}.${i}.answer` : undefined} className="text-sm text-white/55 leading-relaxed font-light max-w-xl">
                     {f.answer}
                   </p>

@@ -34,9 +34,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       getTermsOfServicePageGlobal(),
     ])
 
+  // lastmod is the document's real last edit (2026-11-07, Levi's AI-search list #8). It used
+  // to be new Date() for every URL -- one build timestamp on all 50 -- and search engines
+  // ignore lastmod that isn't consistently accurate. No document, no lastmod: better absent
+  // than wrong.
+  const edited = (doc?: { updatedAt?: string | null } | null) => (doc?.updatedAt ? { lastModified: new Date(doc.updatedAt) } : {})
+
   // A page ticked "Hide from search engines" in /admin stays out.
-  const route = (page: { noIndex?: boolean | null } | null, path: string, changeFrequency: Frequency, priority: number) =>
-    page?.noIndex ? [] : [{ url: `${SITE_URL}${path}`, lastModified: new Date(), changeFrequency, priority }]
+  const route = (page: { noIndex?: boolean | null; updatedAt?: string | null } | null, path: string, changeFrequency: Frequency, priority: number) =>
+    page?.noIndex ? [] : [{ url: `${SITE_URL}${path}`, ...edited(page), changeFrequency, priority }]
 
   const staticRoutes: MetadataRoute.Sitemap = [
     ...route(home, '', 'weekly', 1),
@@ -54,14 +60,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const industryRoutes: MetadataRoute.Sitemap = industries.filter((industry) => !industry.seo?.noIndex).map((industry) => ({
     url: `${SITE_URL}/portfolio/${industry.slug}`,
-    lastModified: new Date(),
+    ...edited(industry),
     changeFrequency: 'monthly',
     priority: 0.7,
   }))
 
   const journalRoutes: MetadataRoute.Sitemap = journalPosts.filter((post) => !post.seo?.noIndex).map((post) => ({
     url: `${SITE_URL}/journal/${post.slug}`,
-    lastModified: new Date(),
+    ...edited(post),
     changeFrequency: 'monthly',
     priority: 0.6,
   }))
@@ -71,7 +77,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter((page) => !page.noIndex)
     .map((page) => ({
       url: `${SITE_URL}/${page.path}`,
-      lastModified: page.updatedAt ? new Date(page.updatedAt) : new Date(),
+      ...edited(page),
       changeFrequency: 'monthly',
       priority: 0.7,
     }))

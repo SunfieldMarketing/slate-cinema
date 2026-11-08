@@ -141,6 +141,8 @@ export interface IndustryData {
   videoTestimonials?: IndustryVideoTestimonial[]
   process?: IndustryProcessStep[]
   faqs?: IndustryFaqItem[]
+  /** Last edit in /admin -- the sitemap's lastmod (2026-11-07). Code-only entries have none. */
+  updatedAt?: string
   /** Position in the Portfolio menu and the /portfolio wheel. */
   order: number
   clientsHeading: IndustrySectionHeading
@@ -207,6 +209,7 @@ export function normalizeIndustry(doc: Industry): IndustryData {
   return {
     id: String(doc.id),
     slug: doc.slug,
+    updatedAt: doc.updatedAt,
     label: doc.label,
     icon: doc.icon,
     // Lifted just enough to read as small text on the dark page -- see readableAccent.
@@ -367,6 +370,9 @@ export interface JournalPostLocal {
   content: PayloadJournalPost['content']
   /** "Search engines & sharing" -- only read by the post's metadata. */
   seo?: SeoValues
+  /** Document timestamps: structured-data dates and the sitemap's lastmod (2026-11-07). */
+  createdAt?: string
+  updatedAt?: string
 }
 
 export function normalizeJournalPost(doc: PayloadJournalPost): JournalPostLocal {
@@ -383,6 +389,8 @@ export function normalizeJournalPost(doc: PayloadJournalPost): JournalPostLocal 
     author: doc.author,
     content: doc.content,
     seo: { metaTitle: doc.metaTitle, metaDescription: doc.metaDescription, metaImage: doc.metaImage, noIndex: doc.noIndex },
+    createdAt: doc.createdAt,
+    updatedAt: doc.updatedAt,
   }
 }
 

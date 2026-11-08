@@ -6,7 +6,8 @@ import { mediaUrl } from '@/lib/media-url'
 export const DEFAULT_SHARE_IMAGE = '/images/og-default.jpg'
 
 /** Used when Site Settings > SEO is empty (a fresh database). */
-export const DEFAULT_TITLE = 'Slate Cinema | Video Marketing at Your Fingertips'
+// Says what the studio does and where (2026-11-07, Levi's AI-search list #1).
+export const DEFAULT_TITLE = 'Slate Cinema | Video Production and Video Editing in Brooklyn, NYC'
 export const DEFAULT_DESCRIPTION =
   'From concept to campaign, we create cinematic content built to capture attention, tell stories, and drive engagement. Brooklyn, NY.'
 

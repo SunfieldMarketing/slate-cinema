@@ -10,6 +10,7 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import AmbientBackdrop from '@/components/ui/AmbientBackdrop'
 import type { JournalPostLocal } from '@/lib/normalize'
+import { postDates } from '@/lib/journal-dates'
 import type { JournalPage } from '@/payload-types'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -31,6 +32,17 @@ export default function JournalPostContent({
   const related = [...others.filter((p) => p.category === post.category), ...others.filter((p) => p.category !== post.category)].slice(0, 3)
   // A database that predates the Journal Page global has no `postCta`
   // group -- keep the original copy then; otherwise an emptied field hides.
+  const dates = postDates(post)
+  // "Related service" (2026-11-07, Levi's AI-search list #7): each post used to link only to
+  // /contact, so the articles passed nothing to the pages that sell the work. Social and
+  // distribution topics point at Social Media Management first; everything else at the
+  // production process.
+  const socialTopic = /social|distribut|creator|collab|platform|reach|calendar|post|caption|vertical/i.test(`${post.category} ${post.title}`)
+  const services = [
+    { href: '/how-it-works', label: 'Video production', note: 'How a shoot runs, from script to final cut' },
+    { href: '/social-media-management', label: 'Social media management', note: 'Calendars, posting and reporting, done for you' },
+  ]
+  if (socialTopic) services.reverse()
   const cta = page?.postCta
   const postCta = {
     headline: cta ? (cta.headline ?? '') : 'Have a project in mind?',
@@ -74,7 +86,14 @@ export default function JournalPostContent({
             <div className="jp-hero-in flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-3 font-mono text-xs text-white/65 uppercase tracking-wide">
               <span>{post.author}</span>
               <span aria-hidden="true" className="hidden sm:block w-1 h-1 rounded-full bg-white/30" />
-              <span>{post.date}</span>
+              {/* A real date crawlers can read (2026-11-07): it was plain "July 2026" text. */}
+              <time dateTime={dates.published}>{dates.publishedLabel}</time>
+              {dates.updatedLabel && (
+                <>
+                  <span aria-hidden="true" className="hidden sm:block w-1 h-1 rounded-full bg-white/30" />
+                  <time dateTime={dates.modified}>{dates.updatedLabel}</time>
+                </>
+              )}
               <span aria-hidden="true" className="hidden sm:block w-1 h-1 rounded-full bg-white/30" />
               <span>{post.readTime}</span>
             </div>
@@ -135,6 +154,26 @@ export default function JournalPostContent({
                 {postCta.buttonLabel} <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
               </a>
             )}
+          </div>
+        </section>
+
+        {/* Related services */}
+        <section className="relative w-full max-w-2xl mx-auto px-5 sm:px-8 pb-16 md:pb-20">
+          <span className="font-mono text-xs sm:text-[11px] tracking-[0.3em] text-white/55 uppercase block mb-5">Related service</span>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {services.map((s) => (
+              <a
+                key={s.href}
+                href={s.href}
+                className="group flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-4 hover:border-white/25 transition-colors duration-300"
+              >
+                <span>
+                  <span className="block text-white font-semibold text-sm">{s.label}</span>
+                  <span className="block text-white/50 text-xs font-light mt-0.5">{s.note}</span>
+                </span>
+                <ArrowUpRight className="w-4 h-4 shrink-0 text-white/55 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" style={{ color: post.accent }} />
+              </a>
+            ))}
           </div>
         </section>
 

@@ -118,16 +118,26 @@ interface LenisLike {
 }
 
 let lenisInstance: LenisLike | null = null
+// A pause can be requested before Lenis exists (2026-11-06, Levi): the portfolio hero calls
+// pauseLenis() on mount, but SmoothScrolling only registers the instance on its first ticker
+// frame -- child effects run first -- so the pause was a no-op and a fresh /portfolio load
+// scrolled past the hero while its frame was still opening. Remember the request and apply
+// it the moment the instance registers.
+let wantPaused = false
 
 export function registerLenis(instance: LenisLike | null) {
+  if (instance === lenisInstance) return // called every frame; only act on a new instance
   lenisInstance = instance
+  if (instance && wantPaused) instance.stop()
 }
 
 export function pauseLenis() {
+  wantPaused = true
   lenisInstance?.stop()
 }
 
 export function resumeLenis() {
+  wantPaused = false
   lenisInstance?.start()
 }
 

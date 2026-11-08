@@ -48,5 +48,24 @@ export default async function IndustryPage({ params }: { params: Promise<{ indus
   const industry = industries.find((i) => i.slug === slug)
   if (!industry) notFound()
   const blocksData = await loadBlocksData(industry.layout, draft)
-  return <IndustryPageContent industry={industry} portfolioProjects={portfolioProjects} finalCta={finalCta} blocksData={blocksData} />
+  // FAQPage structured data (2026-11-07, Levi's AI-search list #5): the industry's FAQs as
+  // machine-readable Q&A in the server HTML, for crawlers that never run JavaScript.
+  const faqs = (industry.faqs ?? []).filter((f) => f.question?.trim() && f.answer?.trim())
+  const faqSchema = faqs.length
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqs.map((f) => ({
+          '@type': 'Question',
+          name: f.question,
+          acceptedAnswer: { '@type': 'Answer', text: f.answer },
+        })),
+      }
+    : null
+  return (
+    <>
+      {faqSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />}
+      <IndustryPageContent industry={industry} portfolioProjects={portfolioProjects} finalCta={finalCta} blocksData={blocksData} />
+    </>
+  )
 }

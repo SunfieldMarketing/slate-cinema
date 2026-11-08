@@ -13,6 +13,7 @@ import { getNormalizedIndustries } from "@/lib/normalize";
 import { DEFAULT_DESCRIPTION, DEFAULT_SHARE_IMAGE, DEFAULT_TITLE } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site-url";
 import { brandColor } from "@/lib/brand";
+import { SOCIAL_PROFILES } from "@/lib/social-profiles";
 import { draftMode } from 'next/headers';
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -92,30 +93,49 @@ export default async function RootLayout({
     getSiteSettings(draft),
   ])
 
-  // Organization/LocalBusiness structured data — sourced from Site
-  // Settings (contact info) rather than hardcoded, so it stays truthful
-  // if that copy ever changes through /admin.
+  // Site-wide structured data (2026-11-07, Levi's AI-search list #2): one named entity --
+  // `#organization`, which journal posts and other pages reference as author/publisher -- with
+  // its services, service area and official profiles, plus the WebSite it publishes. It replaces
+  // a lone ProfessionalService block. Contact facts come from Site Settings so they stay true
+  // if that copy changes in /admin; the profile links are shared with the footer (src/lib/social-profiles.ts).
   const contact = settings.contact
   const organizationSchema = {
     '@context': 'https://schema.org',
-    '@type': 'ProfessionalService',
-    name: 'Slate Cinema',
-    description: settings.seo?.defaultDescription,
-    url: SITE_URL,
-    logo: `${SITE_URL}/images/logo-mark.webp`,
-    image: `${SITE_URL}/images/logo-mark.webp`,
-    email: contact?.email,
-    telephone: contact?.phone,
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: contact?.addressLine,
-      addressLocality: contact?.city,
-      addressRegion: contact?.state,
-      postalCode: contact?.postalCode,
-      addressCountry: 'US',
-    },
-    areaServed: 'US',
-    priceRange: '$$',
+    '@graph': [
+      {
+        '@type': ['Organization', 'ProfessionalService'],
+        '@id': `${SITE_URL}/#organization`,
+        name: 'Slate Cinema',
+        description: settings.seo?.defaultDescription || DEFAULT_DESCRIPTION,
+        url: SITE_URL,
+        logo: `${SITE_URL}/images/logo-mark.webp`,
+        image: `${SITE_URL}/images/logo-mark.webp`,
+        email: contact?.email,
+        telephone: contact?.phone,
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: contact?.addressLine,
+          addressLocality: contact?.city,
+          addressRegion: contact?.state,
+          postalCode: contact?.postalCode,
+          addressCountry: 'US',
+        },
+        areaServed: [
+          { '@type': 'City', name: 'New York' },
+          { '@type': 'Country', name: 'United States' },
+        ],
+        knowsAbout: ['Video production', 'Video editing', 'Post-production', 'Social media management', 'Video marketing'],
+        priceRange: '$$',
+        sameAs: SOCIAL_PROFILES.map((p) => p.href),
+      },
+      {
+        '@type': 'WebSite',
+        '@id': `${SITE_URL}/#website`,
+        url: SITE_URL,
+        name: 'Slate Cinema',
+        publisher: { '@id': `${SITE_URL}/#organization` },
+      },
+    ],
   }
 
   return (

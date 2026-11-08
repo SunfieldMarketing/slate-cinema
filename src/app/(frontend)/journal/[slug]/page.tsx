@@ -5,6 +5,8 @@ import { getJournalPageGlobal } from '@/lib/payload-data'
 import JournalPostContent from '@/components/JournalPostContent'
 import { pageMetadata } from '@/lib/seo'
 import { PLACEHOLDER_IMAGE } from '@/lib/media-url'
+import { postDates } from '@/lib/journal-dates'
+import { SITE_URL } from '@/lib/site-url'
 
 export async function generateStaticParams() {
   const posts = await getNormalizedJournalPosts()
@@ -36,5 +38,44 @@ export default async function JournalPostPage({ params }: { params: Promise<{ sl
   const [posts, page] = await Promise.all([getNormalizedJournalPosts(draft), getJournalPageGlobal(draft)])
   const post = posts.find((p) => p.slug === slug)
   if (!post) notFound()
-  return <JournalPostContent post={post} allPosts={posts} page={page} />
+
+  // BlogPosting + BreadcrumbList structured data (2026-11-07, Levi's AI-search list #7): AI
+  // answers favour sources they can date and attribute. A team byline is credited to the
+  // company itself; a named author (set under Author in /admin) becomes a Person.
+  const url = `${SITE_URL}/journal/${post.slug}`
+  const dates = postDates(post)
+  const organization = { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: 'Slate Cinema', url: SITE_URL }
+  const teamByline = !post.author?.trim() || /slate cinema|team/i.test(post.author)
+  const schema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BlogPosting',
+        '@id': `${url}#article`,
+        headline: post.title,
+        description: post.excerpt,
+        ...(post.coverImage && post.coverImage !== PLACEHOLDER_IMAGE ? { image: post.coverImage } : {}),
+        datePublished: dates.published,
+        dateModified: dates.modified,
+        author: teamByline ? organization : { '@type': 'Person', name: post.author },
+        publisher: organization,
+        mainEntityOfPage: url,
+        articleSection: post.category,
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+          { '@type': 'ListItem', position: 2, name: 'Journal', item: `${SITE_URL}/journal` },
+          { '@type': 'ListItem', position: 3, name: post.title, item: url },
+        ],
+      },
+    ],
+  }
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <JournalPostContent post={post} allPosts={posts} page={page} />
+    </>
+  )
 }

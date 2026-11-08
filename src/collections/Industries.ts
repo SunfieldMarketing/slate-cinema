@@ -412,7 +412,7 @@ export const Industries: CollectionConfig = {
         {
           name: 'faqs',
           type: 'array',
-          admin: { description: 'Not currently shown on the site.' },
+          admin: { description: 'Shown above the closing call to action, and to search engines as FAQ markup.' },
           fields: [
             { name: 'question', type: 'text', required: true },
             { name: 'answer', type: 'textarea', required: true },

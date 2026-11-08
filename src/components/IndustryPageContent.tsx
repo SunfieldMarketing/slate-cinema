@@ -19,6 +19,7 @@ import TrustBanner from '@/components/TrustBanner'
 import MidCtaBand from '@/components/MidCtaBand'
 import StickyCta from '@/components/StickyCta'
 import PageSections from '@/components/blocks/PageSections'
+import IndustryFaq from '@/components/IndustryFaq'
 import type { BlocksData } from '@/components/blocks/types'
 import type { IndustryData, IndustryRedirect, PortfolioProjectLocal } from '@/lib/normalize'
 import type { FinalCta } from '@/payload-types'
@@ -215,7 +216,20 @@ export default function IndustryPageContent({
         />
       </div>
     ),
-    finalCta: <FinalCTA data={finalCta} />,
+    // The industry's FAQs sit just above the closing call to action (2026-11-07, Levi's
+    // AI-search list #5). They were stored in /admin but never shown, so neither visitors nor
+    // crawlers saw them. Part of this built-in rather than a new section type, so it needs no
+    // schema change and appears on every industry that has questions filled in.
+    finalCta: (
+      <>
+        {industry.faqs && industry.faqs.length > 0 && (
+          <div {...cms}>
+            <IndustryFaq faqs={industry.faqs} accent={industry.accent} />
+          </div>
+        )}
+        <FinalCTA data={finalCta} />
+      </>
+    ),
   }
 
   return (
