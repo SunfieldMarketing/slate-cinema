@@ -1631,7 +1631,7 @@ export interface Industry {
     company?: string | null;
   };
   /**
-   * Not currently shown on the site.
+   * Shown above the closing call to action, and to search engines as FAQ markup.
    */
   faqs?:
     | {
